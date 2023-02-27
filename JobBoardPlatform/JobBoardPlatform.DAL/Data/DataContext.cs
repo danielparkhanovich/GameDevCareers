@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace JobBoardPlatform.DAL.Data
 {

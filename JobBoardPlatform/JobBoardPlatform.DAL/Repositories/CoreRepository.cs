@@ -1,17 +1,17 @@
-﻿using JobBoardPlatform.DAL.Models.Contracts;
+﻿using JobBoardPlatform.DAL.Data;
+using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.DAL.Repositories
 {
-    public class CoreRepository<TEntity, TContext> : IRepository<TEntity>
+    public class CoreRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity
-        where TContext : DbContext
     {
-        private readonly TContext context;
+        private readonly DataContext context;
 
 
-        public CoreRepository(TContext context)
+        public CoreRepository(DataContext context)
         {
             this.context = context;
         }
@@ -31,6 +31,11 @@ namespace JobBoardPlatform.DAL.Repositories
         public async Task<List<TEntity>> GetAll()
         {
             return await context.Set<TEntity>().ToListAsync();
+        }
+
+        public async Task<DbSet<TEntity>> GetAllSet()
+        {
+            return await Task.FromResult(context.Set<TEntity>());
         }
 
         public async Task<TEntity> Update(TEntity entity)

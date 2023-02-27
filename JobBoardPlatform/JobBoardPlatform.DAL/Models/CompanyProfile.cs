@@ -1,7 +1,9 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.DAL.Models
 {
+    [Index(nameof(CompanyName), IsUnique = true)]
     public class CompanyProfile : IEntity
     {
         public int Id { get; set; }

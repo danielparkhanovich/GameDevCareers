@@ -1,9 +1,10 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.DAL.Models
 {
-    public class EmployeeCredentials : IEntity
+    [Index(nameof(Email), IsUnique = true)]
+    public class EmployeeCredentials : ICredentialEntity
     {
         public int Id { get; set; }
         public string Email { get; set; } = string.Empty;
