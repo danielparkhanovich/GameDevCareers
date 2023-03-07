@@ -1,9 +1,11 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobBoardPlatform.DAL.Models
 {
     [Index(nameof(CompanyName), IsUnique = true)]
+    [Table("CompanyProfiles")]
     public class CompanyProfile : IEntity
     {
         public int Id { get; set; }

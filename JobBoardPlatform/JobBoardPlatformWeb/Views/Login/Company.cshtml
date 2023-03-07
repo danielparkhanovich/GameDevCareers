@@ -17,7 +17,7 @@
                 <label asp-for="Password" for="floatingPassword">Password</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
 
-                <a asp-controller="SignUp" asp-action="Company" class="text-light" style="text-decoration: none;"><b>Forgot password?</b></a>
+                <a asp-controller="Register" asp-action="Company" class="text-light" style="text-decoration: none;"><b>Forgot password?</b></a>
             </div>
             <div class="col-md-12 text-center mt-4">
                 <button type="submit" class="btn btn-primary px-5 py-1 btn-lg rounded-pill">Sign in</button>
@@ -25,7 +25,7 @@
             <div class="col-md-12 text-center mt-2">
                 <b>
                     <label class="text-dark">New account?</label>
-                    <a asp-controller="SignUp" asp-action="Company" class="text-light" style="text-decoration: none;">Register</a>
+                    <a asp-controller="Register" asp-action="Company" class="text-light" style="text-decoration: none;">Register</a>
                 </b>
             </div>
         </form>

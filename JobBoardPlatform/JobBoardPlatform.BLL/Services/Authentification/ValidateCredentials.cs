@@ -17,12 +17,11 @@ namespace JobBoardPlatform.BLL.Services.Authentification
             this.repository = repository;
         }
 
-        public async Task<AuthorizationResult> ValidateRegistration(string email)
+        public async Task<AuthorizationResult> ValidateRegisterAsync(string email)
         {
             var result = new AuthorizationResult();
 
             var set = await repository.GetAllSet();
-            var test = await repository.GetAll();
 
             var found = await set.FirstOrDefaultAsync(x => x.Email == email);
             if (found != null)
@@ -33,7 +32,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
             return result;
         }
 
-        public async Task<AuthorizationResult> ValidateLogin(string email, string hashedPassword)
+        public async Task<AuthorizationResult> ValidateLoginAsync(string email, string hashedPassword)
         {
             var result = new AuthorizationResult();
 

@@ -1,14 +1,21 @@
-using JobBoardPlatform.BLL.Services.Authentification;
-using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Data;
 using JobBoardPlatform.DAL.Repositories;
 using JobBoardPlatform.DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(
+    CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(option =>
+    {
+        option.LoginPath = "/Login";
+        option.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    });
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -32,6 +39,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

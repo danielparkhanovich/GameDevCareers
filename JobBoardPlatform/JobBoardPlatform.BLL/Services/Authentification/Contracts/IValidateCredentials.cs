@@ -4,7 +4,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Contracts
 {
     internal interface IValidateCredentials
     {
-        Task<AuthorizationResult> ValidateRegistration(string email);
-        Task<AuthorizationResult> ValidateLogin(string email, string hashedPassword);
+        Task<AuthorizationResult> ValidateRegisterAsync(string email);
+        Task<AuthorizationResult> ValidateLoginAsync(string email, string hashedPassword);
     }
 }

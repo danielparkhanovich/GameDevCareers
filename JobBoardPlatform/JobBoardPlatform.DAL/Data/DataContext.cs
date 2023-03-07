@@ -6,9 +6,9 @@ namespace JobBoardPlatform.DAL.Data
 {
     public class DataContext : DbContext
     {
-        public DbSet<EmployeeCredentials> Employees { get; set; }
+        public DbSet<EmployeeCredentials> EmployeeCredentials { get; set; }
         public DbSet<EmployeeProfile> EmployeeProfiles { get; set; }
-        public DbSet<CompanyCredentials> Companies { get; set; }
+        public DbSet<CompanyCredentials> CompanyCredentials { get; set; }
         public DbSet<CompanyProfile> CompanyProfiles { get; set; }
 
 
