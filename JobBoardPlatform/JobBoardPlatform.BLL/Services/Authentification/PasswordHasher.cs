@@ -1,5 +1,4 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
-using JobBoardPlatform.BLL.Utilities;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -23,9 +22,9 @@ namespace JobBoardPlatform.BLL.Services.Authentification
             return hashText;
         }
 
-        public AuthorizationResult VerifyHashedPassword(string providedPassword, string hashedPassword)
+        public AuthentificationResult VerifyHashedPassword(string providedPassword, string hashedPassword)
         {
-            var result = new AuthorizationResult();
+            var result = new AuthentificationResult();
 
             var hashedProvided = HashPassword(hashedPassword);
             if (hashedProvided != hashedPassword)

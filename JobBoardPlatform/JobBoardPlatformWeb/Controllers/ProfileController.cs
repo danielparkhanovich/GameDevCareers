@@ -1,8 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification;
-using JobBoardPlatform.DAL.Models;
-using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Contracts;
-using JobBoardPlatform.PL.ViewModels;
+﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,65 +7,16 @@ namespace JobBoardPlatform.PL.Controllers
     [Authorize]
     public class ProfileController : Controller
     {
+        [Authorize(Policy = AuthorizationPolicies.USER_ONLY_POLICY)]
         public IActionResult Employee()
         {
             return View();
         }
 
+        [Authorize(Policy = AuthorizationPolicies.COMPANY_ONLY_POLICY)]
         public IActionResult Company()
         {
             return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Employee(UserRegisterViewModel userRegister)
-        {
-            if (ModelState.IsValid)
-            {
-                var credential = new EmployeeCredentials()
-                {
-                    Email = userRegister.Email,
-                    HashPassword = userRegister.Password,
-                    Profile = new EmployeeProfile()
-                };
-                return await TryRegister(userRegister, employeeRepository, credential);
-            }
-            return View(userRegister);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Company(UserRegisterViewModel userRegister)
-        {
-            if (ModelState.IsValid)
-            {
-                var credential = new CompanyCredentials()
-                {
-                    Email = userRegister.Email,
-                    HashPassword = userRegister.Password,
-                    Profile = new CompanyProfile()
-                };
-                return await TryRegister(userRegister, companyRepository, credential);
-            }
-            return View(userRegister);
-        }
-
-        private async Task<IActionResult> TryRegister<T>(UserRegisterViewModel userRegister, IRepository<T> repository, T credentials) 
-            where T : class, ICredentialEntity
-        {
-            var processAutorization = new ProcessAuthentification<T>(repository, HttpContext);
-
-            var autorization = await processAutorization.TryRegisterAsync(credentials);
-            if (autorization.IsError)
-            {
-                ModelState.AddModelError("AlreadyExistsError", autorization.Error);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return View(userRegister);
         }
     }
 }

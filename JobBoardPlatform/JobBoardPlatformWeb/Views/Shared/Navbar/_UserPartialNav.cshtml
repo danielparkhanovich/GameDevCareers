@@ -1,3 +1,18 @@
-﻿<li class="nav-item border border-primary rounded-pill mx-2 px-2">
-    <a class="nav-link text-dark" asp-controller="Login" asp-action="LogOut">Log out</a>
+﻿@using System.Security.Claims;
+<li class="nav-item border border-light dropdown px-2">
+    <a class="nav-link dropdown-toggle text-dark col-sm" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle">
+        @User.Identity.Name, @User.FindFirstValue(ClaimTypes.Role)
+    </a>
+    <div class="dropdown-menu dropdown-menu-end mt-3">
+        <a class="dropdown-item" asp-controller="Profile" asp-action="Employee">
+            <i class="bi bi-person mx-2"></i>
+            My profile
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" asp-controller="Login" asp-action="LogOut">
+            <i class="bi bi-emoji-dizzy mx-2"></i>
+            Log out
+        </a>
+    </div>
 </li>

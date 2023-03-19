@@ -1,28 +1,29 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
-using JobBoardPlatform.DAL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Services.Authorization.Contracts;
+using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace JobBoardPlatform.BLL.Services.Authentification
+namespace JobBoardPlatform.BLL.Services.Authorization
 {
-    public class SessionManager : ISessionManager
+    public class AuthorizationService : IAuthorizationService
     {
         private readonly HttpContext httpContext;
 
 
-        public SessionManager(HttpContext httpContext)
+        public AuthorizationService(HttpContext httpContext)
         {
             this.httpContext = httpContext;
         }
 
-        public async Task SignInHttpContextAsync(ICredentialEntity credentials)
+        public async Task SignInHttpContextAsync(AuthorizationData data)
         {
             List<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, credentials.Email),
-                // new Claim("Other properties", "Example role")
+                new Claim(ClaimTypes.NameIdentifier, data.NameIdentifier),
+                new Claim(ClaimTypes.Name, data.DisplayName),
+                new Claim(ClaimTypes.Role, data.Role)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims,

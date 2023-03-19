@@ -4,10 +4,8 @@ using JobBoardPlatform.DAL.Models;
 using JobBoardPlatform.DAL.Repositories.Contracts;
 using JobBoardPlatform.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.BLL.Services.Authorization;
+using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 
 namespace JobBoardPlatform.PL.Controllers
 {
@@ -18,17 +16,22 @@ namespace JobBoardPlatform.PL.Controllers
     {
         return AuthorizationResult.Success;
     }
-     */
+    */
     public class LoginController : Controller
     {
         private readonly IRepository<EmployeeCredentials> employeeRepository;
         private readonly IRepository<CompanyCredentials> companyRepository;
+        private readonly IRepository<EmployeeProfile> employeeProfileRepository;
+        private readonly IRepository<CompanyProfile> companyProfileRepository;
 
 
-        public LoginController(IRepository<EmployeeCredentials> employeeRepository, IRepository<CompanyCredentials> companyRepository)
+        public LoginController(IRepository<EmployeeCredentials> employeeRepository, IRepository<CompanyCredentials> companyRepository,
+            IRepository<EmployeeProfile> employeeProfileRepository, IRepository<CompanyProfile> companyProfileRepository)
         {
             this.employeeRepository = employeeRepository;
             this.companyRepository = companyRepository;
+            this.employeeProfileRepository = employeeProfileRepository;
+            this.companyProfileRepository = companyProfileRepository;
         }
 
         public IActionResult Employee()
@@ -43,7 +46,7 @@ namespace JobBoardPlatform.PL.Controllers
 
         public async Task<IActionResult> LogOut()
         {
-            var sessionManager = new SessionManager(HttpContext);
+            var sessionManager = new AuthorizationService(HttpContext);
             await sessionManager.SignOutHttpContextAsync();
 
             return RedirectToAction("Index", "Home");
@@ -60,7 +63,9 @@ namespace JobBoardPlatform.PL.Controllers
                     Email = userLogin.Email,
                     HashPassword = userLogin.Password
                 };
-                return await TryLogin(userLogin, employeeRepository, credential);
+
+                return await TryLogin(userLogin, 
+                    employeeRepository, employeeProfileRepository, credential, Roles.USER);
             }
             return View(userLogin);
         }
@@ -76,17 +81,21 @@ namespace JobBoardPlatform.PL.Controllers
                     Email = userLogin.Email,
                     HashPassword = userLogin.Password
                 };
-                return await TryLogin(userLogin, companyRepository, credential);
+
+                return await TryLogin(userLogin, 
+                    companyRepository, companyProfileRepository, credential, Roles.COMPANY);
             }
             return View(userLogin);
         }
 
-        private async Task<IActionResult> TryLogin<T>(UserLoginViewModel userLogin, IRepository<T> repository, T credentials)
+        private async Task<IActionResult> TryLogin<T, V>(UserLoginViewModel userLogin, 
+            IRepository<T> credentialRepository, IRepository<V> profileRepository, T credentials, string role)
             where T : class, ICredentialEntity
+            where V : class, IProfileEntity
         {
-            var processAutorization = new ProcessAuthentification<T>(repository, HttpContext);
+            var session = new SessionService<T, V>(HttpContext, credentialRepository, profileRepository, role);
 
-            var autorization = await processAutorization.TryLoginAsync(credentials);
+            var autorization = await session.TryLoginAsync(credentials);
             if (autorization.IsError)
             {
                 ModelState.AddModelError("Autorization error", autorization.Error);

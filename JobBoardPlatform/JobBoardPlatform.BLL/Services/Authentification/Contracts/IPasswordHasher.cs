@@ -1,10 +1,8 @@
-﻿using JobBoardPlatform.BLL.Utilities;
-
-namespace JobBoardPlatform.BLL.Services.Authentification.Contracts
+﻿namespace JobBoardPlatform.BLL.Services.Authentification.Contracts
 {
     internal interface IPasswordHasher
     {
         string HashPassword(string password);
-        AuthorizationResult VerifyHashedPassword(string providedPassword, string hashedPassword);
+        AuthentificationResult VerifyHashedPassword(string providedPassword, string hashedPassword);
     }
 }
