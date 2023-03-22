@@ -11,7 +11,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
             string hashText;
             using (MD5 md5 = MD5.Create())
             {
-                byte[] hash = md5.ComputeHash(Encoding.Unicode.GetBytes("TextToHash"));
+                byte[] hash = md5.ComputeHash(Encoding.Unicode.GetBytes(password));
                 StringBuilder hashTextBuilder = new StringBuilder();
                 for (int i = 0; i < hash.Length; i++)
                 {
@@ -20,19 +20,6 @@ namespace JobBoardPlatform.BLL.Services.Authentification
                 hashText = hashTextBuilder.ToString();
             }
             return hashText;
-        }
-
-        public AuthentificationResult VerifyHashedPassword(string providedPassword, string hashedPassword)
-        {
-            var result = new AuthentificationResult();
-
-            var hashedProvided = HashPassword(hashedPassword);
-            if (hashedProvided != hashedPassword)
-            {
-                result.Error = "Password is false";
-            }
-
-            return result;
         }
     }
 }

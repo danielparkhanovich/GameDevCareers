@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JobBoardPlatform.BLL.Services.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace JobBoardPlatformWeb.Controllers
@@ -26,6 +27,14 @@ namespace JobBoardPlatformWeb.Controllers
         public IActionResult Error()
         {
             return View("None");
+        }
+
+        public async Task<IActionResult> LogOut()
+        {
+            var sessionManager = new AuthorizationService(HttpContext);
+            await sessionManager.SignOutHttpContextAsync();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

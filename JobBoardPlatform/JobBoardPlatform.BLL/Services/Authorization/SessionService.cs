@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Services.Authorization
 {
-    public class SessionService<TCredential, TProfile> : ISessionService, IAuthentificationService<TCredential>
+    public class SessionService<TCredential, TProfile> : IAuthentificationService<TCredential>
         where TCredential : class, ICredentialEntity
         where TProfile : class, IEntity, IDisplayData
     {

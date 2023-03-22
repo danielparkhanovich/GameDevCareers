@@ -19,4 +19,8 @@
     <ProjectReference Include="..\JobBoardPlatform.DAL\JobBoardPlatform.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Shared\ProfileTabs\" />
+  </ItemGroup>
+
 </Project>

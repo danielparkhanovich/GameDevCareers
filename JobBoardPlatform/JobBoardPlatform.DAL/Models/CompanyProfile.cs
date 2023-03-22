@@ -6,7 +6,7 @@ namespace JobBoardPlatform.DAL.Models
 {
     [Index(nameof(CompanyName), IsUnique = true)]
     [Table("CompanyProfiles")]
-    public class CompanyProfile : IEntity, IDisplayData
+    public class CompanyProfile : IDisplayDataEntity
     {
         public int Id { get; set; }
         public string CompanyName { get; set; } = string.Empty;

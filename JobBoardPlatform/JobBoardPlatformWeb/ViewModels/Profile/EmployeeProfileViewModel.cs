@@ -1,6 +1,8 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.Profile
+﻿using JobBoardPlatform.PL.ViewModels.Profile.Contracts;
+
+namespace JobBoardPlatform.PL.ViewModels.Profile
 {
-    public class EmployeeProfileViewModel
+    public class EmployeeProfileViewModel : IProfileViewModel
     {
         public string Name { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;

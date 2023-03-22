@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace JobBoardPlatform.DAL.Models
 {
     [Table("EmployeeProfiles")]
-    public class EmployeeProfile : IEntity, IDisplayData
+    public class EmployeeProfile : IDisplayDataEntity
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
