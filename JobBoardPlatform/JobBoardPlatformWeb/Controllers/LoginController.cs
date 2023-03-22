@@ -2,10 +2,10 @@
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models;
 using JobBoardPlatform.DAL.Repositories.Contracts;
-using JobBoardPlatform.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.PL.ViewModels.Authentification;
 
 namespace JobBoardPlatform.PL.Controllers
 {
@@ -91,7 +91,7 @@ namespace JobBoardPlatform.PL.Controllers
         private async Task<IActionResult> TryLogin<T, V>(UserLoginViewModel userLogin, 
             IRepository<T> credentialRepository, IRepository<V> profileRepository, T credentials, string role)
             where T : class, ICredentialEntity
-            where V : class, IProfileEntity
+            where V : class, IEntity, IDisplayData
         {
             var session = new SessionService<T, V>(HttpContext, credentialRepository, profileRepository, role);
 

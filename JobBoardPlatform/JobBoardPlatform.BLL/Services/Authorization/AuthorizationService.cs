@@ -19,12 +19,9 @@ namespace JobBoardPlatform.BLL.Services.Authorization
 
         public async Task SignInHttpContextAsync(AuthorizationData data)
         {
-            List<Claim> claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, data.NameIdentifier),
-                new Claim(ClaimTypes.Name, data.DisplayName),
-                new Claim(ClaimTypes.Role, data.Role)
-            };
+            List<Claim> claims = new List<Claim>();
+            claims.AddRange(GetSpecificProperties(data));
+            claims.AddRange(GetPersonalizationProperties(data));
 
             var claimsIdentity = new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme);
@@ -42,6 +39,26 @@ namespace JobBoardPlatform.BLL.Services.Authorization
         public async Task SignOutHttpContextAsync()
         {
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        private List<Claim> GetSpecificProperties(AuthorizationData data)
+        {
+            return new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, data.NameIdentifier),
+                new Claim(ClaimTypes.Name, data.DisplayName),
+                new Claim(ClaimTypes.Role, data.Role)
+            };
+        }
+
+        private List<Claim> GetPersonalizationProperties(AuthorizationData data)
+        {
+            return new List<Claim>()
+            {
+                new Claim("Id", data.Id.ToString()),
+                new Claim("DisplayName", data.DisplayName),
+                new Claim("DisplayImageUrl", data.DisplayImageUrl)
+            };
         }
     }
 }

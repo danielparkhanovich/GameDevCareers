@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace JobBoardPlatform.DAL.Models
 {
     [Table("EmployeeProfiles")]
-    public class EmployeeProfile : IProfileEntity
+    public class EmployeeProfile : IEntity, IDisplayData
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -17,5 +17,8 @@ namespace JobBoardPlatform.DAL.Models
 
         [NotMapped]
         public string DisplayName { get => Name; }
+
+        [NotMapped]
+        public string DisplayImageUrl { get => PhotoUrl; }
     }
 }

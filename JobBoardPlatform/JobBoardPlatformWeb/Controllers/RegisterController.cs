@@ -1,10 +1,9 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification;
-using JobBoardPlatform.BLL.Services.Authorization;
+﻿using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Contracts;
-using JobBoardPlatform.PL.ViewModels;
+using JobBoardPlatform.PL.ViewModels.Authentification;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers
@@ -13,17 +12,17 @@ namespace JobBoardPlatform.PL.Controllers
     {
         private readonly IRepository<EmployeeCredentials> employeeRepository;
         private readonly IRepository<CompanyCredentials> companyRepository;
-        private readonly IRepository<EmployeeProfile> employeeProfiles;
-        private readonly IRepository<CompanyProfile> companyProfiles;
+        private readonly IRepository<EmployeeProfile> employeeProfileRepository;
+        private readonly IRepository<CompanyProfile> companyProfileRepository;
 
 
         public RegisterController(IRepository<EmployeeCredentials> employeeRepository, IRepository<CompanyCredentials> companyRepository,
-                                  IRepository<EmployeeProfile> employeeProfiles, IRepository<CompanyProfile> companyProfiles) 
+            IRepository<EmployeeProfile> employeeProfileRepository, IRepository<CompanyProfile> companyProfileRepository)
         {
             this.employeeRepository = employeeRepository;
             this.companyRepository = companyRepository;
-            this.employeeProfiles = employeeProfiles;
-            this.companyProfiles = companyProfiles;
+            this.employeeProfileRepository = employeeProfileRepository;
+            this.companyProfileRepository = companyProfileRepository;
         }
 
         public IActionResult Employee()
@@ -48,7 +47,8 @@ namespace JobBoardPlatform.PL.Controllers
                     HashPassword = userRegister.Password,
                     Profile = new EmployeeProfile()
                 };
-                return await TryRegister(userRegister, employeeRepository, employeeProfiles, credential, Roles.USER);
+                return await TryRegister(userRegister, 
+                    employeeRepository, employeeProfileRepository, credential, Roles.USER);
             }
             return View(userRegister);
         }
@@ -65,16 +65,18 @@ namespace JobBoardPlatform.PL.Controllers
                     HashPassword = userRegister.Password,
                     Profile = new CompanyProfile()
                 };
-                return await TryRegister(userRegister, companyRepository, companyProfiles, credential, Roles.COMPANY);
+                return await TryRegister(userRegister,
+                    companyRepository, companyProfileRepository, credential, Roles.COMPANY);
             }
             return View(userRegister);
         }
 
-        private async Task<IActionResult> TryRegister<T>(UserRegisterViewModel userRegister, IRepository<T> userRepository, 
-            IRepository<T> userProfileRepository, T credentials, string role) 
+        private async Task<IActionResult> TryRegister<T, V>(UserRegisterViewModel userLogin,
+            IRepository<T> credentialRepository, IRepository<V> profileRepository, T credentials, string role)
             where T : class, ICredentialEntity
+            where V : class, IEntity, IDisplayData
         {
-            var session = new SessionService<T>(HttpContext, employeeRepository, repository, role);
+            var session = new SessionService<T, V>(HttpContext, credentialRepository, profileRepository, role);
 
             var autorization = await session.TryRegisterAsync(credentials);
             if (autorization.IsError)
@@ -85,7 +87,8 @@ namespace JobBoardPlatform.PL.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View(userRegister);
+
+            return View(userLogin);
         }
     }
 }

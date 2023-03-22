@@ -10,7 +10,7 @@ namespace JobBoardPlatform.BLL.Services.Authorization
 {
     public class SessionService<TCredential, TProfile> : ISessionService, IAuthentificationService<TCredential>
         where TCredential : class, ICredentialEntity
-        where TProfile : class, IProfileEntity
+        where TProfile : class, IEntity, IDisplayData
     {
         private readonly IRepository<TProfile> profileRepository;
         private readonly IAuthentificationService<TCredential> authentificationService;
@@ -63,8 +63,9 @@ namespace JobBoardPlatform.BLL.Services.Authorization
 
             var userData = new AuthorizationData()
             {
-                Id = userRecord.Id,
+                Id = userRecord.ProfileId,
                 DisplayName = profile.DisplayName,
+                DisplayImageUrl = profile.DisplayImageUrl,
                 NameIdentifier = userRecord.Email,
                 Role = role
             };
