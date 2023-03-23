@@ -6,16 +6,16 @@ using Microsoft.EntityFrameworkCore;
 namespace JobBoardPlatform.BLL.Services.Authentification
 {
     public class AuthentificationService<T> : IAuthentificationService<T> 
-        where T : class, ICredentialEntity
+        where T : class, IUserIdentityEntity
     {
-        private readonly IRepository<T> userRepository;
+        private readonly IRepository<T> identityRepository;
         private readonly ICredentialsValidator<T> validateCredentials;
         private readonly IPasswordHasher passwordHasher;
 
 
         public AuthentificationService(IRepository<T> repository)
         {
-            this.userRepository = repository;
+            this.identityRepository = repository;
             this.validateCredentials = new CredentialsValidator<T>();
             this.passwordHasher = new PasswordHasher();
         }
@@ -36,7 +36,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
 
             var success = AuthentificationResult.Success;
 
-            success.FoundRecord = await userRepository.Add(credentials);
+            success.FoundRecord = await identityRepository.Add(credentials);
 
             return success;
         }
@@ -65,7 +65,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
         /// </summary>
         private async Task<T?> GetUserByEmailAsync(string email)
         {
-            var userSet = await userRepository.GetAllSet();
+            var userSet = await identityRepository.GetAllSet();
             var user = await userSet.FirstOrDefaultAsync(x => x.Email == email);
 
             return user;

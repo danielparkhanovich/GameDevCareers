@@ -17,8 +17,8 @@ namespace JobBoardPlatform.PL.Controllers.Login
     }
     */
     public abstract class BaseLoginController<T, V> : Controller 
-        where T: class, ICredentialEntity
-        where V: class, IDisplayDataEntity
+        where T: class, IUserIdentityEntity
+        where V: class, IUserProfileEntity
     {
         protected IRepository<T> credentialsRepository;
         protected IRepository<V> profileRepository;
@@ -36,20 +36,17 @@ namespace JobBoardPlatform.PL.Controllers.Login
             if (ModelState.IsValid)
             {
                 var credentials = GetCredentials(userLogin);
-                string role = GetRole();
 
-                return await TryLogin(userLogin, credentials, role);
+                return await TryLogin(userLogin, credentials);
             }
             return View(userLogin);
         }
 
-        protected abstract string GetRole();
-
         protected abstract T GetCredentials(UserLoginViewModel userLogin);
 
-        private async Task<IActionResult> TryLogin(UserLoginViewModel userLogin, T credentials, string role)
+        private async Task<IActionResult> TryLogin(UserLoginViewModel userLogin, T credentials)
         {
-            var session = new SessionService<T, V>(HttpContext, credentialsRepository, profileRepository, role);
+            var session = new IdentityService<T, V>(HttpContext, credentialsRepository, profileRepository);
 
             var autorization = await session.TryLoginAsync(credentials);
             if (autorization.IsError)

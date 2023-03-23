@@ -45,7 +45,7 @@ namespace JobBoardPlatform.BLL.Services.Authorization
         {
             return new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, data.NameIdentifier),
+                new Claim(ClaimTypes.NameIdentifier, data.Id.ToString()),
                 new Claim(ClaimTypes.Name, data.DisplayName),
                 new Claim(ClaimTypes.Role, data.Role)
             };
@@ -55,7 +55,6 @@ namespace JobBoardPlatform.BLL.Services.Authorization
         {
             return new List<Claim>()
             {
-                new Claim("Id", data.Id.ToString()),
                 new Claim("DisplayName", data.DisplayName),
                 new Claim("DisplayImageUrl", data.DisplayImageUrl)
             };

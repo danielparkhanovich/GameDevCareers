@@ -18,7 +18,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             this.profileRepository = profileRepository;
         }
 
-        [Authorize(Policy = AuthorizationPolicies.EMPLOYEE_ONLY_POLICY)]
+        [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
         public override async Task<IActionResult> Profile()
         {
             var viewModel = await GetUserViewModel();
@@ -26,7 +26,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return View(viewModel);
         }
 
-        [Authorize(Policy = AuthorizationPolicies.EMPLOYEE_ONLY_POLICY)]
+        [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Profile(EmployeeProfileViewModel userViewModel)
@@ -46,10 +46,9 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 var authorization = new AuthorizationData()
                 {
                     Id = id,
-                    NameIdentifier = profile.Name,
-                    DisplayImageUrl = profile.PhotoUrl,
+                    DisplayImageUrl = profile.ProfileImageUrl,
                     DisplayName = profile.Name,
-                    Role = UserRoles.EMPLOYEE
+                    Role = UserRoles.Employee
                 };
                 await sessionManager.SignInHttpContextAsync(authorization);
 
@@ -74,7 +73,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 City = profile.City,
                 Country = profile.Country,
                 Description = profile.Description,
-                PhotoUrl = profile.PhotoUrl,
+                PhotoUrl = profile.ProfileImageUrl,
                 ResumeUrl = profile.ResumeUrl
             };
         }

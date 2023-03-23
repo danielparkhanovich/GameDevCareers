@@ -1,6 +1,6 @@
 ﻿namespace JobBoardPlatform.BLL.Services.IdentityVerification.Contracts
 {
-    internal interface IEmailVerificationService
+    internal interface IEmailService
     {
         void SendVerificationEmail(string email);
     }

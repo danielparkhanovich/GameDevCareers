@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoardPlatform.PL.Controllers.Register
 {
     public abstract class BaseRegisterController<T, V> : Controller
-        where T : class, ICredentialEntity
+        where T : class, IUserIdentityEntity
         where V : class, IDisplayDataEntity
     {
         protected IRepository<T> credentialsRepository;
@@ -29,7 +29,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
             {
                 var credential = GetCredentials(userRegister);
 
-                return await TryRegister(userRegister, credential, UserRoles.EMPLOYEE);
+                return await TryRegister(userRegister, credential, UserRoles.Employee);
             }
             return View(userRegister);
         }

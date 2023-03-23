@@ -6,23 +6,18 @@ using JobBoardPlatform.PL.ViewModels.Authentification;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
-    public class CompanyLoginController : BaseLoginController<CompanyCredentials, CompanyProfile>
+    public class CompanyLoginController : BaseLoginController<CompanyIdentity, CompanyProfile>
     {
-        public CompanyLoginController(IRepository<CompanyCredentials> credentialsRepository,
+        public CompanyLoginController(IRepository<CompanyIdentity> credentialsRepository,
             IRepository<CompanyProfile> profileRepository)
         {
             this.credentialsRepository = credentialsRepository;
             this.profileRepository = profileRepository;
         }
 
-        protected override string GetRole()
+        protected override CompanyIdentity GetCredentials(UserLoginViewModel userLogin)
         {
-            return UserRoles.COMPANY;
-        }
-
-        protected override CompanyCredentials GetCredentials(UserLoginViewModel userLogin)
-        {
-            var credentials = new CompanyCredentials()
+            var credentials = new CompanyIdentity()
             {
                 Email = userLogin.Email,
                 HashPassword = userLogin.Password

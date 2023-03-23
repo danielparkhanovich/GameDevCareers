@@ -8,7 +8,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
         public static AuthentificationResult Success => new AuthentificationResult();
 
 
-        public ICredentialEntity? FoundRecord { get; set; }
+        public IUserIdentityEntity? FoundRecord { get; set; }
         public string? Error { get; set; }
         public bool IsError { get => Error != null; }
     }

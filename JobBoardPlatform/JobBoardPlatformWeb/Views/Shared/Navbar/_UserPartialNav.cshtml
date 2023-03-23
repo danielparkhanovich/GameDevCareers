@@ -23,14 +23,14 @@
         @userName, @role
     </a>
     <div class="dropdown-menu dropdown-menu-end mt-3">
-        @if (role == UserRoles.EMPLOYEE)
+        @if (role == UserRoles.Employee)
         {
             <a class="dropdown-item" asp-controller="EmployeeProfile" asp-action="Profile">
                 <i class="bi bi-person mx-2"></i>
                 My profile
             </a>
         }
-        else if (role == UserRoles.COMPANY)
+        else if (role == UserRoles.Company)
         {
             <a class="dropdown-item" asp-controller="CompanyProfile" asp-action="Profile">
                 <i class="bi bi-person mx-2"></i>

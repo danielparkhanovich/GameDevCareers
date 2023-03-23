@@ -5,9 +5,9 @@ using JobBoardPlatform.PL.ViewModels.Authentification;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
-    public class CompanyRegisterController : BaseRegisterController<CompanyCredentials, CompanyProfile>
+    public class CompanyRegisterController : BaseRegisterController<CompanyIdentity, CompanyProfile>
     {
-        public CompanyRegisterController(IRepository<CompanyCredentials> credentialsRepository,
+        public CompanyRegisterController(IRepository<CompanyIdentity> credentialsRepository,
             IRepository<CompanyProfile> profileRepository)
         {
             this.credentialsRepository = credentialsRepository;
@@ -16,12 +16,12 @@ namespace JobBoardPlatform.PL.Controllers.Register
 
         protected override string GetRole()
         {
-            return UserRoles.COMPANY;
+            return UserRoles.Company;
         }
 
-        protected override CompanyCredentials GetCredentials(UserRegisterViewModel userRegister)
+        protected override CompanyIdentity GetCredentials(UserRegisterViewModel userRegister)
         {
-            var credentials = new CompanyCredentials()
+            var credentials = new CompanyIdentity()
             {
                 Email = userRegister.Email,
                 HashPassword = userRegister.Password,

@@ -5,9 +5,9 @@ using JobBoardPlatform.PL.ViewModels.Authentification;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
-    public class EmployeeRegisterController : BaseRegisterController<EmployeeCredentials, EmployeeProfile>
+    public class EmployeeRegisterController : BaseRegisterController<EmployeeIdentity, EmployeeProfile>
     {
-        public EmployeeRegisterController(IRepository<EmployeeCredentials> credentialsRepository,
+        public EmployeeRegisterController(IRepository<EmployeeIdentity> credentialsRepository,
             IRepository<EmployeeProfile> profileRepository)
         {
             this.credentialsRepository = credentialsRepository;
@@ -16,12 +16,12 @@ namespace JobBoardPlatform.PL.Controllers.Register
 
         protected override string GetRole()
         {
-            return UserRoles.EMPLOYEE;
+            return UserRoles.Employee;
         }
 
-        protected override EmployeeCredentials GetCredentials(UserRegisterViewModel userRegister)
+        protected override EmployeeIdentity GetCredentials(UserRegisterViewModel userRegister)
         {
-            var credentials = new EmployeeCredentials()
+            var credentials = new EmployeeIdentity()
             {
                 Email = userRegister.Email,
                 HashPassword = userRegister.Password,

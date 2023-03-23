@@ -21,8 +21,8 @@ builder.Services.AddAuthentication(
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthorizationPolicies.EMPLOYEE_ONLY_POLICY, policy => policy.RequireRole(UserRoles.EMPLOYEE));
-    options.AddPolicy(AuthorizationPolicies.COMPANY_ONLY_POLICY, policy => policy.RequireRole(UserRoles.COMPANY));
+    options.AddPolicy(AuthorizationPolicies.EmployeeOnlyPolicy, policy => policy.RequireRole(UserRoles.Employee));
+    options.AddPolicy(AuthorizationPolicies.CompanyOnlyPolicy, policy => policy.RequireRole(UserRoles.Company));
 });
 
 builder.Services.AddDbContext<DataContext>(options =>

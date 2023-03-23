@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace JobBoardPlatform.DAL.Models
 {
     [Index(nameof(Email), IsUnique = true)]
-    [Table("CompanyCredentials")]
-    public class CompanyCredentials : ICredentialEntity
+    [Table("EmployeeIdentities")]
+    public class EmployeeIdentity : IUserIdentityEntity
     {
         public int Id { get; set; }
         public string Email { get; set; } = string.Empty;
@@ -14,6 +14,6 @@ namespace JobBoardPlatform.DAL.Models
 
         [ForeignKey("Profile")]
         public int ProfileId { get; set; }
-        public CompanyProfile Profile { get; set; }
+        public EmployeeProfile Profile { get; set; }
     }
 }

@@ -2,10 +2,10 @@
 {
     public static class AuthorizationPolicies
     {
-        public const string EMPLOYEE_ONLY_POLICY = $"{UserRoles.EMPLOYEE}{ONLY_POLICY}";
-        public const string COMPANY_ONLY_POLICY = $"{UserRoles.COMPANY}{ONLY_POLICY}";
-        public const string ADMIN_ONLY_POLICY = $"{UserRoles.ADMIN}{ONLY_POLICY}";
+        public const string EmployeeOnlyPolicy = $"{UserRoles.Employee}{OnlyPolicy}";
+        public const string CompanyOnlyPolicy = $"{UserRoles.Company}{OnlyPolicy}";
+        public const string AdminOnlyPolicy = $"{UserRoles.Admin}{OnlyPolicy}";
 
-        private const string ONLY_POLICY = "Only";
+        private const string OnlyPolicy = "Only";
     }
 }

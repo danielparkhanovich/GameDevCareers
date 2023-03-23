@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JobBoardPlatform.BLL.Services.Email
 {
-    internal class EmailVerificationService : IEmailVerificationService
+    internal class EmailService : IEmailService
     {
         public void SendVerificationEmail(string email)
         {

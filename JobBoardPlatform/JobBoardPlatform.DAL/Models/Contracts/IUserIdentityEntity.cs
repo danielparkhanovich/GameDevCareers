@@ -1,6 +1,6 @@
 ﻿namespace JobBoardPlatform.DAL.Models.Contracts
 {
-    public interface ICredentialEntity : IEntity
+    public interface IUserIdentityEntity : IEntity
     {
         string Email { get; set; }
         string HashPassword { get; set; }

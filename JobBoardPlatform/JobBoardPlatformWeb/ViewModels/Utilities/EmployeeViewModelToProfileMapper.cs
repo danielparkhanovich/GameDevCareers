@@ -34,7 +34,7 @@ namespace JobBoardPlatform.BLL.Services.Utilities
             }
             if (!string.IsNullOrEmpty(from.PhotoUrl))
             {
-                to.PhotoUrl = from.PhotoUrl;
+                to.ProfileImageUrl = from.PhotoUrl;
             }
         }
     }

@@ -4,7 +4,7 @@ using JobBoardPlatform.DAL.Models.Contracts;
 namespace JobBoardPlatform.BLL.Services.Authentification
 {
     internal class CredentialsValidator<T> : ICredentialsValidator<T>
-        where T: class, ICredentialEntity
+        where T: class, IUserIdentityEntity
     {
         public AuthentificationResult ValidateRegister(T? user)
         {
