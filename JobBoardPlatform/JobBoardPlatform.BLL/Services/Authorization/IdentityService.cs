@@ -4,7 +4,7 @@ using JobBoardPlatform.BLL.Services.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.BLL.Services.Common;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Contracts;
+using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Services.Authorization
@@ -65,6 +65,7 @@ namespace JobBoardPlatform.BLL.Services.Authorization
             var userData = new AuthorizationData()
             {
                 Id = userRecord.Id,
+                ProfileId = profile.Id,
                 DisplayName = profileAdapter.DisplayName,
                 DisplayImageUrl = profileAdapter.DisplayProfileImageUrl,
                 Role = profileAdapter.UserRole

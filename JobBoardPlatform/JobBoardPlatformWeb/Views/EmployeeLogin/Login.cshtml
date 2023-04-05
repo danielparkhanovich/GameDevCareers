@@ -17,7 +17,7 @@
                 <label asp-for="Password" for="floatingPassword">Password</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
 
-                <a asp-controller="EmployeeRegister" asp-action="Register" class="text-light" style="text-decoration: none;"><b>Forgot password?</b></a>
+                <a asp-controller="EmployeeRegister" asp-action="Register" class="text-primary" style="text-decoration: none;"><b>Forgot password?</b></a>
             </div>
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="col-md-12 text-center mt-4">
@@ -26,15 +26,9 @@
             <div class="col-md-12 text-center mt-2">
                 <b>
                     <label class="text-dark">New account?</label>
-                    <a asp-controller="EmployeeRegister" asp-action="Register" class="text-light" style="text-decoration: none;">Register</a>
+                    <a asp-controller="EmployeeRegister" asp-action="Register" class="text-primary" style="text-decoration: none;">Register</a>
                 </b>
             </div>
         </form>
     </div>
 </div>
-
-@section Scripts {
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
-}

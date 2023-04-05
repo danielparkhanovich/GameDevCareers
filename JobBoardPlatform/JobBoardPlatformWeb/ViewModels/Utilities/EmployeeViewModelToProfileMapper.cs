@@ -1,40 +1,32 @@
-﻿using JobBoardPlatform.BLL.Services.Utilities.Contracts;
-using JobBoardPlatform.DAL.Models;
-using JobBoardPlatform.PL.ViewModels.Profile;
+﻿using JobBoardPlatform.DAL.Models;
+using JobBoardPlatform.PL.ViewModels.Profile.Employee;
+using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.BLL.Services.Utilities
+namespace JobBoardPlatform.PL.ViewModels.Utilities
 {
     internal class EmployeeViewModelToProfileMapper : IMapper<EmployeeProfileViewModel, EmployeeProfile>
     {
         public void Map(EmployeeProfileViewModel from, EmployeeProfile to)
         {
-            if (!string.IsNullOrEmpty(from.Name))
+            var fromUpdate = from.Update;
+
+            if (!string.IsNullOrEmpty(fromUpdate.Name))
             {
-                to.Name = from.Name;
+                to.Name = fromUpdate.Name;
             }
-            if (!string.IsNullOrEmpty(from.Surname))
+
+            to.Surname = fromUpdate.Surname;
+            to.City = fromUpdate.City;
+            to.Country = fromUpdate.Country;
+            to.Description = fromUpdate.Description;
+
+            if (!string.IsNullOrEmpty(fromUpdate.AttachedResumeUrl))
             {
-                to.Surname = from.Surname;
+                to.ResumeUrl = fromUpdate.AttachedResumeUrl;
             }
-            if (!string.IsNullOrEmpty(from.City))
+            if (!string.IsNullOrEmpty(fromUpdate.ProfileImageUrl))
             {
-                to.City = from.City;
-            }
-            if (!string.IsNullOrEmpty(from.Country))
-            {
-                to.Country = from.Country;
-            }
-            if (!string.IsNullOrEmpty(from.Description))
-            {
-                to.Description = from.Description;
-            }
-            if (!string.IsNullOrEmpty(from.ResumeUrl))
-            {
-                to.ResumeUrl = from.ResumeUrl;
-            }
-            if (!string.IsNullOrEmpty(from.PhotoUrl))
-            {
-                to.ProfileImageUrl = from.PhotoUrl;
+                to.ProfileImageUrl = fromUpdate.ProfileImageUrl;
             }
         }
     }

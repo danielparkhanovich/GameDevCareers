@@ -1,9 +1,8 @@
 ﻿using JobBoardPlatform.DAL.Data;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoardPlatform.DAL.Repositories
+namespace JobBoardPlatform.DAL.Repositories.Models
 {
     public class CoreRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity

@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Contracts;
+using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.BLL.Services.Authentification
@@ -9,21 +9,21 @@ namespace JobBoardPlatform.BLL.Services.Authentification
         where T : class, IUserIdentityEntity
     {
         private readonly IRepository<T> identityRepository;
-        private readonly ICredentialsValidator<T> validateCredentials;
+        private readonly IIdentityValidator<T> validateIdentity;
         private readonly IPasswordHasher passwordHasher;
 
 
         public AuthentificationService(IRepository<T> repository)
         {
             this.identityRepository = repository;
-            this.validateCredentials = new CredentialsValidator<T>();
+            this.validateIdentity = new IdentityValidator<T>();
             this.passwordHasher = new PasswordHasher();
         }
 
-        public async Task<AuthentificationResult> TryRegisterAsync(T credentials)
+        public async Task<AuthentificationResult> TryRegisterAsync(T identity)
         {
-            var user = await GetUserByEmailAsync(credentials.Email);
-            var validate = validateCredentials.ValidateRegister(user);
+            var user = await GetUserByEmailAsync(identity.Email);
+            var validate = validateIdentity.ValidateRegister(user);
 
             if (validate.IsError)
             {
@@ -31,22 +31,22 @@ namespace JobBoardPlatform.BLL.Services.Authentification
             }
 
             // hash raw password
-            string hashedPassword = passwordHasher.HashPassword(credentials.HashPassword);
-            credentials.HashPassword = hashedPassword;
+            string hashedPassword = passwordHasher.HashPassword(identity.HashPassword);
+            identity.HashPassword = hashedPassword;
 
             var success = AuthentificationResult.Success;
 
-            success.FoundRecord = await identityRepository.Add(credentials);
+            success.FoundRecord = await identityRepository.Add(identity);
 
             return success;
         }
 
-        public async Task<AuthentificationResult> TryLoginAsync(T credentials)
+        public async Task<AuthentificationResult> TryLoginAsync(T identity)
         {
-            string hashedPassword = passwordHasher.HashPassword(credentials.HashPassword);
+            string hashedPassword = passwordHasher.HashPassword(identity.HashPassword);
 
-            var user = await GetUserByEmailAsync(credentials.Email);
-            var validate = validateCredentials.ValidateLogin(user, hashedPassword);
+            var user = await GetUserByEmailAsync(identity.Email);
+            var validate = validateIdentity.ValidateLogin(user, hashedPassword);
 
             if (validate.IsError)
             {

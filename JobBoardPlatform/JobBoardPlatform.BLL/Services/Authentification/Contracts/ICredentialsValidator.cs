@@ -2,7 +2,7 @@
 
 namespace JobBoardPlatform.BLL.Services.Authentification.Contracts
 {
-    internal interface ICredentialsValidator<T>
+    internal interface IIdentityValidator<T>
         where T : class, IUserIdentityEntity
     {
         AuthentificationResult ValidateRegister(T? user);

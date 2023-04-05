@@ -1,9 +1,9 @@
 using JobBoardPlatform.DAL.Data;
-using JobBoardPlatform.DAL.Repositories;
-using JobBoardPlatform.DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.DAL.Options;
+using JobBoardPlatform.DAL.Repositories.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +33,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 });
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
-
+builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
 //
 
 var app = builder.Build();

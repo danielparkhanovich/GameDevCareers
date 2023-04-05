@@ -2,13 +2,13 @@
 @using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 @using JobBoardPlatform.PL.Controllers.Profile;
 @{
-    string? userName = User.FindFirstValue("DisplayName");
+    string? userName = User.FindFirstValue(UserSessionProperties.DisplayName);
     if (string.IsNullOrEmpty(userName))
     {
         userName = "Anonym";
     }
 
-    string? userImageUrl = User.FindFirstValue("DisplayImageUrl");
+    string? userImageUrl = User.FindFirstValue(UserSessionProperties.DisplayImageUrl);
     if (string.IsNullOrEmpty(userImageUrl))
     {
         userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";

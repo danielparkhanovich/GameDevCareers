@@ -1,29 +1,37 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Utilities;
+﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.PL.ViewModels.Utilities;
 using JobBoardPlatform.DAL.Models;
-using JobBoardPlatform.DAL.Repositories.Contracts;
-using JobBoardPlatform.PL.ViewModels.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using JobBoardPlatform.DAL.Options;
+using Microsoft.Extensions.Options;
+using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.PL.ViewModels.Profile.Employee;
+using JobBoardPlatform.BLL.Services.Session;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
     [Authorize]
     public class EmployeeProfileController : BaseProfileController<EmployeeProfile, EmployeeProfileViewModel>
     {
-        public EmployeeProfileController(IRepository<EmployeeProfile> profileRepository)
+        protected IBlobStorage userProfileResumeStorage;
+
+
+        public EmployeeProfileController(IOptions<AzureOptions> azureOptions, IRepository<EmployeeProfile> profileRepository)
         {
+            this.userProfileImagesStorage = new UserProfileImagesStorage(azureOptions);
             this.profileRepository = profileRepository;
+            this.userViewToModel = new EmployeeViewModelToProfileMapper();
+
+            this.userProfileResumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
         }
 
         [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
         public override async Task<IActionResult> Profile()
         {
-            var viewModel = await GetUserViewModel();
-
-            return View(viewModel);
+            return await base.Profile();
         }
 
         [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
@@ -31,51 +39,87 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Profile(EmployeeProfileViewModel userViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                int id = int.Parse(User.FindFirstValue("Id"));
-                var profile = await profileRepository.Get(id);
-
-                var mapper = new EmployeeViewModelToProfileMapper();
-                mapper.Map(userViewModel, profile);
-
-                await profileRepository.Update(profile);
-
-                var sessionManager = new AuthorizationService(HttpContext);
-                await sessionManager.SignOutHttpContextAsync();
-                var authorization = new AuthorizationData()
-                {
-                    Id = id,
-                    DisplayImageUrl = profile.ProfileImageUrl,
-                    DisplayName = profile.Name,
-                    Role = UserRoles.Employee
-                };
-                await sessionManager.SignInHttpContextAsync(authorization);
-
-                return RedirectToAction("Profile");
-            }
-
-            userViewModel = await GetUserViewModel();
-
-            return View(userViewModel);
+            return await base.Profile(userViewModel);
         }
 
-        private async Task<EmployeeProfileViewModel> GetUserViewModel()
+        [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteResume()
         {
-            int id = int.Parse(User.FindFirstValue("Id"));
+            int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
+            var profile = await profileRepository.Get(id);
+
+            await userProfileResumeStorage.DeleteAsync(profile.ResumeUrl!);
+            profile.ResumeUrl = null;
+
+            await profileRepository.Update(profile);
+
+            var userSession = new UserSessionService<EmployeeProfile>(HttpContext);
+            await userSession.UpdateSessionStateAsync(profile);
+
+            return RedirectToAction("Profile");
+        }
+
+        protected override async Task<EmployeeProfileViewModel> UpdateProfileDisplay()
+        {
+            int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
 
             var profile = await profileRepository.Get(id);
 
-            return new EmployeeProfileViewModel()
+            string blobName = "null";
+            string blobSize = "null";
+            if (!string.IsNullOrEmpty(profile.ResumeUrl))
+            {
+                blobName = await userProfileResumeStorage.GetBlobName(profile.ResumeUrl);
+                blobSize = await userProfileResumeStorage.GetBlobSize(profile.ResumeUrl);
+            }
+
+            var display = new EmployeeProfileDisplayViewModel()
             {
                 Name = profile.Name,
                 Surname = profile.Surname,
                 City = profile.City,
                 Country = profile.Country,
                 Description = profile.Description,
-                PhotoUrl = profile.ProfileImageUrl,
-                ResumeUrl = profile.ResumeUrl
+                ProfileImageUrl = profile.ProfileImageUrl,
+                AttachedResumeUrl = profile.ResumeUrl,
+                AttachedResumeFileName = blobName,
+                AttachedResumeFileSize = blobSize
             };
+
+            var update = new EmployeeProfileUpdateViewModel();
+
+            var employeeProfileViewModel = new EmployeeProfileViewModel()
+            {
+                Display = display,
+                Update = update
+            };
+
+            return employeeProfileViewModel;
+        }
+
+        protected override async Task UpdateProfile(EmployeeProfile profile, EmployeeProfileViewModel userViewModel)
+        {
+            var updateViewModel = userViewModel.Update!;
+
+            // TODO: validate data here for stream size
+            // and extension... and add a model error
+
+            if (updateViewModel.ProfileImage != null)
+            {
+                var imageUrl = await userProfileImagesStorage.UpdateAsync(profile.ProfileImageUrl, updateViewModel.ProfileImage);
+                profile.ProfileImageUrl = imageUrl;
+            }
+            if (updateViewModel.AttachedResume != null)
+            {
+                var resumeUrl = await userProfileResumeStorage.UpdateAsync(profile.ResumeUrl, updateViewModel.AttachedResume);
+                updateViewModel.AttachedResumeUrl = resumeUrl;
+            }
+
+            userViewToModel.Map(userViewModel, profile);
+
+            await profileRepository.Update(profile);
         }
     }
 }

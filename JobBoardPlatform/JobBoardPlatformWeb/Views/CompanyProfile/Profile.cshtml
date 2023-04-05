@@ -4,7 +4,7 @@
 
     var user = ViewData.Model;
 
-    string? userImageUrl = user.PhotoUrl;
+    string? userImageUrl = user.ProfileImageUrl;
     if (string.IsNullOrEmpty(userImageUrl))
     {
         userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";

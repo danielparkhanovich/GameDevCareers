@@ -1,4 +1,4 @@
-﻿namespace JobBoardPlatform.BLL.Services.Utilities.Contracts
+﻿namespace JobBoardPlatform.PL.ViewModels.Utilities.Contracts
 {
     /// <summary>
     /// Maps values from T to V

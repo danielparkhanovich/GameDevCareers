@@ -2,6 +2,6 @@
 {
     public interface IUserProfileEntity : IEntity
     {
-        public string ProfileImageUrl { get; set; }
+        public string? ProfileImageUrl { get; set; }
     }
 }

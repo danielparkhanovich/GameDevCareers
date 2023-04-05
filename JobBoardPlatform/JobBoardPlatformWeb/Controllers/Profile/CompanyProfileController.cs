@@ -1,29 +1,31 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Utilities;
+﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.PL.ViewModels.Utilities;
 using JobBoardPlatform.DAL.Models;
-using JobBoardPlatform.DAL.Repositories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using JobBoardPlatform.DAL.Options;
+using Microsoft.Extensions.Options;
+using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.DAL.Repositories.Blob;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
     [Authorize]
     public class CompanyProfileController : BaseProfileController<CompanyProfile, CompanyProfileViewModel>
     {
-        public CompanyProfileController(IRepository<CompanyProfile> profileRepository)
+        public CompanyProfileController(IOptions<AzureOptions> azureOptions, IRepository<CompanyProfile> profileRepository)
         {
+            this.userProfileImagesStorage = new UserProfileImagesStorage(azureOptions);
             this.profileRepository = profileRepository;
+            this.userViewToModel = new CompanyViewModelToProfileMapper();
         }
 
         [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
         public override async Task<IActionResult> Profile()
         {
-            var viewModel = await GetUserViewModel();
-
-            return View(viewModel);
+            return await base.Profile();
         }
 
         [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
@@ -31,38 +33,12 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Profile(CompanyProfileViewModel userViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                int id = int.Parse(User.FindFirstValue("Id"));
-                var profile = await profileRepository.Get(id);
-
-                var mapper = new CompanyViewModelToProfileMapper();
-                mapper.Map(userViewModel, profile);
-
-                await profileRepository.Update(profile);
-
-                var sessionManager = new AuthorizationService(HttpContext);
-                await sessionManager.SignOutHttpContextAsync();
-                var authorization = new AuthorizationData()
-                {
-                    Id = id,
-                    DisplayImageUrl = profile.ProfileImageUrl,
-                    DisplayName = profile.CompanyName,
-                    Role = UserRoles.Company
-                };
-                await sessionManager.SignInHttpContextAsync(authorization);
-
-                return RedirectToAction("Profile");
-            }
-
-            userViewModel = await GetUserViewModel();
-
-            return View(userViewModel);
+            return await base.Profile(userViewModel);
         }
 
-        private async Task<CompanyProfileViewModel> GetUserViewModel()
+        protected override async Task<CompanyProfileViewModel> UpdateProfileDisplay()
         {
-            int id = int.Parse(User.FindFirstValue("Id"));
+            int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
 
             var profile = await profileRepository.Get(id);
 
@@ -71,8 +47,20 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 CompanyName = profile.CompanyName,
                 City = profile.City,
                 Country = profile.Country,
-                PhotoUrl = profile.ProfileImageUrl
+                ProfileImageUrl = profile.ProfileImageUrl
             };
+        }
+
+        protected override async Task UpdateProfile(CompanyProfile profile, CompanyProfileViewModel userViewModel)
+        {
+            if (userViewModel.ProfileImage != null)
+            {
+                userViewModel.ProfileImageUrl = await userProfileImagesStorage.UpdateAsync(profile.ProfileImageUrl, userViewModel.ProfileImage);
+            }
+
+            userViewToModel.Map(userViewModel, profile);
+
+            await profileRepository.Update(profile);
         }
     }
 }

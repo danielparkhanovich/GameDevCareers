@@ -1,8 +1,8 @@
-﻿using JobBoardPlatform.BLL.Services.Utilities.Contracts;
-using JobBoardPlatform.DAL.Models;
+﻿using JobBoardPlatform.DAL.Models;
 using JobBoardPlatform.PL.ViewModels.Profile;
+using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.BLL.Services.Utilities
+namespace JobBoardPlatform.PL.ViewModels.Utilities
 {
     internal class CompanyViewModelToProfileMapper : IMapper<CompanyProfileViewModel, CompanyProfile>
     {
@@ -20,9 +20,9 @@ namespace JobBoardPlatform.BLL.Services.Utilities
             {
                 to.Country = from.Country;
             }
-            if (!string.IsNullOrEmpty(from.PhotoUrl))
+            if (!string.IsNullOrEmpty(from.ProfileImageUrl))
             {
-                to.ProfileImageUrl = from.PhotoUrl;
+                to.ProfileImageUrl = from.ProfileImageUrl;
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoardPlatform.DAL.Repositories.Contracts
+namespace JobBoardPlatform.DAL.Repositories.Models
 {
     public interface IRepository<T> where T : class, IEntity
     {

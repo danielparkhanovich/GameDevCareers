@@ -1,8 +1,8 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models;
-using JobBoardPlatform.DAL.Repositories.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.PL.ViewModels.Authentification;
+using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
@@ -15,7 +15,7 @@ namespace JobBoardPlatform.PL.Controllers.Login
             this.profileRepository = profileRepository;
         }
 
-        protected override EmployeeIdentity GetCredentials(UserLoginViewModel userLogin)
+        protected override EmployeeIdentity GetIdentity(UserLoginViewModel userLogin)
         {
             var credentials = new EmployeeIdentity()
             {

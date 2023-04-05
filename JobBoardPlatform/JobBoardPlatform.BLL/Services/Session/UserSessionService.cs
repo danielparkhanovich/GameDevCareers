@@ -1,12 +1,9 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification;
-using JobBoardPlatform.BLL.Services.Authentification.Contracts;
-using JobBoardPlatform.BLL.Services.Authorization;
+﻿using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.BLL.Services.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.BLL.Services.Common;
 using JobBoardPlatform.BLL.Services.Session.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Contracts;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Services.Session
@@ -26,7 +23,9 @@ namespace JobBoardPlatform.BLL.Services.Session
 
         public async Task UpdateSessionStateAsync(T profile)
         {
-            int id = int.Parse(httpContext.User.FindFirst("NameIdentifier").Value);
+            string idStr = httpContext.User.FindFirst(UserSessionProperties.NameIdentifier)!.Value;
+
+            int id = int.Parse(idStr);
 
             var profileAdapter = UserProfileAdapterFactory.CreateProfileAdapter(profile);
 
@@ -34,6 +33,7 @@ namespace JobBoardPlatform.BLL.Services.Session
             var updated = new AuthorizationData()
             {
                 Id = id,
+                ProfileId = profile.Id,
                 DisplayName = profileAdapter.DisplayName,
                 DisplayImageUrl = profileAdapter.DisplayProfileImageUrl,
                 Role = profileAdapter.UserRole
