@@ -1,6 +1,8 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.Profile.Employee
+﻿using JobBoardPlatform.PL.ViewModels.Profile.Contracts;
+
+namespace JobBoardPlatform.PL.ViewModels.Profile.Employee
 {
-    public class EmployeeProfileDisplayViewModel
+    public class EmployeeProfileDisplayViewModel : IEmployeeProfileSharedFields
     {
         public string? Name { get; set; } = string.Empty;
         public string? Surname { get; set; } = string.Empty;
@@ -11,5 +13,7 @@
         public string? AttachedResumeUrl { get; set; } = string.Empty;
         public string? AttachedResumeFileSize { get; set; } = string.Empty;
         public string? AttachedResumeFileName { get; set; } = string.Empty;
+        public string? YearsOfExperience { get; set; } = string.Empty;
+        public string? LinkedInUrl { get; set; } = string.Empty;
     }
 }

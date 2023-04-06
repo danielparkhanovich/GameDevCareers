@@ -19,6 +19,8 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             to.City = fromUpdate.City;
             to.Country = fromUpdate.Country;
             to.Description = fromUpdate.Description;
+            to.YearsOfExperience = fromUpdate.YearsOfExperience;
+            to.LinkedInUrl = fromUpdate.LinkedInUrl;
 
             if (!string.IsNullOrEmpty(fromUpdate.AttachedResumeUrl))
             {

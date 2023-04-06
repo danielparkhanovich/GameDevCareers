@@ -27,9 +27,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
         {
             BlobContainerClient containerClient = await GetContainerClientAsync();
 
-            string fileExtension = Path.GetExtension(file.FileName);
-
-            string fullFileName = $"{Guid.NewGuid()}{PropertiesSeparator}{file.FileName}{fileExtension}";
+            string fullFileName = $"{Guid.NewGuid()}{PropertiesSeparator}{file.FileName}";
 
             BlobClient blobClient = containerClient.GetBlobClient(fullFileName);
 

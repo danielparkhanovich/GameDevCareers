@@ -14,5 +14,7 @@ namespace JobBoardPlatform.DAL.Models
         public string? Description { get; set; }
         public string? ProfileImageUrl { get; set; }
         public string? ResumeUrl { get; set; }
+        public string? YearsOfExperience { get; set; }
+        public string? LinkedInUrl { get; set; }
     }
 }

@@ -43,8 +43,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         }
 
         [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteResume()
         {
             int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
@@ -85,7 +83,9 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 ProfileImageUrl = profile.ProfileImageUrl,
                 AttachedResumeUrl = profile.ResumeUrl,
                 AttachedResumeFileName = blobName,
-                AttachedResumeFileSize = blobSize
+                AttachedResumeFileSize = blobSize,
+                YearsOfExperience = profile.YearsOfExperience,
+                LinkedInUrl = profile.LinkedInUrl
             };
 
             var update = new EmployeeProfileUpdateViewModel();

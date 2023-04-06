@@ -98,15 +98,11 @@
                                         <div>@user.AttachedResumeFileSize</div>
 
                                         <div>
-                                            <form id="delete-form" action="@Url.Action("DeleteResume", "EmployeeProfile")" method="post">
-                                            </form>
-                                            @using (Html.BeginForm("DeleteResume", "EmployeeProfile", FormMethod.Post))
-                                            {
                                             <input type="hidden" name="id" value="Display.AttachedResumeUrl" />
-                                            <button type="submit" class="small font-italic text-muted mt-auto border-0 bg-transparent">
+                                            <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent"
+                                                onclick="location.href='@Url.Action("DeleteResume", "EmployeeProfile")'">
                                                 <div class="text-primary" style="font-size: 2rem;">X</div>
                                             </button>
-                                            }
                                         </div>
                                     }
                                     else
@@ -122,6 +118,32 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="mb-3">
+                            <label asp-for="Update.YearsOfExperience" class="small mb-1" for="Update.YearsOfExperience">Years of experience</label>
+                            <div class="btn-group d-flex" data-toggle="buttons">
+                                <input type="radio" value="0-1" class="btn-check" name="Update.YearsOfExperience" id="option1" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "0-1" ? "checked" : null) />
+                                <label class="btn btn-secondary p-3" for="option1" style="font-size: 1.2rem;">0-1</label>
+
+                                <input type="radio" value="1-2" class="btn-check" name="Update.YearsOfExperience" id="option2" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "1-2" ? "checked" : null) />
+                                <label class="btn btn-secondary p-3" for="option2" style="font-size: 1.2rem;">1-2</label>
+
+                                <input type="radio" value="2-4" class="btn-check" name="Update.YearsOfExperience" id="option3" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "2-4" ? "checked" : null) />
+                                <label class="btn btn-secondary p-3" for="option3" style="font-size: 1.2rem;">2-4</label>
+
+                                <input type="radio" value="4-8" class="btn-check" name="Update.YearsOfExperience" id="option4" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "4-8" ? "checked" : null) />
+                                <label class="btn btn-secondary p-3" for="option4" style="font-size: 1.2rem;">4-8</label>
+
+                                <input type="radio" value="8+" class="btn-check" name="Update.YearsOfExperience" id="option5" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "8+" ? "checked" : null) />
+                                <label class="btn btn-secondary p-3" for="option5" style="font-size: 1.2rem;">8+</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Update.LinkedInUrl" class="small mb-1" for="Update.LinkedInUrl">Social links</label>
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="bi bi-linkedin mx-2" style="font-size: 1.75rem;"></i>
+                                <input asp-for="Update.LinkedInUrl" class="form-control" id="inputFirstName" type="text" placeholder="LinkedIn" value=@user.LinkedInUrl>
+                            </div>
+                        </div>
                         <!-- Save changes button-->
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
@@ -132,6 +154,7 @@
 </div>
 
 <script>
+    // TODO1: Move to shared components
     // Get the file input element and the button element
     var input = document.getElementById("profileImage-input");
     var button = document.getElementById("profileImage-button");
@@ -148,35 +171,58 @@
         this.form.submit();
     });
 
-    // !! //
+    // TODO2: Move to shared components
     var input2 = document.getElementById("attachedResume-input");
     var button2 = document.getElementById("attachedResume-button");
 
-    button2.addEventListener("click", function () {
+    if (input2 != null && button2 != null) {
+        button2.addEventListener("click", function () {
         input2.click();
-    });
+        });
 
-    input2.addEventListener("change", function () {
-        this.form.submit();
-    });
+        input2.addEventListener("change", function () {
+            this.form.submit();
+        });
 
-    var card = document.querySelector("#uploadResumeCard");
+        var card = document.querySelector("#uploadResumeCard");
 
-    card.addEventListener("dragover", function (event) {
-        event.preventDefault();
-        card.classList.add("dragover");
-    });
+        card.addEventListener("dragover", function (event) {
+            event.preventDefault();
+            card.classList.add("dragover");
+        });
 
-    card.addEventListener("dragleave", function (event) {
-        event.preventDefault();
-        card.classList.remove("dragover");
-    });
+        card.addEventListener("dragleave", function (event) {
+            event.preventDefault();
+            card.classList.remove("dragover");
+        });
 
-    card.addEventListener("drop", function (event) {
-        event.preventDefault();
-        card.classList.remove("dragover");
-        input2.files = event.dataTransfer.files;
-        input2.form.submit();
-    });
+        card.addEventListener("drop", function (event) {
+            event.preventDefault();
+            card.classList.remove("dragover");
+            input2.files = event.dataTransfer.files;
+            input2.form.submit();
+        });
+    }
 
+    // TODO3: Move to shared components
+    var radioButtons = document.querySelectorAll('input[type="radio"][name="Update.YearsOfExperience"]');
+    var labels = document.querySelectorAll('.btn-group label');
+
+    for (var i = 0; i < radioButtons.length; i++) {
+        radioButtons[i].addEventListener('change', function () {
+            for (var j = 0; j < labels.length; j++) {
+                labels[j].classList.remove('btn-primary');
+                labels[j].classList.add('btn-secondary');
+            }
+            var label = this.nextElementSibling;
+            label.classList.remove('btn-secondary');
+            label.classList.add('btn-primary');
+        });
+        if (radioButtons[i].checked)
+        {
+            var label = labels[i];
+            label.classList.remove('btn-secondary');
+            label.classList.add('btn-primary');
+        }
+    }
 </script>
