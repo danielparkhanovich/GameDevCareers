@@ -1,7 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.PL.ViewModels.Utilities;
 using JobBoardPlatform.DAL.Models;
-using JobBoardPlatform.PL.ViewModels.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,6 +8,7 @@ using JobBoardPlatform.DAL.Options;
 using Microsoft.Extensions.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.PL.ViewModels.Profile.Company;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -42,20 +42,32 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
             var profile = await profileRepository.Get(id);
 
-            return new CompanyProfileViewModel()
+            var display = new CompanyProfileDisplayViewModel()
             {
                 CompanyName = profile.CompanyName,
                 City = profile.City,
                 Country = profile.Country,
-                ProfileImageUrl = profile.ProfileImageUrl
+                ProfileImageUrl = profile.ProfileImageUrl,
+                CompanyWebsiteUrl = profile.CompanyWebsiteUrl
+            };
+
+            return new CompanyProfileViewModel()
+            {
+                Display = display
             };
         }
 
         protected override async Task UpdateProfile(CompanyProfile profile, CompanyProfileViewModel userViewModel)
         {
-            if (userViewModel.ProfileImage != null)
+            var updateViewModel = userViewModel.Update;
+
+            // TODO: validate data here for stream size
+            // and extension... and add a model error
+
+            if (updateViewModel.ProfileImage != null)
             {
-                userViewModel.ProfileImageUrl = await userProfileImagesStorage.UpdateAsync(profile.ProfileImageUrl, userViewModel.ProfileImage);
+                var imageUrl = await userProfileImagesStorage.UpdateAsync(profile.ProfileImageUrl, updateViewModel.ProfileImage);
+                profile.ProfileImageUrl = imageUrl;
             }
 
             userViewToModel.Map(userViewModel, profile);

@@ -2,6 +2,7 @@
 {
     public interface IProfileViewModel
     {
-
+        public IFormFile? ProfileImage { get; set; }
+        public string? ProfileImageUrl { get; }
     }
 }

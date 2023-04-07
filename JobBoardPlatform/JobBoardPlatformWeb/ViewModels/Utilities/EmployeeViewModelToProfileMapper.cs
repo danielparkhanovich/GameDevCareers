@@ -14,14 +14,6 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             {
                 to.Name = fromUpdate.Name;
             }
-
-            to.Surname = fromUpdate.Surname;
-            to.City = fromUpdate.City;
-            to.Country = fromUpdate.Country;
-            to.Description = fromUpdate.Description;
-            to.YearsOfExperience = fromUpdate.YearsOfExperience;
-            to.LinkedInUrl = fromUpdate.LinkedInUrl;
-
             if (!string.IsNullOrEmpty(fromUpdate.AttachedResumeUrl))
             {
                 to.ResumeUrl = fromUpdate.AttachedResumeUrl;
@@ -30,6 +22,13 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             {
                 to.ProfileImageUrl = fromUpdate.ProfileImageUrl;
             }
+
+            to.Surname = fromUpdate.Surname;
+            to.City = fromUpdate.City;
+            to.Country = fromUpdate.Country;
+            to.Description = fromUpdate.Description;
+            to.YearsOfExperience = fromUpdate.YearsOfExperience;
+            to.LinkedInUrl = fromUpdate.LinkedInUrl;
         }
     }
 }

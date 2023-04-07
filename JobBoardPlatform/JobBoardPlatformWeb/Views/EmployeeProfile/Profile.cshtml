@@ -16,40 +16,24 @@
 
 <div class="container-xl px-4 mt-4">
     <!-- Account page navigation-->
-    <nav class="nav">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Profile" ? "active ms-0" : "")"
-                   asp-controller="EmployeeProfile" asp-action="Profile">Profile</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Security" ? "active ms-0" : "")"
-                   asp-controller="EmployeeProfile" asp-action="Security">Security</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Preferences" ? "active ms-0" : "")" 
-                   asp-controller="EmployeeProfile" asp-action="Preferences">Preferences</a>
-            </li>
-        </ul>
-    </nav>
+    @await Html.PartialAsync("./ProfileTabs/_EmployeeProfileTabs", Model)
+
     <hr class="mt-0 mb-4">
+    <div class="alert alert-dismissible alert-warning">
+        <i class="bi bi-exclamation-triangle" style="font-size: 1.25rem;"></i>
+        <small>Complete your profile & apply with just one click!</small>
+    </div>
+
     <form method="post" enctype="multipart/form-data">
         <div class="row">
             <div class="col-xl-6">
                 <!-- Profile picture card-->
                 <div class="card mb-4 mb-xl-0">
                     <div class="card-header">User Details</div>
-                    <div class="card-body text-center">
-                        <!-- Profile picture image-->
-                        <img class="img-account-profile rounded-circle mb-2" width="128" height="128" src=@userImageUrl alt="">
-                        <!-- Profile picture help block-->
-                        <div class="small font-italic text-muted mb-2">JPG or PNG no larger than 5 MB</div>
-                        <!-- Profile picture upload button-->
-                        <input asp-for="Update.ProfileImage" name="Update.ProfileImage" class="form-control" id="profileImage-input" type="file" accept="image/png, image/jpeg" style="display:none" />
-                        <button class="btn btn-primary" id="profileImage-button" type="button">Upload new image</button>
-                        <input type="submit" value="Upload" style="display:none" />
-                    </div>
-                    <div class="mx-2">
+                    <div class="card-body">
+
+                        @await Html.PartialAsync("./Profile/_UserProfileImage", Model)
+
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">
                                 <label asp-for="Update.Name" class="small mb-1" for="inputFirstName">Name</label>
@@ -104,7 +88,7 @@
                                             <input type="hidden" name="id" value="Display.AttachedResumeUrl" />
                                             <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent"
                                                 onclick="location.href='@Url.Action("DeleteResume", "EmployeeProfile")'">
-                                                <div class="text-primary" style="font-size: 2rem;">X</div>
+                                                <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
                                             </button>
                                         </div>
                                     }
@@ -166,23 +150,6 @@
 </div>
 
 <script>
-    // TODO1: Move to shared components
-    // Get the file input element and the button element
-    var input = document.getElementById("profileImage-input");
-    var button = document.getElementById("profileImage-button");
-
-    // Add a click event listener to the button
-    button.addEventListener("click", function () {
-        // Simulate a click on the file input element
-        input.click();
-    });
-
-    // Add a change event listener to the file input element
-    input.addEventListener("change", function () {
-        // Submit the form when a file is selected
-        this.form.submit();
-    });
-
     // TODO2: Move to shared components
     var input2 = document.getElementById("attachedResume-input");
     var button2 = document.getElementById("attachedResume-button");

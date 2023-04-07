@@ -1,0 +1,38 @@
+﻿@model IProfileViewModel
+@{
+    string? userImageUrl = ViewData.Model.ProfileImageUrl;
+    if (string.IsNullOrEmpty(userImageUrl))
+    {
+        userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
+    }
+}
+
+<div class="card-body text-center mb-4">
+    <!-- Profile picture image-->
+    <img class="img-account-profile rounded-circle mb-2" width="128" height="128" src=@userImageUrl alt="">
+    <!-- Profile picture help block-->
+    <div class="small font-italic text-muted mb-2">JPG or PNG no larger than 5 MB</div>
+    <!-- Profile picture upload button-->
+    <input asp-for="ProfileImage" name="ProfileImage" class="form-control" id="profileImage-input" type="file" accept="image/png, image/jpeg" style="display:none" />
+    <button class="btn btn-primary" id="profileImage-button" type="button">Upload new image</button>
+    <input type="submit" value="Upload" style="display:none" />
+</div>
+
+<script>
+    // TODO1: Move to shared components
+    // Get the file input element and the button element
+    var input = document.getElementById("profileImage-input");
+    var button = document.getElementById("profileImage-button");
+
+    // Add a click event listener to the button
+    button.addEventListener("click", function () {
+        // Simulate a click on the file input element
+        input.click();
+    });
+
+    // Add a change event listener to the file input element
+    input.addEventListener("change", function () {
+        // Submit the form when a file is selected
+        this.form.submit();
+    });
+</script>

@@ -1,0 +1,20 @@
+﻿@{
+    string currentAction = ViewContext.RouteData.Values["Action"].ToString();
+}
+
+<nav class="nav">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link @(currentAction == "Profile" ? "active ms-0" : "")"
+                asp-controller="EmployeeProfile" asp-action="Profile">Company profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(currentAction == "Security" ? "active ms-0" : "")"
+                asp-controller="EmployeeProfile" asp-action="Security">Security</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(currentAction == "Preferences" ? "active ms-0" : "")"
+                asp-controller="EmployeeProfile" asp-action="Preferences">Preferences</a>
+        </li>
+    </ul>
+</nav>

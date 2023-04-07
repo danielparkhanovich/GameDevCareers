@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models;
-using JobBoardPlatform.PL.ViewModels.Profile;
+using JobBoardPlatform.PL.ViewModels.Profile.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Utilities
@@ -8,22 +8,20 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
     {
         public void Map(CompanyProfileViewModel from, CompanyProfile to)
         {
-            if (!string.IsNullOrEmpty(from.CompanyName))
+            var fromUpdate = from.Update;
+
+            if (!string.IsNullOrEmpty(fromUpdate.CompanyName))
             {
-                to.CompanyName = from.CompanyName;
+                to.CompanyName = fromUpdate.CompanyName;
             }
-            if (!string.IsNullOrEmpty(from.City))
+            if (!string.IsNullOrEmpty(fromUpdate.ProfileImageUrl))
             {
-                to.City = from.City;
+                to.ProfileImageUrl = fromUpdate.ProfileImageUrl;
             }
-            if (!string.IsNullOrEmpty(from.Country))
-            {
-                to.Country = from.Country;
-            }
-            if (!string.IsNullOrEmpty(from.ProfileImageUrl))
-            {
-                to.ProfileImageUrl = from.ProfileImageUrl;
-            }
+
+            to.City = fromUpdate.City;
+            to.Country = fromUpdate.Country;
+            to.CompanyWebsiteUrl = fromUpdate.CompanyWebsiteUrl;
         }
     }
 }

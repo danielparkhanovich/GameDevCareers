@@ -88,12 +88,9 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 LinkedInUrl = profile.LinkedInUrl
             };
 
-            var update = new EmployeeProfileUpdateViewModel();
-
             var employeeProfileViewModel = new EmployeeProfileViewModel()
             {
-                Display = display,
-                Update = update
+                Display = display
             };
 
             return employeeProfileViewModel;
@@ -101,7 +98,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         protected override async Task UpdateProfile(EmployeeProfile profile, EmployeeProfileViewModel userViewModel)
         {
-            var updateViewModel = userViewModel.Update!;
+            var updateViewModel = userViewModel.Update;
 
             // TODO: validate data here for stream size
             // and extension... and add a model error
