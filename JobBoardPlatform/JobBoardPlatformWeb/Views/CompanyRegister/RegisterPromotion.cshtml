@@ -1,0 +1,90 @@
+﻿@model CompanyRegisterViewModel
+@{
+    ViewData["Title"] = "Company";
+}
+
+<div class="d-flex flex-column aligns-items-center justify-content-center mh-100">
+    <h1 class="text-center mb-5">Get to know job ads</h1>
+    <!-- Render shared login form and pass controller name -->
+    @{
+        ViewData["LoginControllerName"] = "CompanyLogin";
+    }
+    <div class="container px-5">
+        <hr class="my-12" />
+        <div class="table-responsive">
+            <table class="table table-striped fa-check text-successtable-border border-light">
+                <thead class="border-light">
+                    <tr>
+                        <th scope="col">Features</th>
+                        <th class="text-center" scope="col">
+                            <strong>Indie</strong>
+                            <h4 class="text-decoration-line-through">50 EU<h5 class="text-success">FREE</h5></h4>
+                        </th>
+                        <th class="text-center" scope="col"><strong>Pro</strong><h4>75 EU</h4></th>
+                        <th class="text-center" scope="col"><strong>AAA</strong><h4>200 EU</h4></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="align-middle">
+                        <th scope="row">Lorem Ipsum</th>
+                        <td class="text-center"><i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                    </tr>
+                    <tr class="align-middle">
+                        <th scope="row">Lorem Ipsum</th>
+                        <td class="text-center"><i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                    </tr>
+                    <tr class="align-middle">
+                        <th scope="row">Lorem Ipsum</th>
+                        <td class="text-center"><i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                    </tr>
+                    <tr class="align-middle">
+                        <th scope="row">Lorem Ipsum</th>
+                        <td class="text-center"><i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                    </tr>
+                    <tr class="align-middle">
+                        <th scope="row">Lorem Ipsum</th>
+                        <td class="text-center"><i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                        <td class="text-center"><i class="bi bi-x-lg text-danger" style="font-size: 1.5rem;"></i></td>
+                    </tr>
+                    <tr class="align-middle">
+                        <th scope="row"></th>
+                        <td class="text-center">
+                            <button type="submit" class="text-small btn btn-primary rounded-pill px-5"
+                                    onclick="location.href='@Url.Action("Register", "CompanyRegister")'">
+                                Post a job
+                            </button>
+                            
+                        </td>
+                        <td class="text-center">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5"
+                                    onclick="location.href='@Url.Action("Register", "CompanyRegister")'">
+                                Post a job
+                            </button>
+                        </td>
+                        <td class="text-center">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5"
+                                    onclick="location.href='@Url.Action("Register", "CompanyRegister")'">
+                                Post a job
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

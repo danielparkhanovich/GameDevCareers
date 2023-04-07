@@ -1,11 +1,11 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.DAL.Models;
+﻿using JobBoardPlatform.DAL.Models;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Authentification;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
-    public class EmployeeRegisterController : BaseRegisterController<EmployeeIdentity, EmployeeProfile>
+    public class EmployeeRegisterController : BaseRegisterController<EmployeeIdentity, EmployeeProfile, UserRegisterViewModel>
     {
         public EmployeeRegisterController(IRepository<EmployeeIdentity> credentialsRepository,
             IRepository<EmployeeProfile> profileRepository)

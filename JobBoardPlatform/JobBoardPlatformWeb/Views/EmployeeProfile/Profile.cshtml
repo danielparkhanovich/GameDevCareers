@@ -93,7 +93,10 @@
                                 <div class="card-body d-flex flex-column align-items-center">
                                     @if (isFileUploaded)
                                     {
-                                        <i class="bi bi-file-earmark-check-fill" style="font-size: 5rem;"></i>
+                                        <a role="button" target="_blank" rel="noopener noreferrer" href=@user.AttachedResumeUrl>
+                                            <i class="bi bi-file-earmark-check-fill text-info" style="font-size: 5rem;"></i>
+                                        </a>
+  
                                         <b>@user.AttachedResumeFileName</b>
                                         <div>@user.AttachedResumeFileSize</div>
 
@@ -140,7 +143,16 @@
                         <div class="mb-3">
                             <label asp-for="Update.LinkedInUrl" class="small mb-1" for="Update.LinkedInUrl">Social links</label>
                             <div class="d-flex flex-row align-items-center">
-                                <i class="bi bi-linkedin mx-2" style="font-size: 1.75rem;"></i>
+                                @if (string.IsNullOrEmpty(Model.Display.LinkedInUrl))
+                                {
+                                    <i class="bi bi-linkedin mx-2" style="font-size: 1.75rem;"></i>
+                                }
+                                else
+                                {
+                                    <a target = "_blank" rel = "noopener noreferrer" href = @user.LinkedInUrl>
+                                        <i class="bi bi-linkedin mx-2 text-info" style="font-size: 1.75rem;"></i>
+                                    </a>
+                                }
                                 <input asp-for="Update.LinkedInUrl" class="form-control" id="inputFirstName" type="text" placeholder="LinkedIn" value=@user.LinkedInUrl>
                             </div>
                         </div>

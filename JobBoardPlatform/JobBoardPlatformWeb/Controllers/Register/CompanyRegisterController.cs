@@ -1,11 +1,11 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.DAL.Models;
+﻿using JobBoardPlatform.DAL.Models;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Authentification;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
-    public class CompanyRegisterController : BaseRegisterController<CompanyIdentity, CompanyProfile>
+    public class CompanyRegisterController : BaseRegisterController<CompanyIdentity, CompanyProfile, CompanyRegisterViewModel>
     {
         public CompanyRegisterController(IRepository<CompanyIdentity> credentialsRepository,
             IRepository<CompanyProfile> profileRepository)
@@ -14,13 +14,21 @@ namespace JobBoardPlatform.PL.Controllers.Register
             this.profileRepository = profileRepository;
         }
 
-        protected override CompanyIdentity GetIdentity(UserRegisterViewModel userRegister)
+        public IActionResult RegisterPromotion()
         {
+            return View();
+        }
+
+        protected override CompanyIdentity GetIdentity(CompanyRegisterViewModel companyRegister)
+        {
+            var companyProfile = new CompanyProfile();
+            companyProfile.CompanyName = companyRegister.CompanyName;
+
             var credentials = new CompanyIdentity()
             {
-                Email = userRegister.Email,
-                HashPassword = userRegister.Password,
-                Profile = new CompanyProfile()
+                Email = companyRegister.Email,
+                HashPassword = companyRegister.Password,
+                Profile = companyProfile
             };
 
             return credentials;

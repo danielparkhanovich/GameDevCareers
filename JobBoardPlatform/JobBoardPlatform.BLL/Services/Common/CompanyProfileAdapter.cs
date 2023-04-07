@@ -4,6 +4,7 @@ using JobBoardPlatform.DAL.Models;
 
 namespace JobBoardPlatform.BLL.Services.Common
 {
+    // TODO: rename into CompanyClaimsAdapter
     internal class CompanyProfileAdapter : IUserProfileAdapter
     {
         private readonly CompanyProfile profile;
@@ -11,7 +12,20 @@ namespace JobBoardPlatform.BLL.Services.Common
 
         public string DisplayName => profile.CompanyName;
 
-        public string DisplayProfileImageUrl => profile.ProfileImageUrl;
+        public string DisplayProfileImageUrl
+        {
+            get
+            {
+                if (profile.ProfileImageUrl == null)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return profile.ProfileImageUrl;
+                }
+            }
+        }
 
         public string UserRole => UserRoles.Company;
 

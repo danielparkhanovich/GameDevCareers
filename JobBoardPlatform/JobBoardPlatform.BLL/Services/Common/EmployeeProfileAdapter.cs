@@ -11,7 +11,20 @@ namespace JobBoardPlatform.BLL.Services.Common
 
         public string DisplayName => profile.Name;
 
-        public string DisplayProfileImageUrl => profile.ProfileImageUrl;
+        public string DisplayProfileImageUrl
+        {
+            get
+            {
+                if (profile.ProfileImageUrl == null)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return profile.ProfileImageUrl;
+                }
+            }
+        }
 
         public string UserRole => UserRoles.Employee;
 
