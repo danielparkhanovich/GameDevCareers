@@ -1,0 +1,60 @@
+﻿@model JobOfferUpdateViewModel
+@{
+    ViewData["Title"] = "Company";
+}
+
+<div class="container-xl px-4 mt-4">
+    <form method="post">
+        <div class="row gx-3 mb-3">
+            <div class="col-md-12">
+                <label asp-for="JobTitle" class="small mb-1" for="inputCompanyName">Job title *</label>
+                <input asp-for="JobTitle" class="form-control" id="inputCompanyName" type="text" placeholder="Enter job title">
+            </div>
+        </div>
+
+        <div class="row gx-3 mb-3">
+            <div class="col-md-4">
+                <label asp-for="Country" class="small mb-1" for="inputCountry">Country *</label>
+                <input asp-for="Country" class="form-control" id="inputCountry" type="text" placeholder="Enter country">
+            </div>
+            <div class="col-md-4">
+                <label asp-for="City" class="small mb-1" for="inputCity">City *</label>
+                <input asp-for="City" class="form-control" id="inputCity" type="text" placeholder="Enter city">
+            </div>
+            <div class="col-md-4">
+                <label asp-for="WorkLocationType" class="small mb-1" for="inputWorkLocationType">Work location *</label>
+                <select asp-for="WorkLocationType" class="form-select" aria-label="Employment type">
+                    <option value="OnCite" selected>On cite</option>
+                    <option value="FullyRemote">Fully remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+        </div>
+
+        @await Html.PartialAsync("./JobOffers/_MultiselectTripleField", Model)
+
+        <div class="row gx-3 mb-3">
+            <div class="col-md-12">
+                <label asp-for="TechStack" class="small mb-1" for="inputTechStack">Tech stack</label>
+                <input asp-for="TechStack" class="form-control" id="inputTechStack" type="text" placeholder="Enter your company country" value=JobTitle>
+            </div>
+        </div>
+
+        <div class="row gx-3 mb-3">
+            <div class="col-md-12">
+                <label asp-for="JobDescription" class="small mb-1" for="inputJobDescription">Description *</label>
+                <textarea asp-for="JobDescription" class="form-control" id="inputJobDescription" type="text" placeholder="Enter description" value=JobTitle>
+                </textarea>
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">Go Next</button>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

@@ -2,8 +2,154 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <img src="https://petprojectsstorage2.blob.core.windows.net/userprofileimagescontainer/698e3b86-6a6f-42aa-894f-d2c4e10ba9f9.jpg" />
+<div class="container px-5">
+    <div class="d-flex flex-column px-5" style="height: 100vh;">
+        <div class="mb-3">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="form-floating mb-3">
+                        <input class="form-control rounded-pill" id="floatingInput" placeholder="Skill Feature Field">
+                        <label for="floatingInput">Search</label>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="form-floating mb-3" id="floatingSelect">
+                        <select class="form-select rounded-pill" id="floatingSelect" aria-label="Floating label select example">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                        <label for="floatingSelect">Works with selects</label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center align-content-center">
+                <button class="text-center mx-1 border-0 bg-transparent">
+                    <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
+                        <i class="bi bi-display" style="font-size: 1.5rem;"></i>
+                    </div>
+                    All
+                </button>
+                <button class="text-center mx-1 border-0 bg-transparent">
+                    <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
+                        <i class="bi bi-display" style="font-size: 1.5rem;"></i>
+                    </div>
+                    All
+                </button>
+                <button class="text-center mx-1 border-0 bg-transparent">
+                    <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
+                        <i class="bi bi-display" style="font-size: 1.5rem;"></i>
+                    </div>
+                    All
+                </button>
+            </div>
+        </div>
+
+        <div class="d-flex flex-row px-4">
+            <ul class="nav nav-tabs flex-grow-1 border-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Offers</a>
+                </li>
+                <li class="nav-item px-5">
+                    <a class="nav-link" href="#">Commissions</a>
+                </li>
+            </ul>
+            <div class="form-check form-switch align-self-center mx-4">
+                <label class="form-check-label" for="remoteSwitchBox">Remote</label>
+                <input class="form-check-input" type="checkbox" id="remoteSwitchBox" style="transform: scale(1.25);">
+            </div>
+            <div class="form-check form-switch align-self-center">
+                <label class="form-check-label" for="withSalarySwitchBox">With salary</label>
+                <input class="form-check-input" type="checkbox" id="withSalarySwitchBox" style="transform: scale(1.25);">
+            </div>
+        </div>
+
+        <hr class="mt-0 mb-2">
+        <div class="flex-grow-1 bg-dark bg-opacity-10">
+            <div class="m-2">
+                <div class="card mb-2 p-1">
+                    <a href="https://example.com" class="card-body d-flex align-content-center border-0 bg-transparent text-decoration-none">
+                        <img src="https://yt3.googleusercontent.com/ytc/AL5GRJW5wDxRYtWJBKWXq0d-klF4aoHG-jKXlqMeTB70sw=s900-c-k-c0x00ffffff-no-rj" width="50" height="50"
+                             class="mx-2 border border-secondary rounded">
+                        <div class="d-flex flex-column mx-4 w-100">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h5 class="mb-0">Unity 3D programmer</h5>
+                                <div class="d-flex">
+                                    <div class="text-success mx-4 align-text-top h5 mb-0">5000 - 15000 PLN</div>
+                                    <div class="text-center rounded-pill border border-primary px-2">
+                                        <p class="small mb-0">1d ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row small">
+                                    <div class="d-flex flex-row">
+                                        <i class="bi bi-buildings text-muted"></i>
+                                        <div class="mx-2 text-muted">TreyArch</div>
+                                    </div>
+                                    <div class="d-flex flex-row mx-3">
+                                        <i class="bi bi-geo-alt text-muted"></i>
+                                        <div class="mx-2 text-muted">New York, USA</div>
+                                    </div>
+                                    <div class="text-center rounded-pill border border-primary bg-primary bg-opacity-10 px-2">
+                                        <p class="small mb-0 text-primary">Fully Remote</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row small">
+                                    <div class="text-center rounded-pill border border-dark border-opacity-25 px-2  mx-2">
+                                        <p class="small mb-0">C#</p>
+                                    </div>
+                                    <div class="text-center rounded-pill border border-dark border-opacity-25 px-2">
+                                        <p class="small mb-0">Unity</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="m-2">
+                <div class="card mb-2 p-1">
+                    <a href="https://example.com" class="card-body d-flex align-content-center border-0 bg-transparent text-decoration-none">
+                        <img src="https://yt3.googleusercontent.com/ytc/AL5GRJW5wDxRYtWJBKWXq0d-klF4aoHG-jKXlqMeTB70sw=s900-c-k-c0x00ffffff-no-rj" width="50" height="50"
+                             class="mx-2 border border-secondary rounded">
+                        <div class="d-flex flex-column mx-4 w-100">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h5 class="mb-0">Unity 3D programmer</h5>
+                                <div class="d-flex">
+                                    <div class="text-success mx-4 align-text-top h5 mb-0">5000 - 15000 PLN</div>
+                                    <div class="text-center rounded-pill border border-primary px-2">
+                                        <p class="small mb-0">1d ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row small">
+                                    <div class="d-flex flex-row">
+                                        <i class="bi bi-buildings text-muted"></i>
+                                        <div class="mx-2 text-muted">TreyArch</div>
+                                    </div>
+                                    <div class="d-flex flex-row mx-3">
+                                        <i class="bi bi-geo-alt text-muted"></i>
+                                        <div class="mx-2 text-muted">New York, USA</div>
+                                    </div>
+                                    <div class="text-center rounded-pill border border-primary bg-primary bg-opacity-10 px-2">
+                                        <p class="small mb-0 text-primary">Fully Remote</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row small">
+                                    <div class="text-center rounded-pill border border-dark border-opacity-25 px-2  mx-2">
+                                        <p class="small mb-0">C#</p>
+                                    </div>
+                                    <div class="text-center rounded-pill border border-dark border-opacity-25 px-2">
+                                        <p class="small mb-0">Unity</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

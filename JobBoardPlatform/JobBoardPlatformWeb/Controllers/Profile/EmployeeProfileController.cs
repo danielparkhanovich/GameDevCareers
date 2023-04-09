@@ -13,7 +13,7 @@ using JobBoardPlatform.BLL.Services.Session;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
-    [Authorize]
+    [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
     public class EmployeeProfileController : BaseProfileController<EmployeeProfile, EmployeeProfileViewModel>
     {
         protected IBlobStorage userProfileResumeStorage;
@@ -28,13 +28,11 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             this.userProfileResumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
         }
 
-        [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
         public override async Task<IActionResult> Profile()
         {
             return await base.Profile();
         }
 
-        [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Profile(EmployeeProfileViewModel userViewModel)

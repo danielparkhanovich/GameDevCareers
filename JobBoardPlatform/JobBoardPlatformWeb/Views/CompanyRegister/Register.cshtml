@@ -1,15 +1,11 @@
 ﻿@model CompanyRegisterViewModel
 @{
     ViewData["Title"] = "Company";
+    ViewData["LoginControllerName"] = "CompanyLogin";
 }
 
 <div class="d-flex flex-column aligns-items-center justify-content-center mh-100">
     <h1 class="text-center mb-5">Register</h1>
-
-    <!-- Render shared login form and pass controller name -->
-    @{
-        ViewData["LoginControllerName"] = "CompanyLogin";
-    }
     <div class="container px-5">
         <form method="post" class="d-flex flex-column aligns-items-center my-4">
             <div class="form-floating mb-5">

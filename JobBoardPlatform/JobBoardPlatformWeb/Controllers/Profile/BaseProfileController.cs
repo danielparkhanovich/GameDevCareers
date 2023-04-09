@@ -12,12 +12,12 @@ using System.Security.Claims;
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
     [Authorize]
-    public abstract class BaseProfileController<T, V> : Controller
-        where T : class, IUserProfileEntity
-        where V : class, IProfileViewModel
+    public abstract class BaseProfileController<TProfile, TViewModel> : Controller
+        where TProfile : class, IUserProfileEntity
+        where TViewModel : class, IProfileViewModel
     {
-        protected IRepository<T> profileRepository;
-        protected IMapper<V, T> userViewToModel;
+        protected IRepository<TProfile> profileRepository;
+        protected IMapper<TViewModel, TProfile> userViewToModel;
         protected IBlobStorage userProfileImagesStorage;
 
 
@@ -30,7 +30,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async virtual Task<IActionResult> Profile(V userViewModel)
+        public async virtual Task<IActionResult> Profile(TViewModel userViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -39,7 +39,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
                 await UpdateProfile(profile, userViewModel);
 
-                var userSession = new UserSessionService<T>(HttpContext);
+                var userSession = new UserSessionService<TProfile>(HttpContext);
                 await userSession.UpdateSessionStateAsync(profile);
 
                 return RedirectToAction("Profile");
@@ -50,7 +50,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return View(userViewModel);
         }
 
-        protected abstract Task UpdateProfile(T profile, V userViewModel);
-        protected abstract Task<V> UpdateProfileDisplay();
+        protected abstract Task UpdateProfile(TProfile profile, TViewModel userViewModel);
+        protected abstract Task<TViewModel> UpdateProfileDisplay();
     }
 }

@@ -1,10 +1,12 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
+    [TypeFilter(typeof(SkipLoggedInUsersFilter))]
     public abstract class BaseRegisterController<TIdentity, TProfile, TViewModel> : Controller
         where TIdentity : class, IUserIdentityEntity
         where TProfile : class, IUserProfileEntity

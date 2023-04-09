@@ -1,0 +1,79 @@
+﻿@model IJobOfferSalary
+
+<div>
+    <div class="row gx-3 mb-3 offer-salary-container" id="template">
+        <div class="col-md-6">
+            <label asp-for="EmploymentTypes[0]" class="small mb-1" for="inputEmploymentTypes">Employment type *</label>
+            <select asp-for="EmploymentTypes[0]" class="form-select" aria-label="Employment type">
+                <option value="Permanent" selected>Permanent</option>
+                <option value="MandateContract">Mandate contract</option>
+                <option value="B2B">B2B</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="SalaryFromRange[0]" class="small mb-1" for="inputSalaryFromRange">Monthly salary from (gross)</label>
+            <input asp-for="SalaryFromRange[0]" class="form-control" id="inputSalaryFromRange" type="text" placeholder="From">
+        </div>
+        <div class="col-md-2">
+            <label asp-for="SalaryToRange[0]" class="small mb-1" for="inputSalaryToRange">Monthly salary to (gross)</label>
+            <input asp-for="SalaryToRange[0]" class="form-control" id="inputSalaryToRange" type="text" placeholder="To">
+        </div>
+        <div class="col-md-1">
+            <label asp-for="SalaryCurrency[0]" class="small mb-1" for="inputSalaryToRange">Currency</label>
+            <select asp-for="SalaryCurrency[0]" class="form-select" aria-label="Default select example">
+                <option value="PLN" selected>PLN</option>
+                <option value="EUR">EUR</option>
+            </select>
+        </div>
+        <div class="col-md-1 d-flex justify-content-end flex-column" id="removeButtonContainer">
+            <button type="button" class="bg-transparent border-0 h-50" id="removeButton" style="display:none;">
+                <i class="bi bi-x-lg text-danger" style="font-size: 1.35rem;"></i>
+            </button>
+        </div>
+    </div>
+    <button type="button" id="addButton" class="btn btn-primary btn-block mb-4">Add one more employment type</button>
+</div>
+
+<script>
+    var addButton = document.getElementById('addButton');
+    addButton.addEventListener('click', function () {
+        // Get the current index of employment items
+        var index = document.getElementsByClassName('offer-salary-container').length;
+
+        if (index > 2)
+        {
+            return;
+        }
+
+        // Create new employment container
+        var salaryContainer = document.getElementById('template');
+        var newEmploymentHTML = salaryContainer.innerHTML;
+
+        newEmploymentHTML = newEmploymentHTML.replaceAll("[0]", "[" + index + "]");
+
+        // Create a temporary element to hold the new HTML
+        var tempElement = document.createElement('div');
+        tempElement.innerHTML = newEmploymentHTML;
+
+        tempElement.className = 'row gx-3 mb-3 offer-salary-container';
+
+        var removeButton = tempElement.querySelector('#removeButton');
+        removeButton.style.display = null;
+        removeButton.addEventListener('click', function () {
+            var parentContainer = removeButton.closest(".offer-salary-container");
+            parentContainer.remove();
+            addButton.style.display = null;
+        });
+
+        console.log(newEmploymentHTML);
+
+        // Append the new employment container to the form
+        var newEmploymentContainer = tempElement;
+        addButton.parentNode.insertBefore(newEmploymentContainer, addButton);
+
+        if (document.getElementsByClassName('offer-salary-container').length > 2) 
+        {
+            addButton.style.display = "none";
+        }
+    });
+</script>

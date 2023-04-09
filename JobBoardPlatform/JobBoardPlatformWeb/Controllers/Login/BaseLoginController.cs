@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.PL.ViewModels.Authentification;
-using NuGet.Protocol.Core.Types;
-using JobBoardPlatform.DAL.Models;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.Filters;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
@@ -16,6 +15,7 @@ namespace JobBoardPlatform.PL.Controllers.Login
         return AuthorizationResult.Success;
     }
     */
+    [TypeFilter(typeof(SkipLoggedInUsersFilter))]
     public abstract class BaseLoginController<T, V> : Controller 
         where T: class, IUserIdentityEntity
         where V: class, IUserProfileEntity

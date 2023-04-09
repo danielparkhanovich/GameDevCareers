@@ -12,7 +12,7 @@ using JobBoardPlatform.PL.ViewModels.Profile.Company;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
-    [Authorize]
+    [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyProfileController : BaseProfileController<CompanyProfile, CompanyProfileViewModel>
     {
         public CompanyProfileController(IOptions<AzureOptions> azureOptions, IRepository<CompanyProfile> profileRepository)
@@ -22,13 +22,11 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             this.userViewToModel = new CompanyViewModelToProfileMapper();
         }
 
-        [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
         public override async Task<IActionResult> Profile()
         {
             return await base.Profile();
         }
 
-        [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Profile(CompanyProfileViewModel userViewModel)
