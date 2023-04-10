@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.DAL.Models.Enums;
 using Microsoft.Build.Framework;
 
-namespace JobBoardPlatform.PL.ViewModels.JobOffer
+namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels
 {
     public interface IJobOfferSalary
     {

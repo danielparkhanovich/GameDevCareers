@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.BLL.Services.Common.Contracts;
-using JobBoardPlatform.DAL.Models;
+using JobBoardPlatform.DAL.Models.Employee;
 
 namespace JobBoardPlatform.BLL.Services.Common
 {

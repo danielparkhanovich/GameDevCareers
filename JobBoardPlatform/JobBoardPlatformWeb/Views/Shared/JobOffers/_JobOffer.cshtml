@@ -1,0 +1,87 @@
+﻿@model JobOfferCardDisplayViewModel
+@{
+    var offer = Model;
+}
+
+<a href="https://example.com" class="card-body d-flex align-content-center border-0 bg-transparent text-decoration-none">
+    <img src=@offer.CompanyImageUrl width="50" height="50"
+         class="mx-2 border border-secondary rounded">
+    <div class="d-flex flex-column mx-4 w-100">
+        <div class="d-flex justify-content-between mb-2">
+            <h5 class="mb-0">@offer.JobTitle</h5>
+            <div class="d-flex">
+                <div class="text-success mx-4 align-text-top h5 mb-0">@offer.SalaryFrom - @offer.SalaryTo @offer.SalaryCurrency</div>
+                <div class="text-center rounded-pill border border-primary px-2">
+                    <p class="small mb-0">@offer.PublishedAgo d ago</p>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <div class="d-flex flex-row small">
+                <div class="d-flex flex-row">
+                    <i class="bi bi-buildings text-muted"></i>
+                    <div class="mx-2 text-muted">@offer.Company</div>
+                </div>
+                <div class="d-flex flex-row mx-3">
+                    <i class="bi bi-geo-alt text-muted"></i>
+                    <div class="mx-2 text-muted">@offer.City, @offer.Country</div>
+                </div>
+                <div class="text-center rounded-pill border border-primary bg-primary bg-opacity-10 px-2">
+                    <p class="small mb-0 text-primary">@offer.WorkLocationType</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row small">
+                <div class="text-center rounded-pill border border-dark border-opacity-25 px-2  mx-2">
+                    <p class="small mb-0">C#</p>
+                </div>
+                <div class="text-center rounded-pill border border-dark border-opacity-25 px-2">
+                    <p class="small mb-0">Unity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</a>
+
+<script>
+    var addButton = document.getElementById('addButton');
+    addButton.addEventListener('click', function () {
+        // Get the current index of employment items
+        var index = document.getElementsByClassName('offer-salary-container').length;
+
+        if (index > 2)
+        {
+            return;
+        }
+
+        // Create new employment container
+        var salaryContainer = document.getElementById('template');
+        var newEmploymentHTML = salaryContainer.innerHTML;
+
+        newEmploymentHTML = newEmploymentHTML.replaceAll("[0]", "[" + index + "]");
+
+        // Create a temporary element to hold the new HTML
+        var tempElement = document.createElement('div');
+        tempElement.innerHTML = newEmploymentHTML;
+
+        tempElement.className = 'row gx-3 mb-3 offer-salary-container';
+
+        var removeButton = tempElement.querySelector('#removeButton');
+        removeButton.style.display = null;
+        removeButton.addEventListener('click', function () {
+            var parentContainer = removeButton.closest(".offer-salary-container");
+            parentContainer.remove();
+            addButton.style.display = null;
+        });
+
+        console.log(newEmploymentHTML);
+
+        // Append the new employment container to the form
+        var newEmploymentContainer = tempElement;
+        addButton.parentNode.insertBefore(newEmploymentContainer, addButton);
+
+        if (document.getElementsByClassName('offer-salary-container').length > 2) 
+        {
+            addButton.style.display = "none";
+        }
+    });
+</script>

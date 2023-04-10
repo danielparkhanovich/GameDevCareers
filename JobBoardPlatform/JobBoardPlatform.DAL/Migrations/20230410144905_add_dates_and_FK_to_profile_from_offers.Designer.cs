@@ -4,6 +4,7 @@ using JobBoardPlatform.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoardPlatform.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230410144905_add_dates_and_FK_to_profile_from_offers")]
+    partial class add_dates_and_FK_to_profile_from_offers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,10 +94,6 @@ namespace JobBoardPlatform.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CompanyProfileId")
                         .HasColumnType("int");
 
@@ -102,7 +101,7 @@ namespace JobBoardPlatform.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -116,7 +115,7 @@ namespace JobBoardPlatform.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("PublishedAt")
+                    b.Property<DateTime>("Published")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("WorkLocationType")
@@ -138,22 +137,27 @@ namespace JobBoardPlatform.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EmploymentTypeId")
+                    b.Property<int>("EmploymentTypesId")
                         .HasColumnType("int");
 
                     b.Property<int?>("JobOfferId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SalaryRangeId")
+                    b.Property<int>("SalaryCurrencyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalaryFromRangeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmploymentTypeId");
+                    b.HasIndex("EmploymentTypesId");
 
                     b.HasIndex("JobOfferId");
 
-                    b.HasIndex("SalaryRangeId");
+                    b.HasIndex("SalaryCurrencyId");
+
+                    b.HasIndex("SalaryFromRangeId");
 
                     b.ToTable("JobOfferEmploymentDetails");
                 });
@@ -169,39 +173,12 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.Property<int>("From")
                         .HasColumnType("int");
 
-                    b.Property<int>("SalaryCurrencyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("To")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SalaryCurrencyId");
-
                     b.ToTable("JobOfferSalariesRange");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.TechKeyWord", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("JobOfferId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobOfferId");
-
-                    b.ToTable("TechKeyWords");
                 });
 
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Employee.EmployeeIdentity", b =>
@@ -323,7 +300,7 @@ namespace JobBoardPlatform.DAL.Migrations
                         new
                         {
                             Id = 1,
-                            Type = "Permanent"
+                            Type = "ContractOfEmployment"
                         },
                         new
                         {
@@ -361,9 +338,9 @@ namespace JobBoardPlatform.DAL.Migrations
 
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOfferEmploymentDetails", b =>
                 {
-                    b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.EmploymentType", "EmploymentType")
+                    b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.EmploymentType", "EmploymentTypes")
                         .WithMany()
-                        .HasForeignKey("EmploymentTypeId")
+                        .HasForeignKey("EmploymentTypesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -371,33 +348,23 @@ namespace JobBoardPlatform.DAL.Migrations
                         .WithMany("JobOfferEmploymentDetails")
                         .HasForeignKey("JobOfferId");
 
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOfferSalariesRange", "SalaryRange")
-                        .WithMany()
-                        .HasForeignKey("SalaryRangeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EmploymentType");
-
-                    b.Navigation("SalaryRange");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOfferSalariesRange", b =>
-                {
                     b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.CurrencyType", "SalaryCurrency")
                         .WithMany()
                         .HasForeignKey("SalaryCurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SalaryCurrency");
-                });
+                    b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOfferSalariesRange", "SalaryFromRange")
+                        .WithMany()
+                        .HasForeignKey("SalaryFromRangeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.TechKeyWord", b =>
-                {
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOffer", null)
-                        .WithMany("TechKeyWords")
-                        .HasForeignKey("JobOfferId");
+                    b.Navigation("EmploymentTypes");
+
+                    b.Navigation("SalaryCurrency");
+
+                    b.Navigation("SalaryFromRange");
                 });
 
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Employee.EmployeeIdentity", b =>
@@ -414,8 +381,6 @@ namespace JobBoardPlatform.DAL.Migrations
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOffer", b =>
                 {
                     b.Navigation("JobOfferEmploymentDetails");
-
-                    b.Navigation("TechKeyWords");
                 });
 #pragma warning restore 612, 618
         }

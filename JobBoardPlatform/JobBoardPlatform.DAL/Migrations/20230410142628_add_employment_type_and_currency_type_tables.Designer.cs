@@ -4,6 +4,7 @@ using JobBoardPlatform.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoardPlatform.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230410142628_add_employment_type_and_currency_type_tables")]
+    partial class add_employment_type_and_currency_type_tables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace JobBoardPlatform.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.Company.CompanyIdentity", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.CompanyIdentity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +54,7 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.ToTable("CompanyIdentities");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.Company.CompanyProfile", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.CompanyProfile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,128 +86,7 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.ToTable("CompanyProfiles");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOffer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CompanyProfileId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("JobTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("WorkLocationType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyProfileId");
-
-                    b.ToTable("JobOffers");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOfferEmploymentDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EmploymentTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobOfferId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SalaryRangeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmploymentTypeId");
-
-                    b.HasIndex("JobOfferId");
-
-                    b.HasIndex("SalaryRangeId");
-
-                    b.ToTable("JobOfferEmploymentDetails");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOfferSalariesRange", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("From")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SalaryCurrencyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("To")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SalaryCurrencyId");
-
-                    b.ToTable("JobOfferSalariesRange");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.TechKeyWord", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("JobOfferId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobOfferId");
-
-                    b.ToTable("TechKeyWords");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Employee.EmployeeIdentity", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.EmployeeIdentity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -233,7 +115,7 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.ToTable("EmployeeIdentities");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Employee.EmployeeProfile", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.EmployeeProfile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -323,7 +205,7 @@ namespace JobBoardPlatform.DAL.Migrations
                         new
                         {
                             Id = 1,
-                            Type = "Permanent"
+                            Type = "ContractOfEmployment"
                         },
                         new
                         {
@@ -337,9 +219,86 @@ namespace JobBoardPlatform.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.Company.CompanyIdentity", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.JobOffer", b =>
                 {
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.Company.CompanyProfile", "Profile")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorkLocationType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobOffers");
+                });
+
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.JobOfferEmploymentDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmploymentTypesId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("JobOfferId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalaryCurrencyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalaryFromRangeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmploymentTypesId");
+
+                    b.HasIndex("JobOfferId");
+
+                    b.HasIndex("SalaryCurrencyId");
+
+                    b.HasIndex("SalaryFromRangeId");
+
+                    b.ToTable("JobOfferEmploymentDetails");
+                });
+
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.JobOfferSalariesRange", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("From")
+                        .HasColumnType("int");
+
+                    b.Property<int>("To")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobOfferSalariesRange");
+                });
+
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.CompanyIdentity", b =>
+                {
+                    b.HasOne("JobBoardPlatform.DAL.Models.CompanyProfile", "Profile")
                         .WithMany()
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -348,74 +307,51 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOffer", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.EmployeeIdentity", b =>
                 {
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.Company.CompanyProfile", "CompanyProfile")
+                    b.HasOne("JobBoardPlatform.DAL.Models.EmployeeProfile", "Profile")
                         .WithMany()
-                        .HasForeignKey("CompanyProfileId")
+                        .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CompanyProfile");
+                    b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOfferEmploymentDetails", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.JobOfferEmploymentDetails", b =>
                 {
-                    b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.EmploymentType", "EmploymentType")
+                    b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.EmploymentType", "EmploymentTypes")
                         .WithMany()
-                        .HasForeignKey("EmploymentTypeId")
+                        .HasForeignKey("EmploymentTypesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOffer", null)
+                    b.HasOne("JobBoardPlatform.DAL.Models.JobOffer", null)
                         .WithMany("JobOfferEmploymentDetails")
                         .HasForeignKey("JobOfferId");
 
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOfferSalariesRange", "SalaryRange")
-                        .WithMany()
-                        .HasForeignKey("SalaryRangeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EmploymentType");
-
-                    b.Navigation("SalaryRange");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOfferSalariesRange", b =>
-                {
                     b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.CurrencyType", "SalaryCurrency")
                         .WithMany()
                         .HasForeignKey("SalaryCurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SalaryCurrency");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.TechKeyWord", b =>
-                {
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOffer", null)
-                        .WithMany("TechKeyWords")
-                        .HasForeignKey("JobOfferId");
-                });
-
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Employee.EmployeeIdentity", b =>
-                {
-                    b.HasOne("JobBoardPlatform.DAL.Models.Employee.EmployeeProfile", "Profile")
+                    b.HasOne("JobBoardPlatform.DAL.Models.JobOfferSalariesRange", "SalaryFromRange")
                         .WithMany()
-                        .HasForeignKey("ProfileId")
+                        .HasForeignKey("SalaryFromRangeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Profile");
+                    b.Navigation("EmploymentTypes");
+
+                    b.Navigation("SalaryCurrency");
+
+                    b.Navigation("SalaryFromRange");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOffer", b =>
+            modelBuilder.Entity("JobBoardPlatform.DAL.Models.JobOffer", b =>
                 {
                     b.Navigation("JobOfferEmploymentDetails");
-
-                    b.Navigation("TechKeyWords");
                 });
 #pragma warning restore 612, 618
         }

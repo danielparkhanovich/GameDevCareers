@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.PL.ViewModels.Utilities;
-using JobBoardPlatform.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,6 +8,8 @@ using Microsoft.Extensions.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.PL.ViewModels.Profile.Company;
+using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.DAL.Models.Company.Company;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

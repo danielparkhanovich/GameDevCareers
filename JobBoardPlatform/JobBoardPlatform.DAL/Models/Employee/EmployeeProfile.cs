@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobBoardPlatform.DAL.Models
+namespace JobBoardPlatform.DAL.Models.Employee
 {
     [Table("EmployeeProfiles")]
     public class EmployeeProfile : IUserProfileEntity

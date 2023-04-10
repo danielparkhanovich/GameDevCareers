@@ -2,7 +2,7 @@
 
 namespace JobBoardPlatform.PL.ViewModels.Attributes
 {
-    public class UniqueElementsAttribute : ValidationAttribute
+    public class IntElementsAttribute : ValidationAttribute
     {
         public override bool IsValid(object value)
         {
@@ -10,11 +10,15 @@ namespace JobBoardPlatform.PL.ViewModels.Attributes
 
             if (array == null)
             {
-                return true; // Return true for non-array values
+                return true;
             }
 
-            // Check for duplicate elements in the array
-            return array.Distinct().Count() == array.Length;
+            if (array.Any(x => x is int) == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

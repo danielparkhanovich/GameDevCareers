@@ -2,7 +2,7 @@
 {
     public enum EmploymentTypeEnum
     {
-        ContractOfEmployment,
+        Permanent,
         B2B,
         MandatoryContract
     }

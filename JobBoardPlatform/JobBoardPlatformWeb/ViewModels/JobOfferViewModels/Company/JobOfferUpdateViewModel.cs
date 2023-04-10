@@ -1,8 +1,7 @@
-﻿using JobBoardPlatform.DAL.Models.Enums;
-using JobBoardPlatform.PL.ViewModels.Attributes;
+﻿using JobBoardPlatform.PL.ViewModels.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace JobBoardPlatform.PL.ViewModels.JobOffer
+namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
 {
     public class JobOfferUpdateViewModel : IJobOfferSalary
     {
@@ -22,13 +21,15 @@ namespace JobBoardPlatform.PL.ViewModels.JobOffer
         [UniqueElements(ErrorMessage = "Employment types must be unique.")]
         public string[] EmploymentTypes { get; set; }
 
+        [IntElements(ErrorMessage = "From must be a number")]
         public int[]? SalaryFromRange { get; set; }
 
+        [IntElements(ErrorMessage = "To must be a number")]
         public int[]? SalaryToRange { get; set; }
 
         public string[]? SalaryCurrency { get; set; }
 
-        public string[]? TechStack { get; set; }
+        public string[]? TechKeyWords { get; set; }
 
         [Required]
         public string JobDescription { get; set; } = string.Empty;
