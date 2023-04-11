@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.PL.ViewModels.Authentification;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.DAL.Models.Company.Company;
+using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {

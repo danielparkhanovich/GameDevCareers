@@ -1,20 +1,22 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
-using JobBoardPlatform.PL.ViewModels.JobOfferViewModels;
 using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Utilities
 {
-    internal class JobOfferViewModelToJobOfferMapper : IMapper<JobOfferCardDisplayViewModel, JobOffer>
+    internal class JobOfferViewModelToJobOfferMapper : IMapper<JobOfferUpdateViewModel, JobOffer>
     {
-        public void Map(JobOfferCardDisplayViewModel from, JobOffer to)
+        public void Map(JobOfferUpdateViewModel from, JobOffer to)
         {
             to.JobTitle = from.JobTitle;
             to.Description = from.JobDescription;
-            to.WorkLocationType = from.WorkLocationType;
             to.Country = from.Country;
             to.City = from.City;
+            to.Address = from.Address;
+
+            to.WorkLocationId = from.WorkLocationType;
+            to.MainTechnologyTypeId = from.MainTechnology;
 
             MapOfferDetails(from, to);
 
@@ -24,7 +26,7 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             }
         }
 
-        private void MapOfferDetails(JobOfferCardDisplayViewModel from, JobOffer to)
+        private void MapOfferDetails(JobOfferUpdateViewModel from, JobOffer to)
         {
             var employmentDetails = new JobOfferEmploymentDetails[from.EmploymentTypes.Length];
 
@@ -60,7 +62,7 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             to.JobOfferEmploymentDetails = employmentDetails;
         }
 
-        private void MapTechKeyWords(JobOfferCardDisplayViewModel from, JobOffer to)
+        private void MapTechKeyWords(JobOfferUpdateViewModel from, JobOffer to)
         {
             var techKeyWords = new TechKeyWord[from.TechKeyWords.Length];
 

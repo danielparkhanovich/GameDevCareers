@@ -1,0 +1,20 @@
+﻿@model JobOfferCardDisplayViewModel
+@{
+    var offer = Model;
+}
+
+<div class="my-2">
+    <div class="card border">
+        <div class="row border">
+            <div class="col-9">
+                @await Html.PartialAsync("./JobOffers/_JobOffer", Model)
+            </div>
+            <div class="col-3 align-self-center">
+                <div class="d-flex flex-row px-5 text-success">
+                    <i class="bi bi-check-lg align-self-center px-2" style="font-size: 1.5rem;"></i>
+                    <div class="align-self-center">Billed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

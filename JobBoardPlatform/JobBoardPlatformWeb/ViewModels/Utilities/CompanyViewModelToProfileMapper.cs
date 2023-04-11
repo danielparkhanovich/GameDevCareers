@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.DAL.Models.Company.Company;
+﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Profile.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 

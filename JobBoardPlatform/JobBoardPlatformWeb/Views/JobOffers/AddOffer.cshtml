@@ -14,24 +14,38 @@
 
         <div class="row gx-3 mb-3">
             <div class="col-md-4">
-                <label asp-for="Country" class="small mb-1" for="inputCountry">Country *</label>
-                <input asp-for="Country" class="form-control" id="inputCountry" type="text" placeholder="Enter country">
-            </div>
-            <div class="col-md-4">
                 <label asp-for="City" class="small mb-1" for="inputCity">City *</label>
                 <input asp-for="City" class="form-control" id="inputCity" type="text" placeholder="Enter city">
             </div>
             <div class="col-md-4">
+                <label asp-for="Country" class="small mb-1" for="inputCountry">Country *</label>
+                <input asp-for="Country" class="form-control" id="inputCountry" type="text" placeholder="Enter country">
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Address" class="small mb-1" for="inputAddress">Address</label>
+                <input asp-for="Address" class="form-control" id="inputAddress" type="text" placeholder="Enter address">
+            </div>
+        </div>
+
+        <div class="row gx-3 mb-3">
+            <div class="col-md-12">
                 <label asp-for="WorkLocationType" class="small mb-1" for="inputWorkLocationType">Work location *</label>
                 <select asp-for="WorkLocationType" class="form-select" aria-label="Employment type">
-                    <option value="OnCite" selected>On cite</option>
-                    <option value="FullyRemote">Fully remote</option>
-                    <option value="Hybrid">Hybrid</option>
+                    <option value="1" selected>On Site</option>
+                    <option value="2">Hybrid</option>
+                    <option value="3">Fully Remote</option>
                 </select>
             </div>
         </div>
 
         @await Html.PartialAsync("./JobOffers/_MultiselectTripleField", Model)
+
+        <div class="row gx-3 mb-3">
+            <div class="col-md-12">
+                <label asp-for="MainTechnology" class="small mb-1" for="inputJobField">Main Technology *</label>
+                @await Html.PartialAsync("./JobOffers/_MainTechnologiesWidgets", Model)
+            </div>
+        </div>
 
         <div class="row gx-3 mb-3">
             <div class="col-md-12">

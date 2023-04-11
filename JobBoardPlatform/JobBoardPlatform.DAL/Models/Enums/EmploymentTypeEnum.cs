@@ -4,6 +4,6 @@
     {
         Permanent,
         B2B,
-        MandatoryContract
+        MandateContract
     }
 }

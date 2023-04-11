@@ -1,0 +1,20 @@
+﻿@using JobBoardPlatform.DAL.Models.Enums;
+
+@model IJobField
+@{
+    var fields = Enum.GetValues(typeof(MainTechnologyEnum))
+        .Cast<MainTechnologyEnum>()
+        .ToArray();
+}
+
+@for (int i = 0; i < fields.Length; i++)
+{
+    <button class="text-center mx-1 border-0 bg-transparent">
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
+                <i class="bi bi-display" style="font-size: 1.5rem;"></i>
+            </div>
+            @fields[i].ToString()
+        </div>
+    </button>
+}

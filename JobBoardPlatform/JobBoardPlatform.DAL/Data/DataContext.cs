@@ -1,5 +1,5 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Models.Company.Company;
+﻿using JobBoardPlatform.DAL.Data.Enums;
+using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.DAL.Models.EnumTables;
@@ -24,6 +24,8 @@ namespace JobBoardPlatform.DAL.Data
         // Common
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<TechKeyWord> TechKeyWords { get; set; }
+        public DbSet<WorkLocationType> WorkLocationTypes { get; set; }
+        public DbSet<MainTechnologyType> MainFieldTypes { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
@@ -33,16 +35,12 @@ namespace JobBoardPlatform.DAL.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EmploymentType>().HasData(
-                new EmploymentType { Id = 1, Type = EmploymentTypeEnum.Permanent.ToString() },
-                new EmploymentType { Id = 2, Type = EmploymentTypeEnum.B2B.ToString() },
-                new EmploymentType { Id = 3, Type = EmploymentTypeEnum.MandatoryContract.ToString() }
-            );
+            var enumCreator = new EnumModelCreator(modelBuilder);
 
-            modelBuilder.Entity<CurrencyType>().HasData(
-                new CurrencyType { Id = 1, Type = CurrencyTypeEnum.PLN.ToString() },
-                new CurrencyType { Id = 2, Type = CurrencyTypeEnum.EUR.ToString() }
-            );
+            enumCreator.SetDataForEntity<EmploymentType, EmploymentTypeEnum>();
+            enumCreator.SetDataForEntity<CurrencyType, CurrencyTypeEnum>();
+            enumCreator.SetDataForEntity<WorkLocationType, WorkLocationEnum>();
+            enumCreator.SetDataForEntity<MainTechnologyType, MainTechnologyEnum>();
         }
     }
 }

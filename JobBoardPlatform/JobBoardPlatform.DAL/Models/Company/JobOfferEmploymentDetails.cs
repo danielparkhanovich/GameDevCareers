@@ -9,12 +9,12 @@ namespace JobBoardPlatform.DAL.Models.Company
     {
         public int Id { get; set; }
 
-        [ForeignKey("CompanyProfile")]
+        [ForeignKey("EmploymentType")]
         public int EmploymentTypeId { get; set; }
         public EmploymentType EmploymentType { get; set; }
 
         [ForeignKey("SalaryRange")]
         public int SalaryRangeId { get; set; }
-        public JobOfferSalariesRange SalaryRange { get; set; }
+        public JobOfferSalariesRange? SalaryRange { get; set; }
     }
 }

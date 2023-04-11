@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Common.Contracts;
-using JobBoardPlatform.DAL.Models.Company.Company;
+using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
 

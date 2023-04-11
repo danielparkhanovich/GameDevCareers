@@ -4,6 +4,7 @@ using JobBoardPlatform.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoardPlatform.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230411180537_refactored_members_Offer_added_work_location_type")]
+    partial class refactored_members_Offer_added_work_location_type
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,6 +95,7 @@ namespace JobBoardPlatform.DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
@@ -112,15 +116,12 @@ namespace JobBoardPlatform.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsPublished")
+                    b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MainTechnologyTypeId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime2");
@@ -131,8 +132,6 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyProfileId");
-
-                    b.HasIndex("MainTechnologyTypeId");
 
                     b.HasIndex("WorkLocationId");
 
@@ -346,45 +345,6 @@ namespace JobBoardPlatform.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.EnumTables.MainTechnologyType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MainTechnologyTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Type = "Programming"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Type = "Audio"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Type = "Graphics3D"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Type = "LevelDesign"
-                        });
-                });
-
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.EnumTables.WorkLocationType", b =>
                 {
                     b.Property<int>("Id")
@@ -438,12 +398,6 @@ namespace JobBoardPlatform.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.MainTechnologyType", "MainTechnologyType")
-                        .WithMany()
-                        .HasForeignKey("MainTechnologyTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.WorkLocationType", "WorkLocation")
                         .WithMany()
                         .HasForeignKey("WorkLocationId")
@@ -451,8 +405,6 @@ namespace JobBoardPlatform.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("CompanyProfile");
-
-                    b.Navigation("MainTechnologyType");
 
                     b.Navigation("WorkLocation");
                 });

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
 {
-    public class JobOfferUpdateViewModel : IJobOfferSalary
+    public class JobOfferUpdateViewModel : IJobOfferSalary, IJobField
     {
         [Required]
         public string JobTitle { get; set; } = string.Empty;
@@ -15,7 +15,13 @@ namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
         public string City { get; set; } = string.Empty;
 
         [Required]
-        public string WorkLocationType { get; set; } = string.Empty;
+        public int WorkLocationType { get; set; }
+
+        [Required]
+        public string JobDescription { get; set; } = string.Empty;
+
+        [Required]
+        public int MainTechnology { get; set; }
 
         [Required]
         [UniqueElements(ErrorMessage = "Employment types must be unique.")]
@@ -31,7 +37,6 @@ namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
 
         public string[]? TechKeyWords { get; set; }
 
-        [Required]
-        public string JobDescription { get; set; } = string.Empty;
+        public string? Address { get; set; }
     }
 }

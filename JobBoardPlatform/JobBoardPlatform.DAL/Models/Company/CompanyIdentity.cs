@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobBoardPlatform.DAL.Models.Company.Company
+namespace JobBoardPlatform.DAL.Models.Company
 {
     [Index(nameof(Email), IsUnique = true)]
     [Table("CompanyIdentities")]

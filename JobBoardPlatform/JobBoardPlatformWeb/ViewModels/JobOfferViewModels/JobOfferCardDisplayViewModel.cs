@@ -9,10 +9,7 @@
         public string Country { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string WorkLocationType { get; set; } = string.Empty;
-        public string EmploymentType { get; set; } = string.Empty;
-        public int SalaryFrom { get; set; }
-        public int SalaryTo { get; set; }
-        public string SalaryCurrency { get; set; } = string.Empty;
+        public string SalaryDetails { get; set; } = string.Empty;
         public string[]? TechKeyWords { get; set; }
     }
 }

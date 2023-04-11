@@ -9,7 +9,6 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.PL.ViewModels.Profile.Company;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Models.Company.Company;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

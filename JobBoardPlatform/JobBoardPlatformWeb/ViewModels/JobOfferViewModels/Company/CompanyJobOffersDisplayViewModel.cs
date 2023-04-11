@@ -4,6 +4,6 @@ namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
 {
     public class CompanyJobOffersDisplayViewModel
     {
-        public ICollection<JobOffer>? JobOffers { get; set; }
+        public ICollection<JobOfferCardDisplayViewModel>? JobOffers { get; set; }
     }
 }
