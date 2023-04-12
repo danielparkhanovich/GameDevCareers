@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
 {
-    public class JobOfferUpdateViewModel : IJobOfferSalary, IJobField
+    public class JobOfferUpdateViewModel : IJobOfferSalary, IMainTechnology, ITechKeyWords
     {
         [Required]
         public string JobTitle { get; set; } = string.Empty;

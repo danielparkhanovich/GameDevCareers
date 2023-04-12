@@ -1,0 +1,58 @@
+﻿@model ITechKeyWords
+
+<div class="form-group">
+    <input id="keywordsInput" type="text" class="form-control" />
+    <div id="keywordsList" class="list-group mt-2 d-flex flex-row flex-wrap">
+        <div id="templateTechKeyWordWidget" class="rounded-pill align-content-center justify-content-center bg-info px-2 mx-1 techKeyWord-container" style="display:none;">
+            <div class="d-flex flex-row techKeyword-sub-container">
+                <div class="text-light techKeyWordContent">C#</div>
+                <div class="mx-1"></div>
+                <button type="button" class="removeElementButton bg-transparent border-0 align-self-center">
+                    <i class="bi bi-x-lg text-secondary" style="font-size: 0.8rem;"></i>
+                </button>
+                <input class="techKeyWordValue" style="display:none;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var keywordsInput = document.getElementById('keywordsInput')
+
+    keywordsInput.addEventListener('keydown', function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            var input = this.value.trim();
+            if (input !== '') {
+                var index = document.getElementsByClassName('techKeyword-container-added').length;
+
+                var keywordWidget = document.getElementById('templateTechKeyWordWidget');
+
+                var newElement = keywordWidget.cloneNode(true);
+
+                var input = newElement.querySelector('.techKeyWordValue');
+                input.setAttribute("asp-for", "TechKeyWords[" + index + "]");
+                input.value = keywordsInput.value;
+
+                var content = newElement.querySelector('.techKeyWordContent');
+                content.innerHTML = keywordsInput.value;
+
+                newElement.style.display = null;
+                newElement.classList.add("techKeyword-container-added");
+
+                var newKeyWordHtml = newElement.innerHTML;
+                newKeyWordHtml = newKeyWordHtml.replaceAll("[0]", "[" + index + "]");
+
+                newElement.innerHTML = newKeyWordHtml;
+
+                var deleteButton = newElement.querySelector('.removeElementButton');
+                deleteButton.addEventListener('click', function () {
+                    newElement.remove();
+                });
+
+                document.getElementById('keywordsList').appendChild(newElement);
+                this.value = '';
+            }
+        }
+    });
+</script>

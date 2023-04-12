@@ -1,20 +1,63 @@
 ﻿@using JobBoardPlatform.DAL.Models.Enums;
 
-@model IJobField
+@model IMainTechnology
 @{
     var fields = Enum.GetValues(typeof(MainTechnologyEnum))
         .Cast<MainTechnologyEnum>()
         .ToArray();
 }
 
-@for (int i = 0; i < fields.Length; i++)
-{
-    <button class="text-center mx-1 border-0 bg-transparent">
-        <div class="d-flex flex-column justify-content-center align-items-center">
-            <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
-                <i class="bi bi-display" style="font-size: 1.5rem;"></i>
-            </div>
-            @fields[i].ToString()
+<div class="d-flex btn-group flex-wrap" data-toggle="buttons">
+    @for (int i = 0; i < fields.Length; i++)
+    {
+        <div class="d-flex mx-2 flex-column justify-content-center align-items-center radio-button-area" onclick="selectField('mainFieldInput_@i')">
+            <label asp-for="MainTechnology" class="d-flex flex-column align-items-center btn btn-secondary p-3 text-center mainField" for="option4">
+                <i class="d-flex justify-content-center align-items-center border rounded-circle bi bi-display mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
+                @fields[i].ToString()
+            </label>
+            <input asp-for="MainTechnology" id="mainFieldInput_@i" class="mainFieldInput" type="radio" name="MainTechnology" value="@(i+1)" checked="checked"
+            style="position: absolute; opacity: 0; pointer-events: none;" />
         </div>
-    </button>
-}
+    }
+</div>
+
+<script>
+
+    var radioButtons = document.getElementsByClassName('mainFieldInput');
+    checkTechnologyWidget(radioButtons[0]);
+
+    function selectField(value) 
+    {
+        var radioButtons = document.getElementsByClassName('mainFieldInput');
+
+        for (var i = 0; i < radioButtons.length; i++) 
+        {
+            var element = radioButtons[i];
+            uncheckTechnologyWidget(element);
+        }
+
+        var selectedRadioButton = document.querySelector('#'+value);
+        checkTechnologyWidget(selectedRadioButton);
+    }
+
+    function checkTechnologyWidget(element) {
+        element.checked = true;
+
+        // Add 'active' class to parent element of selected radio button
+        var label = element.parentElement.querySelector('.mainField');
+        label.classList.add('text-primary');
+
+        var img = label.querySelector('.mainFieldImg');
+        img.classList.add('border-primary');
+    }
+
+    function uncheckTechnologyWidget(element) {
+        element.checked = false;
+
+        var label = element.parentElement.querySelector('.mainField');
+        label.classList.remove('text-primary');
+
+        var img = label.querySelector('.mainFieldImg');
+        img.classList.remove('border-primary');
+    }
+</script>
