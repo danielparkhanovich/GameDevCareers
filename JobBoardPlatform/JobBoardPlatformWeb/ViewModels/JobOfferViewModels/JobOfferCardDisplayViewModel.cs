@@ -10,6 +10,6 @@
         public string City { get; set; } = string.Empty;
         public string WorkLocationType { get; set; } = string.Empty;
         public string SalaryDetails { get; set; } = string.Empty;
-        public string[]? TechKeyWords { get; set; }
+        public string[]? TechKeywords { get; set; }
     }
 }

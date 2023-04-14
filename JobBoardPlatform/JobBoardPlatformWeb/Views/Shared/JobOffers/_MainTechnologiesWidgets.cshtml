@@ -2,22 +2,22 @@
 
 @model IMainTechnology
 @{
-    var fields = Enum.GetValues(typeof(MainTechnologyEnum))
-        .Cast<MainTechnologyEnum>()
+    var fields = Enum.GetValues(typeof(MainTechnologyTypeEnum))
+        .Cast<MainTechnologyTypeEnum>()
         .ToArray();
 }
 
 <div class="d-flex btn-group flex-wrap" data-toggle="buttons">
     @for (int i = 0; i < fields.Length; i++)
     {
-        <div class="d-flex mx-2 flex-column justify-content-center align-items-center radio-button-area" onclick="selectField('mainFieldInput_@i')">
-            <label asp-for="MainTechnology" class="d-flex flex-column align-items-center btn btn-secondary p-3 text-center mainField" for="option4">
-                <i class="d-flex justify-content-center align-items-center border rounded-circle bi bi-display mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
-                @fields[i].ToString()
-            </label>
-            <input asp-for="MainTechnology" id="mainFieldInput_@i" class="mainFieldInput" type="radio" name="MainTechnology" value="@(i+1)" checked="checked"
-            style="position: absolute; opacity: 0; pointer-events: none;" />
-        </div>
+    <div class="d-flex mx-2 flex-column justify-content-center align-items-center radio-button-area" onclick="selectField('mainFieldInput_@i')">
+        <label asp-for="MainTechnologyType" class="d-flex flex-column align-items-center btn btn-secondary p-3 text-center mainField" for="option4">
+            <i class="d-flex justify-content-center align-items-center border rounded-circle bi bi-display mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
+            @fields[i].ToString()
+        </label>
+            <input asp-for="MainTechnologyType" id="mainFieldInput_@i" class="mainFieldInput" type="radio" name="MainTechnologyType" value="@(i+1)" checked="checked"
+        style="position: absolute; opacity: 0; pointer-events: none;" />
+    </div>
     }
 </div>
 

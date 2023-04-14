@@ -5,9 +5,9 @@
         <div class="col-md-6">
             <label asp-for="EmploymentTypes[0]" class="small mb-1" for="inputEmploymentTypes">Employment type *</label>
             <select asp-for="EmploymentTypes[0]" class="form-select" aria-label="Employment type">
-                <option value="Permanent" selected>Permanent</option>
-                <option value="MandateContract">Mandate contract</option>
-                <option value="B2B">B2B</option>
+                <option value="1" selected>Permanent</option>
+                <option value="2">Mandate contract</option>
+                <option value="3">B2B</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -19,10 +19,10 @@
             <input asp-for="SalaryToRange[0]" class="form-control" id="inputSalaryToRange" type="text" placeholder="To">
         </div>
         <div class="col-md-1">
-            <label asp-for="SalaryCurrency[0]" class="small mb-1" for="inputSalaryToRange">Currency</label>
-            <select asp-for="SalaryCurrency[0]" class="form-select" aria-label="Default select example">
-                <option value="PLN" selected>PLN</option>
-                <option value="EUR">EUR</option>
+            <label asp-for="SalaryCurrencyType[0]" class="small mb-1" for="inputSalaryToRange">Currency</label>
+            <select asp-for="SalaryCurrencyType[0]" class="form-select" aria-label="Default select example">
+                <option value="1" selected>PLN</option>
+                <option value="2">EUR</option>
             </select>
         </div>
         <div class="col-md-1 d-flex justify-content-end flex-column" id="removeButtonContainer">

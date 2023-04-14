@@ -4,6 +4,7 @@ using JobBoardPlatform.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoardPlatform.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230413182422_set_unique_name_keywords")]
+    partial class set_unique_name_keywords
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,27 +86,6 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.ToTable("CompanyProfiles");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.ContactDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ContactAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ContactTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactTypeId");
-
-                    b.ToTable("ContactDetails");
-                });
-
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOffer", b =>
                 {
                     b.Property<int>("Id")
@@ -120,9 +102,6 @@ namespace JobBoardPlatform.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CompanyProfileId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ContactDetailsId")
                         .HasColumnType("int");
 
                     b.Property<string>("Country")
@@ -155,8 +134,6 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyProfileId");
-
-                    b.HasIndex("ContactDetailsId");
 
                     b.HasIndex("MainTechnologyTypeId");
 
@@ -312,40 +289,6 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.ToTable("EmployeeProfiles");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.EnumTables.ContactType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ContactTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Type = "Mail"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Type = "ExternalForm"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Type = "PrivateApplications"
-                        });
-                });
-
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.EnumTables.CurrencyType", b =>
                 {
                     b.Property<int>("Id")
@@ -493,28 +436,11 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.ContactDetails", b =>
-                {
-                    b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.ContactType", "ContactType")
-                        .WithMany()
-                        .HasForeignKey("ContactTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ContactType");
-                });
-
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOffer", b =>
                 {
                     b.HasOne("JobBoardPlatform.DAL.Models.Company.CompanyProfile", "CompanyProfile")
                         .WithMany()
                         .HasForeignKey("CompanyProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("JobBoardPlatform.DAL.Models.Company.ContactDetails", "ContactDetails")
-                        .WithMany()
-                        .HasForeignKey("ContactDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -531,8 +457,6 @@ namespace JobBoardPlatform.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("CompanyProfile");
-
-                    b.Navigation("ContactDetails");
 
                     b.Navigation("MainTechnologyType");
 
@@ -576,7 +500,7 @@ namespace JobBoardPlatform.DAL.Migrations
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.TechKeyword", b =>
                 {
                     b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOffer", null)
-                        .WithMany("TechKeywords")
+                        .WithMany("TechKeyWords")
                         .HasForeignKey("JobOfferId");
                 });
 
@@ -595,7 +519,7 @@ namespace JobBoardPlatform.DAL.Migrations
                 {
                     b.Navigation("JobOfferEmploymentDetails");
 
-                    b.Navigation("TechKeywords");
+                    b.Navigation("TechKeyWords");
                 });
 #pragma warning restore 612, 618
         }

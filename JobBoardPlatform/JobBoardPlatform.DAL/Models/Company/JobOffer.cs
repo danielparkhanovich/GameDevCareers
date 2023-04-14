@@ -21,6 +21,10 @@ namespace JobBoardPlatform.DAL.Models.Company
         public int MainTechnologyTypeId { get; set; }
         public MainTechnologyType MainTechnologyType { get; set; }
 
+        [ForeignKey("ContactDetails")]
+        public int ContactDetailsId { get; set; }
+        public ContactDetails ContactDetails { get; set; }
+
         public string JobTitle { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
@@ -32,6 +36,6 @@ namespace JobBoardPlatform.DAL.Models.Company
         public string? Address { get; set; }
 
         public virtual ICollection<JobOfferEmploymentDetails> JobOfferEmploymentDetails { get; set; }
-        public virtual ICollection<TechKeyWord> TechKeyWords { get; set; }
+        public virtual ICollection<TechKeyword> TechKeywords { get; set; }
     }
 }

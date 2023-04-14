@@ -20,12 +20,14 @@ namespace JobBoardPlatform.DAL.Data
         public DbSet<JobOfferEmploymentDetails> JobOfferEmploymentDetails { get; set; }
         public DbSet<JobOfferSalariesRange> JobOfferSalariesRange { get; set; }
         public DbSet<EmploymentType> EmploymentTypes { get; set; }
+        public DbSet<ContactDetails> ContactDetails { get; set; }
 
         // Common
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
-        public DbSet<TechKeyWord> TechKeyWords { get; set; }
+        public DbSet<TechKeyword> TechKeyWords { get; set; }
         public DbSet<WorkLocationType> WorkLocationTypes { get; set; }
         public DbSet<MainTechnologyType> MainFieldTypes { get; set; }
+        public DbSet<ContactType> ContactTypes { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
@@ -38,9 +40,14 @@ namespace JobBoardPlatform.DAL.Data
             var enumCreator = new EnumModelCreator(modelBuilder);
 
             enumCreator.SetDataForEntity<EmploymentType, EmploymentTypeEnum>();
+
             enumCreator.SetDataForEntity<CurrencyType, CurrencyTypeEnum>();
-            enumCreator.SetDataForEntity<WorkLocationType, WorkLocationEnum>();
-            enumCreator.SetDataForEntity<MainTechnologyType, MainTechnologyEnum>();
+
+            enumCreator.SetDataForEntity<WorkLocationType, WorkLocationTypeEnum>();
+
+            enumCreator.SetDataForEntity<MainTechnologyType, MainTechnologyTypeEnum>();
+
+            enumCreator.SetDataForEntity<ContactType, ContactTypeEnum>();
         }
     }
 }

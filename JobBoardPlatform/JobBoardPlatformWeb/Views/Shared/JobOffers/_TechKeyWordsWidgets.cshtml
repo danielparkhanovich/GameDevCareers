@@ -1,4 +1,4 @@
-﻿@model ITechKeyWords
+﻿@model ITechKeywords
 
 <div class="form-group">
     <input id="keywordsInput" type="text" class="form-control" />
@@ -10,7 +10,7 @@
                 <button type="button" class="removeElementButton bg-transparent border-0 align-self-center">
                     <i class="bi bi-x-lg text-secondary" style="font-size: 0.8rem;"></i>
                 </button>
-                <input class="techKeyWordValue" style="display:none;" />
+                <input asp-for="TechKeywords" class="techKeywordValue" style="display:none;" />
             </div>
         </div>
     </div>
@@ -23,36 +23,54 @@
         if (event.keyCode === 13) {
             event.preventDefault();
             var input = this.value.trim();
-            if (input !== '') {
+            if (input !== '') 
+            {
                 var index = document.getElementsByClassName('techKeyword-container-added').length;
-
                 var keywordWidget = document.getElementById('templateTechKeyWordWidget');
 
-                var newElement = keywordWidget.cloneNode(true);
-
-                var input = newElement.querySelector('.techKeyWordValue');
-                input.setAttribute("asp-for", "TechKeyWords[" + index + "]");
-                input.value = keywordsInput.value;
-
-                var content = newElement.querySelector('.techKeyWordContent');
-                content.innerHTML = keywordsInput.value;
-
-                newElement.style.display = null;
-                newElement.classList.add("techKeyword-container-added");
-
-                var newKeyWordHtml = newElement.innerHTML;
-                newKeyWordHtml = newKeyWordHtml.replaceAll("[0]", "[" + index + "]");
-
-                newElement.innerHTML = newKeyWordHtml;
-
-                var deleteButton = newElement.querySelector('.removeElementButton');
-                deleteButton.addEventListener('click', function () {
-                    newElement.remove();
-                });
-
-                document.getElementById('keywordsList').appendChild(newElement);
-                this.value = '';
+                addNewTechnologyWidget(keywordWidget, index);
             }
+            this.value = '';
         }
     });
+
+    function addNewTechnologyWidget(template, index) {
+
+        var newElement = template.cloneNode(true);
+
+        var input = newElement.querySelector('.techKeywordValue');
+        input.setAttribute("asp-for", "TechKeywords[" + index + "]");
+        input.setAttribute("index-in-list", index);
+        input.value = keywordsInput.value;
+
+        var content = newElement.querySelector('.techKeyWordContent');
+        content.innerHTML = keywordsInput.value;
+
+        newElement.style.display = null;
+        newElement.classList.add("techKeyword-container-added");
+
+        var deleteButton = newElement.querySelector('.removeElementButton');
+        deleteButton.addEventListener('click', function () {
+            onTechnologyWidgetRemove(index);
+            newElement.remove();
+        });
+
+        document.getElementById('keywordsList').appendChild(newElement);
+    }
+
+    function onTechnologyWidgetRemove(removedWidgetIndex) {
+
+        var technologyWidgets = document.getElementsByClassName('techKeyword-container-added');
+        for (var i = 0; i < technologyWidgets.length; i++) 
+        {
+            var input = technologyWidgets[i].querySelector('.techKeywordValue');
+            var index = input.getAttribute("index-in-list");
+            if (index > removedWidgetIndex)
+            {
+                index -= 1;
+            }
+            input.setAttribute("index-in-list", index);
+            input.setAttribute("asp-for", "TechKeywords[" + index + "]");
+        }
+    }
 </script>

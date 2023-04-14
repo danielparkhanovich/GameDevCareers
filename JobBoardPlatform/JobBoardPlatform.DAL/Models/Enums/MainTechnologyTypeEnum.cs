@@ -1,6 +1,6 @@
 ﻿namespace JobBoardPlatform.DAL.Models.Enums
 {
-    public enum MainTechnologyEnum
+    public enum MainTechnologyTypeEnum
     {
         Programming,
         Audio,

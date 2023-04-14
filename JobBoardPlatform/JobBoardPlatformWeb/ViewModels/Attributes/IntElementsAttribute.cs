@@ -6,7 +6,7 @@ namespace JobBoardPlatform.PL.ViewModels.Attributes
     {
         public override bool IsValid(object value)
         {
-            object[] array = value as object[];
+            object[]? array = value as object[];
 
             if (array == null)
             {

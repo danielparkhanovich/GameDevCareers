@@ -1,7 +1,7 @@
 ﻿namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels
 {
-    public interface ITechKeyWords
+    public interface ITechKeywords
     {
-        public string[] TechKeyWords { get; set; }
+        public string[] TechKeywords { get; set; }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IMainTechnology
     {
-        public int MainTechnology { get; set; }
+        public int MainTechnologyType { get; set; }
     }
 }

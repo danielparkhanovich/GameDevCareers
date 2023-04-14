@@ -41,16 +41,31 @@
         @await Html.PartialAsync("./JobOffers/_MultiselectTripleField", Model)
 
         <div class="row gx-3 mb-3">
+            <div class="col-md-6">
+                <label asp-for="ContactType" class="small mb-1" for="inputContactType">Contact form *</label>
+                <select asp-for="ContactType" class="form-select" aria-label="Contact type">
+                    <option value="1" selected>Email</option>
+                    <option value="2">External form</option>
+                    <option value="3">GameDev.Hunt</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="ContactAddress" class="small mb-1" for="inputContactAddress">Contact address *</label>
+                <input asp-for="ContactAddress" class="form-control" id="inputContactAddress" type="text" placeholder="Enter email/url">
+            </div>
+        </div>
+
+        <div class="row gx-3 mb-3">
             <div class="col-md-12">
-                <label asp-for="MainTechnology" class="small mb-1" for="inputJobField">Main Technology *</label>
+                <label asp-for="MainTechnologyType" class="small mb-1" for="inputJobField">Main Technology *</label>
                 @await Html.PartialAsync("./JobOffers/_MainTechnologiesWidgets", Model)
             </div>
         </div>
 
         <div class="row gx-3 mb-3">
             <div class="col-md-12">
-                <label asp-for="TechKeyWords" class="small mb-1" for="inputTechStack">Tech stack</label>
-                @await Html.PartialAsync("./JobOffers/_TechKeyWordsWidgets", Model)
+                <label asp-for="TechKeywords" class="small mb-1" for="inputTechStack">Tech stack</label>
+                @await Html.PartialAsync("./JobOffers/_TechKeywordsWidgets", Model)
             </div>
         </div>
 

@@ -1,18 +1,54 @@
-﻿@model JobOfferCardDisplayViewModel
+﻿@model JobOfferCardDisplayCompanyViewModel
 @{
     var offer = Model;
 }
 
 <div class="my-2">
-    <div class="card border">
-        <div class="row border">
-            <div class="col-9">
-                @await Html.PartialAsync("./JobOffers/_JobOffer", Model)
+    <div class="card border border-white">
+        <div class="row mx-0 @(@offer.IsPublished ? null : "bg-dark bg-opacity-10")">
+            <div class="col-8 mx-0 px-0">
+                @await Html.PartialAsync("./JobOffers/_JobOffer", Model.CardDisplay)
             </div>
-            <div class="col-3 align-self-center">
-                <div class="d-flex flex-row px-5 text-success">
-                    <i class="bi bi-check-lg align-self-center px-2" style="font-size: 1.5rem;"></i>
-                    <div class="align-self-center">Billed</div>
+            <div class="col-1 bg-dark text-light">
+                <div class="overflow-hidden h-100">
+                    <label class="d-flex flex-column justify-content-center align-items-center text-center mainField h-100" for="option4">
+                        <i class="bi bi-display d-flex justify-content-center align-items-center border border-light rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
+                        <small style="font-size: 0.75rem;">@offer.MainTechnology.ToString()</small>
+                    </label>
+                </div>
+            </div>
+            <div class="col-1 bg-info text-light">
+                <div class="overflow-hidden h-100">
+                    <label class="d-flex flex-column justify-content-center align-items-center text-center mainField h-100" for="option4">
+                        @if (offer.ContactType == ContactTypeEnum.Mail.ToString())
+                        {
+                            <i class="bi bi-envelope d-flex justify-content-center align-items-center rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.6rem;"></i>
+                        }
+                        else if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
+                        {
+                            <i class="bi bi-box-arrow-up-right d-flex justify-content-center align-items-center rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.6rem;"></i>
+                        }
+                        else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
+                        {
+                            <i class="bi bi-people d-flex justify-content-center align-items-center rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.6rem;"></i>
+                        }
+                    </label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="d-flex flex-row justify-content-center align-items-center px-1 h-100">
+                    @if (offer.IsPublished)
+                    {
+                        <i class="bi bi-check-lg px-2 text-success" style="font-size: 1.5rem;"></i>
+                        <div class="text-success">Published</div>
+                    }
+                    else
+                    {
+                        <a href="https://example.com" class="d-flex flex-row justify-content-center align-items-center btn btn-primary btn-sm">
+                            <i class="bi bi-credit-card-2-front-fill px-2 text-white" style="font-size: 1.75rem;"></i>
+                            <div class="text-white">Pay to publish</div>
+                        </a>
+                    }
                 </div>
             </div>
         </div>

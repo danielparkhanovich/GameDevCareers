@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Models.Enums;
+using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
@@ -7,6 +7,14 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
 {
     internal class JobOfferViewModelToJobOfferMapper : IMapper<JobOfferUpdateViewModel, JobOffer>
     {
+        private readonly IRepository<TechKeyword> keyWordsRepository;
+
+
+        public JobOfferViewModelToJobOfferMapper(IRepository<TechKeyword> keyWordsRepository)
+        {
+            this.keyWordsRepository = keyWordsRepository;
+        }
+
         public void Map(JobOfferUpdateViewModel from, JobOffer to)
         {
             to.JobTitle = from.JobTitle;
@@ -16,14 +24,27 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             to.Address = from.Address;
 
             to.WorkLocationId = from.WorkLocationType;
-            to.MainTechnologyTypeId = from.MainTechnology;
+            to.MainTechnologyTypeId = from.MainTechnologyType;
+
+            MapContactDetails(from, to);
 
             MapOfferDetails(from, to);
 
-            if (from.TechKeyWords != null)
+            if (from.TechKeywords != null)
             {
-                MapTechKeyWords(from, to);
+                MapTechKeywords(from, to);
             }
+        }
+
+        private void MapContactDetails(JobOfferUpdateViewModel from, JobOffer to)
+        {
+            var contactDetails = new ContactDetails();
+            contactDetails.ContactTypeId = from.ContactType;
+
+            // ContactAddress is null in case of private messages on the website
+            contactDetails.ContactAddress = from.ContactAddress;
+
+            to.ContactDetails = contactDetails;
         }
 
         private void MapOfferDetails(JobOfferUpdateViewModel from, JobOffer to)
@@ -32,51 +53,59 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
 
             for (int i = 0; i < from.EmploymentTypes.Length; i++)
             {
-                var employmentType = from.EmploymentTypes[i];
-                var employmentTypeEnum = (EmploymentTypeEnum)Enum.Parse(typeof(EmploymentTypeEnum), employmentType);
-                int employmentTypeId = Array.IndexOf(
-                    Enum.GetValues(typeof(EmploymentTypeEnum)).Cast<EmploymentTypeEnum>().ToArray(), employmentTypeEnum);
-                employmentTypeId += 1;
+                int employmentTypeId = from.EmploymentTypes[i];
 
-                var currency = from.SalaryCurrency[i];
-                var salaryFrom = from.SalaryFromRange[i];
-                var salaryTo = from.SalaryToRange[i];
+                employmentDetails[i] = new JobOfferEmploymentDetails();
+                employmentDetails[i].EmploymentTypeId = employmentTypeId;
 
-                var currencyTypeEnum = (CurrencyTypeEnum)Enum.Parse(typeof(CurrencyTypeEnum), currency);
-                int currencyTypeId = Array.IndexOf(
-                    Enum.GetValues(typeof(CurrencyTypeEnum)).Cast<CurrencyTypeEnum>().ToArray(), currencyTypeEnum);
-                currencyTypeId += 1;
+                int? currencyTypeId = from.SalaryCurrencyType[i];
+                int? salaryFrom = from.SalaryFromRange[i];
+                int? salaryTo = from.SalaryToRange[i];
 
-                employmentDetails[i] = new JobOfferEmploymentDetails()
+                if (currencyTypeId.HasValue && salaryFrom.HasValue && salaryTo.HasValue)
                 {
-                    EmploymentTypeId = employmentTypeId,
-                    SalaryRange = new JobOfferSalariesRange()
+                    employmentDetails[i].SalaryRange = new JobOfferSalariesRange()
                     {
-                        From = salaryFrom,
-                        To = salaryTo,
-                        SalaryCurrencyId = currencyTypeId
-                    }
-                };
+                        From = salaryFrom.Value,
+                        To = salaryTo.Value,
+                        SalaryCurrencyId = currencyTypeId.Value
+                    };
+                }
             }
 
             to.JobOfferEmploymentDetails = employmentDetails;
         }
 
-        private void MapTechKeyWords(JobOfferUpdateViewModel from, JobOffer to)
+        private async void MapTechKeywords(JobOfferUpdateViewModel from, JobOffer to)
         {
-            var techKeyWords = new TechKeyWord[from.TechKeyWords.Length];
+            from.TechKeywords = from.TechKeywords.Distinct().ToArray();
 
-            for (int i = 0; i < techKeyWords.Length; i++)
+            var techKeywords = new List<TechKeyword>(from.TechKeywords.Length);
+
+            for (int i = 0; i < from.TechKeywords.Length; i++)
             {
-                string keyWord = from.TechKeyWords[i];
+                string keywordString = from.TechKeywords[i];
 
-                techKeyWords[i] = new TechKeyWord()
+                if (string.IsNullOrEmpty(keywordString))
                 {
-                    Name = keyWord
-                };
+                    continue;
+                }
+
+                var keywordsSet = await keyWordsRepository.GetAllSet();
+                if (keywordsSet.Any(x => x.Name == keywordString))
+                {
+                    continue;
+                }
+
+                var keyword = new TechKeyword() { Name = keywordString };
+
+                techKeywords.Add(keyword);
             }
 
-            to.TechKeyWords = techKeyWords;
+            if (techKeywords.Count > 0) 
+            {
+                to.TechKeywords = techKeywords;
+            }
         }
     }
 }

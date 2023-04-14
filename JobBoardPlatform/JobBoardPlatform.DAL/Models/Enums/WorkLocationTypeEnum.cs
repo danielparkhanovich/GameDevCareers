@@ -1,6 +1,6 @@
 ﻿namespace JobBoardPlatform.DAL.Models.Enums
 {
-    public enum WorkLocationEnum
+    public enum WorkLocationTypeEnum
     {
         OnSite,
         Hybrid,

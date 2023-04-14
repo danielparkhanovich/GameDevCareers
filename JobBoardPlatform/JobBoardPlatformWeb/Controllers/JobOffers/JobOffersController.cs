@@ -8,6 +8,7 @@ using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace JobBoardPlatform.PL.Controllers.JobOffers
@@ -21,11 +22,12 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
         private readonly IMapper<JobOfferUpdateViewModel, JobOffer> viewModelToOffer;
 
 
-        public JobOffersController(IRepository<JobOffer> offersRepository, IRepository<CompanyProfile> profilesRepository)
+        public JobOffersController(IRepository<JobOffer> offersRepository, 
+            IRepository<CompanyProfile> profilesRepository, IRepository<TechKeyword> keyWordsRepository)
         {
             this.offersRepository = offersRepository;
             this.profilesRepository = profilesRepository;
-            this.viewModelToOffer = new JobOfferViewModelToJobOfferMapper();
+            this.viewModelToOffer = new JobOfferViewModelToJobOfferMapper(keyWordsRepository);
         }
 
         public async virtual Task<IActionResult> Offers()
@@ -62,7 +64,7 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
             return View(viewModel);
         }
 
-        private async Task<CompanyJobOffersDisplayViewModel> UpdateDisplayView()
+        private async Task<JobOffersDisplayCompanyViewModel> UpdateDisplayView()
         {
             int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
             var profile = await profilesRepository.Get(profileId);
@@ -72,18 +74,30 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
                 .OrderByDescending(offer => offer.CreatedAt)
                 .Include(offer => offer.WorkLocation)
                 .Include(offer => offer.MainTechnologyType)
-                .Include(offer => offer.TechKeyWords)
+                .Include(offer => offer.TechKeywords)
                 .Include(offer => offer.JobOfferEmploymentDetails)
                 .ThenInclude(details => details.SalaryRange != null ? details.SalaryRange.SalaryCurrency : null)
+                .Include(offer => offer.ContactDetails)
+                .ThenInclude(details => details.ContactType)
                 .ToListAsync();
 
-            var display = new CompanyJobOffersDisplayViewModel();
+            var display = new JobOffersDisplayCompanyViewModel();
 
-            var offersDisplay = new List<JobOfferCardDisplayViewModel>();
+            var offersDisplay = new List<JobOfferCardDisplayCompanyViewModel>();
             foreach (var offer in offers)
             {
-                var displayCard = GetDisplayCard(offer, profile);
-                offersDisplay.Add(displayCard);
+                var displayCard = GetDisplayCard(offer, profile)!;
+
+                var cardDisplayCompany = new JobOfferCardDisplayCompanyViewModel()
+                {
+                    CardDisplay = displayCard,
+                    MainTechnology = offer.MainTechnologyType.Type,
+                    ContactType = offer.ContactDetails.ContactType.Type,
+                    ContactAddress = offer.ContactDetails.ContactAddress,
+                    IsPublished = offer.IsPublished,
+                };
+
+                offersDisplay.Add(cardDisplayCompany);
             }
 
             display.JobOffers = offersDisplay;
@@ -97,11 +111,12 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
 
             if (offer.JobOfferEmploymentDetails != null && offer.JobOfferEmploymentDetails.Count > 0)
             {
-                var firstDetails = offer.JobOfferEmploymentDetails.First();
+                var details = offer.JobOfferEmploymentDetails.Where(x => x.SalaryRange != null);
 
-                var salary = firstDetails.SalaryRange;
-                if (salary != null)
+                if (!details.IsNullOrEmpty())
                 {
+                    var firstDetails = details.OrderBy(x => x.SalaryRange!.To).First();
+                    var salary = firstDetails.SalaryRange!;
                     salaryDetails = $"{salary.From} - {salary.To} {salary.SalaryCurrency.Type}";
                 }
             }
@@ -113,7 +128,7 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
                 publishedAgo = $"{(DateTime.Now - offer.PublishedAt).Days}d ago";
             }
 
-            var techKeyWords = offer.TechKeyWords.Select(x => x.Name).ToArray();
+            var techKeyWords = offer.TechKeywords.Select(x => x.Name).ToArray();
 
             var displayCard = new JobOfferCardDisplayViewModel()
             {
@@ -125,7 +140,7 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
                 WorkLocationType = offer.WorkLocation.Type,
                 SalaryDetails = salaryDetails,
                 PublishedAgo = publishedAgo,
-                TechKeyWords = techKeyWords
+                TechKeywords = techKeyWords,
             };
 
             return displayCard;
