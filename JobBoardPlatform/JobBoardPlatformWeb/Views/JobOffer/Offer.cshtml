@@ -56,9 +56,9 @@
             @Html.Raw(System.Web.HttpUtility.HtmlDecode(@offerDescription.JobDescription))
         </div>
     </div>
+    @if (!isExternalForm)
+    {
     <div class="card">
-        @if (!isExternalForm)
-        {
         <div class="card-header bg-white h5">
             Apply for this job
         </div>
@@ -77,14 +77,19 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-12">
                         <label class="small mb-1" for="inputAddress">Introduce yourself (linkedin/github links)</label>
-                        <textarea class="form-control" id="inputAddress" type="text" placeholder="Type something about you">
-                        </textarea>
+                        <textarea class="form-control" id="inputAddress" type="text" placeholder="Type something about you"></textarea>
                     </div>
                 </div>
                 <!-- Submit button -->
                 <button type="submit" class="btn btn-primary btn-block px-5">Apply</button>
             </form>
         </div>
-        }
     </div>
+    }
+    else
+    {
+        <div class="d-flex flex-row justify-content-center">
+            <button type="submit" class="btn btn-primary w-75 px-5">Apply</button>
+        </div>
+    }
 </div>
