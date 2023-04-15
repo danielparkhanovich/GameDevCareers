@@ -1,4 +1,5 @@
 ﻿@using JobBoardPlatform.DAL.Models.Enums;
+@using System.Text.RegularExpressions;
 
 @model JobOfferCardDisplayViewModel
 @{
@@ -8,9 +9,15 @@
     {
         isShowFull = (bool)ViewData["IsFullCardDisplay"];
     }
+
+    // TODO: move to utilities function
+    string formattedCompanyName = Regex.Replace(offer.Company, @"\s+", "-").ToLower();
+    string formattedOfferTitle = Regex.Replace(offer.JobTitle, @"\s+", "-").ToLower();
+    string offerPageUrl = $"{formattedCompanyName}-{formattedOfferTitle}";
 }
 
-<a href="https://example.com" class="card-body d-flex align-content-center border-0 bg-transparent text-decoration-none">
+<a href="@Url.Action("Offer", "JobOffer", new { id=offer.Id, companyname=formattedCompanyName, offertitle=formattedOfferTitle })"
+   class="card-body d-flex align-content-center border-0 bg-transparent text-decoration-none">
     <img src=@offer.CompanyImageUrl width="50" height="50" class="mx-2 border border-secondary rounded">
     <div class="d-flex flex-column mx-4 w-100">
         <div class="d-flex justify-content-between mb-2">

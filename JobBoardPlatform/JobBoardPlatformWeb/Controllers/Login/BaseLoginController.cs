@@ -7,14 +7,6 @@ using JobBoardPlatform.PL.Filters;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
-    /*
-    ClaimsPrincipal claimUser = httpContext.User;
-
-    if (claimUser.Identity.IsAuthenticated)
-    {
-        return AuthorizationResult.Success;
-    }
-    */
     [TypeFilter(typeof(SkipLoggedInUsersFilter))]
     public abstract class BaseLoginController<T, V> : Controller 
         where T: class, IUserIdentityEntity

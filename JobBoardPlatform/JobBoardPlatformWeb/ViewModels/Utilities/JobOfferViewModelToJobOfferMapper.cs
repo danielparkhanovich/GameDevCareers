@@ -1,6 +1,7 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company;
+using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Utilities

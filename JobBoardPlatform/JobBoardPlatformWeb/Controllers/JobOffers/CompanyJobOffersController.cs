@@ -3,6 +3,7 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.JobOfferViewModels;
 using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company;
+using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -15,14 +16,14 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
 {
     // TODO: split into two or more controllers
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
-    public class JobOffersController : Controller
+    public class CompanyJobOffersController : Controller
     {
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<CompanyProfile> profilesRepository;
         private readonly IMapper<JobOfferUpdateViewModel, JobOffer> viewModelToOffer;
 
 
-        public JobOffersController(IRepository<JobOffer> offersRepository, 
+        public CompanyJobOffersController(IRepository<JobOffer> offersRepository, 
             IRepository<CompanyProfile> profilesRepository, IRepository<TechKeyword> keyWordsRepository)
         {
             this.offersRepository = offersRepository;
@@ -30,7 +31,7 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
             this.viewModelToOffer = new JobOfferViewModelToJobOfferMapper(keyWordsRepository);
         }
 
-        public async virtual Task<IActionResult> Offers()
+        public async virtual Task<IActionResult> CompanyOffers()
         {
             var model = await UpdateDisplayView();
 
@@ -132,6 +133,7 @@ namespace JobBoardPlatform.PL.Controllers.JobOffers
 
             var displayCard = new JobOfferCardDisplayViewModel()
             {
+                Id = offer.Id,
                 Company = profile.CompanyName,
                 CompanyImageUrl = profile.ProfileImageUrl,
                 JobTitle = offer.JobTitle,

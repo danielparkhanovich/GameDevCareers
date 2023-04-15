@@ -2,6 +2,9 @@
 {
     public class JobOfferCardDisplayViewModel
     {
+        // Only for redirections
+        public int Id { get; set; }
+
         public string JobTitle { get; set; } = string.Empty;
         public string Company { get; set; } = string.Empty;
         public string CompanyImageUrl { get; set; } = string.Empty;
