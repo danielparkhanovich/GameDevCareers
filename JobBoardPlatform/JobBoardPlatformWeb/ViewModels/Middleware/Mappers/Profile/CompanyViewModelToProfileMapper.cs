@@ -2,7 +2,7 @@
 using JobBoardPlatform.PL.ViewModels.Profile.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.PL.ViewModels.Utilities
+namespace JobBoardPlatform.PL.ViewModels.Utilities.Mappers.Profile
 {
     internal class CompanyViewModelToProfileMapper : IMapper<CompanyProfileViewModel, CompanyProfile>
     {

@@ -10,6 +10,7 @@ using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.PL.ViewModels.Profile.Employee;
 using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Employee;
+using JobBoardPlatform.PL.ViewModels.Utilities.Mappers.Profile;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

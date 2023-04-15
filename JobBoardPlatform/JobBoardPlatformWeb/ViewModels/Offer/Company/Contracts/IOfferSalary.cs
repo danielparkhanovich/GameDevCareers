@@ -1,6 +1,6 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels
+﻿namespace JobBoardPlatform.PL.ViewModels.Offer.Company.Contracts
 {
-    public interface IJobOfferSalary
+    public interface IOfferSalary
     {
         public int[] EmploymentTypes { get; set; }
 

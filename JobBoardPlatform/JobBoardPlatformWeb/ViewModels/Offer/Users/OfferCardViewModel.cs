@@ -1,8 +1,8 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels
+﻿namespace JobBoardPlatform.PL.ViewModels.Offer.Users
 {
-    public class JobOfferCardDisplayViewModel
+    public class OfferCardViewModel
     {
-        // Only for redirections
+        // For redirections only
         public int Id { get; set; }
 
         public string JobTitle { get; set; } = string.Empty;

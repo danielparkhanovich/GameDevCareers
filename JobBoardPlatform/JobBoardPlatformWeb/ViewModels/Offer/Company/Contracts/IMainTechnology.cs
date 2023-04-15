@@ -1,4 +1,4 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels
+﻿namespace JobBoardPlatform.PL.ViewModels.Offer.Company.Contracts
 {
     public interface IMainTechnology
     {

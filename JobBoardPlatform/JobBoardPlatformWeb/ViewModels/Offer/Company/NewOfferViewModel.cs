@@ -1,9 +1,10 @@
 ﻿using JobBoardPlatform.PL.ViewModels.Attributes;
+using JobBoardPlatform.PL.ViewModels.Offer.Company.Contracts;
 using System.ComponentModel.DataAnnotations;
 
-namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
+namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
 {
-    public class JobOfferUpdateViewModel : IJobOfferSalary, IMainTechnology, ITechKeywords
+    public class NewOfferViewModel : IOfferSalary, IMainTechnology, ITechKeywords
     {
         [Required]
         public string JobTitle { get; set; } = string.Empty;

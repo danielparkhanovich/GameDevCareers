@@ -1,22 +1,21 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company;
-using JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Users;
+using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.PL.ViewModels.Utilities
+namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer.CompanyBoard
 {
-    internal class JobOfferViewModelToJobOfferMapper : IMapper<JobOfferUpdateViewModel, JobOffer>
+    internal class NewOfferViewModelToJobOfferMapper : IMapper<NewOfferViewModel, JobOffer>
     {
         private readonly IRepository<TechKeyword> keyWordsRepository;
 
 
-        public JobOfferViewModelToJobOfferMapper(IRepository<TechKeyword> keyWordsRepository)
+        public NewOfferViewModelToJobOfferMapper(IRepository<TechKeyword> keyWordsRepository)
         {
             this.keyWordsRepository = keyWordsRepository;
         }
 
-        public void Map(JobOfferUpdateViewModel from, JobOffer to)
+        public void Map(NewOfferViewModel from, JobOffer to)
         {
             to.JobTitle = from.JobTitle;
             to.Description = from.JobDescription;
@@ -37,7 +36,7 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             }
         }
 
-        private void MapContactDetails(JobOfferUpdateViewModel from, JobOffer to)
+        private void MapContactDetails(NewOfferViewModel from, JobOffer to)
         {
             var contactDetails = new ContactDetails();
             contactDetails.ContactTypeId = from.ContactType;
@@ -48,7 +47,7 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             to.ContactDetails = contactDetails;
         }
 
-        private void MapOfferDetails(JobOfferUpdateViewModel from, JobOffer to)
+        private void MapOfferDetails(NewOfferViewModel from, JobOffer to)
         {
             var employmentDetails = new JobOfferEmploymentDetails[from.EmploymentTypes.Length];
 
@@ -77,7 +76,7 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
             to.JobOfferEmploymentDetails = employmentDetails;
         }
 
-        private async void MapTechKeywords(JobOfferUpdateViewModel from, JobOffer to)
+        private async void MapTechKeywords(NewOfferViewModel from, JobOffer to)
         {
             from.TechKeywords = from.TechKeywords.Distinct().ToArray();
 
@@ -103,7 +102,7 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities
                 techKeywords.Add(keyword);
             }
 
-            if (techKeywords.Count > 0) 
+            if (techKeywords.Count > 0)
             {
                 to.TechKeywords = techKeywords;
             }

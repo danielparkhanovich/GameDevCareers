@@ -1,7 +1,8 @@
 ﻿@using JobBoardPlatform.DAL.Models.Enums;
 @using System.Text.RegularExpressions;
+@using JobBoardPlatform.PL.ViewModels.Offer.Users;
 
-@model JobOfferCardDisplayViewModel
+@model OfferCardViewModel
 @{
     var offer = Model;
     bool isShowFull = false;
@@ -16,7 +17,7 @@
     string offerPageUrl = $"{formattedCompanyName}-{formattedOfferTitle}";
 }
 
-<a href="@Url.Action("Offer", "JobOffer", new { id=offer.Id, companyname=formattedCompanyName, offertitle=formattedOfferTitle })"
+<a href="@Url.Action("Offer", "OfferContent", new { id=offer.Id, companyname=formattedCompanyName, offertitle=formattedOfferTitle })"
    class="card-body d-flex align-content-center border-0 bg-transparent text-decoration-none">
     <img src=@offer.CompanyImageUrl width="50" height="50" class="mx-2 border border-secondary rounded">
     <div class="d-flex flex-column mx-4 w-100">

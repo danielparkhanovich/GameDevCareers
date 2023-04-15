@@ -1,11 +1,13 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.JobOfferViewModels.Company
+﻿using JobBoardPlatform.PL.ViewModels.Offer.Users;
+
+namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
 {
-    public class JobOfferCardDisplayCompanyViewModel
+    public class CompanyOfferCardViewModel
     {
         public string MainTechnology { get; set; } = string.Empty;
         public string ContactType { get; set; } = string.Empty;
         public string? ContactAddress { get; set; }
         public bool IsPublished { get; set; }
-        public JobOfferCardDisplayViewModel CardDisplay { get; set; }
+        public OfferCardViewModel CardDisplay { get; set; }
     }
 }
