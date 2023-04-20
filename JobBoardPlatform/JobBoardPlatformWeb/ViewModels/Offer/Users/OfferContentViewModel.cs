@@ -1,28 +1,8 @@
 ﻿namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Users
 {
-    // TODO: rename -> Offer content display view model
     public class OfferContentViewModel
     {
-        public string ContactForm { get; set; } = string.Empty;
-
-        public string JobTitle { get; set; } = string.Empty;
-
-        public string CompanyName { get; set; } = string.Empty;
-
-        public string CompanyImageUrl { get; set; } = string.Empty;
-
-        public string FullAddress { get; set; } = string.Empty;
-
-        public string WorkLocationType { get; set; } = string.Empty;
-
-        public string JobDescription { get; set; } = string.Empty;
-
-        public string MainTechnologyType { get; set; } = string.Empty;
-
-        public string[] SalaryDetails { get; set; }
-
-        public string[] EmploymentDetails { get; set; }
-
-        public string[]? TechKeywords { get; set; }
+        public OfferContentDisplayViewModel Display { get; set; }
+        public OfferApplicationUpdateViewModel Update { get; set; }
     }
 }

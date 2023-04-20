@@ -8,9 +8,9 @@ using System;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer
 {
-    internal class JobOfferToContentViewModelMapper : IMapper<JobOffer, OfferContentViewModel>
+    internal class JobOfferToContentViewModelMapper : IMapper<JobOffer, OfferContentDisplayViewModel>
     {
-        public void Map(JobOffer from, OfferContentViewModel to)
+        public void Map(JobOffer from, OfferContentDisplayViewModel to)
         {
             var techKeyWords = from.TechKeywords.Select(x => x.Name).ToArray();
 
@@ -28,7 +28,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer
             MapFullAddress(from, to);
         }
 
-        private void MapSalaryDetails(JobOffer from, OfferContentViewModel to)
+        private void MapSalaryDetails(JobOffer from, OfferContentDisplayViewModel to)
         {
             var salaryDisplayText = new List<string>(from.JobOfferEmploymentDetails.Count);
             var employmentTypeDisplayText = new List<string>(from.JobOfferEmploymentDetails.Count);
@@ -54,7 +54,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer
             to.EmploymentDetails = employmentTypeDisplayText.ToArray();
         }
 
-        private void MapFullAddress(JobOffer from, OfferContentViewModel to)
+        private void MapFullAddress(JobOffer from, OfferContentDisplayViewModel to)
         {
             string fullAddress = $"{from.City}, {from.Country}";
             if (!string.IsNullOrEmpty(from.Address))

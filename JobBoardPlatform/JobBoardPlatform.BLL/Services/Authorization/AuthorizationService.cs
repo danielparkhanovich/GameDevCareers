@@ -58,7 +58,8 @@ namespace JobBoardPlatform.BLL.Services.Authorization
                 new Claim(UserSessionProperties.NameIdentifier, data.Id.ToString()),
                 new Claim(UserSessionProperties.ProfileIdentifier, data.ProfileId.ToString()),
                 new Claim(UserSessionProperties.DisplayName, data.DisplayName),
-                new Claim(UserSessionProperties.DisplayImageUrl, data.DisplayImageUrl)
+                new Claim(UserSessionProperties.DisplayImageUrl, data.DisplayImageUrl),
+                new Claim(UserSessionProperties.Role, data.Role)
             };
         }
     }

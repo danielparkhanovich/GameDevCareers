@@ -29,13 +29,17 @@ namespace JobBoardPlatform.DAL.Models.Company
         public string Country { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string? Address { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime PublishedAt { get; set; }
         public bool IsPublished { get; set; }
 
-        public string? Address { get; set; }
+        public int NumberOfApplications { get; set; }
+        public int NumberOfViews { get; set; }
+
 
         public virtual ICollection<JobOfferEmploymentDetails> JobOfferEmploymentDetails { get; set; }
         public virtual ICollection<TechKeyword> TechKeywords { get; set; }
+        public virtual ICollection<OfferApplication> OfferApplications { get; set; }
     }
 }

@@ -1,21 +1,20 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer;
-using JobBoardPlatform.PL.ViewModels.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
 {
-    public class OfferContentViewModelFactory : IFactory<OfferContentViewModel>
+    public class OfferContentDisplayViewModelFactory : IFactory<OfferContentDisplayViewModel>
     {
         private readonly int offerId;
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IMapper<JobOffer, OfferContentViewModel> offerToContentViewModel;
+        private readonly IMapper<JobOffer, OfferContentDisplayViewModel> offerToContentViewModel;
 
 
-        public OfferContentViewModelFactory(int offerId, IRepository<JobOffer> offersRepository)
+        public OfferContentDisplayViewModelFactory(int offerId, IRepository<JobOffer> offersRepository)
         {
             this.offerId = offerId;
             this.offersRepository = offersRepository;
@@ -42,11 +41,11 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
             return offer;
         }
 
-        public async Task<OfferContentViewModel> Create()
+        public async Task<OfferContentDisplayViewModel> Create()
         {
             var offer = await GetOffers();
 
-            var display = new OfferContentViewModel();
+            var display = new OfferContentDisplayViewModel();
             offerToContentViewModel.Map(offer, display);
 
             return display;

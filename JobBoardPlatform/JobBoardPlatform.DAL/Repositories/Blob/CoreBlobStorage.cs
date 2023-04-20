@@ -79,7 +79,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
         {
             var blobProperties = await GetBlobProperties(path);
 
-            string fileName = "null";
+            string fileName = string.Empty;
 
             if (blobProperties.Metadata.ContainsKey(NameProperty)) 
             {

@@ -25,7 +25,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             this.userProfileImagesStorage = new UserProfileImagesStorage(azureOptions);
             this.profileRepository = profileRepository;
             this.userViewToModel = new EmployeeViewModelToProfileMapper();
-
+            
             this.userProfileResumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
         }
 
@@ -91,6 +91,8 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             {
                 Display = display
             };
+
+            employeeProfileViewModel.Update.Description = profile.Description;
 
             return employeeProfileViewModel;
         }

@@ -3,6 +3,7 @@
     ViewData["Title"] = "Employee";
 
     var user = ViewData.Model.Display;
+    var update = Model.Update;
 
     string? userImageUrl = user.ProfileImageUrl;
     if (string.IsNullOrEmpty(userImageUrl))
@@ -55,10 +56,8 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label asp-for="Update.Description" class="small mb-1" for="Description">Introduce yourself</label>
-                            <textarea asp-for="Update.Description" class="form-control" id="description" placeholder="Introduce yourself">
-                                @user.Description
-                            </textarea>
+                            <label asp-for=@update.Description class="small mb-1" for="description">Introduce yourself</label>
+                            <textarea asp-for=@update.Description class="form-control" id="description" placeholder="Introduce yourself">@user.Description</textarea>
                         </div>
                     </div>
                 </div>

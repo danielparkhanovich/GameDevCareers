@@ -21,6 +21,7 @@ namespace JobBoardPlatform.DAL.Data
         public DbSet<JobOfferSalariesRange> JobOfferSalariesRange { get; set; }
         public DbSet<EmploymentType> EmploymentTypes { get; set; }
         public DbSet<ContactDetails> ContactDetails { get; set; }
+        public DbSet<OfferApplication> OfferApplications { get; set; }
 
         // Common
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
