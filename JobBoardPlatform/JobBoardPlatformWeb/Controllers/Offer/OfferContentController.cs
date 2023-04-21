@@ -9,7 +9,8 @@ using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using Microsoft.Extensions.Options;
-using JobBoardPlatform.BLL.Services.Cookies;
+using JobBoardPlatform.BLL.Services.PageViews;
+using JobBoardPlatform.PL.ViewModels.Profile.Employee;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -21,8 +22,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly IBlobStorage resumeStorage;
 
 
-        public OfferContentController(IRepository<JobOffer> offersRepository, 
-            IRepository<EmployeeProfile> profileRepository, 
+        public OfferContentController(IRepository<JobOffer> offersRepository,
+            IRepository<EmployeeProfile> profileRepository,
             IRepository<EmployeeIdentity> identityRepository,
             IOptions<AzureOptions> azureOptions)
         {
@@ -43,7 +44,10 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
             var content = new OfferContentViewModel();
             content.Display = display;
-            content.Update = new OfferApplicationUpdateViewModel();
+            content.Update = new OfferApplicationUpdateViewModel()
+            {
+                AttachedResume = new EmployeeAttachedResumeViewModel()
+            };
 
             if (!offer.IsPublished)
             {
@@ -57,10 +61,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
             await TryFillApplicationForm(content, display);
 
-            if (!IsUserOwner(offer))
-            {
-                await TryIncreaseViewsCount(offer);
-            }
+            await TryIncreaseViewsCount(offer);
 
             return View(content);
         }
@@ -91,6 +92,11 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private async Task TryIncreaseViewsCount(JobOffer offer)
         {
+            if (IsUserOwner(offer))
+            {
+                return;
+            }
+
             var viewsHandler = new UserViewsHandler();
             if (viewsHandler.IsViewedRecently(offer.Id, Request, Response))
             {
@@ -115,9 +121,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                     var update = await GetUpdateViewModel();
                     content.Update = update;
 
-                    if (update.AttachedResumeUrl != null)
+                    string? resumeUrl = update.AttachedResume.ResumeUrl;
+
+                    if (resumeUrl != null)
                     {
-                        display.ResumeName = await resumeStorage.GetBlobName(update.AttachedResumeUrl);
+                        update.AttachedResume.FileName = await resumeStorage.GetBlobName(resumeUrl);
+                        update.AttachedResume.FileSize = await resumeStorage.GetBlobSize(resumeUrl);
                     }
                 }
             }
@@ -135,7 +144,10 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
             update.FullName = $"{profile.Name} {profile.Surname}";
             update.Email = identity.Email;
-            update.AttachedResumeUrl = profile.ResumeUrl;
+
+            var attachedResume = new EmployeeAttachedResumeViewModel();
+            attachedResume.ResumeUrl = profile.ResumeUrl;
+            update.AttachedResume = attachedResume;
 
             if (profile.Description != null)
             {

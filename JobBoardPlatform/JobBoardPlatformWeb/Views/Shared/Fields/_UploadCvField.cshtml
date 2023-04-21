@@ -1,0 +1,205 @@
+﻿@using JobBoardPlatform.PL.ViewModels.Offer.Company.Contracts;
+
+@model IAttachedResume
+@{
+    ViewData["IsClientSideHandling"] = true;
+
+    // in case of server side handling, form will be immediately submitted
+    bool isClientSideHandling = false;
+
+    if (ViewData.ContainsKey("IsClientSideHandling"))
+    {
+        isClientSideHandling = true;
+    }
+
+    var resume = Model;
+    bool isFilePreUploaded = (string.IsNullOrEmpty(Model.ResumeUrl) == false);
+}
+
+<div class="mb-3">
+    <label asp-for="@resume.File" class="small mb-1" for="attachedResume-input">Upload CV</label>
+    <div class="card mb-4 mb-xl-0" id="uploadResumeCard">
+        <input asp-for="@resume.File" name="File" id="attachedResume-input" type="file" accept="application/pdf" style="display:none">
+
+        <div class="card-body d-flex flex-column align-items-center">
+            <div class="flex-column align-items-center m-0 p-0" id="client-side-attachedResume-file" style=@(isFilePreUploaded ? "display:flex;" : "display:none;")>
+                <a role="button" id="client-side-open-resume-button" target=”_blank” href="">
+                    <i class="bi bi-file-earmark-check-fill text-info" style="font-size: 5rem;"></i>
+                </a>
+
+                <b id="client-side-fileName">@resume.FileName</b>
+                <div id="client-side-fileSize">@resume.FileSize</div>
+
+                <div>
+                    <input type="hidden" name="id" value="@resume.ResumeUrl" />
+                    @if (isClientSideHandling)
+                    {
+                        <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent" 
+                        onclick="removeClientSideAttachedResume();">
+                            <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent" 
+                        onclick="location.href='@Url.Action("DeleteResume")'">
+                            <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="flex-column align-items-center m-0 p-0" id="client-side-attachedResume-input" style=@(!isFilePreUploaded ? "display:flex;" : "display:none;")>
+                <i class="bi bi-file-earmark-arrow-up" style="font-size: 5rem;"></i>
+                <div class="d-flex justify-content-between small font-italic text-muted mb-2">
+                    <label asp-for="File" class="custom-file-label" for="attachedResume-input">
+                        Drag and Drop or <button class="btn btn-primary btn-sm" type="button" id="attachedResume-button">Browse</button>
+                    </label>
+                </div>
+                <div class="small font-italic text-muted mb-2">PDF no larger than 5 MB</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const fileContainer = document.getElementById("attachedResume-input");
+    const attachResumeButton = document.getElementById("attachedResume-button");
+
+    addInputFieldListeners();
+    
+    const displayFile = document.getElementById("client-side-attachedResume-file");
+    const displayInput = document.getElementById("client-side-attachedResume-input");
+
+    var openResumeButton = document.getElementById("client-side-open-resume-button");
+    openResumeButton.href = @Json.Serialize(Model.ResumeUrl);
+
+    const isClientSideHandling = @Json.Serialize(ViewData.ContainsKey("IsClientSideHandling"));
+
+    function addInputFieldListeners()
+    {
+        attachResumeButton.addEventListener("click", function () {
+            fileContainer.click();
+        });
+
+        fileContainer.addEventListener("change", function () {
+
+            if (isClientSideHandling) 
+            {
+                handleFileUpload();
+            }
+            else 
+            {
+                this.form.submit();
+            }
+
+        });
+
+        const card = document.getElementById("uploadResumeCard");
+
+        card.addEventListener("dragover", function (event) {
+            event.preventDefault();
+            card.classList.add("dragover");
+        });
+
+        card.addEventListener("dragleave", function (event) {
+            event.preventDefault();
+            card.classList.remove("dragover");
+        });
+
+        card.addEventListener("drop", function (event) {
+            event.preventDefault();
+            card.classList.remove("dragover");
+            fileContainer.files = event.dataTransfer.files;
+
+            if (isClientSideHandling) 
+            {
+                handleFileUpload();
+            }
+            else 
+            {
+                fileContainer.form.submit();
+            }
+        });
+    }
+
+    // used in case of client-side handling
+    function handleFileUpload() 
+    {
+        // Get the file input element and the file object
+        const file = fileContainer.files[0];
+
+        console.log("Test");
+
+        // Create a FileReader object to read the file contents
+        const reader = new FileReader();
+        reader.onload = () => {
+            // Update the UI to display the file information to the user
+            const fileName = document.getElementById('client-side-fileName');
+            const fileSize = document.getElementById('client-side-fileSize');
+
+            fileName.innerText = file.name;
+            fileSize.innerText = formatFileSize(file.size);
+
+            toggleClientFileFieldView(true);
+        };
+        reader.readAsDataURL(file);
+
+        function clicked(event) {
+            const url = URL.createObjectURL(file);
+            const open = window.open(url, '_blank');
+        };
+
+        var button = document.getElementById("client-side-open-resume-button");
+        button.removeAttribute("href");
+
+        // remove event listeners
+        var old_element = button;
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+
+        // add new
+        new_element.addEventListener("click", clicked, false);
+    }
+
+    function formatFileSize(bytes) 
+    {
+        const units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
+        let size = bytes;
+        let i = 0;
+
+        while (size >= 1024 && i < units.length) {
+            size /= 1024;
+            i++;
+        }
+
+        return `${size.toFixed(2)} ${units[i]}`;
+    }
+
+    function removeClientSideAttachedResume() 
+    {
+        console.log("removed");
+
+        fileContainer.files = null;
+        fileContainer.value = "";
+        toggleClientFileFieldView(false);
+    }
+
+    function toggleClientFileFieldView(isClientUploaded) 
+    {
+        let displayFileValue = "flex";
+        let displayInputValue = "flex";
+
+        if (isClientUploaded)
+        {
+            displayInputValue = "none";
+        }
+        else
+        {
+            displayFileValue = "none";
+        }
+
+        displayFile.style.display = displayFileValue;
+        displayInput.style.display = displayInputValue;
+    }
+</script>

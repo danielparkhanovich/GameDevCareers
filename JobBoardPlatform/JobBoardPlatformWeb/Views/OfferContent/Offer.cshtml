@@ -2,6 +2,7 @@
 @model OfferContentViewModel
 @{
     var offerDescription = Model.Display;
+
     bool isFullyRemote = offerDescription.WorkLocationType == WorkLocationTypeEnum.FullyRemote.ToString();
     bool isTechKeywords = offerDescription.TechKeywords != null && offerDescription.TechKeywords.Count() > 0;
     bool isExternalForm = offerDescription.ContactForm == ContactTypeEnum.ExternalForm.ToString();
@@ -80,37 +81,7 @@
                     </div>
                     <div class="row gx-3 mb-3">
                         <div class="col-md-12">
-                            <label asp-for="@application.AttachedResume" class="small mb-1" for="attachedResume-input">Upload CV (.pdf)</label>
-                            <input asp-for="@application.AttachedResume" name="Update.AttachedResume" id="attachedResume-input" type="file" accept="application/pdf" style="display:none">
-
-                            <div class="card mb-4 mb-xl-0">
-                                <div class="card-body d-flex flex-column align-items-center">
-                                    @if (!string.IsNullOrEmpty(offerDescription.ResumeName))
-                                    {
-                                        <a role="button" target="_blank" rel="noopener noreferrer" href=@application.AttachedResumeUrl>
-                                            <i class="bi bi-file-earmark-check-fill text-info" style="font-size: 5rem;"></i>
-                                        </a>
-                                        <b>@offerDescription.ResumeName</b>
-                                        <div>
-                                            <input type="hidden" name="id" value="Display.AttachedResumeUrl" />
-                                            <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent"
-                                                onclick="location.href='@Url.Action("DeleteResume", "OfferContent")'">
-                                                <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
-                                            </button>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-file-earmark-arrow-up" style="font-size: 5rem;"></i>
-                                        <div class="d-flex justify-content-between small font-italic text-muted mb-2">
-                                            <label asp-for="@application.AttachedResume" class="custom-file-label" for="attachedResume-input">
-                                                Drag and Drop or <button class="btn btn-primary btn-sm" type="button" id="attachedResume-button">Browse</button>
-                                            </label>
-                                        </div>
-                                        <div class="small font-italic text-muted mb-2">PDF no larger than 5 MB</div>
-                                    }
-                                </div>
-                            </div>
+                            @await Html.PartialAsync("./Fields/_UploadCvField", application.AttachedResume)
                         </div>
                     </div>
                     <div class="row gx-3 mb-3">

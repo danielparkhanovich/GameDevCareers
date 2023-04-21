@@ -24,6 +24,6 @@
 
         public string[]? TechKeywords { get; set; }
 
-        public string? ResumeName { get; set; }
+        public string? ResumeUrl { get; set; }
     }
 }

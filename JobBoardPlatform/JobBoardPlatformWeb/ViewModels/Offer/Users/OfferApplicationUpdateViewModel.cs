@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using JobBoardPlatform.PL.ViewModels.Profile.Employee;
+using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Users
 {
@@ -10,10 +11,7 @@ namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Users
         [Required]
         public string Email { get; set; } = string.Empty;
 
-        // TODO: add validation for this
-        public IFormFile? AttachedResume { get; set; }
-
-        public string? AttachedResumeUrl { get; set; }
+        public EmployeeAttachedResumeViewModel AttachedResume { get; set; }
 
         public string AdditionalInformation { get; set; } = string.Empty;
     }
