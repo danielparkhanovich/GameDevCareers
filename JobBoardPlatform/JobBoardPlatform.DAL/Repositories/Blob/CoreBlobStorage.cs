@@ -11,7 +11,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
 {
     public abstract class CoreBlobStorage : IBlobStorage
     {
-        private const string PropertiesSeparator = "_";
+        protected const string PropertiesSeparator = "_";
         private const string NameProperty = "Name";
 
         private readonly BlobServiceClient blobServiceClient;
@@ -27,12 +27,11 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
         {
             BlobContainerClient containerClient = await GetContainerClientAsync();
 
-            string fullFileName = $"{Guid.NewGuid()}{PropertiesSeparator}{file.FileName}";
+            string fullFileName = GetFileName(file);
 
             BlobClient blobClient = containerClient.GetBlobClient(fullFileName);
 
-            var metaData = new Dictionary<string, string>();
-            metaData[NameProperty] = file.FileName;
+            var metadata = GetMetadata(file);
 
             using (var fileUploadStream = new MemoryStream())
             {
@@ -41,7 +40,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
                 await blobClient.UploadAsync(fileUploadStream, new BlobUploadOptions()
                 {
                     HttpHeaders = GetBlobHttpHeaders(),
-                    Metadata = metaData
+                    Metadata = metadata
                 }, cancellationToken: default);
             }
 
@@ -104,10 +103,22 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
                 format = "Mb";
             }
 
-            return $"{fileSize.ToString("#.##")} {format}";
+            var fileSizeFormatted = fileSize.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+
+            return $"{fileSizeFormatted} {format}";
+        }
+
+        protected virtual Dictionary<string, string> GetMetadata(IFormFile file)
+        {
+            var metadata = new Dictionary<string, string>();
+            metadata[NameProperty] = file.FileName;
+
+            return metadata;
         }
 
         protected abstract string GetContainerName();
+
+        protected abstract string GetFileName(IFormFile file);
 
         protected abstract BlobHttpHeaders GetBlobHttpHeaders();
 

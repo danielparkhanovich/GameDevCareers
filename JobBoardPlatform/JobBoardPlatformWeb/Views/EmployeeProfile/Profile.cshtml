@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Employee";
 
-    var user = ViewData.Model.Display;
+    var user = Model.Display;
     var update = Model.Update;
 
     string? userImageUrl = user.ProfileImageUrl;
@@ -19,7 +19,6 @@
     <!-- Account page navigation-->
     @await Html.PartialAsync("./ProfileTabs/_EmployeeProfileTabs", Model)
 
-    <hr class="mt-0 mb-4">
     <div class="alert alert-dismissible alert-warning">
         <i class="bi bi-exclamation-triangle" style="font-size: 1.25rem;"></i>
         <small>Complete your profile & apply with just one click!</small>
@@ -56,8 +55,10 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label asp-for=@update.Description class="small mb-1" for="description">Introduce yourself</label>
-                            <textarea asp-for=@update.Description class="form-control" id="description" placeholder="Introduce yourself">@user.Description</textarea>
+                            <div class="col-md-12">
+                                <label asp-for="Update.Description" class="small mb-1">Introduce yourself</label>
+                                <textarea asp-for="Update.Description" class="form-control" placeholder="Introduce yourself">@update.Description</textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -67,43 +68,11 @@
                 <div class="card mb-4" id="uploadResumeCard">
                     <div class="card-header">Account Details</div>
                     <div class="card-body">
-                        <!-- Form Row-->
-                        <div class="mb-3">
-                            <label asp-for="Update.AttachedResume" class="small mb-1" for="attachedResume-input">Upload CV</label>
-                            <input asp-for="Update.AttachedResume" name="Update.AttachedResume" id="attachedResume-input" type="file" accept="application/pdf" style="display:none">
+                        @{
+                            ViewData["IsPostFormOnChange"] = true;
+                        }
+                        @await Html.PartialAsync("./Fields/_UploadCvField", Model)
 
-                            <div class="card mb-4 mb-xl-0">
-                                <div class="card-body d-flex flex-column align-items-center">
-                                    @if (isFileUploaded)
-                                    {
-                                        <a role="button" target="_blank" rel="noopener noreferrer" href=@user.AttachedResumeUrl>
-                                            <i class="bi bi-file-earmark-check-fill text-info" style="font-size: 5rem;"></i>
-                                        </a>
-  
-                                        <b>@user.AttachedResumeFileName</b>
-                                        <div>@user.AttachedResumeFileSize</div>
-
-                                        <div>
-                                            <input type="hidden" name="id" value="Display.AttachedResumeUrl" />
-                                            <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent"
-                                                onclick="location.href='@Url.Action("DeleteResume", "EmployeeProfile")'">
-                                                <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
-                                            </button>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-file-earmark-arrow-up" style="font-size: 5rem;"></i>
-                                        <div class="d-flex justify-content-between small font-italic text-muted mb-2">
-                                            <label asp-for="Update.AttachedResume" class="custom-file-label" for="attachedResume-input">
-                                                Drag and Drop or <button class="btn btn-primary btn-sm" type="button" id="attachedResume-button">Browse</button>
-                                            </label>
-                                        </div>
-                                        <div class="small font-italic text-muted mb-2">PDF no larger than 5 MB</div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
                         <div class="mb-3">
                             <label asp-for="Update.YearsOfExperience" class="small mb-1" for="Update.YearsOfExperience">Years of experience</label>
                             <div class="btn-group d-flex" data-toggle="buttons">
@@ -149,39 +118,6 @@
 </div>
 
 <script>
-    // TODO2: Move to shared components
-    var input2 = document.getElementById("attachedResume-input");
-    var button2 = document.getElementById("attachedResume-button");
-
-    if (input2 != null && button2 != null) {
-        button2.addEventListener("click", function () {
-        input2.click();
-        });
-
-        input2.addEventListener("change", function () {
-            this.form.submit();
-        });
-
-        var card = document.querySelector("#uploadResumeCard");
-
-        card.addEventListener("dragover", function (event) {
-            event.preventDefault();
-            card.classList.add("dragover");
-        });
-
-        card.addEventListener("dragleave", function (event) {
-            event.preventDefault();
-            card.classList.remove("dragover");
-        });
-
-        card.addEventListener("drop", function (event) {
-            event.preventDefault();
-            card.classList.remove("dragover");
-            input2.files = event.dataTransfer.files;
-            input2.form.submit();
-        });
-    }
-
     // TODO3: Move to shared components
     var radioButtons = document.querySelectorAll('input[type="radio"][name="Update.YearsOfExperience"]');
     var labels = document.querySelectorAll('.btn-group label');

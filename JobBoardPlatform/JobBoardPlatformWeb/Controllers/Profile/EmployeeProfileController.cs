@@ -41,7 +41,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return await base.Profile(userViewModel);
         }
 
-        [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
         public async Task<IActionResult> DeleteResume()
         {
             int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
@@ -58,14 +57,15 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return RedirectToAction("Profile");
         }
 
+        // TODO: remove display and update here, put everyting inside of EmployeeProfileViewModel
         protected override async Task<EmployeeProfileViewModel> UpdateProfileDisplay()
         {
             int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
 
             var profile = await profileRepository.Get(id);
 
-            string blobName = "null";
-            string blobSize = "null";
+            string blobName = string.Empty;
+            string blobSize = string.Empty;
             if (!string.IsNullOrEmpty(profile.ResumeUrl))
             {
                 blobName = await userProfileResumeStorage.GetBlobName(profile.ResumeUrl);
@@ -91,8 +91,13 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             {
                 Display = display
             };
-
             employeeProfileViewModel.Update.Description = profile.Description;
+
+            var attachedResume = new EmployeeAttachedResumeViewModel();
+            attachedResume.ResumeUrl = profile.ResumeUrl;
+            attachedResume.FileName = blobName;
+            attachedResume.FileSize = blobSize;
+            employeeProfileViewModel.Update.AttachedResume = attachedResume;
 
             return employeeProfileViewModel;
         }
@@ -109,10 +114,10 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 var imageUrl = await userProfileImagesStorage.UpdateAsync(profile.ProfileImageUrl, updateViewModel.ProfileImage);
                 profile.ProfileImageUrl = imageUrl;
             }
-            if (updateViewModel.AttachedResume != null)
+            if (updateViewModel.AttachedResume != null && updateViewModel.AttachedResume.File != null)
             {
-                var resumeUrl = await userProfileResumeStorage.UpdateAsync(profile.ResumeUrl, updateViewModel.AttachedResume);
-                updateViewModel.AttachedResumeUrl = resumeUrl;
+                var resumeUrl = await userProfileResumeStorage.UpdateAsync(profile.ResumeUrl, updateViewModel.AttachedResume.File);
+                updateViewModel.AttachedResume.ResumeUrl = resumeUrl;
             }
 
             userViewToModel.Map(userViewModel, profile);

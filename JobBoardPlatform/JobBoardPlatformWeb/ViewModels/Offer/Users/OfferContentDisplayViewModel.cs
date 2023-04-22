@@ -18,9 +18,9 @@
 
         public string MainTechnologyType { get; set; } = string.Empty;
 
-        public string[] SalaryDetails { get; set; }
+        public string[]? SalaryDetails { get; set; }
 
-        public string[] EmploymentDetails { get; set; }
+        public string[]? EmploymentDetails { get; set; }
 
         public string[]? TechKeywords { get; set; }
 

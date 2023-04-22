@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,15 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
+
+if (!builder.Environment.IsDevelopment()) 
+{
+    builder.Services.AddTransient<IOfferActionHandlerFactory, OfferActionHandlerFactory>();
+}
+else 
+{
+    builder.Services.AddTransient<IOfferActionHandlerFactory, OfferActionEmptyHandlerFactory>();
+}
 //
 
 var app = builder.Build();

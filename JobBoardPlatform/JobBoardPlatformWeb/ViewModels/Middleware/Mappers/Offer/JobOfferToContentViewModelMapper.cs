@@ -4,8 +4,6 @@ using JobBoardPlatform.PL.ViewModels.Offer.Company.Contracts;
 using JobBoardPlatform.PL.ViewModels.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
-using System;
-
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer
 {
     internal class JobOfferToContentViewModelMapper : IMapper<JobOffer, OfferContentDisplayViewModel>
@@ -15,7 +13,6 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer
             var techKeyWords = from.TechKeywords.Select(x => x.Name).ToArray();
 
             to.TechKeywords = techKeyWords;
-
             to.JobTitle = from.JobTitle;
             to.JobDescription = from.Description;
             to.CompanyName = from.CompanyProfile.CompanyName;

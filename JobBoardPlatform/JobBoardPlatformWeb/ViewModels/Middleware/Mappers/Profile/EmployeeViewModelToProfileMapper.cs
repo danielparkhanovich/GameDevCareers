@@ -14,9 +14,9 @@ namespace JobBoardPlatform.PL.ViewModels.Utilities.Mappers.Profile
             {
                 to.Name = fromUpdate.Name;
             }
-            if (!string.IsNullOrEmpty(fromUpdate.AttachedResumeUrl))
+            if (fromUpdate.AttachedResume != null && !string.IsNullOrEmpty(fromUpdate.AttachedResume.ResumeUrl))
             {
-                to.ResumeUrl = fromUpdate.AttachedResumeUrl;
+                to.ResumeUrl = fromUpdate.AttachedResume.ResumeUrl;
             }
             if (!string.IsNullOrEmpty(fromUpdate.ProfileImageUrl))
             {

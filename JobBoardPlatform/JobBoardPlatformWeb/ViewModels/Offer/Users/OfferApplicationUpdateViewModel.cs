@@ -5,6 +5,8 @@ namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Users
 {
     public class OfferApplicationUpdateViewModel
     {
+        public int OfferId { get; set; }
+
         [Required]
         public string FullName { get; set; } = string.Empty;
 
@@ -13,6 +15,6 @@ namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Users
 
         public EmployeeAttachedResumeViewModel AttachedResume { get; set; }
 
-        public string AdditionalInformation { get; set; } = string.Empty;
+        public string? AdditionalInformation { get; set; }
     }
 }

@@ -2,14 +2,12 @@
 
 @model IAttachedResume
 @{
-    ViewData["IsClientSideHandling"] = true;
-
     // in case of server side handling, form will be immediately submitted
-    bool isClientSideHandling = false;
+    bool isPostFormOnChange = false;
 
-    if (ViewData.ContainsKey("IsClientSideHandling"))
+    if (ViewData.ContainsKey("IsPostFormOnChange"))
     {
-        isClientSideHandling = true;
+        isPostFormOnChange = (bool)ViewData["IsPostFormOnChange"]!;
     }
 
     var resume = Model;
@@ -17,9 +15,10 @@
 }
 
 <div class="mb-3">
-    <label asp-for="@resume.File" class="small mb-1" for="attachedResume-input">Upload CV</label>
+    <label asp-for="File" class="small mb-1">Upload CV</label>
+    <input asp-for="File" id="attachedResume-input" type="file" accept="application/pdf" style="display:none">
+
     <div class="card mb-4 mb-xl-0" id="uploadResumeCard">
-        <input asp-for="@resume.File" name="File" id="attachedResume-input" type="file" accept="application/pdf" style="display:none">
 
         <div class="card-body d-flex flex-column align-items-center">
             <div class="flex-column align-items-center m-0 p-0" id="client-side-attachedResume-file" style=@(isFilePreUploaded ? "display:flex;" : "display:none;")>
@@ -32,17 +31,19 @@
 
                 <div>
                     <input type="hidden" name="id" value="@resume.ResumeUrl" />
-                    @if (isClientSideHandling)
+                    @if (isPostFormOnChange)
                     {
                         <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent" 
-                        onclick="removeClientSideAttachedResume();">
+                        onclick="location.href='@Url.Action("DeleteResume")'">
                             <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
                         </button>
                     }
                     else
                     {
-                        <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent" 
-                        onclick="location.href='@Url.Action("DeleteResume")'">
+                        <input asp-for="ResumeUrl" id="profile-resume-url" value="@resume.ResumeUrl" style="display:none" />
+
+                        <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent"
+                            onclick="removeClientSideAttachedResume();">
                             <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
                         </button>
                     }
@@ -52,7 +53,7 @@
             <div class="flex-column align-items-center m-0 p-0" id="client-side-attachedResume-input" style=@(!isFilePreUploaded ? "display:flex;" : "display:none;")>
                 <i class="bi bi-file-earmark-arrow-up" style="font-size: 5rem;"></i>
                 <div class="d-flex justify-content-between small font-italic text-muted mb-2">
-                    <label asp-for="File" class="custom-file-label" for="attachedResume-input">
+                    <label asp-for="File" class="custom-file-label">
                         Drag and Drop or <button class="btn btn-primary btn-sm" type="button" id="attachedResume-button">Browse</button>
                     </label>
                 </div>
@@ -71,10 +72,15 @@
     const displayFile = document.getElementById("client-side-attachedResume-file");
     const displayInput = document.getElementById("client-side-attachedResume-input");
 
-    var openResumeButton = document.getElementById("client-side-open-resume-button");
+    let openResumeButton = document.getElementById("client-side-open-resume-button");
     openResumeButton.href = @Json.Serialize(Model.ResumeUrl);
 
-    const isClientSideHandling = @Json.Serialize(ViewData.ContainsKey("IsClientSideHandling"));
+    let isPostFormOnChange = false;
+
+    if (@Json.Serialize(ViewData.ContainsKey("IsPostFormOnChange")))
+    {
+        isPostFormOnChange = @Json.Serialize(ViewData["IsPostFormOnChange"]);
+    }
 
     function addInputFieldListeners()
     {
@@ -84,15 +90,14 @@
 
         fileContainer.addEventListener("change", function () {
 
-            if (isClientSideHandling) 
-            {
-                handleFileUpload();
-            }
-            else 
+            if (isPostFormOnChange) 
             {
                 this.form.submit();
             }
-
+            else 
+            {
+                handleFileUpload();
+            }
         });
 
         const card = document.getElementById("uploadResumeCard");
@@ -112,13 +117,13 @@
             card.classList.remove("dragover");
             fileContainer.files = event.dataTransfer.files;
 
-            if (isClientSideHandling) 
+            if (isPostFormOnChange) 
             {
-                handleFileUpload();
+                fileContainer.form.submit();
             }
             else 
             {
-                fileContainer.form.submit();
+                handleFileUpload();
             }
         });
     }
@@ -126,6 +131,9 @@
     // used in case of client-side handling
     function handleFileUpload() 
     {
+        var profileResume = document.getElementById('profile-resume-url');
+        profileResume.value = null;
+
         // Get the file input element and the file object
         const file = fileContainer.files[0];
 
@@ -183,6 +191,9 @@
         fileContainer.files = null;
         fileContainer.value = "";
         toggleClientFileFieldView(false);
+
+        var profileResume = document.getElementById('profile-resume-url');
+        profileResume.value = null;
     }
 
     function toggleClientFileFieldView(isClientUploaded) 
