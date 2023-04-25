@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.BLL.Services.Common;
+using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
@@ -10,7 +11,8 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer
         {
             string salaryDetails = GetSalaryString(from);
 
-            string publishedAgo = GetPublishedAgoString(from);
+            var daysFormatter = new DaysFormatter(from.IsPublished);
+            string publishedAgo = daysFormatter.GetDaysAgoString(from.PublishedAt);
 
             var techKeywords = from.TechKeywords.Select(x => x.Name).ToArray();
 
@@ -43,18 +45,6 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer
             }
 
             return salaryDetails;
-        }
-
-        private string GetPublishedAgoString(JobOffer from)
-        {
-            string publishedAgo = $"0d ago";
-
-            if (from.IsPublished)
-            {
-                publishedAgo = $"{(DateTime.Now - from.PublishedAt).Days}d ago";
-            }
-
-            return publishedAgo;
         }
     }
 }

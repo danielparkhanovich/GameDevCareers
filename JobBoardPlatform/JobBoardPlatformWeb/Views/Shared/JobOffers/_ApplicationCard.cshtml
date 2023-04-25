@@ -1,0 +1,188 @@
+﻿@using JobBoardPlatform.DAL.Models.Enums;
+@using System.Text.RegularExpressions;
+@using JobBoardPlatform.PL.ViewModels.Offer.Users;
+
+@model CompanyApplicationCardViewModel
+@{
+    var card = Model;
+
+    string? profileImageUrl = card.ProfileImageUrl;
+    if (string.IsNullOrEmpty(profileImageUrl))
+    {
+        profileImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
+    }
+}
+
+<div class="card-body d-flex align-content-center text-decoration-none border-start border-success border-4 card-border-@card.Id">
+    <img src=@profileImageUrl width="60" height="60" class="mx-2 border border-secondary rounded-circle">
+    <div class="d-flex flex-row justify-content-between mx-2 w-100">
+        <div class="d-flex flex-column">
+            <div class="d-flex">
+                <div class="d-flex flex-column justify-content-center me-2">
+                    @card.FullName
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex flex-column justify-content-center me-1" style="font-size: 0.75rem;">
+                    @card.Email
+                </div>
+                <div class="p-1 me-1">
+                    <button class="btn btn-sm btn-outline-primary px-1 py-0" onclick=copyContent("@card.Email");>
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+            @if (card.City != null && card.Country != null)
+            {
+                <div class="d-flex flex-row small mx-1" style="font-size: 0.75rem;">
+                    <div class="d-flex flex-row">
+                        <i class="bi bi-geo-alt text-muted"></i>
+                        <div class="text-muted mx-1">@card.City, @card.Country</div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="d-flex flex-row">
+            <div class="d-flex flex-column justify-content-center mx-4">
+                @if (card.LinkedInUrl != null)
+                {
+                    <a target="_blank" rel="noopener noreferrer" href=@card.LinkedInUrl>
+                        <i class="bi bi-linkedin mx-2 text-info" style="font-size: 1.75rem;"></i>
+                    </a>
+                }
+            </div>
+            <div class="d-flex flex-column justify-content-center me-5">
+                <a role="button" class="d-flex flex-column justify-content-center text-decoration-none" id="client-side-open-resume-button" target=”_blank” href=@card.ResumeUrl>
+                    <div class="d-flex flex-row btn btn-primary py-0">
+                        <div class="d-flex flex-column justify-content-center me-1">
+                            Resume (.PDF)
+                        </div>
+                        <i class="bi bi-file-earmark-pdf-fill text-info text-light" style="font-size: 2rem;"></i>
+                    </div>
+                    @if (card.YearsOfExperience != null)
+                    {
+                        <div class="text-center text-muted small">years of experience: @card.YearsOfExperience</div>
+                    }
+                </a>
+            </div>
+            <!-- priorities -->
+            <div class="d-flex flex-row me-5">
+                <div class="d-flex flex-column justify-content-center me-1">
+                    <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark must-hire-priority-@card.Id" 
+                    onclick="selectPriority(@card.Id, 2);">
+                        <p class="align-middle mb-0 h-100"><i class="bi bi-star"></i></p>
+                    </button>
+                </div>
+                <div class="d-flex flex-column justify-content-center me-1">
+                    <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark average-hire-priority-@card.Id"
+                            onclick="selectPriority(@card.Id, 3);">
+                        <p class="align-middle mb-0 h-100"><i class="bi bi-question-lg"></i></p>
+                    </button>
+                </div>
+                <div class="d-flex flex-column justify-content-center">
+                    <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark reject-priority-@card.Id"
+                    onclick="selectPriority(@card.Id, 4);">
+                        <p class="align-middle mb-0 h-100"><i class="bi bi-x-lg"></i></p>
+                    </button>
+                </div>
+            </div>
+            <!-- published ago -->
+            <div class="d-flex flex-column justify-content-center">
+                <div class="rounded-pill border border-primary px-2 mb-0 border-1">
+                    <p class="align-middle small mb-0 h-100">@card.ApplicatedAgo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function copyContent(textToCopy) {
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            console.log('Content copied to clipboard');
+        }
+        catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    }
+    var applicationIndex = @Json.Serialize(Model.Id);
+    var priorityIndex = @Json.Serialize(Model.PriorityFlagId);
+    colorElementsToPriority(applicationIndex, priorityIndex);
+
+    function selectPriority(applicationId, priorityIndex)
+    {
+        console.log("Request sended " + applicationId + " " + priorityIndex);
+
+        $.ajax({
+          url: '@Url.Action("SetPriority")',
+          method: 'POST',
+          data: { applicationId: applicationId, priorityIndex: priorityIndex },
+          success: function(result) {
+              console.log("ok");
+              console.log(result);
+              console.log(result.priority);
+              colorElementsToPriority(applicationId, result.priority)
+          },
+          error: function(xhr, status, error) {
+            console.error(status);
+            console.error(error);
+          }
+        });
+    }
+
+    function colorElementsToPriority(applicationIndex, priority) 
+    {
+        const mustHirePriority = document.getElementsByClassName(`must-hire-priority-${applicationIndex}`)[0];
+        const averagePriority = document.getElementsByClassName(`average-hire-priority-${applicationIndex}`)[0];
+        const rejectPriority = document.getElementsByClassName(`reject-priority-${applicationIndex}`)[0];
+
+        const priorities = [mustHirePriority, averagePriority, rejectPriority];
+
+        const cardBorder = document.getElementsByClassName(`card-border-${applicationIndex}`)[0];
+
+        cardBorder.classList.remove("border-light");
+        cardBorder.classList.remove("border-success");
+        cardBorder.classList.remove("border-warning");
+        cardBorder.classList.remove("border-danger");
+
+        for (i = 0; i < priorities.length; i++)
+        {
+            priorities[i].classList.remove("bg-light");
+            priorities[i].classList.remove("text-dark");
+
+            priorities[i].classList.remove("bg-success");
+            priorities[i].classList.remove("bg-warning");
+            priorities[i].classList.remove("bg-danger");
+            priorities[i].classList.remove("text-white");
+
+            if (i + 2 == priority)
+            {
+                if (priority == 4) 
+                {
+                    priorities[i].classList.add("text-white");
+                    priorities[i].classList.add("bg-danger");
+                    cardBorder.classList.add("border-danger");
+                }
+                else if (priority == 3) 
+                {
+                    priorities[i].classList.add("text-white");
+                    priorities[i].classList.add("bg-warning");
+                    cardBorder.classList.add("border-warning");
+                }
+                else
+                {
+                    priorities[i].classList.add("text-white");
+                    priorities[i].classList.add("bg-success");
+                    cardBorder.classList.add("border-success");
+                }
+            }
+            else
+            {
+                priorities[i].classList.add("bg-light");
+                priorities[i].classList.add("text-dark");
+
+            }
+        }
+    }
+</script>

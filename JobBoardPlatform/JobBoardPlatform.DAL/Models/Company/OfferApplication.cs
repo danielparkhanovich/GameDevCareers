@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
+using JobBoardPlatform.DAL.Models.EnumTables;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobBoardPlatform.DAL.Models.Company
@@ -12,6 +13,10 @@ namespace JobBoardPlatform.DAL.Models.Company
         [ForeignKey("JobOffer")]
         public int JobOfferId { get; set; }
         public JobOffer JobOffer { get; set; }
+
+        [ForeignKey("ApplicationFlagType")]
+        public int ApplicationFlagTypeId { get; set; }
+        public ApplicationFlagType ApplicationFlagType { get; set; }
 
         [ForeignKey("EmployeeProfile")]
         public int? EmployeeProfileId { get; set; }

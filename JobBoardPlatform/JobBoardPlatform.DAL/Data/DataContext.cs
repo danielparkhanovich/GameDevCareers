@@ -29,6 +29,7 @@ namespace JobBoardPlatform.DAL.Data
         public DbSet<WorkLocationType> WorkLocationTypes { get; set; }
         public DbSet<MainTechnologyType> MainFieldTypes { get; set; }
         public DbSet<ContactType> ContactTypes { get; set; }
+        public DbSet<ApplicationFlagType> ApplicationFlagTypes { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
@@ -49,6 +50,8 @@ namespace JobBoardPlatform.DAL.Data
             enumCreator.SetDataForEntity<MainTechnologyType, MainTechnologyTypeEnum>();
 
             enumCreator.SetDataForEntity<ContactType, ContactTypeEnum>();
+
+            enumCreator.SetDataForEntity<ApplicationFlagType, ApplicationFlagEnum>();
         }
     }
 }

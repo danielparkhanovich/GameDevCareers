@@ -1,8 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Common.Contracts;
+using JobBoardPlatform.BLL.Services.Common.ProfileAdapter.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
 
-namespace JobBoardPlatform.BLL.Services.Common
+namespace JobBoardPlatform.BLL.Services.Common.ProfileAdapter
 {
     internal class EmployeeProfileAdapter : IUserProfileAdapter
     {
@@ -29,7 +29,7 @@ namespace JobBoardPlatform.BLL.Services.Common
         public string UserRole => UserRoles.Employee;
 
 
-        public EmployeeProfileAdapter(EmployeeProfile profile) 
+        public EmployeeProfileAdapter(EmployeeProfile profile)
         {
             this.profile = profile;
         }

@@ -1,8 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Common.Contracts;
+using JobBoardPlatform.BLL.Services.Common.ProfileAdapter.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 
-namespace JobBoardPlatform.BLL.Services.Common
+namespace JobBoardPlatform.BLL.Services.Common.ProfileAdapter
 {
     // TODO: rename into CompanyClaimsAdapter
     internal class CompanyProfileAdapter : IUserProfileAdapter
@@ -30,7 +30,7 @@ namespace JobBoardPlatform.BLL.Services.Common
         public string UserRole => UserRoles.Company;
 
 
-        public CompanyProfileAdapter(CompanyProfile profile) 
+        public CompanyProfileAdapter(CompanyProfile profile)
         {
             this.profile = profile;
         }

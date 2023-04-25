@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.BLL.Services.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Common;
+using JobBoardPlatform.BLL.Services.Common.ProfileAdapter;
 using JobBoardPlatform.BLL.Services.Session.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.AspNetCore.Http;

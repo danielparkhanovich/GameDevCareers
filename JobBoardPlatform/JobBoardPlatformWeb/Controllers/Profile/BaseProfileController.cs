@@ -47,8 +47,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
             userViewModel = await UpdateProfileDisplay();
 
-            ModelState.Clear();
-
             return View(userViewModel);
         }
 

@@ -1,9 +1,9 @@
-﻿using JobBoardPlatform.BLL.Services.Common.Contracts;
+﻿using JobBoardPlatform.BLL.Services.Common.ProfileAdapter.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
 
-namespace JobBoardPlatform.BLL.Services.Common
+namespace JobBoardPlatform.BLL.Services.Common.ProfileAdapter
 {
     internal class UserProfileAdapterFactory
     {

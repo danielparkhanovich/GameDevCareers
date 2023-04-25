@@ -1,4 +1,4 @@
-﻿namespace JobBoardPlatform.BLL.Services.Common.Contracts
+﻿namespace JobBoardPlatform.BLL.Services.Common.ProfileAdapter.Contracts
 {
     internal interface IUserProfileAdapter
     {

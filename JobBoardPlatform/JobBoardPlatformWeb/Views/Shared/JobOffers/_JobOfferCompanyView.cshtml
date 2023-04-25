@@ -3,6 +3,16 @@
 @model CompanyOfferCardViewModel
 @{
     var offer = Model;
+
+    string cardUrl = string.Empty;
+    if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
+    {
+        cardUrl = offer.ContactAddress!;
+    }
+    else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
+    {
+        cardUrl = $"{@Url.Action("Applications", new { offerId = Model.CardDisplay.Id, page = 1 })}";
+    }
 }
 
 <div class="my-2">
@@ -13,28 +23,39 @@
             </div>
             <div class="col-1 bg-dark text-light">
                 <div class="overflow-hidden h-100">
-                    <label class="d-flex flex-column justify-content-center align-items-center text-center mainField h-100" for="option4">
-                        <i class="bi bi-display d-flex justify-content-center align-items-center border border-light rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
+                    <label class="d-flex flex-column justify-content-center align-items-center text-center mainField h-100">
+                        <i class="bi bi-display d-flex justify-content-center align-items-center border border-light rounded-circle" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
                         <small style="font-size: 0.75rem;">@offer.MainTechnology.ToString()</small>
                     </label>
                 </div>
             </div>
             <div class="col-1 bg-info text-light">
                 <div class="overflow-hidden h-100">
-                    <label class="d-flex flex-column justify-content-center align-items-center text-center mainField h-100" for="option4">
+                    <a @(cardUrl != string.Empty ? $"href={cardUrl}" : string.Empty)
+                       class="d-flex flex-column h-100 justify-content-center align-items-center p-1 text-light text-decoration-none">
                         @if (offer.ContactType == ContactTypeEnum.Mail.ToString())
                         {
-                            <i class="bi bi-envelope d-flex justify-content-center align-items-center rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.6rem;"></i>
+                            <i class="bi bi-envelope d-flex justify-content-center align-items-center rounded-circle" style="width: 2.5rem; height: 2.5rem; font-size: 1.6rem;"></i>
                         }
                         else if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
                         {
-                            <i class="bi bi-box-arrow-up-right d-flex justify-content-center align-items-center rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.6rem;"></i>
+                            <i class="bi bi-box-arrow-up-right d-flex justify-content-center align-items-center rounded-circle" style="width: 2.5rem; height: 2.5rem; font-size: 1.6rem;"></i>
                         }
                         else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
                         {
-                            <i class="bi bi-people d-flex justify-content-center align-items-center rounded-circle mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.6rem;"></i>
-                        }
-                    </label>
+                            <i class="bi bi-people d-flex justify-content-center align-items-center rounded-circle" style="width: 2.5rem; height: 2.5rem; font-size: 1.6rem;"></i>
+                        }    
+                        <div class="d-flex flex-column">
+                            <div class="d-flex flex-row">
+                                <i class="bi bi-eye d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 0.9rem;"></i>
+                                1024
+                            </div>
+                            <div class="d-flex flex-row">
+                                <i class="bi bi-send d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 0.9rem;"></i>
+                                72
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
             <div class="col-2">

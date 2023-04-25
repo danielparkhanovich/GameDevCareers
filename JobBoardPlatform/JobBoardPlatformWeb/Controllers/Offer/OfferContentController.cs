@@ -205,6 +205,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private async Task PostApplicationForm(int offerId, OfferContentViewModel content, OfferApplication application)
         {
             application.CreatedAt = DateTime.Now;
+            application.ApplicationFlagTypeId = 1;
             application.JobOfferId = offerId;
 
             bool isUserLoggedIn = User.Identity.IsAuthenticated;
