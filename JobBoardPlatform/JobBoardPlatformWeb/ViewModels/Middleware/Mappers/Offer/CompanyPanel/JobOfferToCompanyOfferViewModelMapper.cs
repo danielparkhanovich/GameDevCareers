@@ -17,10 +17,16 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer.CompanyBoard
 
         public void Map(JobOffer from, CompanyOfferCardViewModel to)
         {
+            to.TotalViews = from.NumberOfViews;
+            to.TotalApplicants = from.NumberOfApplications;
             to.MainTechnology = from.MainTechnologyType.Type;
             to.ContactType = from.ContactDetails.ContactType.Type;
             to.ContactAddress = from.ContactDetails.ContactAddress;
+
+            to.IsPaid = from.IsPaid;
             to.IsPublished = from.IsPublished;
+            to.IsShelved = from.IsShelved;
+            to.IsDeleted = from.IsDeleted;
 
             MapCardDisplay(from, to);
         }

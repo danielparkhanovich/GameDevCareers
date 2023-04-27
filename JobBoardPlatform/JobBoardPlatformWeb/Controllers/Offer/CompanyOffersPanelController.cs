@@ -1,9 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Common;
+using JobBoardPlatform.BLL.Services.Offer.State;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer;
 using JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer.CompanyBoard;
 using JobBoardPlatform.PL.ViewModels.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
@@ -11,26 +10,20 @@ using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
-    //TODO: Split + add security
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOffersPanelController : Controller
     {
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<OfferApplication> applicationsRepository;
-        private readonly IMapper<NewOfferViewModel, JobOffer> viewModelToOffer;
 
 
-        public CompanyOffersPanelController(IRepository<JobOffer> offersRepository, 
-            IRepository<TechKeyword> keywordsRepository,
-            IRepository<OfferApplication> applicationsRepository)
+        public CompanyOffersPanelController(IRepository<JobOffer> offersRepository)
         {
             this.offersRepository = offersRepository;
-            this.applicationsRepository = applicationsRepository;
-            this.viewModelToOffer = new NewOfferViewModelToJobOfferMapper(keywordsRepository);
         }
 
         public async virtual Task<IActionResult> Offers()
@@ -43,129 +36,77 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return View(model);
         }
 
-        public async virtual Task<IActionResult> AddOffer()
+        [HttpPost]
+        public async virtual Task<IActionResult> ToggleOfferVisibility(int offerId, bool isVisible)
         {
-            return View();
+            var offer = await GetJobOffer(offerId);
+            offer.IsShelved = isVisible;
+            await offersRepository.Update(offer);
+
+            var offerToCardViewModel = new JobOfferToCompanyOfferViewModelMapper();
+            var offerCard = new CompanyOfferCardViewModel();
+            offerToCardViewModel.Map(offer, offerCard);
+            var offerStateFactory = new OfferStateFactory();
+            offerCard.IsVisible = offerStateFactory.IsOfferVisible(offer);
+            offerCard.IsAvailable = offerStateFactory.IsOfferAvailable(offer);
+            offerCard.StateType = offerStateFactory.GetOfferState(offer);
+
+            return PartialView("./JobOffers/_JobOfferCompanyView", offerCard);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async virtual Task<IActionResult> AddOffer(NewOfferViewModel viewModel)
+        public async virtual Task<IActionResult> ToggleOfferCloseState(int offerId, bool isDeleted)
         {
-            if (ModelState.IsValid)
-            {
-                int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
+            var offer = await GetJobOffer(offerId);
+            offer.IsDeleted = isDeleted;
+            await offersRepository.Update(offer);
 
-                var offer = new JobOffer();
-                offer.CompanyProfileId = profileId;
-                offer.CreatedAt = DateTime.Now;
+            var offerToCardViewModel = new JobOfferToCompanyOfferViewModelMapper();
+            var offerCard = new CompanyOfferCardViewModel();
+            offerToCardViewModel.Map(offer, offerCard);
+            var offerStateFactory = new OfferStateFactory();
+            offerCard.IsVisible = offerStateFactory.IsOfferVisible(offer);
+            offerCard.IsAvailable = offerStateFactory.IsOfferAvailable(offer);
+            offerCard.StateType = offerStateFactory.GetOfferState(offer);
 
-                viewModelToOffer.Map(viewModel, offer);
-
-                await offersRepository.Add(offer);
-
-                return RedirectToAction("Offers");
-            }
-
-            return View(viewModel);
+            return PartialView("./JobOffers/_JobOfferCompanyView", offerCard);
         }
 
-        [Route("CompanyOffersPanel/applications-{offerId}-page-{page}")]
-        public async virtual Task<IActionResult> Applications(int offerId, int page)
+        public async Task<IActionResult> RequestPayment(int offerId)
         {
-            int pageSize = 10;
+            // TODO: payment logic
+            var offer = await offersRepository.Get(offerId);
+            offer.IsPaid = true;
+            offer.IsPublished = true;
+            offer.PublishedAt = DateTime.Now;
 
-            var applicationsSet = await applicationsRepository.GetAllSet();
-            var companyApplications = applicationsSet.Where(application => application.JobOfferId == offerId);
+            await offersRepository.Update(offer);
 
-            int totalApplications = companyApplications.Count();
-            int applicationsAfterFilters = 0;
-
-            var applications = await companyApplications
-                .Include(application => application.EmployeeProfile)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            var offersSet = await offersRepository.GetAllSet();
-
-            var offer = offersSet.Where(x => x.Id == offerId)
-                .Include(x => x.CompanyProfile)
-                .Include(x => x.WorkLocation)
-                .Include(x => x.MainTechnologyType)
-                .Include(x => x.TechKeywords)
-                .Include(x => x.JobOfferEmploymentDetails)
-                    .ThenInclude(y => y.SalaryRange != null ? y.SalaryRange.SalaryCurrency : null)
-                .Include(x => x.JobOfferEmploymentDetails)
-                    .ThenInclude(y => y.EmploymentType)
-                .Include(x => x.ContactDetails)
-                    .ThenInclude(y => y.ContactType)
-                .Single();
-
-            var applicationsViewModel = new CompanyApplicationsViewModel();
-
-            var applicationCards = new List<CompanyApplicationCardViewModel>(applications.Count);
-            var daysFormatter = new DaysFormatter(true);
-
-            foreach (var application in applications)
-            {
-                string applicatedAgo = daysFormatter.GetDaysAgoString(application.CreatedAt);
-                string? linkedInUrl = application.EmployeeProfile?.LinkedInUrl;
-                string? profileImageUrl = application.EmployeeProfile?.ProfileImageUrl;
-                string? yearsOfExperience = application.EmployeeProfile?.YearsOfExperience;
-                string? city = application.EmployeeProfile?.City;
-                string? country = application.EmployeeProfile?.Country;
-
-                applicationCards.Add(new CompanyApplicationCardViewModel()
-                {
-                    Id = application.Id,
-                    PriorityFlagId = application.ApplicationFlagTypeId,
-                    FullName = application.FullName,
-                    Email = application.Email,
-                    ProfileImageUrl = profileImageUrl,
-                    ResumeUrl = application.ResumeUrl,
-                    YearsOfExperience = yearsOfExperience,
-                    Description = application.Description,
-                    ApplicatedAgo = applicatedAgo,
-                    LinkedInUrl = linkedInUrl,
-                    City = city,
-                    Country = country
-                });
-            }
-            applicationsViewModel.Applications = applicationCards;
-
-            var offerToCardViewModel = new JobOfferToOfferViewModelMapper();
-            var displayCard = new OfferCardViewModel();
-            offerToCardViewModel.Map(offer, displayCard);
-            applicationsViewModel.OfferCard = displayCard;
-
-            applicationsViewModel.TotalApplications = totalApplications;
-            applicationsViewModel.AfterFiltersApplications = applicationCards.Count;
-            applicationsViewModel.TotalViewsCount = offer.NumberOfViews;
-            applicationsViewModel.Page = page;
-
-            return View(applicationsViewModel);
+            return Redirect("Offers");
         }
 
-        [HttpPost]
-        public async virtual Task<IActionResult> SetPriority(int applicationId, int priorityIndex)
+        public async virtual Task<IActionResult> ProcessPayment(string paymentId, string orderId, string signature)
         {
-            var application = await applicationsRepository.Get(applicationId);
-
-            // double select -> deselect
-            if (application.ApplicationFlagTypeId == priorityIndex)
-            {
-                application.ApplicationFlagTypeId = 1;
-            }
-            else
-            {
-                application.ApplicationFlagTypeId = priorityIndex;
-            }
-
-            await applicationsRepository.Update(application);
-
             string message = "SUCCESS";
-            return Json(new { Message = message, Priority = application.ApplicationFlagTypeId });
+            return Json(new { Message = message });
+        }
+
+        private async Task<JobOffer> GetJobOffer(int offerId)
+        {
+            var offersSet = await offersRepository.GetAllSet();
+            var offer = await offersSet
+                .Where(offer => offer.Id == offerId) // replace Id with the actual property name of your offer's ID
+                .Include(offer => offer.CompanyProfile)
+                .Include(offer => offer.WorkLocation)
+                .Include(offer => offer.MainTechnologyType)
+                .Include(offer => offer.TechKeywords)
+                .Include(offer => offer.JobOfferEmploymentDetails)
+                    .ThenInclude(details => details.SalaryRange != null ? details.SalaryRange.SalaryCurrency : null)
+                .Include(offer => offer.ContactDetails)
+                    .ThenInclude(details => details.ContactType)
+                .FirstOrDefaultAsync();
+
+            return offer;
         }
     }
 }

@@ -32,7 +32,12 @@ namespace JobBoardPlatform.DAL.Models.Company
         public string? Address { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime PublishedAt { get; set; }
+
+        public bool IsPaid { get; set; }
         public bool IsPublished { get; set; }
+        public bool IsShelved { get; set; }
+        public bool IsDeleted { get; set; }
+        public bool IsSuspended { get; set; }
 
         public int NumberOfApplications { get; set; }
         public int NumberOfViews { get; set; }

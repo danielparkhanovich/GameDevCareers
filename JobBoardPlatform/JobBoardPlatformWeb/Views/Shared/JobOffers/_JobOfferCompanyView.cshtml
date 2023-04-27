@@ -1,78 +1,148 @@
-﻿@using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
+﻿@using JobBoardPlatform.BLL.Services.Offer.State;
+@using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
 
 @model CompanyOfferCardViewModel
 @{
     var offer = Model;
+    int offerId = offer.CardDisplay.Id;
 
-    string cardUrl = string.Empty;
+    string applicationsUrl = string.Empty;
     if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
     {
-        cardUrl = offer.ContactAddress!;
+        applicationsUrl = offer.ContactAddress!;
     }
     else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
     {
-        cardUrl = $"{@Url.Action("Applications", new { offerId = Model.CardDisplay.Id, page = 1 })}";
+        applicationsUrl = $"{@Url.Action("Applications", "CompanyApplicationsPanel", new { offerId = offerId, page = 1 })}";
     }
+
+    var actionParametes = new { offerId = Model.CardDisplay.Id };
+
+    string editOfferUrl = $"{@Url.Action("EditOffer", "CompanyOfferEditor", new { offerId = offerId })}";
+
+    string hideOfferUrl = $"{@Url.Action("ToggleOfferVisibility", "CompanyOffersPanel")}";
+    string closeOfferUrl = $"{@Url.Action("ToggleOfferCloseState", "CompanyOffersPanel")}";
+
+    bool isEdit = ViewContext.RouteData.Values.ContainsKey("edit");
+
+    bool isAvailableToShelve = offer.IsAvailable && offer.IsPaid;
+    bool isAvailableToEdit = offer.IsAvailable && !offer.IsDeleted;
+
+    ViewData["IsFullCardDisplay"] = true;
 }
 
 <div class="my-2">
     <div class="card border">
-        <div class="row mx-0 @(offer.IsPublished ? null : "bg-dark bg-opacity-10 border border-opacity-50")">
+        <div class="d-flex flex-row mx-0 @(offer.IsVisible ? null : "bg-dark bg-opacity-10 border border-opacity-50")">
             <div class="col-8 mx-0 px-0">
                 @await Html.PartialAsync("./JobOffers/_JobOffer", Model.CardDisplay)
             </div>
-            <div class="col-1 bg-dark text-light">
-                <div class="overflow-hidden h-100">
-                    <label class="d-flex flex-column justify-content-center align-items-center text-center mainField h-100">
-                        <i class="bi bi-display d-flex justify-content-center align-items-center border border-light rounded-circle" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
-                        <small style="font-size: 0.75rem;">@offer.MainTechnology.ToString()</small>
-                    </label>
+            <div class="d-flex flex-row company-card-view-data w-100">
+                <div class="bg-dark text-light">
+                    <div class="overflow-hidden h-100" style="width:90px;">
+                        <label class="d-flex flex-column justify-content-center align-items-center text-center mainField h-100">
+                            <i class="bi bi-display d-flex justify-content-center align-items-center border border-light rounded-circle" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
+                            <small style="font-size: 0.75rem;">@offer.MainTechnology.ToString()</small>
+                        </label>
+                    </div>
                 </div>
-            </div>
-            <div class="col-1 bg-info text-light">
-                <div class="overflow-hidden h-100">
-                    <a @(cardUrl != string.Empty ? $"href={cardUrl}" : string.Empty)
-                       class="d-flex flex-column h-100 justify-content-center align-items-center p-1 text-light text-decoration-none">
-                        @if (offer.ContactType == ContactTypeEnum.Mail.ToString())
-                        {
-                            <i class="bi bi-envelope d-flex justify-content-center align-items-center rounded-circle" style="width: 2.5rem; height: 2.5rem; font-size: 1.6rem;"></i>
-                        }
-                        else if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
-                        {
-                            <i class="bi bi-box-arrow-up-right d-flex justify-content-center align-items-center rounded-circle" style="width: 2.5rem; height: 2.5rem; font-size: 1.6rem;"></i>
-                        }
-                        else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
-                        {
-                            <i class="bi bi-people d-flex justify-content-center align-items-center rounded-circle" style="width: 2.5rem; height: 2.5rem; font-size: 1.6rem;"></i>
-                        }    
-                        <div class="d-flex flex-column">
-                            <div class="d-flex flex-row">
-                                <i class="bi bi-eye d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 0.9rem;"></i>
-                                1024
-                            </div>
-                            <div class="d-flex flex-row">
-                                <i class="bi bi-send d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 0.9rem;"></i>
-                                72
-                            </div>
+                @if (offer.IsPublished)
+                {
+                    <div class="bg-primary text-light">
+                        <div class="overflow-hidden h-100" style="width:85px;">
+                            <a @(applicationsUrl != string.Empty ? $"href={applicationsUrl}" : string.Empty)
+                            class="d-flex flex-column h-100 justify-content-center align-items-center p-1 text-light text-decoration-none">
+                                <div class="d-flex flex-column">
+                                    <div class="d-flex flex-row mb-2">
+                                        <i class="bi bi-eye d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 1rem;"></i>
+                                        @offer.TotalViews
+                                    </div>
+                                    <div class="d-flex flex-row">
+                                        @if (offer.ContactType == ContactTypeEnum.Mail.ToString())
+                                        {
+                                            <i class="bi bi-envelope d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 1rem;"></i>
+                                        }
+                                        else if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
+                                        {
+                                            <i class="bi bi-box-arrow-up-right d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 1rem;"></i>
+                                        }
+                                        else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
+                                        {
+                                            <i class="bi bi-send d-flex justify-content-center align-items-center rounded-circle me-2" style="font-size: 1rem;"></i>
+                                        }
+                                        @offer.TotalApplicants
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                    </a>
+                    </div>
+                }
+                else
+                {
+                <div></div>
+                }
+                <div class="d-flex flex-flex-column justify-content-center w-100">
+                    <div class="d-flex flex-row justify-content-center align-items-center px-1 h-100">
+                        @if (offer.StateType == OfferStateType.NotPaid)
+                        {
+                            <a href="@Url.Action("RequestPayment", new { offerId = offer.CardDisplay.Id})" 
+                            class="d-flex flex-row justify-content-center align-items-center btn btn-primary btn-sm">
+                                <i class="bi bi-credit-card-2-front-fill px-2 text-white" style="font-size: 1.75rem;"></i>
+                                <div class="text-white">Pay to publish</div>
+                            </a>
+                        }
+                        else if (offer.StateType == OfferStateType.Visible)
+                        {
+                            <i class="bi bi-check-lg px-2 text-success" style="font-size: 1.5rem;"></i>
+                            <div class="text-success">Published</div>
+                        }
+                        else if (offer.StateType == OfferStateType.Deleted)
+                        {
+                            <i class="bi bi-trash2-fill px-2 text-danger" style="font-size: 1.5rem;"></i>
+                            <div class="text-danger">Deleted</div>
+                        }
+                        else if (offer.StateType == OfferStateType.Shelved)
+                        {
+                            <i class="bi bi-eye-slash px-2 text-warning" style="font-size: 1.5rem;"></i>
+                            <div class="text-warning">Shelved</div>
+                        }
+                        else if (offer.StateType == OfferStateType.Suspended)
+                        {
+                            <i class="bi bi-flag-fill px-2 text-warning" style="font-size: 1.5rem;"></i>
+                            <div class="text-warning">Suspended</div>
+                        }
+                    </div>
                 </div>
             </div>
-            <div class="col-2">
-                <div class="d-flex flex-row justify-content-center align-items-center px-1 h-100">
-                    @if (offer.IsPublished)
+            <div class="d-none flex-row justify-content-between align-items-center w-100 px-4 company-card-actions">
+                <a class="btn btn-primary @(isAvailableToEdit ? string.Empty : "disabled")" style="width:100px;" onclick="">
+                    Edit
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <button @(isAvailableToShelve ? string.Empty : "disabled") class="btn @(offer.IsShelved ? "btn-info" : "btn-warning")" style="width:100px;" onclick="toggleVisibility(@offerId, '@hideOfferUrl', @((!offer.IsShelved).ToString().ToLower()));">
+                    @if (!offer.IsShelved)
                     {
-                        <i class="bi bi-check-lg px-2 text-success" style="font-size: 1.5rem;"></i>
-                        <div class="text-success">Published</div>
+                        @("Hide")
+                        <i class="bi bi-eye-slash"></i>
                     }
                     else
                     {
-                        <a href="https://example.com" class="d-flex flex-row justify-content-center align-items-center btn btn-primary btn-sm">
-                            <i class="bi bi-credit-card-2-front-fill px-2 text-white" style="font-size: 1.75rem;"></i>
-                            <div class="text-white">Pay to publish</div>
-                        </a>
+                        @("Show")
+                        <i class="bi bi-eye"></i>
                     }
-                </div>
+                </button>
+                <button class="btn @(offer.IsDeleted ? "btn-success" : "btn-danger")" style="width:100px;" onclick="toggleDeleted(@offerId, '@closeOfferUrl', @((!offer.IsDeleted).ToString().ToLower()));">
+                    @if (!offer.IsDeleted)
+                    {
+                        @("Close")
+                        <i class="bi bi-x-lg"></i>
+                    }
+                    else
+                    {
+                        @("Revert")
+                        <i class="bi bi-activity"></i>
+                    }
+                </button>
             </div>
         </div>
     </div>

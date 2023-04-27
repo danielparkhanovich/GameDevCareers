@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.BLL.Services.Offer.State;
+using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer.CompanyBoard;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
@@ -48,10 +49,16 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
             var offersDisplay = new List<CompanyOfferCardViewModel>();
             foreach (var offer in offers)
             {
-                var displayCard = new CompanyOfferCardViewModel();
-                offerToCardViewModel.Map(offer, displayCard);
+                var offerCard = new CompanyOfferCardViewModel();
 
-                offersDisplay.Add(displayCard);
+                var offerStateFactory = new OfferStateFactory();
+                offerCard.IsVisible = offerStateFactory.IsOfferVisible(offer);
+                offerCard.IsAvailable = offerStateFactory.IsOfferAvailable(offer);
+                offerCard.StateType = offerStateFactory.GetOfferState(offer);
+
+                offerToCardViewModel.Map(offer, offerCard);
+
+                offersDisplay.Add(offerCard);
             }
 
             display.JobOffers = offersDisplay;

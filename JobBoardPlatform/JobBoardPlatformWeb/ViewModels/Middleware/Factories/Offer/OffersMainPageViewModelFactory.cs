@@ -1,10 +1,12 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.BLL.Services.Offer.State;
+using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer;
 using JobBoardPlatform.PL.ViewModels.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
 {
@@ -22,8 +24,11 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
 
         private async Task<List<JobOffer>> GetOffers()
         {
+            var offerStateFactory = new OfferStateFactory();
+
             var offersSet = await offersRepository.GetAllSet();
-            var offers = await offersSet.Where(offer => offer.IsPublished)
+            var filtered = offersSet.Where(offer => !offer.IsDeleted && offer.IsPaid && !offer.IsSuspended && !offer.IsShelved && offer.IsPublished);
+            var offers = await filtered
                 .OrderByDescending(offer => offer.PublishedAt)
                 .Include(offer => offer.CompanyProfile)
                 .Include(offer => offer.WorkLocation)

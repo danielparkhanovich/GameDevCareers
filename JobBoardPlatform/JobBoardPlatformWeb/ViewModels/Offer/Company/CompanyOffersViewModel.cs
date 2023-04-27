@@ -2,6 +2,6 @@
 {
     public class CompanyOffersViewModel
     {
-        public ICollection<CompanyOfferCardViewModel>? JobOffers { get; set; }
+        public List<CompanyOfferCardViewModel>? JobOffers { get; set; }
     }
 }
