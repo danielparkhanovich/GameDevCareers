@@ -113,7 +113,7 @@
                 }
             }
         </div>
-        @if (Model.TotalApplications > 10)
+        @if (Model.AfterFiltersApplications > 10)
         {
             <div>
                 <ul class="pagination m-0">
@@ -122,7 +122,7 @@
                     </li>
                     @{
                         int pageSize = 10;
-                        int pagesCount = (int)Math.Ceiling((float)Model.TotalApplications / pageSize);
+                        int pagesCount = (int)Math.Ceiling((float)Model.AfterFiltersApplications / pageSize);
                     }
                     @for (int i = 1; i <= pagesCount; i++)
                     {

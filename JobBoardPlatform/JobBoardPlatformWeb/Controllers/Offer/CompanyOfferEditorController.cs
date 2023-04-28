@@ -1,12 +1,10 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+﻿using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer.CompanyBoard;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -14,14 +12,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     public class CompanyOfferEditorController : Controller
     {
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IMapper<NewOfferViewModel, JobOffer> viewModelToOffer;
+        private readonly IRepository<TechKeyword> keywordsRepository;
 
 
         public CompanyOfferEditorController(IRepository<JobOffer> offersRepository,
             IRepository<TechKeyword> keywordsRepository)
         {
             this.offersRepository = offersRepository;
-            this.viewModelToOffer = new NewOfferViewModelToJobOfferMapper(keywordsRepository);
+            this.keywordsRepository = keywordsRepository;
         }
 
         public IActionResult NewOffer()
@@ -41,15 +39,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         {
             if (ModelState.IsValid)
             {
-                int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
+                int profileId = UserSessionUtils.GetProfileId(User);
 
-                var offer = new JobOffer();
-                offer.CompanyProfileId = profileId;
-                offer.CreatedAt = DateTime.Now;
+                var addNewOfferCommand = new AddNewOfferCommand(profileId,
+                    viewModel,
+                    keywordsRepository,
+                    offersRepository);
 
-                viewModelToOffer.Map(viewModel, offer);
-
-                await offersRepository.Add(offer);
+                await addNewOfferCommand.Execute();
 
                 return RedirectToAction("Offers", "CompanyOffersPanel");
             }

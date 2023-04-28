@@ -2,8 +2,7 @@
 @{
     ViewData["Title"] = "Employee";
 
-    var user = Model.Display;
-    var update = Model.Update;
+    var user = Model;
 
     string? userImageUrl = user.ProfileImageUrl;
     if (string.IsNullOrEmpty(userImageUrl))
@@ -11,7 +10,7 @@
         userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
     }
 
-    string? fileUrl = user.AttachedResumeUrl;
+    string? fileUrl = user.AttachedResume?.ResumeUrl;
     bool isFileUploaded = string.IsNullOrEmpty(fileUrl) == false;
 }
 
@@ -36,28 +35,28 @@
 
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">
-                                <label asp-for="Update.Name" class="small mb-1" for="inputFirstName">Name</label>
-                                <input asp-for="Update.Name" class="form-control" id="inputFirstName" type="text" placeholder="Enter your name" value=@user.Name>
+                                <label asp-for="@user.Name" class="small mb-1" for="inputFirstName">Name</label>
+                                <input asp-for="@user.Name" class="form-control" id="inputFirstName" type="text" placeholder="Enter your name" value=@user.Name>
                             </div>
                             <div class="col-md-6">
-                                <label asp-for="Update.Surname" class="small mb-1" for="inputLastName">Surname</label>
-                                <input asp-for="Update.Surname" class="form-control" id="inputLastName" type="text" placeholder="Enter your surname" value=@user.Surname>
+                                <label asp-for="@user.Surname" class="small mb-1" for="inputLastName">Surname</label>
+                                <input asp-for="@user.Surname" class="form-control" id="inputLastName" type="text" placeholder="Enter your surname" value=@user.Surname>
                             </div>
                         </div>
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">
-                                <label asp-for="Update.Country" class="small mb-1" for="inputLocation">Country</label>
-                                <input asp-for="Update.Country" class="form-control" id="inputLocation" type="text" placeholder="Enter your country" value=@user.Country>
+                                <label asp-for="@user.Country" class="small mb-1" for="inputLocation">Country</label>
+                                <input asp-for="@user.Country" class="form-control" id="inputLocation" type="text" placeholder="Enter your country" value=@user.Country>
                             </div>
                             <div class="col-md-6">
-                                <label asp-for="Update.City" class="small mb-1" for="inputLocation">City</label>
-                                <input asp-for="Update.City" class="form-control" id="inputLocation" type="text" placeholder="Enter your city" value=@user.City>
+                                <label asp-for="@user.City" class="small mb-1" for="inputLocation">City</label>
+                                <input asp-for="@user.City" class="form-control" id="inputLocation" type="text" placeholder="Enter your city" value=@user.City>
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="col-md-12">
-                                <label asp-for="Update.Description" class="small mb-1">Introduce yourself</label>
-                                <textarea asp-for="Update.Description" class="form-control" placeholder="Introduce yourself">@update.Description</textarea>
+                                <label asp-for="@user.Description" class="small mb-1">Introduce yourself</label>
+                                <textarea asp-for="@user.Description" class="form-control" placeholder="Introduce yourself">@user.Description</textarea>
                             </div>
                         </div>
                     </div>
@@ -74,28 +73,28 @@
                         @await Html.PartialAsync("./Fields/_UploadCvField", Model)
 
                         <div class="mb-3">
-                            <label asp-for="Update.YearsOfExperience" class="small mb-1" for="Update.YearsOfExperience">Years of experience</label>
+                            <label asp-for="@user.YearsOfExperience" class="small mb-1" for="Update.YearsOfExperience">Years of experience</label>
                             <div class="btn-group d-flex" data-toggle="buttons">
-                                <input type="radio" value="0-1" class="btn-check" name="Update.YearsOfExperience" id="option1" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "0-1" ? "checked" : null) />
+                                <input type="radio" value="0-1" class="btn-check" name="Update.YearsOfExperience" id="option1" autocomplete="off" checked=@(@user.YearsOfExperience == "0-1" ? "checked" : null) />
                                 <label class="btn btn-secondary p-3" for="option1" style="font-size: 1.2rem;">0-1</label>
 
-                                <input type="radio" value="1-2" class="btn-check" name="Update.YearsOfExperience" id="option2" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "1-2" ? "checked" : null) />
+                                <input type="radio" value="1-2" class="btn-check" name="Update.YearsOfExperience" id="option2" autocomplete="off" checked=@(@user.YearsOfExperience == "1-2" ? "checked" : null) />
                                 <label class="btn btn-secondary p-3" for="option2" style="font-size: 1.2rem;">1-2</label>
 
-                                <input type="radio" value="2-4" class="btn-check" name="Update.YearsOfExperience" id="option3" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "2-4" ? "checked" : null) />
+                                <input type="radio" value="2-4" class="btn-check" name="Update.YearsOfExperience" id="option3" autocomplete="off" checked=@(@user.YearsOfExperience == "2-4" ? "checked" : null) />
                                 <label class="btn btn-secondary p-3" for="option3" style="font-size: 1.2rem;">2-4</label>
 
-                                <input type="radio" value="4-8" class="btn-check" name="Update.YearsOfExperience" id="option4" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "4-8" ? "checked" : null) />
+                                <input type="radio" value="4-8" class="btn-check" name="Update.YearsOfExperience" id="option4" autocomplete="off" checked=@(@user.YearsOfExperience == "4-8" ? "checked" : null) />
                                 <label class="btn btn-secondary p-3" for="option4" style="font-size: 1.2rem;">4-8</label>
 
-                                <input type="radio" value="8+" class="btn-check" name="Update.YearsOfExperience" id="option5" autocomplete="off" checked=@(Model.Display.YearsOfExperience == "8+" ? "checked" : null) />
+                                <input type="radio" value="8+" class="btn-check" name="Update.YearsOfExperience" id="option5" autocomplete="off" checked=@(@user.YearsOfExperience == "8+" ? "checked" : null) />
                                 <label class="btn btn-secondary p-3" for="option5" style="font-size: 1.2rem;">8+</label>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label asp-for="Update.LinkedInUrl" class="small mb-1" for="Update.LinkedInUrl">Social links</label>
+                            <label asp-for="@user.LinkedInUrl" class="small mb-1" for="Update.LinkedInUrl">Social links</label>
                             <div class="d-flex flex-row align-items-center">
-                                @if (string.IsNullOrEmpty(Model.Display.LinkedInUrl))
+                                @if (string.IsNullOrEmpty(@user.LinkedInUrl))
                                 {
                                     <i class="bi bi-linkedin mx-2" style="font-size: 1.75rem;"></i>
                                 }
@@ -105,7 +104,7 @@
                                         <i class="bi bi-linkedin mx-2 text-info" style="font-size: 1.75rem;"></i>
                                     </a>
                                 }
-                                <input asp-for="Update.LinkedInUrl" class="form-control" id="inputFirstName" type="text" placeholder="LinkedIn" value=@user.LinkedInUrl>
+                                <input asp-for="@user.LinkedInUrl" class="form-control" id="inputFirstName" type="text" placeholder="LinkedIn" value=@user.LinkedInUrl>
                             </div>
                         </div>
                         <!-- Save changes button-->
@@ -118,7 +117,7 @@
 </div>
 
 <script>
-    // TODO3: Move to shared components
+    // TODO: Move to shared components
     var radioButtons = document.querySelectorAll('input[type="radio"][name="Update.YearsOfExperience"]');
     var labels = document.querySelectorAll('.btn-group label');
 

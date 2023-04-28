@@ -1,7 +1,5 @@
 ﻿using JobBoardPlatform.PL.ViewModels.Authentification;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.Filters;
-using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.DAL.Models.Employee;
 
 namespace JobBoardPlatform.PL.Controllers.Login

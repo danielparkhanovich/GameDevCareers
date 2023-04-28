@@ -1,10 +1,11 @@
-﻿using JobBoardPlatform.PL.ViewModels.Attributes;
+﻿using JobBoardPlatform.BLL.Models.Contracts;
+using JobBoardPlatform.PL.ViewModels.Attributes;
 using JobBoardPlatform.PL.ViewModels.Offer.Company.Contracts;
 using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
 {
-    public class NewOfferViewModel : IOfferSalary, IMainTechnology, ITechKeywords
+    public class NewOfferViewModel : IOfferSalary, IMainTechnology, ITechKeywords, INewOfferData
     {
         [Required]
         public string JobTitle { get; set; } = string.Empty;

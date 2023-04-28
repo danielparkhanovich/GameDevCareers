@@ -27,9 +27,10 @@ namespace JobBoardPlatform.PL.Controllers.Register
             var credentials = new CompanyIdentity()
             {
                 Email = companyRegister.Email,
-                HashPassword = companyRegister.Password,
-                Profile = companyProfile
+                HashPassword = companyRegister.Password
             };
+
+            credentials.Profile = companyProfile;
 
             return credentials;
         }

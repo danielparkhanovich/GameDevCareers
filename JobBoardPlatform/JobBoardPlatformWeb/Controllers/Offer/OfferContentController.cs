@@ -3,16 +3,14 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using System.Security.Claims;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using Microsoft.Extensions.Options;
-using JobBoardPlatform.PL.ViewModels.Profile.Employee;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
-using JobBoardPlatform.PL.ViewModels.Middleware.Mappers.Offer.Application;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
+using JobBoardPlatform.BLL.Commands.Application;
+using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -24,7 +22,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IBlobStorage resumeStorage;
         private readonly IOptions<AzureOptions> azureOptions;
-        private readonly IMapper<OfferApplicationUpdateViewModel, OfferApplication> applicationViewToModel;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
 
 
@@ -42,7 +39,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
             this.resumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
             this.azureOptions = azureOptions;
-            this.applicationViewToModel = new OfferApplicationViewModelToModelMapper();
             this.actionHandlerFactory = actionHandlerFactory;
         }
 
@@ -59,7 +55,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
             if (!offer.IsPublished)
             {
-                if (IsUserOwner(offer))
+                if (UserRolesUtils.IsUserOwner(User, offer))
                 {
                     // Pass only owners
                     return View(content);
@@ -67,7 +63,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 return RedirectToAction("Index", "Home");
             }
 
-            await TryFillApplicationForm(content, display);
+            await TryFillApplicationForm(content);
 
             await TryIncreaseViewsCount(offer);
 
@@ -92,19 +88,19 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 {
                     return RedirectToAction("Offer");
                 }
-                int offerId = content.Update.OfferId;
 
-                var application = new OfferApplication();
+                int offerId = content.Update.OfferId;
 
                 var actionsHandler = actionHandlerFactory.GetApplyActionHandler(offerId);
                 if (!actionsHandler.IsActionDoneRecently(Request))
                 {
-                    await PostApplicationForm(offerId, content, application);
-
-                    var offer = await offersRepository.Get(offerId);
-                    offer.NumberOfApplications += 1;
-
-                    await offersRepository.Update(offer);
+                    var postFormCommand = new PostApplicationFormCommand(applicationsRepository,
+                        offersRepository,
+                        azureOptions,
+                        User,
+                        offerId,
+                        content.Update);
+                    await postFormCommand.Execute();
 
                     actionsHandler.RegisterAction(Request, Response);
                 }
@@ -115,7 +111,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private async Task TryIncreaseViewsCount(JobOffer offer)
         {
-            if (IsUserOwner(offer))
+            if (UserRolesUtils.IsUserOwner(User, offer))
             {
                 return;
             }
@@ -133,102 +129,36 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             actionsHandler.RegisterAction(Request, Response);
         }
 
-        private async Task TryFillApplicationForm(OfferContentViewModel content, OfferContentDisplayViewModel display)
+        private async Task TryFillApplicationForm(OfferContentViewModel content)
         {
             bool isUserLoggedIn = User.Identity.IsAuthenticated;
 
-            if (isUserLoggedIn)
+            if (!isUserLoggedIn)
             {
-                string userRole = User.FindFirstValue(UserSessionProperties.Role);
-                
-                if (userRole == UserRoles.Employee)
-                {
-                    var update = await GetFilledUpdateViewModel();
-                    content.Update = update;
-
-                    string? resumeUrl = update.AttachedResume.ResumeUrl;
-
-                    if (resumeUrl != null)
-                    {
-                        update.AttachedResume.FileName = await resumeStorage.GetBlobName(resumeUrl);
-                        update.AttachedResume.FileSize = await resumeStorage.GetBlobSize(resumeUrl);
-                    }
-                }
-            }
-        }
-
-        private async Task<OfferApplicationUpdateViewModel> GetFilledUpdateViewModel()
-        {
-            var update = new OfferApplicationUpdateViewModel();
-
-            // Auto fill form
-            int identityId = UserSessionProperties.GetIdentityId(User);
-
-            var identity = await identityRepository.Get(identityId);
-            var profile = await profileRepository.Get(identity.ProfileId);
-
-            update.FullName = $"{profile.Name} {profile.Surname}";
-            update.Email = identity.Email;
-
-            var attachedResume = new EmployeeAttachedResumeViewModel();
-            attachedResume.ResumeUrl = profile.ResumeUrl;
-            update.AttachedResume = attachedResume;
-
-            if (profile.Description != null)
-            {
-                update.AdditionalInformation = profile.Description;
+                return;
             }
 
-            return update;
-        }
+            string userRole = UserSessionUtils.GetRole(User);
 
-        private bool IsUserOwner(JobOffer offer)
-        {
-            bool isUserLoggedIn = User.Identity.IsAuthenticated;
-
-            if (isUserLoggedIn)
+            if (userRole != UserRoles.Employee)
             {
-                string userRole = User.FindFirstValue(UserSessionProperties.Role);
-                int userId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
-                bool isOwner = ((userRole == UserRoles.Company) && (offer.CompanyProfileId == userId));
-
-                return isOwner;
+                return;
             }
 
-            return false;
-        }
+            var applicationUpdateFactory = new OfferApplicationUpdateViewModelFactory(User,
+                identityRepository,
+                profileRepository);
+            var update = await applicationUpdateFactory.Create();
 
-        // TODO: refactor -> create all models using specific factory, if model is complex
-        // TODO: also add validator.
-        // TODO: 1. validate the view model, return an error in case of problems
-        // TODO: 2. create using factory the actual model
-        private async Task PostApplicationForm(int offerId, OfferContentViewModel content, OfferApplication application)
-        {
-            application.CreatedAt = DateTime.Now;
-            application.ApplicationFlagTypeId = 1;
-            application.JobOfferId = offerId;
+            string? resumeUrl = update.AttachedResume.ResumeUrl;
 
-            bool isUserLoggedIn = User.Identity.IsAuthenticated;
-            if (isUserLoggedIn)
+            if (resumeUrl != null)
             {
-                int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
-                application.EmployeeProfileId = profileId;
+                update.AttachedResume.FileName = await resumeStorage.GetBlobName(resumeUrl);
+                update.AttachedResume.FileSize = await resumeStorage.GetBlobSize(resumeUrl);
             }
 
-            if (content.Update.AttachedResume.ResumeUrl != null) 
-            {
-                application.ResumeUrl = content.Update.AttachedResume.ResumeUrl;
-            }
-            else if (content.Update.AttachedResume.File != null) 
-            {
-                var applicationsResumesStorage = new UserApplicationsResumeStorage(azureOptions, offerId);
-                var url = await applicationsResumesStorage.UpdateAsync(null, content.Update.AttachedResume.File);
-                application.ResumeUrl = url;
-            }
-
-            applicationViewToModel.Map(content.Update, application);
-
-            await applicationsRepository.Add(application);
+            content.Update = update;
         }
     }
 }

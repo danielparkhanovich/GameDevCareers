@@ -1,5 +1,4 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.PL.ViewModels.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -8,9 +7,9 @@ using Microsoft.Extensions.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.PL.ViewModels.Profile.Employee;
-using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Employee;
-using JobBoardPlatform.PL.ViewModels.Utilities.Mappers.Profile;
+using JobBoardPlatform.BLL.Commands.Profile;
+using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -20,18 +19,12 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         protected IBlobStorage userProfileResumeStorage;
 
 
-        public EmployeeProfileController(IOptions<AzureOptions> azureOptions, IRepository<EmployeeProfile> profileRepository)
+        public EmployeeProfileController(IOptions<AzureOptions> azureOptions, 
+            IRepository<EmployeeProfile> profileRepository)
         {
             this.userProfileImagesStorage = new UserProfileImagesStorage(azureOptions);
-            this.profileRepository = profileRepository;
-            this.userViewToModel = new EmployeeViewModelToProfileMapper();
-            
+            this.profileRepository = profileRepository;            
             this.userProfileResumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
-        }
-
-        public override async Task<IActionResult> Profile()
-        {
-            return await base.Profile();
         }
 
         [HttpPost]
@@ -43,22 +36,19 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         public async Task<IActionResult> DeleteResume()
         {
-            int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
-            var profile = await profileRepository.Get(id);
+            int id = UserSessionUtils.GetProfileId(User);
 
-            await userProfileResumeStorage.DeleteAsync(profile.ResumeUrl!);
-            profile.ResumeUrl = null;
+            var updateProfileCommand = new DeleteEmployeeResumeCommand(id,
+                profileRepository,
+                userProfileResumeStorage,
+                HttpContext);
 
-            await profileRepository.Update(profile);
-
-            var userSession = new UserSessionService<EmployeeProfile>(HttpContext);
-            await userSession.UpdateSessionStateAsync(profile);
+            await updateProfileCommand.Execute();
 
             return RedirectToAction("Profile");
         }
 
-        // TODO: remove display and update here, put everyting inside of EmployeeProfileViewModel
-        protected override async Task<EmployeeProfileViewModel> UpdateProfileDisplay()
+        protected override async Task<EmployeeProfileViewModel> GetProfileViewModel()
         {
             int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
 
@@ -72,57 +62,24 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 blobSize = await userProfileResumeStorage.GetBlobSize(profile.ResumeUrl);
             }
 
-            var display = new EmployeeProfileDisplayViewModel()
-            {
-                Name = profile.Name,
-                Surname = profile.Surname,
-                City = profile.City,
-                Country = profile.Country,
-                Description = profile.Description,
-                ProfileImageUrl = profile.ProfileImageUrl,
-                AttachedResumeUrl = profile.ResumeUrl,
-                AttachedResumeFileName = blobName,
-                AttachedResumeFileSize = blobSize,
-                YearsOfExperience = profile.YearsOfExperience,
-                LinkedInUrl = profile.LinkedInUrl
-            };
+            var viewModelFactory = new EmployeeProfileViewModelFactory(blobName, blobSize);
+            var viewModel = viewModelFactory.CreateViewModel(profile);
 
-            var employeeProfileViewModel = new EmployeeProfileViewModel()
-            {
-                Display = display
-            };
-            employeeProfileViewModel.Update.Description = profile.Description;
-
-            var attachedResume = new EmployeeAttachedResumeViewModel();
-            attachedResume.ResumeUrl = profile.ResumeUrl;
-            attachedResume.FileName = blobName;
-            attachedResume.FileSize = blobSize;
-            employeeProfileViewModel.Update.AttachedResume = attachedResume;
-
-            return employeeProfileViewModel;
+            return viewModel;
         }
 
-        protected override async Task UpdateProfile(EmployeeProfile profile, EmployeeProfileViewModel userViewModel)
+        protected override async Task UpdateProfile(EmployeeProfileViewModel viewModel)
         {
-            var updateViewModel = userViewModel.Update;
+            int id = UserSessionUtils.GetProfileId(User);
 
-            // TODO: validate data here for stream size
-            // and extension... and add a model error
+            var updateProfileCommand = new UpdateEmployeeProfileCommand(id,
+                viewModel,
+                profileRepository,
+                HttpContext,
+                userProfileImagesStorage,
+                userProfileResumeStorage);
 
-            if (updateViewModel.ProfileImage != null)
-            {
-                var imageUrl = await userProfileImagesStorage.UpdateAsync(profile.ProfileImageUrl, updateViewModel.ProfileImage);
-                profile.ProfileImageUrl = imageUrl;
-            }
-            if (updateViewModel.AttachedResume != null && updateViewModel.AttachedResume.File != null)
-            {
-                var resumeUrl = await userProfileResumeStorage.UpdateAsync(profile.ResumeUrl, updateViewModel.AttachedResume.File);
-                updateViewModel.AttachedResume.ResumeUrl = resumeUrl;
-            }
-
-            userViewToModel.Map(userViewModel, profile);
-
-            await profileRepository.Update(profile);
+            await updateProfileCommand.Execute();
         }
     }
 }

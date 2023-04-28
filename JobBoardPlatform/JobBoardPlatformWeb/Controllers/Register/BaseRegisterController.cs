@@ -10,7 +10,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
     public abstract class BaseRegisterController<TIdentity, TProfile, TViewModel> : Controller
         where TIdentity : class, IUserIdentityEntity
         where TProfile : class, IUserProfileEntity
-        where TViewModel : class //, TODO: add interface
+        where TViewModel : class
     {
         protected IRepository<TIdentity> credentialsRepository;
         protected IRepository<TProfile> profileRepository;

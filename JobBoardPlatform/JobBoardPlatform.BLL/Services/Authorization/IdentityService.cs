@@ -1,8 +1,8 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification;
+﻿using JobBoardPlatform.BLL.Common.ProfileAdapter;
+using JobBoardPlatform.BLL.Services.Authentification;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Common.ProfileAdapter;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Http;

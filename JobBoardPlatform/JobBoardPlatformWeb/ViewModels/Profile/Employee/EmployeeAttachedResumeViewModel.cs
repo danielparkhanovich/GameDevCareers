@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.PL.ViewModels.Profile.Contracts;
+﻿using JobBoardPlatform.BLL.Commands.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Profile.Employee
 {

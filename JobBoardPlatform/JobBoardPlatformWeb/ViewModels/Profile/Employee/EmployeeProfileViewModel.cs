@@ -1,28 +1,27 @@
-﻿using JobBoardPlatform.PL.ViewModels.Profile.Contracts;
+﻿using JobBoardPlatform.BLL.Commands.Contracts;
+using JobBoardPlatform.BLL.Models.Contracts;
+using JobBoardPlatform.PL.ViewModels.Profile.Contracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.Profile.Employee
 {
-    public class EmployeeProfileViewModel : IProfileViewModel, IAttachedResume
+    public class EmployeeProfileViewModel : IProfileViewModel, IAttachedResume, IEmployeeProfileData
     {
-        public string? ProfileImageUrl { get => Display.ProfileImageUrl; }
-        public IFormFile? ProfileImage { get => Update.ProfileImage; set => Update.ProfileImage = value; }
+        public string? Name { get; set; } = string.Empty;
+        public string? Surname { get; set; } = string.Empty;
+        public string? Country { get; set; } = string.Empty;
+        public string? City { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
+        public string? ProfileImageUrl { get; set; } = string.Empty;
+        public EmployeeAttachedResumeViewModel? AttachedResume { get; set; }
+        public string? YearsOfExperience { get; set; } = string.Empty;
+        [Url]
+        public string? LinkedInUrl { get; set; } = string.Empty;
 
-        public IFormFile? File { get => Update.AttachedResume.File; set => Update.AttachedResume.File = value; }
-        public string? ResumeUrl { get => Update.AttachedResume.ResumeUrl; set => Update.AttachedResume.ResumeUrl = value; }
-        public string? FileName { get => Update.AttachedResume.FileName; set => Update.AttachedResume.FileName = value; }
-        public string? FileSize { get => Update.AttachedResume.FileSize; set => Update.AttachedResume.FileSize = value; }
-
-        public EmployeeProfileDisplayViewModel Display { get; set; }
-        public EmployeeProfileUpdateViewModel Update { get; set; }
-
-
-        public EmployeeProfileViewModel()
-        {
-            Display = new EmployeeProfileDisplayViewModel();
-            Update = new EmployeeProfileUpdateViewModel()
-            {
-                AttachedResume = new EmployeeAttachedResumeViewModel()
-            };
-        }
+        public IFormFile? File { get; set; }
+        public string? ResumeUrl { get; set; }
+        public string? FileName { get; set; }
+        public string? FileSize { get; set; }
+        public IFormFile? ProfileImage { get; set; }
     }
 }

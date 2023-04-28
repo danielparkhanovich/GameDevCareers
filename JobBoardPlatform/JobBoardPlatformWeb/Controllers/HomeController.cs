@@ -2,18 +2,12 @@
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Offer.Users;
-using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace JobBoardPlatformWeb.Controllers
 {
     public class HomeController : Controller
     {
-        // private readonly ILogger<HomeController> _logger;
         private readonly IRepository<JobOffer> offersRepository;
 
 

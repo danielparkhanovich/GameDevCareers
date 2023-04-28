@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using JobBoardPlatform.BLL.Models.Contracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.Authentification
 {
-    public class UserRegisterViewModel
+    public class UserRegisterViewModel : IUserLoginData
     {
         [Required]
         public string Email { get; set; } = string.Empty;

@@ -1,9 +1,9 @@
-﻿using JobBoardPlatform.PL.ViewModels.Profile.Employee;
+﻿using JobBoardPlatform.BLL.Commands.Contracts;
 using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Users
 {
-    public class OfferApplicationUpdateViewModel
+    public class OfferApplicationUpdateViewModel : IApplicationForm
     {
         public int OfferId { get; set; }
 
@@ -13,7 +13,7 @@ namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Users
         [Required]
         public string Email { get; set; } = string.Empty;
 
-        public EmployeeAttachedResumeViewModel AttachedResume { get; set; }
+        public IAttachedResume AttachedResume { get; set; }
 
         public string? AdditionalInformation { get; set; }
     }
