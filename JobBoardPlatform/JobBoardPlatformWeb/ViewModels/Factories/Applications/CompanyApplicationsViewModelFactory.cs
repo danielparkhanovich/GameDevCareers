@@ -1,7 +1,9 @@
-﻿using JobBoardPlatform.DAL.Data.Loaders;
+﻿using JobBoardPlatform.DAL.Data.Enums.Sort;
+using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
+using JobBoardPlatform.PL.ViewModels.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
@@ -38,41 +40,29 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
             var offerLoader = new LoadCompanyOffer(offersRepository, offerId);
             var offer = await offerLoader.Load();
 
-            var applicationsLoader = new LoadApplicationsPage(applicationsRepository,
-                    offerId,
-                    page,
-                    pageSize,
-                    filterStates);
-            var applications = await applicationsLoader.Load();
-
             var viewModel = new CompanyApplicationsViewModel();
-            viewModel.Applications = await GetApplicationCards(applications);
+            viewModel.Applications = await GetApplicationCards();
+
             viewModel.OfferCard = await GetOfferCard(offer);
 
             viewModel.TotalApplications = offer.NumberOfApplications;
             viewModel.TotalViewsCount = offer.NumberOfViews;
-            viewModel.AfterFiltersApplications = applicationsLoader.SelectedApplicationsCount;
-
-            viewModel.Page = page;
-
-            viewModel.SortBy = string.Empty;
-            viewModel.IsIncludeUnseen = filterStates[0];
-            viewModel.IsIncludeMustHire = filterStates[1];
-            viewModel.IsIncludeAverage = filterStates[2];
-            viewModel.IsIncludeReject = filterStates[3];
 
             return viewModel;
         }
 
-        private async Task<List<CompanyApplicationCardViewModel>> GetApplicationCards(List<OfferApplication> applications)
+        private async Task<CompanyApplicationsCardsViewModel> GetApplicationCards()
         {
-            var applicationCards = new List<CompanyApplicationCardViewModel>(applications.Count);
-            foreach (var application in applications)
-            {
-                var applicationCardFactory = new CompanyApplicationCardViewModelFactory(application);
-                var applicationCard = await applicationCardFactory.Create();
-                applicationCards.Add(applicationCard);
-            }
+            var applicationCardsFactory = new CompanyApplicationsCardsViewModelFactory(offerId,
+                applicationsRepository, 
+                page,
+                pageSize,
+                filterStates, 
+                SortType.Descending, 
+                SortCategoryType.PublishDate);
+
+            var applicationCards = await applicationCardsFactory.Create();
+
             return applicationCards;
         }
 

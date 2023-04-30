@@ -1,6 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Mappers;
-using JobBoardPlatform.BLL.Models.Contracts;
-using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Application
@@ -10,6 +8,9 @@ namespace JobBoardPlatform.BLL.Commands.Application
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly int applicationId;
         private readonly int newPriorityIndex;
+
+
+        public int ResultPriorityIndex { get; private set; }
 
 
         public UpdateApplicationPriorityCommand(IRepository<OfferApplication> applicationsRepository, 
@@ -36,6 +37,8 @@ namespace JobBoardPlatform.BLL.Commands.Application
             }
 
             await applicationsRepository.Update(application);
+
+            ResultPriorityIndex = application.ApplicationFlagTypeId;
         }
     }
 }

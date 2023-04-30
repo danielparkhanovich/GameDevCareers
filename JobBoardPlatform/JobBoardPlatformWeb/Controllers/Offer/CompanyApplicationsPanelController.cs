@@ -3,6 +3,7 @@ using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
+using JobBoardPlatform.PL.ViewModels.Offer.Company;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,8 +54,34 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 priorityIndex);
             await updateApplicationPriorityCommand.Execute();
 
+            var resultPriorityIndex = updateApplicationPriorityCommand.ResultPriorityIndex;
+
             string message = "SUCCESS";
-            return Json(new { Message = message, Priority = priorityIndex });
+            return Json(new { Message = message, Priority = resultPriorityIndex });
+        }
+
+        [HttpPost]
+        public async virtual Task<IActionResult> RefreshApplications(CompanyApplicationsCardsViewModel cardsViewModel)
+        {
+            bool[] filterStates = new bool[4] 
+            { 
+                cardsViewModel.IsIncludeUnseen,
+                cardsViewModel.IsIncludeMustHire,
+                cardsViewModel.IsIncludeAverage,
+                cardsViewModel.IsIncludeReject
+            };
+
+            var applicationCardsFactory = new CompanyApplicationsCardsViewModelFactory(cardsViewModel.OfferId,
+                applicationsRepository,
+                cardsViewModel.Page,
+                PageSize,
+                filterStates,
+                cardsViewModel.SortType,
+                cardsViewModel.SortCategory);
+
+            var applicationCards = await applicationCardsFactory.Create();
+
+            return PartialView("./Applications/_ApplicationsContainer", applicationCards);
         }
     }
 }
