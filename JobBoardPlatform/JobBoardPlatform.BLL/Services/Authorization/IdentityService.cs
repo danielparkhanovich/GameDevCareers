@@ -26,24 +26,24 @@ namespace JobBoardPlatform.BLL.Services.Authorization
             this.authorizationService = new AuthorizationService(httpContext);
         }
 
-        public async Task<AuthentificationResult> TryLoginAsync(TIdentity Identitys)
+        public async Task<AuthentificationResult> TryLoginAsync(TIdentity identity)
         {
             var authentificationFunc = authentificationService.TryLoginAsync;
 
-            return await TryAuthorize(authentificationFunc, Identitys);
+            return await TryAuthorize(authentificationFunc, identity);
         }
 
-        public async Task<AuthentificationResult> TryRegisterAsync(TIdentity Identitys)
+        public async Task<AuthentificationResult> TryRegisterAsync(TIdentity identity)
         {
             var authentificationFunc = authentificationService.TryRegisterAsync;
 
-            return await TryAuthorize(authentificationFunc, Identitys);
+            return await TryAuthorize(authentificationFunc, identity);
         }
 
         private async Task<AuthentificationResult> TryAuthorize(Func<TIdentity, Task<AuthentificationResult>> authentificationFunc,
-            TIdentity Identitys)
+            TIdentity identity)
         {
-            var authentification = await authentificationFunc(Identitys);
+            var authentification = await authentificationFunc(identity);
             if (authentification.IsError)
             {
                 return authentification;

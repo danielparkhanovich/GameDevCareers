@@ -51,7 +51,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
             return viewModel;
         }
 
-        private async Task<CompanyApplicationsCardsViewModel> GetApplicationCards()
+        private async Task<ContainerCardsViewModel> GetApplicationCards()
         {
             var applicationCardsFactory = new CompanyApplicationsCardsViewModelFactory(offerId,
                 applicationsRepository, 

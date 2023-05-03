@@ -5,8 +5,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
 {
-    public class NewOfferViewModel : IOfferSalary, IMainTechnology, ITechKeywords, INewOfferData
+    public class OfferDetailsViewModel : IOfferSalary, IMainTechnology, ITechKeywords, INewOfferData
     {
+        public int OfferId { get; set; }
+
         [Required]
         public string JobTitle { get; set; } = string.Empty;
 

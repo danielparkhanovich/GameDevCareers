@@ -3,17 +3,19 @@ using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
+using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
+namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
-    public class CompanyApplicationsCardsViewModelFactory : IFactory<ContainerCardsViewModel>
+    public class CompanyOfferCardsViewModelFactory : IFactory<ContainerCardsViewModel>
     {
-        private const string CardPartialViewModelName = "./JobOffers/_ApplicationCard";
+        private const string CardPartialViewModelName = "./JobOffers/_JobOfferCompanyView";
 
-        private readonly IRepository<OfferApplication> repository;
-        private readonly int offerId;
+        private readonly IRepository<JobOffer> offersRepository;
+        private readonly int profileId;
 
         private readonly int page;
         private readonly int pageSize;
@@ -22,16 +24,17 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
         private readonly SortCategoryType sortCategoryType;
 
 
-        public CompanyApplicationsCardsViewModelFactory(int offerId,
-            IRepository<OfferApplication> repository,
+        public CompanyOfferCardsViewModelFactory(int profileId,
+            IRepository<JobOffer> offersRepository,
             int page,
             int pageSize,
             bool[] filterToggles,
             SortType sortType,
             SortCategoryType sortCategoryType)
         {
-            this.offerId = offerId;
-            this.repository = repository;
+            this.profileId = profileId;
+            this.offersRepository = offersRepository;
+
             this.page = page;
             this.pageSize = pageSize;
             this.filterToggles = filterToggles;
@@ -41,43 +44,41 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 
         public async Task<ContainerCardsViewModel> Create()
         {
-            var applicationsLoader = new LoadApplicationsPage(repository,
-                offerId,
+            var offersLoader = new LoadCompanyOffersPage(offersRepository, 
+                profileId,
                 page,
                 pageSize,
                 filterToggles,
                 sortType,
                 sortCategoryType);
-            var applications = await applicationsLoader.Load();
+            var offers = await offersLoader.Load();
 
-            var applicationCards = new List<IContainerCard>(applications.Count);
-            foreach (var application in applications)
+            var offerCards = new List<IContainerCard>();
+            foreach (var offer in offers)
             {
-                var applicationCardFactory = new CompanyApplicationCardViewModelFactory(application);
-                var applicationCard = await applicationCardFactory.Create();
-                applicationCards.Add(applicationCard);
+                var offerCard = await GetOfferCard(offer);
+
+                offerCards.Add(offerCard);
             }
 
-            var filterLabels = new string[] 
-            { 
-                "Unseen", 
-                "<i class=\"bi bi-star\"></i>", 
-                "<i class=\"bi bi-question-lg\"></i>", 
-                "<i class=\"bi bi-x-lg\"></i>" 
+            var filterLabels = new string[]
+            {
+                "Published",
+                "Shelved"
             };
 
             var sortCategoryTypes = Enum.GetValues(typeof(SortCategoryType)).Cast<SortCategoryType>().ToArray();
-            var sortLables = new string[] 
-            { 
-                "Date", 
-                "Alphabetically", 
-                "Relevenacy" 
-            }; 
+            var sortLables = new string[]
+            {
+                "Date",
+                "Alphabetically",
+                "Relevenacy"
+            };
 
             var viewModel = new ContainerCardsViewModel()
             {
-                RelatedId = offerId,
-                ContainerCards = applicationCards,
+                RelatedId = profileId,
+                ContainerCards = offerCards,
                 Page = page,
                 SortType = sortType,
                 SortCategory = sortCategoryType,
@@ -86,10 +87,19 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
                 SortLabels = sortLables,
                 SortCategoryTypes = sortCategoryTypes,
                 FilterToggles = filterToggles,
-                RecordsCount = applicationsLoader.SelectedApplicationsCount
+                RecordsCount = offersLoader.SelectedCount
             };
 
             return viewModel;
+        }
+
+        private async Task<CompanyOfferCardViewModel> GetOfferCard(JobOffer offer)
+        {
+            var offerCardFactory = new CompanyOfferViewModelFactory(offer);
+
+            var offerCard = await offerCardFactory.Create();
+
+            return offerCard;
         }
     }
 }

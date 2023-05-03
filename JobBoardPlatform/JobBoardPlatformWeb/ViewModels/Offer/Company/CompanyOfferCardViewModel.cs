@@ -1,9 +1,10 @@
 ﻿using JobBoardPlatform.BLL.Services.Offer.State;
+using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Offer.Users;
 
 namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
 {
-    public class CompanyOfferCardViewModel
+    public class CompanyOfferCardViewModel : IContainerCard
     {
         public int TotalViews { get; set; }
         public int TotalApplicants { get; set; }

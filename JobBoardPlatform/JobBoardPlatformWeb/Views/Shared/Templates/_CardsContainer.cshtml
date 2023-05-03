@@ -1,0 +1,149 @@
+﻿@using JobBoardPlatform.DAL.Data.Enums.Sort;
+@using JobBoardPlatform.PL.ViewModels.Offer.Company;
+
+@model ContainerCardsViewModel
+@{
+    string refreshApplications = @Url.Action("RefreshCardContainer");
+}
+
+<div class="card border-0 rounded-0 flex-grow-1">
+    <div class="card-header border-bottom d-flex flex-row justify-content-between align-items-center bg-light">
+        <!-- Sorting -->
+        <div class="d-flex flex-row">
+            @for (int i = 0; i < Model.SortLabels.Length; i++)
+            {
+                <div class="d-flex flex-row justify-content-center align-content-center me-3 @(Model.SortCategory != Model.SortCategoryTypes[i] ? "text-muted" : string.Empty)">
+                    <div class="d-flex flex-column justify-content-center me-1"
+                     onclick="sortRecords(@((int)Model.SortCategoryTypes[i]));">
+                        @Model.SortLabels[i]
+                    </div>
+                    @if (Model.SortCategory == Model.SortCategoryTypes[i])
+                    {
+                        <i class="d-flex flex-column justify-content-center 
+                        @(Model.SortType == SortType.Descending ? "bi bi-arrow-up" : "bi bi-arrow-down")" style="font-size: 1rem;"></i>
+                    }
+                    else
+                    {
+                        <i class="d-flex flex-column justify-content-center bi bi-arrow-down-up" style="font-size: 1rem;"></i>
+                    }
+                </div>
+            }
+        </div>
+        <!-- Filtering -->
+        <div class="d-flex flex-row">
+            @for (int i = 0; i < Model.FilterLabels.Length; i++)
+            {
+                <div class="form-check form-switch me-3">
+                    <input id="@($"filter-toggle-{i}")" class="form-check-input" type="checkbox" @(Model.FilterToggles[i] ? "checked" : string.Empty) onchange="filterRecords(this, @i);">
+                    <label class="form-check-label" for="@($"filter-toggle-{i}")">@Html.Raw(@Model.FilterLabels[i])</label>
+                </div>
+            }
+            <div class="text-end pe-1" style="width:100px;">
+                Found: @Model.RecordsCount
+            </div>
+        </div>
+    </div>
+    <div class="bg-info bg-opacity-10">
+        @if (Model.ContainerCards != null && Model.ContainerCards.Count > 0)
+        {
+            @foreach (var card in Model.ContainerCards)
+            {
+                <div class="mx-2 my-2 card border-0">
+                    @await Html.PartialAsync(Model.CardPartialViewModelName, card)
+                </div>
+            }
+        }
+    </div>
+    @if (Model.RecordsCount > 10)
+    {
+        <div>
+            <ul class="pagination m-0">
+                <li class="page-item rounded-0 @(Model.Page == 1 ? "disabled" : string.Empty)">
+                    <button class="page-link rounded-0" onclick="switchPage(@Model.Page - 1);">&laquo;</button>
+                </li>
+                @{
+                    int pageSize = 10;
+                    int pagesCount = (int)Math.Ceiling((float)Model.RecordsCount / pageSize);
+                }
+                @for (int i = 1; i <= pagesCount; i++)
+                {
+                    <li class="page-item @(Model.Page == i ? "active" : string.Empty)">
+                        <button class="page-link" onclick="switchPage(@i);">@i</button>
+                    </li>
+                }
+                <li class="page-item rounded-0 @(Model.Page == pagesCount ? "disabled" : string.Empty)">
+                    <button class="page-link rounded-0" onclick="switchPage(@Model.Page + 1);">&raquo;</button>
+                </li>
+            </ul>
+        </div>
+    }
+</div>
+
+<script>
+    function filterRecords(toggle, index) {
+
+        const isChecked = toggle.checked;
+        const viewModel = @Html.Raw(Json.Serialize(Model));
+
+        viewModel.filterToggles[index] = isChecked;
+        viewModel.page = 1;
+
+        const refreshApplications = @Html.Raw(Json.Serialize(refreshApplications));
+        sendAjaxAndUpdateTable(refreshApplications, viewModel);
+    }
+
+    function sortRecords(sortCategory) {
+
+        const viewModel = @Html.Raw(Json.Serialize(Model));
+
+        if (viewModel.sortType == 1) 
+        {
+            viewModel.sortType = 0;
+        }
+        else 
+        {
+            viewModel.sortType = 1;
+        }
+
+        console.log(viewModel.sortCategory);
+        console.log(sortCategory);
+
+        if (viewModel.sortCategory != sortCategory)
+        {
+            viewModel.sortType = 1;
+        }
+
+        viewModel.sortCategory = sortCategory;
+        viewModel.page = 1;
+
+        const refreshApplications = @Html.Raw(Json.Serialize(refreshApplications));
+        sendAjaxAndUpdateTable(refreshApplications, viewModel);
+    }
+
+    function switchPage(page) {
+
+        const viewModel = @Html.Raw(Json.Serialize(Model));
+
+        viewModel.page = page;
+
+        const refreshApplications = @Html.Raw(Json.Serialize(refreshApplications));
+        sendAjaxAndUpdateTable(refreshApplications, viewModel);
+    }
+
+    function sendAjaxAndUpdateTable(url, viewModel) {
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: { cardsViewModel: viewModel },
+            success: function (result) {
+                const selector = `#applications-container`;
+                const element = $(selector);
+                element.html(result);
+            },
+            error: function (xhr, status, error) {
+                console.error(status);
+                console.error(error);
+            }
+        });
+    }
+</script>

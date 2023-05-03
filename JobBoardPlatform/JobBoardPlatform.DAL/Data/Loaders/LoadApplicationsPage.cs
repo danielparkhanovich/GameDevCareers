@@ -10,6 +10,7 @@ namespace JobBoardPlatform.DAL.Data.Loaders
     {
         private readonly IRepository<OfferApplication> repository;
         private readonly int offerId;
+
         private readonly int page;
         private readonly int pageSize;
         private readonly bool[] flagState;

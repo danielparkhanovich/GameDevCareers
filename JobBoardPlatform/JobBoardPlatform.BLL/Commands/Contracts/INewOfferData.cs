@@ -2,6 +2,7 @@
 {
     public interface INewOfferData
     {
+        int OfferId { get; set; }
         string JobTitle { get; set; }
 
         string Country { get; set; }

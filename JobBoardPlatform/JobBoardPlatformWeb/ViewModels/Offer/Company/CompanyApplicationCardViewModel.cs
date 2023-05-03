@@ -1,6 +1,8 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
+﻿using JobBoardPlatform.PL.ViewModels.Contracts;
+
+namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
 {
-    public class CompanyApplicationCardViewModel
+    public class CompanyApplicationCardViewModel : IContainerCard
     {
         public int Id { get; set; }
         public int PriorityFlagId { get; set; }

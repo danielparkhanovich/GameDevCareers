@@ -22,7 +22,7 @@ namespace JobBoardPlatform.DAL.Repositories.Models
             return entity;
         }
 
-        public async Task<TEntity> Get(int id)
+        public async Task<TEntity?> Get(int id)
         {
             return await context.Set<TEntity>().FindAsync(id);
         }

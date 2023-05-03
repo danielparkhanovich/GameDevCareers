@@ -1,9 +1,7 @@
-﻿@using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
+﻿@using JobBoardPlatform.PL.ViewModels.Offer.Company;
+@using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
 
-@model CompanyOffersViewModel
-@{
-    var offerCards = Model.JobOffers;
-}
+@model ContainerCardsViewModel
 
 <div class="container-xl px-4 mt-4">
 
@@ -11,14 +9,18 @@
     @await Html.PartialAsync("./ProfileTabs/_CompanyProfileTabs")
 
     <div class="card mb-5">
-        <div class="card-header">Account type</div>
+        <div class="card-header d-flex flex-row justify-content-between align-content-center">
+            <div class="align-self-center">
+                Account type
+            </div>
+            <a asp-controller="CompanyManageOffer" asp-action="NewOffer" class="btn btn-primary">
+                Change account type
+            </a>
+        </div>
         <div class="card-body d-flex flex-row justify-content-between align-items-center">
             <h5 class="mb-0">
                 INDIE
             </h5>
-            <a asp-controller="CompanyManageOffer" asp-action="NewOffer" class="btn btn-primary">
-                Change account type
-            </a>
         </div>
     </div>
 
@@ -26,13 +28,7 @@
         <div class="card-header d-flex flex-row justify-content-between align-items-center">
             <div class="d-flex flex-row">
                 <div class="d-flex flex-row justify-content-center align-content-center me-3">
-                    <div class="d-flex flex-column justify-content-center me-1">
-                        Date
-                    </div>
-                    <div>
-                        <i class="d-flex flex-column justify-content-end bi bi-caret-up" style="font-size: 0.75rem;"></i>
-                        <i class="d-flex flex-column justify-content-start bi bi-caret-down" style="font-size: 0.75rem;"></i>
-                    </div>
+                    Created Ads
                 </div>
             </div>
             <div class="d-flex flex-row justify-content-center">
@@ -45,16 +41,8 @@
                 </a>
             </div>
         </div>
-        <div class="bg-dark bg-opacity-10">
-            @if (offerCards != null && offerCards.Count > 0)
-            {
-                @foreach (var card in offerCards)
-                {
-                    <div id="company-offer-card-container-@card.CardDisplay.Id">
-                        @await Html.PartialAsync("./JobOffers/_JobOfferCompanyView", card)
-                    </div>
-                }
-            }
+        <div id="applications-container">
+            @await Html.PartialAsync("./Templates/_CardsContainer", Model)
         </div>
     </div>
 </div>
@@ -138,7 +126,6 @@
                 console.log(cardData);
                 var cardAction = element.find(`.${cardActionsClass}`).get(0);
 
-                console.log(cardAction);
                 toggleCardVisibility(true, cardData, cardAction);
             },
             error: function (xhr, status, error) {

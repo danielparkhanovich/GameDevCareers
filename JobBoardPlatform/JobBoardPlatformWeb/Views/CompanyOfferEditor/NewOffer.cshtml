@@ -1,84 +1,95 @@
-﻿@model NewOfferViewModel
-@{
-    ViewData["Title"] = "Company";
-}
+﻿
+@model OfferDetailsViewModel
 
-<div class="container-xl px-4 mt-4">
+<div class="container-xl px-5 mt-5">
+    <!-- Account page navigation-->
+    @await Html.PartialAsync("./ProfileTabs/_CompanyProfileTabs", Model)
+
     <form method="post">
-        <div class="row gx-3 mb-3">
-            <div class="col-md-12">
-                <label asp-for="JobTitle" class="small mb-1" for="inputCompanyName">Job title *</label>
-                <input asp-for="JobTitle" class="form-control" id="inputCompanyName" type="text" placeholder="Enter job title">
+        <div class="card">
+            <div class="mb-4">
+                <div class="card-header">Position info</div>
+                <div class="card-body">
+                    <div class="gx-3 mb-3">
+                        <label asp-for="@Model.JobTitle" class="form-label small mb-1">Job title <span class="text-danger">*</span></label>
+                        <input asp-for="@Model.JobTitle" class="form-control" type="text" placeholder="Enter job title">
+                    </div>
+
+                    <div class="d-flex flex-row gx-3 mb-3">
+                        <div class="flex-grow-1">
+                            <label asp-for="@Model.City" class="form-label small mb-1">City <span class="text-danger">*</span></label>
+                            <input asp-for="@Model.City" class="form-control" type="text" placeholder="Enter city">
+                        </div>
+                        <div class="flex-grow-1 mx-5">
+                            <label asp-for="@Model.Country" class="form-label small mb-1">Country <span class="text-danger">*</span></label>
+                            <input asp-for="@Model.Country" class="form-control" type="text" placeholder="Enter country">
+                        </div>
+                        <div class="flex-grow-1">
+                            <label asp-for="@Model.Address" class="form-label small mb-1">Address</label>
+                            <input asp-for="@Model.Address" class="form-control" type="text" placeholder="Enter address">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="card-header">Employment details</div>
+                <div class="card-body">
+                    <div class="gx-3 mb-3">
+                        <label asp-for="@Model.WorkLocationType" class="form-label small mb-1">Work location <span class="text-danger">*</span></label>
+                        <select asp-for="@Model.WorkLocationType" class="form-select" aria-label="Employment type">
+                            <option value="1" selected>On Site</option>
+                            <option value="2">Hybrid</option>
+                            <option value="3">Fully Remote</option>
+                        </select>
+                    </div>
+                    @await Html.PartialAsync("./JobOffers/_MultiselectTripleField", Model)
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="card-header">Job description</div>
+                <div class="card-body">
+                    <div class="gx-3 mb-3">
+                        <label asp-for="@Model.MainTechnologyType" class="form-label small mb-1">Main Technology <span class="text-danger">*</span></label>
+                        @await Html.PartialAsync("./JobOffers/_MainTechnologiesWidgets", Model)
+                    </div>
+                    <div class="gx-3 mb-3">
+                        <label asp-for="@Model.TechKeywords" class="form-label small mb-1">Tech stack</label>
+                        @await Html.PartialAsync("./JobOffers/_TechKeywordsWidgets", Model)
+                    </div>
+                    <div class="gx-3 mb-3">
+                        <label asp-for="@Model.JobDescription" class="form-label small mb-1">Description <span class="text-danger">*</span></label>
+                        <textarea asp-for="@Model.JobDescription" class="form-control" type="text" placeholder="Enter description">
+                            @Model.JobDescription
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card-header">Applications</div>
+                <div class="card-body">
+                    <div class="gx-3 mb-3">
+                        <label asp-for="@Model.ContactType" class="form-label small mb-1">Contact form <span class="text-danger">*</span></label>
+                        <select asp-for="@Model.ContactType" class="form-select" aria-label="Contact type">
+                            <option value="1" selected>Email</option>
+                            <option value="2">External form</option>
+                            <option value="3">GameDev.Hunt</option>
+                        </select>
+                    </div>
+                    <div class="gx-3">
+                        <label asp-for="@Model.ContactAddress" class="form-label small mb-1">Contact address <span class="text-danger">*</span></label>
+                        <input asp-for="@Model.ContactAddress" class="form-control" type="text" placeholder="Enter email/url">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit button -->
+            <div class="card-body">
+                <button type="submit" class="btn btn-primary btn-block">Go Next</button>
             </div>
         </div>
-
-        <div class="row gx-3 mb-3">
-            <div class="col-md-4">
-                <label asp-for="City" class="small mb-1" for="inputCity">City *</label>
-                <input asp-for="City" class="form-control" id="inputCity" type="text" placeholder="Enter city">
-            </div>
-            <div class="col-md-4">
-                <label asp-for="Country" class="small mb-1" for="inputCountry">Country *</label>
-                <input asp-for="Country" class="form-control" id="inputCountry" type="text" placeholder="Enter country">
-            </div>
-            <div class="col-md-4">
-                <label asp-for="Address" class="small mb-1" for="inputAddress">Address</label>
-                <input asp-for="Address" class="form-control" id="inputAddress" type="text" placeholder="Enter address">
-            </div>
-        </div>
-
-        <div class="row gx-3 mb-3">
-            <div class="col-md-12">
-                <label asp-for="WorkLocationType" class="small mb-1" for="inputWorkLocationType">Work location *</label>
-                <select asp-for="WorkLocationType" class="form-select" aria-label="Employment type">
-                    <option value="1" selected>On Site</option>
-                    <option value="2">Hybrid</option>
-                    <option value="3">Fully Remote</option>
-                </select>
-            </div>
-        </div>
-
-        @await Html.PartialAsync("./JobOffers/_MultiselectTripleField", Model)
-
-        <div class="row gx-3 mb-3">
-            <div class="col-md-6">
-                <label asp-for="ContactType" class="small mb-1" for="inputContactType">Contact form *</label>
-                <select asp-for="ContactType" class="form-select" aria-label="Contact type">
-                    <option value="1" selected>Email</option>
-                    <option value="2">External form</option>
-                    <option value="3">GameDev.Hunt</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label asp-for="ContactAddress" class="small mb-1" for="inputContactAddress">Contact address *</label>
-                <input asp-for="ContactAddress" class="form-control" id="inputContactAddress" type="text" placeholder="Enter email/url">
-            </div>
-        </div>
-
-        <div class="row gx-3 mb-3">
-            <div class="col-md-12">
-                <label asp-for="MainTechnologyType" class="small mb-1" for="inputJobField">Main Technology *</label>
-                @await Html.PartialAsync("./JobOffers/_MainTechnologiesWidgets", Model)
-            </div>
-        </div>
-
-        <div class="row gx-3 mb-3">
-            <div class="col-md-12">
-                <label asp-for="TechKeywords" class="small mb-1" for="inputTechStack">Tech stack</label>
-                @await Html.PartialAsync("./JobOffers/_TechKeywordsWidgets", Model)
-            </div>
-        </div>
-
-        <div class="row gx-3 mb-3">
-            <div class="col-md-12">
-                <label asp-for="JobDescription" class="small mb-1" for="inputJobDescription">Description *</label>
-                <textarea asp-for="JobDescription" class="form-control" id="inputJobDescription" type="text" placeholder="Enter description" value=JobTitle>
-                </textarea>
-            </div>
-        </div>
-
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-primary btn-block mb-4">Go Next</button>
     </form>
 </div>
 

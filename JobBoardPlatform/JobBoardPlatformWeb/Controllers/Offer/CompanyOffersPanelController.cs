@@ -1,8 +1,11 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.DAL.Data.Enums.Sort;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
+using JobBoardPlatform.PL.ViewModels.Offer.Company;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,6 +15,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOffersPanelController : Controller
     {
+        private const int PageSize = 10;
+
         private readonly IRepository<JobOffer> offersRepository;
 
 
@@ -23,11 +28,34 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public async virtual Task<IActionResult> Offers()
         {
             int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
-            var viewModelFactory = new CompanyOffersViewModelFactory(profileId, offersRepository);
+            var viewModelFactory = new CompanyOfferCardsViewModelFactory(profileId, 
+                offersRepository,
+                1,
+                PageSize,
+                new bool[] { true, true},
+                SortType.Descending,
+                SortCategoryType.PublishDate);
 
             var model = await viewModelFactory.Create();
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async virtual Task<IActionResult> RefreshCardContainer(ContainerCardsViewModel cardsViewModel)
+        {
+            int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
+            var viewModelFactory = new CompanyOfferCardsViewModelFactory(profileId,
+                offersRepository,
+                cardsViewModel.Page,
+                PageSize,
+                cardsViewModel.FilterToggles,
+                cardsViewModel.SortType,
+                cardsViewModel.SortCategory);
+
+            var applicationCards = await viewModelFactory.Create();
+
+            return PartialView("./Templates/_CardsContainer", applicationCards);
         }
 
         [HttpPost]

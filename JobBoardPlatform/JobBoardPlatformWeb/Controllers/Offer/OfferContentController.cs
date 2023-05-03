@@ -42,7 +42,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             this.actionHandlerFactory = actionHandlerFactory;
         }
 
-        [Route("{companyname}-{offertitle}-{id}")]
+        [Route("offer-{companyname}-{offertitle}-{id}")]
         public async Task<IActionResult> Offer(int id, string companyname, string offertitle)
         {
             var offer = await offersRepository.Get(id);
@@ -75,7 +75,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("{companyname}-{offertitle}-{id}")]
+        [Route("offer-{companyname}-{offertitle}-{id}")]
         public async Task<IActionResult> Offer(OfferContentViewModel content)
         {
             if (ModelState.IsValid)

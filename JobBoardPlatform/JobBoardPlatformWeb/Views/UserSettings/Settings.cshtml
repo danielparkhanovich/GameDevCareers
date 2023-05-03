@@ -1,0 +1,75 @@
+﻿@using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+
+@model SettingsIdentityViewModel
+@{
+    string role = UserSessionUtils.GetRole(User);
+}
+
+<div class="container-xl px-4 mt-4">
+
+    <!-- Account page navigation-->
+    @if (role == UserRoles.Employee)
+    {
+        @await Html.PartialAsync("./ProfileTabs/_EmployeeProfileTabs")
+    }
+    else if (role == UserRoles.Company)
+    {
+        @await Html.PartialAsync("./ProfileTabs/_CompanyProfileTabs")
+    }
+
+    <form method="post">
+        <div class="mb-4">
+            <div class="card mb-2">
+                <div class="card-header d-flex flex-row justify-content-between align-content-center">
+                    <div class="align-self-center">
+                        Change email
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-row justify-content-between align-items-center">
+                    <div class="d-flex flex-column">
+                        <label asp-for="@Model.LoginIdentifier" class="small mb-1">Email</label>
+                        <input asp-for="@Model.LoginIdentifier" class="form-control" type="text" value="@Model.LoginIdentifier">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-10">Update email</button>
+        </div>
+    </form>
+    <form method="post">
+        <div class="mb-4">
+            <div class="card mb-2">
+                <div class="card-header d-flex flex-row justify-content-between align-content-center">
+                    <div class="align-self-center">
+                        Change password
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-row justify-content-between align-items-center">
+                    <div class="d-flex flex-column">
+                        <div class="mb-2">
+                            <label asp-for="@Model.OldPassword" class="small mb-1">Old password</label>
+                            <input asp-for="@Model.OldPassword" class="form-control" type="password">
+                        </div>
+                        <div>
+                            <label asp-for="@Model.NewPassword" class="small mb-1">New password</label>
+                            <input asp-for="@Model.NewPassword" class="form-control" type="password">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-10">Update password</button>
+        </div>
+    </form>
+    <div class="mb-4">
+        <div class="card mb-2">
+            <div class="card-header d-flex flex-row justify-content-between align-content-center">
+                <div class="align-self-center">
+                    Delete account
+                </div>
+            </div>
+            <div class="card-body d-flex flex-row justify-content-between align-items-center">
+                <div class="small text-muted">Delete your account and account data</div>
+                <button type="button" class="btn btn-outline-danger w-10">Delete account</button>
+            </div>
+        </div>
+    </div>
+</div>

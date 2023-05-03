@@ -12,13 +12,23 @@
     @await Html.PartialAsync("./ProfileTabs/_CompanyProfileTabs")
 
     <div class="mb-5 card">
-        <div class="card-header">
-            Job offer (views: @Model.TotalViewsCount, total applications: @Model.TotalApplications)
+        <div class="card-header d-flex justify-content-between">
+            <div>
+                Job offer
+            </div>
+            <div class="d-flex flex-row">
+                <div class="me-3">
+                    <i class="bi bi-eye"></i> @Model.TotalViewsCount
+                </div>
+                <div class="me-3">
+                    <i class="bi bi-send"></i> @Model.TotalApplications
+                </div>
+            </div>
         </div>
         @await Html.PartialAsync("./JobOffers/_JobOffer", offerCard)
     </div>
 
-    <div id="applications-container">
-        @await Html.PartialAsync("./Applications/_ApplicationsContainer", applicationCards)
+    <div id="applications-container" class="border">
+        @await Html.PartialAsync("./Templates/_CardsContainer", applicationCards)
     </div>
 </div>

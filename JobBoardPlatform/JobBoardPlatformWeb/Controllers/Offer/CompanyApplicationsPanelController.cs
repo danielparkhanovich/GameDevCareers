@@ -28,16 +28,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("CompanyOffersPanel/applications-{offerId}-page-{page}")]
         public async virtual Task<IActionResult> Applications(int offerId, int page)
         {
-            bool isShowUnseen = !Request.Query.ContainsKey("hide-unseen");
-            bool isShowMustHire = !Request.Query.ContainsKey("hide-musthire");
-            bool isShowAverage = !Request.Query.ContainsKey("hide-average");
-            bool isShowRejected = !Request.Query.ContainsKey("hide-reject");
-            bool[] filterStates = new bool[4] { isShowUnseen, isShowMustHire, isShowAverage, isShowRejected };
+            bool[] filterToggles = new bool[4] { true, true, true, true };
 
             var applicationsViewModelFactory = new CompanyApplicationsViewModelFactory(offerId,
                 page,
                 PageSize,
-                filterStates,
+                filterToggles,
                 applicationsRepository,
                 offersRepository);
 
@@ -61,27 +57,19 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         }
 
         [HttpPost]
-        public async virtual Task<IActionResult> RefreshApplications(CompanyApplicationsCardsViewModel cardsViewModel)
+        public async virtual Task<IActionResult> RefreshCardContainer(ContainerCardsViewModel cardsViewModel)
         {
-            bool[] filterStates = new bool[4] 
-            { 
-                cardsViewModel.IsIncludeUnseen,
-                cardsViewModel.IsIncludeMustHire,
-                cardsViewModel.IsIncludeAverage,
-                cardsViewModel.IsIncludeReject
-            };
-
-            var applicationCardsFactory = new CompanyApplicationsCardsViewModelFactory(cardsViewModel.OfferId,
+            var applicationCardsFactory = new CompanyApplicationsCardsViewModelFactory(cardsViewModel.RelatedId,
                 applicationsRepository,
                 cardsViewModel.Page,
                 PageSize,
-                filterStates,
+                cardsViewModel.FilterToggles,
                 cardsViewModel.SortType,
                 cardsViewModel.SortCategory);
 
             var applicationCards = await applicationCardsFactory.Create();
 
-            return PartialView("./Applications/_ApplicationsContainer", applicationCards);
+            return PartialView("./Templates/_CardsContainer", applicationCards);
         }
     }
 }

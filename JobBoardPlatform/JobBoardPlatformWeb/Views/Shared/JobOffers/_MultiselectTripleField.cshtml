@@ -3,37 +3,40 @@
 @model IOfferSalary
 
 <div>
-    <div class="row gx-3 mb-3 offer-salary-container" id="template">
-        <div class="col-md-6">
-            <label asp-for="EmploymentTypes[0]" class="small mb-1" for="inputEmploymentTypes">Employment type *</label>
+    <div class="d-flex flex-row justify-content-between gx-3 mb-3 offer-salary-container" id="template">
+        <div class="flex-grow-1 pe-5">
+            <label asp-for="EmploymentTypes[0]" class="form-label small mb-1">Employment type <span class="text-danger">*</span></label>
             <select asp-for="EmploymentTypes[0]" class="form-select" aria-label="Employment type">
                 <option value="1" selected>Permanent</option>
                 <option value="2">Mandate contract</option>
                 <option value="3">B2B</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <label asp-for="SalaryFromRange[0]" class="small mb-1" for="inputSalaryFromRange">Monthly salary from (gross)</label>
-            <input asp-for="SalaryFromRange[0]" class="form-control" id="inputSalaryFromRange" type="text" placeholder="From">
+        <div class="d-flex flex-row justify-content-center me-5">
+            <div>
+                <label asp-for="SalaryFromRange[0]" class="form-label small mb-1">Monthly salary from (gross)</label>
+                <input asp-for="SalaryFromRange[0]" class="form-control" type="text" placeholder="From">
+            </div>
+            <div class="align-self-center pt-4 mx-2"> - </div>
+            <div>
+                <label asp-for="SalaryToRange[0]" class="form-label small mb-1">Monthly salary to (gross)</label>
+                <input asp-for="SalaryToRange[0]" class="form-control" type="text" placeholder="To">
+            </div>
         </div>
-        <div class="col-md-2">
-            <label asp-for="SalaryToRange[0]" class="small mb-1" for="inputSalaryToRange">Monthly salary to (gross)</label>
-            <input asp-for="SalaryToRange[0]" class="form-control" id="inputSalaryToRange" type="text" placeholder="To">
-        </div>
-        <div class="col-md-1">
-            <label asp-for="SalaryCurrencyType[0]" class="small mb-1" for="inputSalaryToRange">Currency</label>
+        <div class="flex-grow-1">
+            <label asp-for="SalaryCurrencyType[0]" class="form-label small mb-1">Currency</label>
             <select asp-for="SalaryCurrencyType[0]" class="form-select" aria-label="Default select example">
                 <option value="1" selected>PLN</option>
                 <option value="2">EUR</option>
             </select>
         </div>
-        <div class="col-md-1 d-flex justify-content-end flex-column" id="removeButtonContainer">
+        <div class="justify-content-end flex-column" id="removeButtonContainer">
             <button type="button" class="bg-transparent border-0 h-50" id="removeButton" style="display:none;">
                 <i class="bi bi-x-lg text-danger" style="font-size: 1.35rem;"></i>
             </button>
         </div>
     </div>
-    <button type="button" id="addButton" class="btn btn-primary btn-block mb-4">Add one more employment type</button>
+    <button type="button" id="addButton" class="btn btn-primary btn-block mb-2">Add one more employment type</button>
 </div>
 
 <script>

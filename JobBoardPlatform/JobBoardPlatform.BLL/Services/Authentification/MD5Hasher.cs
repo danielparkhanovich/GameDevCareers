@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JobBoardPlatform.BLL.Services.Authentification
 {
-    internal class PasswordHasher : IPasswordHasher
+    internal class MD5Hasher : IPasswordHasher
     {
         public string HashPassword(string password)
         {

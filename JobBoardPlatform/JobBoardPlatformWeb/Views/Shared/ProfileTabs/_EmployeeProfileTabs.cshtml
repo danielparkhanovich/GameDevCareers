@@ -9,12 +9,8 @@
                 asp-controller="EmployeeProfile" asp-action="Profile">Company profile</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link @(currentAction == "Security" ? "active ms-0" : "")"
-                asp-controller="EmployeeProfile" asp-action="Security">Security</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link @(currentAction == "Preferences" ? "active ms-0" : "")"
-                asp-controller="EmployeeProfile" asp-action="Preferences">Preferences</a>
+            <a class="nav-link @(currentAction == "Settings" ? "active ms-0" : "")"
+               asp-controller="UserSettings" asp-action="Settings">Settings</a>
         </li>
     </ul>
 </nav>

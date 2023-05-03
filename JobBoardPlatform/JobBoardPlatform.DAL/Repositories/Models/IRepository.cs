@@ -7,7 +7,7 @@ namespace JobBoardPlatform.DAL.Repositories.Models
     {
         public Task<List<T>> GetAll();
         public Task<DbSet<T>> GetAllSet();
-        public Task<T> Get(int id);
+        public Task<T?> Get(int id);
         public Task<T> Add(T entity);
         public Task<T> Update(T entity);
         public Task<T> Delete(int id);

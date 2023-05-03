@@ -26,13 +26,24 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public async Task Execute()
         {
-            var offer = new JobOffer();
-            offer.CompanyProfileId = profileId;
-            offer.CreatedAt = DateTime.Now;
+            var offer = await repository.Get(data.OfferId);
 
-            dataToOffer.Map(data, offer);
+            if (offer != null)
+            {
+                dataToOffer.Map(data, offer);
 
-            await repository.Add(offer);
+                await repository.Update(offer);
+            }
+            else
+            {
+                offer = new JobOffer();
+                offer.CompanyProfileId = profileId;
+                offer.CreatedAt = DateTime.Now;
+
+                dataToOffer.Map(data, offer);
+
+                await repository.Add(offer);
+            }
         }
     }
 }

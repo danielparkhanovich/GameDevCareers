@@ -1,7 +1,10 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
+﻿using JobBoardPlatform.PL.ViewModels.Contracts;
+using JobBoardPlatform.PL.ViewModels.Offer.Company;
+
+namespace JobBoardPlatform.PL.ViewModels.OfferViewModels.Company
 {
     public class CompanyOffersViewModel
     {
-        public List<CompanyOfferCardViewModel>? JobOffers { get; set; }
+        public ContainerCardsViewModel ContainerCards { get; set; }
     }
 }

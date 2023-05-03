@@ -4,35 +4,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.DAL.Data.Loaders
 {
-    public class LoadCompanyOffers : ILoader<List<JobOffer>>
+    public class LoadCompanyOffer : ILoader<JobOffer>
     {
         private readonly IRepository<JobOffer> repository;
-        private readonly int profileId;
+        private readonly int offerId;
 
 
-        public LoadCompanyOffers(IRepository<JobOffer> repository, 
-            int companyProfileId)
+        public LoadCompanyOffer(IRepository<JobOffer> repository, 
+            int offerId)
         {
             this.repository = repository;
-            this.profileId = companyProfileId;
+            this.offerId = offerId;
         }
 
-        public async Task<List<JobOffer>> Load()
+        public async Task<JobOffer> Load()
         {
             var offersSet = await repository.GetAllSet();
-            var offers = await offersSet.Where(offer => offer.CompanyProfileId == profileId)
-                .OrderByDescending(offer => offer.CreatedAt)
-                .Include(offer => offer.CompanyProfile)
-                .Include(offer => offer.WorkLocation)
-                .Include(offer => offer.MainTechnologyType)
-                .Include(offer => offer.TechKeywords)
-                .Include(offer => offer.JobOfferEmploymentDetails)
-                    .ThenInclude(details => details.SalaryRange != null ? details.SalaryRange.SalaryCurrency : null)
-                .Include(offer => offer.ContactDetails)
-                    .ThenInclude(details => details.ContactType)
-                .ToListAsync();
+            var offer = await offersSet.Where(offer => offer.Id == offerId)
+                .Include(x => x.CompanyProfile)
+                .Include(x => x.WorkLocation)
+                .Include(x => x.MainTechnologyType)
+                .Include(x => x.TechKeywords)
+                .Include(x => x.JobOfferEmploymentDetails)
+                    .ThenInclude(y => y.SalaryRange != null ? y.SalaryRange.SalaryCurrency : null)
+                .Include(x => x.JobOfferEmploymentDetails)
+                    .ThenInclude(y => y.EmploymentType)
+                .Include(x => x.ContactDetails)
+                    .ThenInclude(y => y.ContactType)
+                .SingleAsync();
 
-            return offers;
+            return offer;
         }
     }
 }

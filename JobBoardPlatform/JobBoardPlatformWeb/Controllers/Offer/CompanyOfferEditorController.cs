@@ -2,6 +2,7 @@
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,15 +28,43 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return View();
         }
 
-        public async virtual Task<IActionResult> EditOffer(int offerId)
+        [Route("edit-offer-{offerId}")]
+        public async Task<IActionResult> NewOffer(int offerId)
         {
-            NewOfferViewModel viewModel = null;
-            return View();
+            var viewModelFactory = new OfferDetailsViewModelFactory(offerId,
+                offersRepository);
+
+            var viewModel = await viewModelFactory.Create();
+
+            return View(viewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("edit-offer-{offerId}")]
+        public async Task<IActionResult> EditOffer(int offerId, OfferDetailsViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                int profileId = UserSessionUtils.GetProfileId(User);
+
+                var addNewOfferCommand = new AddNewOfferCommand(profileId,
+                    viewModel,
+                    keywordsRepository,
+                    offersRepository);
+
+                await addNewOfferCommand.Execute();
+
+                return RedirectToAction("Offers", "CompanyOffersPanel");
+            }
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async virtual Task<IActionResult> NewOffer(NewOfferViewModel viewModel)
+        public async Task<IActionResult> NewOffer(OfferDetailsViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
