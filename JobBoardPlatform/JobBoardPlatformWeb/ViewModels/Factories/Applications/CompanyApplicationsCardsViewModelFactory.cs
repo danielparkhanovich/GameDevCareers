@@ -86,7 +86,8 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
                 SortLabels = sortLables,
                 SortCategoryTypes = sortCategoryTypes,
                 FilterToggles = filterToggles,
-                RecordsCount = applicationsLoader.SelectedApplicationsCount
+                RecordsCount = applicationsLoader.SelectedApplicationsCount,
+                PageSize = pageSize
             };
 
             return viewModel;

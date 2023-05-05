@@ -68,6 +68,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.MainPage
                 SortCategoryTypes = sortCategoryTypes,
                 FilterToggles = filterToggles,
                 RecordsCount = offersLoader.SelectedOffersCount,
+                PageSize = pageSize,
                 IsShowHeader = false
             };
 
