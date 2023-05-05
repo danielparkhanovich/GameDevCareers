@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.BLL.Services.MessageBus.Notifications;
 using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Blob;
@@ -33,6 +34,9 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             if (ModelState.IsValid)
             {
                 await UpdateProfile(userViewModel);
+
+                TempData["OperationResultMessage"] = "Profile successfully updated";
+                TempData["OperationResultStatus"] = OperationResultType.Success.ToString();
 
                 return RedirectToAction("Profile");
             }

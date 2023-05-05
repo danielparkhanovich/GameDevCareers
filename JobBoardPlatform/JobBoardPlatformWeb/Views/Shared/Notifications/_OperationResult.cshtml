@@ -1,0 +1,14 @@
+﻿@using JobBoardPlatform.BLL.Services.MessageBus.Notifications;
+@{
+    var message = TempData["OperationResultMessage"] as string;
+    var resultType = TempData["OperationResultStatus"] as string;
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-dismissible @(resultType == OperationResultType.Success.ToString() ? "alert-success" : "alert-danger")">
+        <button type="button" class="btn-close small" data-bs-dismiss="alert"></button>
+        <i class="bi bi-pencil-square me-2"></i>
+        <small>@message</small>
+    </div>
+}

@@ -1,0 +1,40 @@
+﻿@using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+@using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
+@{
+    string role = UserSessionUtils.GetRole(User);
+    var factory = new ProfileTabsViewModelFactory(role);
+    var viewModel = await factory.Create();
+
+    var actions = viewModel.MainTabsActions;
+    var controllers = viewModel.MainTabsControllers;
+    var tabs = viewModel.MainTabsLabels;
+
+    string currentAction = ViewContext.RouteData.Values["Action"].ToString();
+
+    bool isSecondaryTab = !actions.Contains(currentAction);
+
+    string? secondaryTabTitle = ViewData["Title"] as string;
+}
+
+<nav class="nav">
+    <div class="d-flex flex-row border-0 justify-content-between w-100">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            @for (int i = 0; i < tabs.Length; i++)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(currentAction == $"{actions[i]}" ? "active ms-0" : "")"
+                   asp-controller="@controllers[i]" asp-action="@actions[i]">@tabs[i]</a>
+                </li>
+            }
+        </ul>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            @if (isSecondaryTab)
+            {
+                <li class="nav-item">
+                    <a class="nav-link active ms-0">@secondaryTabTitle</a>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>
+<hr class="mt-0 mb-4">

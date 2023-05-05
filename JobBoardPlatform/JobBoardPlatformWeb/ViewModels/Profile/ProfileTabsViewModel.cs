@@ -2,7 +2,8 @@
 {
     public class ProfileTabsViewModel
     {
-        public string CurrentTab { get; set; }
-        public string[] MainTabs { get; set; }
+        public string[] MainTabsLabels { get; set; }
+        public string[] MainTabsActions { get; set; }
+        public string[] MainTabsControllers { get; set; }
     }
 }

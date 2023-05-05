@@ -1,9 +1,19 @@
 ﻿
 @model OfferDetailsViewModel
+@{
+    if (Model == null)
+    {
+        ViewData["Title"] = $"New Ad";
+    }
+    else
+    {
+        ViewData["Title"] = $"Edit Ad";
+    }
+}
 
 <div class="container-xl px-5 mt-5">
     <!-- Account page navigation-->
-    @await Html.PartialAsync("./ProfileTabs/_CompanyProfileTabs", Model)
+    @await Html.PartialAsync("./ProfileTabs/_ProfileTabs")
 
     <form method="post">
         <div class="card">
@@ -92,9 +102,3 @@
         </div>
     </form>
 </div>
-
-@section Scripts {
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
-}
