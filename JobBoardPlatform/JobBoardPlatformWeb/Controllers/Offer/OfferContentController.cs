@@ -3,7 +3,6 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob;
@@ -11,6 +10,7 @@ using Microsoft.Extensions.Options;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {

@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models.Employee;
-using JobBoardPlatform.PL.ViewModels.Profile.Employee;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile

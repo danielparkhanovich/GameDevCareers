@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.PL.ViewModels.Profile;
+using JobBoardPlatform.PL.ViewModels.Models.Profile;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile

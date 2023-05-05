@@ -4,11 +4,11 @@ using JobBoardPlatform.DAL.Options;
 using Microsoft.Extensions.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.DAL.Repositories.Blob;
-using JobBoardPlatform.PL.ViewModels.Profile.Company;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.BLL.Commands.Profile;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

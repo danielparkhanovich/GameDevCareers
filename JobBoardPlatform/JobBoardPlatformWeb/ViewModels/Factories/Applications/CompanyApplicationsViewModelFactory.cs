@@ -3,9 +3,8 @@ using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Offer.Company;
-using JobBoardPlatform.PL.ViewModels.Offer.Users;
-using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications

@@ -4,7 +4,7 @@ using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.Profile.Contracts;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Contracts;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Common;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.PL.ViewModels.Offer.Users;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer

@@ -18,7 +18,7 @@ namespace JobBoardPlatformWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository);
+            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 1);
 
             var model = await viewModelFactory.Create();
 

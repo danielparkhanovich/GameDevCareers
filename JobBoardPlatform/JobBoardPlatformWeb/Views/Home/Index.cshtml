@@ -1,13 +1,13 @@
-﻿@using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
+﻿
 @model OffersMainPageViewModel
 @{
     ViewData["Title"] = "Home Page";
 
-    var offers = Model.Offers;
+    var offers = Model.OffersContainer;
 }
 
 <div class="container px-5 pt-4">
-    <div class="d-flex flex-column px-5" style="height: 100vh;">
+    <div class="d-flex flex-column px-5">
         <div class="mb-3">
             <div class="row">
                 <div class="input-group mb-3">
@@ -17,31 +17,14 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center align-content-center">
-                <button class="text-center mx-1 border-0 bg-transparent">
-                    <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
-                        <i class="bi bi-display" style="font-size: 1.5rem;"></i>
-                    </div>
-                    All
-                </button>
-                <button class="text-center mx-1 border-0 bg-transparent">
-                    <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
-                        <i class="bi bi-display" style="font-size: 1.5rem;"></i>
-                    </div>
-                    All
-                </button>
-                <button class="text-center mx-1 border-0 bg-transparent">
-                    <div class="d-flex justify-content-center align-items-center border border-dark rounded-circle" style="width: 2.5rem; height: 2.5rem;">
-                        <i class="bi bi-display" style="font-size: 1.5rem;"></i>
-                    </div>
-                    All
-                </button>
+                @await Html.PartialAsync("./JobOffers/_MainTechnologiesWidgets", Model)
             </div>
         </div>
 
         <div class="d-flex flex-row px-4">
             <ul class="nav nav-tabs flex-grow-1 border-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Offers <small class="ms-3">152 offers</small></a>
+                    <a class="nav-link active" aria-current="page" href="#">Employment<small class="ms-3">152 offers</small></a>
                 </li>
                 <li class="nav-item px-5">
                     <a class="nav-link" href="#">Commissions</a>
@@ -58,13 +41,8 @@
         </div>
 
         <hr class="mt-0 mb-2">
-        <div class="flex-grow-1 bg-dark bg-opacity-10">
-            @foreach(var offer in offers)
-            {
-                <div class="mb-2 card">
-                    @await Html.PartialAsync("./JobOffers/_JobOffer", offer)
-                </div>
-            }
+        <div id="cards-container">
+            @await Html.PartialAsync("./Templates/_CardsContainer", offers)
         </div>
     </div>
 </div>

@@ -4,8 +4,7 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Offer.Company;
-using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer

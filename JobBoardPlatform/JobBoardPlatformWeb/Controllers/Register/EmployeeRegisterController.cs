@@ -1,8 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.Authentification;
-using JobBoardPlatform.PL.ViewModels.OfferViewModels;
-using Microsoft.AspNetCore.Mvc;
+using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {

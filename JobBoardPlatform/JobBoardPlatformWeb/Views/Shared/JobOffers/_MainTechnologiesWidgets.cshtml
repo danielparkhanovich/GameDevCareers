@@ -1,5 +1,4 @@
 ﻿@using JobBoardPlatform.DAL.Models.Enums;
-@using JobBoardPlatform.PL.ViewModels.Offer.Company.Contracts;
 @using JobBoardPlatform.PL.ViewModels.Contracts;
 
 @model IMainTechnology
@@ -7,29 +6,43 @@
     var fields = Enum.GetValues(typeof(MainTechnologyTypeEnum))
         .Cast<MainTechnologyTypeEnum>()
         .ToArray();
+    var fieldLabels = new List<string>(fields.Select(x => x.ToString()));
+    int indexOffset = 1;
+
+    bool isIncludeAny = (ViewData["Title"] as string == "Home Page");
+    if (isIncludeAny)
+    {
+        fieldLabels.Insert(0, "All");
+        indexOffset = 0;
+    }
 }
 
 <div class="d-flex btn-group flex-wrap" data-toggle="buttons">
-    @for (int i = 0; i < fields.Length; i++)
+    @for (int i = 0; i < fieldLabels.Count; i++)
     {
-    <div class="d-flex mx-2 flex-column justify-content-center align-items-center radio-button-area" onclick="selectField('mainFieldInput_@i')">
-        <label asp-for="MainTechnologyType" class="d-flex flex-column align-items-center btn btn-secondary p-3 text-center mainField" for="option4">
-            <i class="d-flex justify-content-center align-items-center border rounded-circle bi bi-display mainFieldImg" id="mainFieldImg" style="width: 3rem; height: 3rem; font-size: 1.4rem;"></i>
-            @fields[i].ToString()
-        </label>
-            <input asp-for="MainTechnologyType" id="mainFieldInput_@i" class="mainFieldInput" type="radio" name="MainTechnologyType" value="@(i+1)" checked="checked"
-        style="position: absolute; opacity: 0; pointer-events: none;" />
-    </div>
+        <div class="d-flex flex-column justify-content-center align-items-center radio-button-area" onclick="selectField('mainFieldInput_@i')">
+            <label asp-for="MainTechnologyType" class="d-flex flex-column align-items-center p-3 text-center mainField" for="option4">
+                <div class="overlay" style="width: 4rem; height: 4rem; position: absolute; border-radius: 50%; background-color: rgba(100, 100, 100, 0.5); opacity:0; transition: all 0.3s;
+                 z-index:0;"></div>
+                <i class="d-flex justify-content-center align-items-center rounded-circle bi bi-display text-white mainFieldImg"
+                    style="width: 3rem; height: 3rem; font-size: 1.4rem;
+                    background-image: linear-gradient(90deg, rgba(101,101,101,1) 0%, rgba(130,130,130,1) 100%);
+                    transition: all 0.2s ease-in-out; z-index:1;">
+                </i>
+                <div class="small">@fieldLabels[i].ToString()</div>
+            </label>
+            <input asp-for="MainTechnologyType" id="mainFieldInput_@i" class="mainFieldInput" type="radio" name="MainTechnologyType" value="@(i + indexOffset)" checked="checked"
+            style="position: absolute; opacity: 0; pointer-events: none;" />
+        </div>
     }
 </div>
 
 <script>
-
     var radioButtons = document.getElementsByClassName('mainFieldInput');
     checkTechnologyWidget(radioButtons[0]);
 
-    function selectField(value) 
-    {
+    function selectField(value) {
+
         var radioButtons = document.getElementsByClassName('mainFieldInput');
 
         for (var i = 0; i < radioButtons.length; i++) 
@@ -43,23 +56,22 @@
     }
 
     function checkTechnologyWidget(element) {
+
         element.checked = true;
 
         // Add 'active' class to parent element of selected radio button
         var label = element.parentElement.querySelector('.mainField');
-        label.classList.add('text-primary');
 
         var img = label.querySelector('.mainFieldImg');
-        img.classList.add('border-primary');
+        img.style.backgroundImage = "linear-gradient(90deg, rgba(52,89,230,1) 0%, rgba(102,134,255,1) 100%)";
     }
 
     function uncheckTechnologyWidget(element) {
         element.checked = false;
 
         var label = element.parentElement.querySelector('.mainField');
-        label.classList.remove('text-primary');
 
         var img = label.querySelector('.mainFieldImg');
-        img.classList.remove('border-primary');
+        img.style.backgroundImage = "linear-gradient(90deg, rgba(101,101,101,1) 0%, rgba(130,130,130,1) 100%)";
     }
 </script>

@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Offer.State;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.PL.ViewModels.OfferViewModels.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer

@@ -5,7 +5,7 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

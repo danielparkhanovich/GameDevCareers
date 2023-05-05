@@ -1,9 +1,9 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.PL.ViewModels.Authentification;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Filters;
+using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {

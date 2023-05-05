@@ -1,8 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.OfferViewModels.Users;
-using JobBoardPlatform.PL.ViewModels.Profile.Employee;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using System.Security.Claims;
 

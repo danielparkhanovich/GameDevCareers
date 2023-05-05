@@ -1,6 +1,5 @@
 ﻿@using JobBoardPlatform.DAL.Models.Enums;
 @using System.Text.RegularExpressions;
-@using JobBoardPlatform.PL.ViewModels.Offer.Users;
 
 @model OfferCardViewModel
 @{
@@ -10,35 +9,39 @@
     string formattedCompanyName = Regex.Replace(offer.Company, @"\s+", "-").ToLower();
     string formattedOfferTitle = Regex.Replace(offer.JobTitle, @"\s+", "-").ToLower();
     string offerPageUrl = $"{formattedCompanyName}-{formattedOfferTitle}";
+
+    var contentData = new { id = offer.Id, companyname = formattedCompanyName, offertitle = formattedOfferTitle };
+    string contentUrl = @Url.Action("Offer", "OfferContent", contentData);
 }
 
-<a href="@Url.Action("Offer", "OfferContent", new { id=offer.Id, companyname=formattedCompanyName, offertitle=formattedOfferTitle })"
-   class="card-body d-flex align-content-center border-0 bg-transparent text-decoration-none">
-    <img src=@offer.CompanyImageUrl width="50" height="50" class="mx-2 border border-secondary rounded">
-    <div class="d-flex flex-column mx-4 w-100">
-        <div class="d-flex justify-content-between mb-2">
-            <h5 class="mb-0">@offer.JobTitle</h5>
-            <div class="d-flex">
-                <div class="text-success mx-4 lead mb-0 text-center">@offer.SalaryDetails</div>
-                <div class="rounded-pill border border-primary px-2 mb-0 justify-content-center align-self-center">
-                    <p class="align-middle mb-0 small h-100">@offer.PublishedAgo</p>
+<a href="@contentUrl" class="shadow card-body d-flex rounded align-content-center text-decoration-none px-2" style="padding-top:8px; padding-bottom:8px;">
+    <div class="d-flex flex-row align-items-center justify-content-center" style="width:100px; height:45px; overflow:hidden;">
+        <img src=@offer.CompanyImageUrl class="border border-secondary rounded" style="width:80%; height:100%; object-fit:contain;">
+    </div>
+    <div class="d-flex flex-column ms-2 me-4 w-100">
+        <div class="d-flex flex-row justify-content-between align-items-center mb-1">
+            <div class="mb-0" style="font-weight:500">@offer.JobTitle</div>
+            <div class="d-flex flex-row align-items-center">
+                <div class="text-success mx-4 mb-0 text-center" style="font-weight:500">@offer.SalaryDetails</div>
+                <div class="rounded-pill border border-primary px-2 mb-0 justify-content-center align-self-center small">
+                    <div class="align-middle mb-0 h-100" style="font-size:12px;">@offer.PublishedAgo</div>
                 </div>
             </div>
         </div>
         <div class="d-flex justify-content-between">
             <div class="d-flex flex-row small">
-                <div class="d-flex flex-row">
-                    <i class="bi bi-buildings text-muted"></i>
-                    <div class="mx-2 text-muted">@offer.Company</div>
+                <div class="d-flex flex-row small">
+                    <i class="bi bi-buildings text-muted me-1"></i>
+                    <div class="text-muted">@offer.Company</div>
                 </div>
-                <div class="d-flex flex-row mx-3">
-                    <i class="bi bi-geo-alt text-muted"></i>
-                    <div class="mx-2 text-muted">@offer.City, @offer.Country</div>
+                <div class="d-flex flex-row mx-3 small">
+                    <i class="bi bi-geo-alt text-muted me-1"></i>
+                    <div class="text-muted">@offer.City, @offer.Country</div>
                 </div>
                 @if (offer.WorkLocationType == WorkLocationTypeEnum.FullyRemote.ToString())
                 {
-                    <div class="text-center rounded-pill border border-primary bg-primary bg-opacity-10 px-2">
-                        <p class="small mb-0 text-primary">@offer.WorkLocationType</p>
+                    <div class="d-flex flex-row align-items-center text-center rounded-pill bg-primary bg-opacity-10 px-2 small">
+                        <div class="mb-0 text-primary small text-center">@offer.WorkLocationType</div>
                     </div>
                 }
             </div>
@@ -48,7 +51,7 @@
                     @foreach (var technology in offer.TechKeywords)
                     {
                     <div class="text-center rounded-pill border border-dark border-opacity-25 px-2 ms-2">
-                        <p class="small mb-0">@technology.ToLower()</p>
+                        <p class="small mb-0 text-muted">@technology.ToLower()</p>
                     </div>
                     }
                 }
