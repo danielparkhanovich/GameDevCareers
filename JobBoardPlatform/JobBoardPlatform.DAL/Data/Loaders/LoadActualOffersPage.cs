@@ -1,39 +1,21 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.DAL.Data.Loaders
 {
     public class LoadActualOffersPage : ILoader<List<JobOffer>>
     {
-        private readonly IRepository<JobOffer> repository;
-        private readonly int page;
-        private readonly int pageSize;
-
-        public int SelectedOffersCount { get; private set; }
+        private readonly IQueryable<JobOffer> offersQuery;
 
 
-        public LoadActualOffersPage(IRepository<JobOffer> repository, 
-            int page, int pageSize)
+        public LoadActualOffersPage(IQueryable<JobOffer> offersQuery)
         {
-            this.repository = repository;
-            this.page = page;
-            this.pageSize = pageSize;
+            this.offersQuery = offersQuery;
         }
 
         public async Task<List<JobOffer>> Load()
         {
-            var offersSet = await repository.GetAllSet();
-
-            var filtered = offersSet.Where(offer => 
-                (!offer.IsDeleted && 
-                 offer.IsPaid && 
-                 !offer.IsSuspended && 
-                 !offer.IsShelved && 
-                 offer.IsPublished));
-
-            var offers = await filtered
-                .OrderByDescending(offer => offer.PublishedAt)
+            var offers = await offersQuery
                 .Include(offer => offer.CompanyProfile)
                 .Include(offer => offer.WorkLocation)
                 .Include(offer => offer.MainTechnologyType)
@@ -44,13 +26,7 @@ namespace JobBoardPlatform.DAL.Data.Loaders
                     .ThenInclude(details => details.ContactType)
                 .ToListAsync();
 
-            this.SelectedOffersCount = offers.Count();
-
-            var pageOffers = offers
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize).ToList();
-
-            return pageOffers;
+            return offers;
         }
     }
 }
