@@ -35,18 +35,14 @@ namespace JobBoardPlatform.BLL.Search.Offers
 
             var searchData = searchDataFactory.Create();
             var filtered = GetFiltered(searchData, available);
-            AfterFiltersCount = filtered.Count();
 
             var sorted = GetSorted(searchData, filtered);
-
-            if (!string.IsNullOrEmpty(searchData.SearchString))
-            {
-                sorted = SearchByKeywords(searchData, sorted);
-            }
 
             int page = searchData.Page;
             var pageOffers = sorted.Skip((page - 1) * pageSize)
                 .Take(pageSize);
+
+            AfterFiltersCount = sorted.Count();
 
             var loader = new LoadActualOffersPage(pageOffers);
             var loaded = await loader.Load();
@@ -75,6 +71,10 @@ namespace JobBoardPlatform.BLL.Search.Offers
             {
                 available = available.Where(offer => offer.MainTechnologyTypeId == searchData.MainTechnology);
             }
+            if (!string.IsNullOrEmpty(searchData.SearchString))
+            {
+                available = SearchByKeywords(searchData, available);
+            }
 
             return available;
         }
@@ -96,6 +96,7 @@ namespace JobBoardPlatform.BLL.Search.Offers
                 .Include(offer => offer.TechKeywords);
 
             // ranking + filtering
+            // TODO: integrate Elasticsearch instead (SQL to store, Elasticsearch for queries)
             available = available
                 .Select(x => new
                 {
@@ -109,8 +110,7 @@ namespace JobBoardPlatform.BLL.Search.Offers
                 })
                 .Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score)
-                .Select(x => x.Offer)
-                .AsQueryable();
+                .Select(x => x.Offer);
 
             return available;
         }

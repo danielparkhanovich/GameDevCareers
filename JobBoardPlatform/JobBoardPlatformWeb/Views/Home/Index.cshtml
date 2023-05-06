@@ -106,8 +106,7 @@
     function searchWithKeywords(paramName) {
         var searchField = document.getElementById(searchFieldId);
         const value = searchField.value;
-        console.log(paramName)
-        console.log(value)
+
         updateQueryStringParameter(paramName, value);
 
         refreshCards();
