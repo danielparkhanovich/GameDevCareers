@@ -47,7 +47,7 @@ namespace JobBoardPlatform.BLL.Search.Offers
         {
             OfferType offerType = OfferType.Employment;
 
-            if (typeString == OfferType.Commission.ToString().ToLower())
+            if (typeString == "/commissions")
             {
                 offerType = OfferType.Commission;
             }
@@ -63,13 +63,19 @@ namespace JobBoardPlatform.BLL.Search.Offers
                 return 0;
             }
 
+            technologyString = technologyString.ToLower();
+
             var technologies = Enum.GetValues(typeof(MainTechnologyTypeEnum))
                 .Cast<MainTechnologyTypeEnum>();
+            if (!technologies.Any(x => x.ToString().ToLower() == technologyString))
+            {
+                return 0;
+            }
 
-            var foundIndex = technologies
-                .FirstOrDefault(x => x.ToString().ToLower() == technologyString);
+            var foundIndex = technologies.FirstOrDefault(x => 
+                x.ToString().ToLower() == technologyString);
 
-            return (int)foundIndex;
+            return (int)foundIndex + 1;
         }
     }
 }

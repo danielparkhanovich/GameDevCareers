@@ -36,14 +36,19 @@ namespace JobBoardPlatform.BLL.Search.Offers
             var searchData = searchDataFactory.Create();
             var filtered = GetFiltered(searchData, available);
             AfterFiltersCount = filtered.Count();
-            var sorted = GetSorted(searchData, available);
+
+            var sorted = GetSorted(searchData, filtered);
+
+            if (!string.IsNullOrEmpty(searchData.SearchString))
+            {
+                sorted = SearchByKeywords(searchData, sorted);
+            }
 
             int page = searchData.Page;
-            var pageOffers = filtered
-                .Skip((page - 1) * pageSize)
+            var pageOffers = sorted.Skip((page - 1) * pageSize)
                 .Take(pageSize);
 
-            var loader = new LoadActualOffersPage(filtered);
+            var loader = new LoadActualOffersPage(pageOffers);
             var loaded = await loader.Load();
 
             return loaded;
@@ -70,10 +75,6 @@ namespace JobBoardPlatform.BLL.Search.Offers
             {
                 available = available.Where(offer => offer.MainTechnologyTypeId == searchData.MainTechnology);
             }
-            if (!string.IsNullOrEmpty(searchData.SearchString))
-            {
-                // search logic
-            }
 
             return available;
         }
@@ -81,6 +82,36 @@ namespace JobBoardPlatform.BLL.Search.Offers
         private IQueryable<JobOffer> GetSorted(OfferSearchData searchData, IQueryable<JobOffer> available)
         {
             available = available.OrderByDescending(offer => offer.PublishedAt);
+            return available;
+        }
+
+        private IQueryable<JobOffer> SearchByKeywords(OfferSearchData searchData, IQueryable<JobOffer> available)
+        {
+            string search = searchData.SearchString!.Trim();
+            string[] keywordsTokens = search.Split().Select(x => x.ToLower())
+                .ToArray();
+
+            available = available.Include(offer => offer.CompanyProfile)
+                .Include(offer => offer.MainTechnologyType)
+                .Include(offer => offer.TechKeywords);
+
+            // ranking + filtering
+            available = available
+                .Select(x => new
+                {
+                    Offer = x,
+                    Score = (keywordsTokens.Any(token => x.JobTitle == token) ? 8 : 0) +
+                            // (keywordsTokens.Count(token => x.TechKeywords.Any(y => y.Name == token)) * 3) +
+                            (keywordsTokens.Any(token => x.MainTechnologyType.Type == token) ? 4 : 0) +
+                            (keywordsTokens.Any(token => x.Country == token) ? 3 : 0) +
+                            (keywordsTokens.Any(token => x.City == token) ? 2 : 0) +
+                            (keywordsTokens.Any(token => x.CompanyProfile.CompanyName == token) ? 1 : 0)
+                })
+                .Where(x => x.Score > 0)
+                .OrderByDescending(x => x.Score)
+                .Select(x => x.Offer)
+                .AsQueryable();
+
             return available;
         }
     }

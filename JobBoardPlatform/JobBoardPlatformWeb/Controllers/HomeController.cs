@@ -4,7 +4,6 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace JobBoardPlatformWeb.Controllers
 {
@@ -19,17 +18,10 @@ namespace JobBoardPlatformWeb.Controllers
         }
 
         [Route("")]
-        [Route("commissions")]
+        [Route("commissions", Order = 1)]
         public async Task<IActionResult> Index()
         {
-            string tab = Request.Path.ToString().ToLower();
-
-            // Get all query parameters
-            bool isSalary = Request.Query.ContainsKey("salary");
-            bool isRemote = Request.Query.ContainsKey("remote");
-
-
-            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 1);
+            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, Request);
 
             var model = await viewModelFactory.Create();
 
@@ -39,11 +31,12 @@ namespace JobBoardPlatformWeb.Controllers
         [HttpPost]
         public async virtual Task<IActionResult> RefreshCardContainer(ContainerCardsViewModel cardsViewModel)
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, cardsViewModel.Page);
+            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, Request);
 
             var model = await viewModelFactory.Create();
+            cardsViewModel = model.OffersContainer;
 
-            return PartialView("./Templates/_CardsContainer", model);
+            return PartialView("./Templates/_CardsContainer", cardsViewModel);
         }
 
         public IActionResult Privacy()

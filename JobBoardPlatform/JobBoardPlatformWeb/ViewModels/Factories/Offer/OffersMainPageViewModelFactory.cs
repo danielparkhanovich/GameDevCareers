@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.DAL.Data.Enums.Sort;
+﻿using JobBoardPlatform.BLL.Search.Offers;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.MainPage;
@@ -12,28 +12,27 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
         private const int PageSize = 20;
 
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly int page;
+        private readonly HttpRequest request;
 
 
-        public OffersMainPageViewModelFactory(IRepository<JobOffer> offersRepository, int page)
+        public OffersMainPageViewModelFactory(IRepository<JobOffer> offersRepository, HttpRequest request)
         {
             this.offersRepository = offersRepository;
-            this.page = page;
+            this.request = request;
         }
 
         public async Task<OffersMainPageViewModel> Create()
         {
-            bool[] filterToggles = new bool[0];
-
             var viewModel = new OffersMainPageViewModel();
             var mainPageOfferCardsFactory = new MainPageContainerCardsViewModelFactory(offersRepository,
-                page, 
-                PageSize, 
-                filterToggles, 
-                SortType.Descending, 
-                SortCategoryType.PublishDate);
+                request,
+                PageSize);
             viewModel.OffersContainer = await mainPageOfferCardsFactory.Create();
-            viewModel.MainTechnologyType = 0;
+
+            var searchData = new OfferSearchDataUrlFactory(request).Create();
+            viewModel.OfferSearchData = searchData;
+
+            viewModel.OffersContainer.Page = searchData.Page;
 
             return viewModel;
         }

@@ -7,20 +7,23 @@
         .Cast<MainTechnologyTypeEnum>()
         .ToArray();
     var fieldLabels = new List<string>(fields.Select(x => x.ToString()));
+    var fieldValues = new List<string>(fields.Select(x => x.ToString()));
     int indexOffset = 1;
 
     bool isIncludeAny = (ViewData["Title"] as string == "Home Page");
     if (isIncludeAny)
     {
         fieldLabels.Insert(0, "All");
+        fieldValues.Insert(0, "All");
         indexOffset = 0;
     }
+    int selectedIndex = Model.MainTechnologyType - indexOffset;
 }
 
 <div class="d-flex btn-group flex-wrap" data-toggle="buttons">
     @for (int i = 0; i < fieldLabels.Count; i++)
     {
-        <div class="d-flex flex-column justify-content-center align-items-center radio-button-area" onclick="selectField('mainFieldInput_@i')">
+        <div fieldtype="@fieldValues[i]" class="d-flex flex-column justify-content-center align-items-center radio-button-area widgetField" onclick="selectField('mainFieldInput_@i')">
             <label asp-for="MainTechnologyType" class="d-flex flex-column align-items-center p-3 text-center mainField" for="option4">
                 <div class="overlay" style="width: 4rem; height: 4rem; position: absolute; border-radius: 50%; background-color: rgba(100, 100, 100, 0.5); opacity:0; transition: all 0.3s;
                  z-index:0;"></div>
@@ -39,7 +42,10 @@
 
 <script>
     var radioButtons = document.getElementsByClassName('mainFieldInput');
-    checkTechnologyWidget(radioButtons[0]);
+
+    const selected = @Html.Raw(Json.Serialize(selectedIndex));
+
+    checkTechnologyWidget(radioButtons[selected]);
 
     function selectField(value) {
 

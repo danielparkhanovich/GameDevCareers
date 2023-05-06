@@ -45,7 +45,7 @@
             </div>
         </div>
     }
-    <div class="bg-info bg-opacity-10">
+    <div id="containerRecords" count="@Model.RecordsCount" class="bg-info bg-opacity-10">
         @if (Model.ContainerCards != null && Model.ContainerCards.Count > 0)
         {
             @foreach (var card in Model.ContainerCards)
@@ -129,7 +129,7 @@
         sendAjaxAndUpdateTable(refreshCards, viewModel);
     }
 
-    function sendAjaxAndUpdateTable(url, viewModel) {
+    function sendAjaxAndUpdateTable(url, viewModel, callback = null) {
         $.ajax({
             url: url,
             method: 'POST',
@@ -138,6 +138,9 @@
                 const selector = `#cards-container`;
                 const element = $(selector);
                 element.html(result);
+                if (callback != null) {
+                    callback();
+                }
             },
             error: function (xhr, status, error) {
                 console.error(status);
