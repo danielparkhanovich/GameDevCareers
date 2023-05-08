@@ -57,9 +57,9 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
                 employmentDetails[i] = new JobOfferEmploymentDetails();
                 employmentDetails[i].EmploymentTypeId = employmentTypeId;
 
-                int? currencyTypeId = from.SalaryCurrencyType[i];
-                int? salaryFrom = from.SalaryFromRange[i];
-                int? salaryTo = from.SalaryToRange[i];
+                int? currencyTypeId = from.SalaryCurrencyType?[i] ?? null;
+                int? salaryFrom = from.SalaryFromRange?[i] ?? null;
+                int? salaryTo = from.SalaryToRange?[i] ?? null;
 
                 if (currencyTypeId.HasValue && salaryFrom.HasValue && salaryTo.HasValue)
                 {

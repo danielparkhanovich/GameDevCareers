@@ -6,6 +6,7 @@ using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
@@ -24,6 +25,7 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AuthorizationPolicies.EmployeeOnlyPolicy, policy => policy.RequireRole(UserRoles.Employee));
     options.AddPolicy(AuthorizationPolicies.CompanyOnlyPolicy, policy => policy.RequireRole(UserRoles.Company));
+    options.AddPolicy(AuthorizationPolicies.AdminOnlyPolicy, policy => policy.RequireRole(UserRoles.Admin));
 });
 
 builder.Services.AddDbContext<DataContext>(options =>
@@ -31,6 +33,12 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         x => x.MigrationsAssembly("JobBoardPlatform.DAL"));
+});
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetValue<string>("Redis:ConnectionString");
+    options.InstanceName = builder.Configuration.GetValue<string>("Redis:InstanceName");
 });
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));

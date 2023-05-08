@@ -5,6 +5,19 @@ namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
 {
     public static class UserRolesUtils
     {
+        private const string ReservedAdminIdentifier = "admin@gmail.com";
+
+
+        public static bool IsUserAdmin(string userIdentifier)
+        {
+            if (ReservedAdminIdentifier == userIdentifier)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool IsUserOwner(ClaimsPrincipal user, JobOffer offer)
         {
             bool isUserLoggedIn = user.Identity.IsAuthenticated;

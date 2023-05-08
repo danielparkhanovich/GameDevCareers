@@ -10,16 +10,16 @@ namespace JobBoardPlatform.BLL.Search.Offers
     public class SearchActualOffers : ISearcher<List<JobOffer>>
     {
         private readonly IRepository<JobOffer> repository;
-        private readonly OfferSearchDataUrlFactory searchDataFactory;
+        private readonly OfferSearchData searchData;
         private readonly int pageSize;
 
         public int AfterFiltersCount { get; set; }
 
 
-        public SearchActualOffers(IRepository<JobOffer> repository, HttpRequest request, int pageSize) 
+        public SearchActualOffers(IRepository<JobOffer> repository, OfferSearchData searchData, int pageSize) 
         {
             this.repository = repository;
-            this.searchDataFactory = new OfferSearchDataUrlFactory(request);
+            this.searchData = searchData;
             this.pageSize = pageSize;
         }
 
@@ -33,7 +33,6 @@ namespace JobBoardPlatform.BLL.Search.Offers
                  !offer.IsShelved &&
                  offer.IsPublished);
 
-            var searchData = searchDataFactory.Create();
             var filtered = GetFiltered(searchData, available);
 
             var sorted = GetSorted(searchData, filtered);

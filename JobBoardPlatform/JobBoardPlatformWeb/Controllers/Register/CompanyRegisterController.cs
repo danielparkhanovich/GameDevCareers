@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using Microsoft.AspNetCore.Mvc;
 

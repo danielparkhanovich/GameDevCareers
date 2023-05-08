@@ -1,0 +1,18 @@
+﻿@using JobBoardPlatform.PL.ViewModels.Models.Admin;
+@model AdminPanelViewModel
+@{
+
+}
+
+<div class="container-xl px-4 pt-4">
+
+    <!-- Account page navigation-->
+    @await Html.PartialAsync("./ProfileTabs/_ProfileTabs")
+
+    <div class="card">
+        <div class="card-header">Companies</div>
+        <div id="cards-container">
+            @await Html.PartialAsync("./Templates/_CardsContainer", Model.OffersContainer)
+        </div>
+    </div>
+</div>

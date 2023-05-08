@@ -62,13 +62,19 @@ namespace JobBoardPlatform.BLL.Services.Authorization
 
             var profileAdapter = UserProfileAdapterFactory.CreateProfileAdapter(profile);
 
+            string role = profileAdapter.UserRole;
+            if (UserRolesUtils.IsUserAdmin(userRecord.Email))
+            {
+                role = UserRoles.Admin;
+            }
+
             var userData = new AuthorizationData()
             {
                 Id = userRecord.Id,
                 ProfileId = profile.Id,
                 DisplayName = profileAdapter.DisplayName,
                 DisplayImageUrl = profileAdapter.DisplayProfileImageUrl,
-                Role = profileAdapter.UserRole
+                Role = role
             };
 
             return userData;

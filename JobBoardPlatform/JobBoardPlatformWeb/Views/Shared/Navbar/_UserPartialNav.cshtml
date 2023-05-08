@@ -1,6 +1,7 @@
 ﻿@using System.Security.Claims;
 @using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 @using JobBoardPlatform.PL.Controllers.Profile;
+@using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
 @{
     string? userName = User.FindFirstValue(UserSessionProperties.DisplayName);
     if (string.IsNullOrEmpty(userName))
@@ -14,7 +15,13 @@
         userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
     }
 
-    string role = User.FindFirstValue(ClaimTypes.Role);
+    string role = UserSessionUtils.GetRole(User);
+    var factory = new ProfileTabsViewModelFactory(role);
+    var viewModel = await factory.Create();
+
+    var actions = viewModel.MainTabsActions;
+    var controllers = viewModel.MainTabsControllers;
+    var tabs = viewModel.MainTabsLabels;
 }
 
 <li class="nav-item bg-secondary border-start border-opacity-10 border-dark dropdown px-2">
@@ -23,21 +30,14 @@
         @userName, @role
     </a>
     <div class="dropdown-menu dropdown-menu-end mt-3">
-        @if (role == UserRoles.Employee)
+        @for (int i = 0; i < tabs.Length; i++)
         {
-            <a class="dropdown-item" asp-controller="EmployeeProfile" asp-action="Profile">
+            <a class="dropdown-item" asp-controller="@controllers[i]" asp-action="@actions[i]">
                 <i class="bi bi-person mx-2"></i>
-                My profile
+                @tabs[i]
             </a>
+            <div class="dropdown-divider"></div>
         }
-        else if (role == UserRoles.Company)
-        {
-            <a class="dropdown-item" asp-controller="CompanyProfile" asp-action="Profile">
-                <i class="bi bi-person mx-2"></i>
-                Company profile
-            </a>
-        }
-        <div class="dropdown-divider"></div>
         <a class="dropdown-item" asp-controller="Home" asp-action="LogOut">
             <i class="bi bi-emoji-dizzy mx-2"></i>
             Log out

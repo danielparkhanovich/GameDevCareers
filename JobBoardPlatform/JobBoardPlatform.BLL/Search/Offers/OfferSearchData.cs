@@ -1,4 +1,6 @@
-﻿namespace JobBoardPlatform.BLL.Search.Offers
+﻿using Azure;
+
+namespace JobBoardPlatform.BLL.Search.Offers
 {
     public class OfferSearchData
     {
@@ -8,5 +10,13 @@
         public bool IsSalaryOnly { get; set; }
         public bool IsRemoteOnly { get; set; }
         public int Page { get; set; }
+
+        public bool IsQueryParams { get => 
+                (Page != 1 ||
+                Type != OfferType.Employment ||
+                IsRemoteOnly ||
+                IsSalaryOnly ||
+                MainTechnology != 0);
+        }
     }
 }
