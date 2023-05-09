@@ -1,6 +1,6 @@
-﻿namespace JobBoardPlatform.BLL.Common
+﻿namespace JobBoardPlatform.BLL.Common.Formatter
 {
-    public class DaysFormatter
+    public class DaysFormatter : ITextFormatter<DateTime>
     {
         private readonly bool isPublished;
 
@@ -10,7 +10,7 @@
             this.isPublished = isPublished;
         }
 
-        public string GetDaysAgoString(DateTime date)
+        public string GetString(DateTime date)
         {
             string publishedAgo = $"0d ago";
 

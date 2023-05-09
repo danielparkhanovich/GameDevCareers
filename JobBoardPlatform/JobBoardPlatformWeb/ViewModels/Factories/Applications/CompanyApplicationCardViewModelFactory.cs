@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Common;
+﻿using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
@@ -20,7 +20,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 
         public Task<CompanyApplicationCardViewModel> Create()
         {
-            string applicatedAgo = daysFormatter.GetDaysAgoString(application.CreatedAt);
+            string applicatedAgo = daysFormatter.GetString(application.CreatedAt);
             string? linkedInUrl = application.EmployeeProfile?.LinkedInUrl;
             string? profileImageUrl = application.EmployeeProfile?.ProfileImageUrl;
             string? yearsOfExperience = application.EmployeeProfile?.YearsOfExperience;
