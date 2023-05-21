@@ -1,6 +1,6 @@
-﻿using JobBoardPlatform.BLL.Search.Offers;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+﻿using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company.Contracts;
+using JobBoardPlatform.PL.ViewModels.Models.Templates;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
 {
@@ -8,7 +8,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
     {
         public int MainTechnologyType { get => OfferSearchData.MainTechnology; set => OfferSearchData.MainTechnology = value; }
 
-        public ContainerCardsViewModel OffersContainer { get; set; }
-        public OfferSearchData OfferSearchData { get; set; }
+        public CardsContainerViewModel OffersContainer { get; set; }
+        public MainPageOfferSearchParameters OfferSearchData { get; set; }
     }
 }

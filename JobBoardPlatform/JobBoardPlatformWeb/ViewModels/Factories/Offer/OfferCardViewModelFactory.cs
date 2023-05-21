@@ -1,27 +1,20 @@
 ﻿using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
+namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
-    internal class OfferCardViewModelFactory : IFactory<OfferCardViewModel>
+    internal class OfferCardViewModelFactory : IViewModelFactory<JobOffer, IContainerCard>
     {
-        private readonly JobOffer offer;
-
-
-        public OfferCardViewModelFactory(JobOffer offer)
-        {
-            this.offer = offer;
-        }
-
-        public Task<OfferCardViewModel> Create()
+        public IContainerCard CreateViewModel(JobOffer offer)
         {
             var offerCardViewModel = new OfferCardViewModel();
 
             Map(offer, offerCardViewModel);
 
-            return Task.FromResult(offerCardViewModel);
+            return offerCardViewModel;
         }
 
         public void Map(JobOffer from, OfferCardViewModel to)

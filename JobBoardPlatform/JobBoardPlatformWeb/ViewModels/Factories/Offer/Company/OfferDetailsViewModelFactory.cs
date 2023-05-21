@@ -5,7 +5,7 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
+namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
     public class OfferDetailsViewModelFactory : IFactory<OfferDetailsViewModel>
     {

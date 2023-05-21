@@ -6,6 +6,8 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
 {
     public class CompanyOfferCardViewModel : IContainerCard
     {
+        public int Id { get => CardDisplay.Id; set => CardDisplay.Id = value; }
+
         public int TotalViews { get; set; }
         public int TotalApplicants { get; set; }
         public string MainTechnology { get; set; } = string.Empty;
@@ -18,6 +20,6 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
         public bool IsVisible { get; set; }
         public bool IsAvailable { get; set; }
         public OfferStateType StateType { get; set; }
-        public OfferCardViewModel CardDisplay { get; set; }
+        public IContainerCard CardDisplay { get; set; }
     }
 }

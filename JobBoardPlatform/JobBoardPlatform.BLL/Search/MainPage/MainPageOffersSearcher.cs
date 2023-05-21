@@ -2,28 +2,23 @@
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.DAL.Repositories.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoardPlatform.BLL.Search.Offers
+namespace JobBoardPlatform.BLL.Search.MainPage
 {
-    public class SearchActualOffers : ISearcher<List<JobOffer>>
+    public class MainPageOffersSearcher : ISearcher<JobOffer, MainPageOfferSearchParameters>
     {
-        private readonly IRepository<JobOffer> repository;
-        private readonly OfferSearchData searchData;
-        private readonly int pageSize;
-
+        public MainPageOfferSearchParameters SearchParams { get; }
         public int AfterFiltersCount { get; set; }
 
 
-        public SearchActualOffers(IRepository<JobOffer> repository, OfferSearchData searchData, int pageSize) 
+        public MainPageOffersSearcher(MainPageOfferSearchParameters searchParams)
         {
-            this.repository = repository;
-            this.searchData = searchData;
-            this.pageSize = pageSize;
+            SearchParams = searchParams;
+            AfterFiltersCount = 0;
         }
 
-        public async Task<List<JobOffer>> Search()
+        public async Task<List<JobOffer>> Search(IRepository<JobOffer> repository)
         {
             var offersSet = await repository.GetAllSet();
             var available = offersSet.Where(offer =>
@@ -33,32 +28,33 @@ namespace JobBoardPlatform.BLL.Search.Offers
                  !offer.IsShelved &&
                  offer.IsPublished);
 
-            var filtered = GetFiltered(searchData, available);
+            var filtered = GetFiltered(available);
+            AfterFiltersCount = filtered.Count();
 
-            var sorted = GetSorted(searchData, filtered);
+            var sorted = GetSorted(filtered);
 
-            int page = searchData.Page;
+            int page = SearchParams.Page;
+            int pageSize = SearchParams.PageSize;
+
             var pageOffers = sorted.Skip((page - 1) * pageSize)
                 .Take(pageSize);
 
-            AfterFiltersCount = sorted.Count();
-
-            var loader = new LoadActualOffersPage(pageOffers);
+            var loader = new LoadOffers(pageOffers);
             var loaded = await loader.Load();
 
             return loaded;
         }
 
-        private IQueryable<JobOffer> GetFiltered(OfferSearchData searchData, IQueryable<JobOffer> available) 
+        private IQueryable<JobOffer> GetFiltered(IQueryable<JobOffer> available)
         {
-            if (searchData.IsRemoteOnly)
+            if (SearchParams.IsRemoteOnly)
             {
                 string fullyRemoteString = WorkLocationTypeEnum.FullyRemote.ToString();
 
                 available = available.Include(offer => offer.WorkLocation)
                     .Where(offer => offer.WorkLocation.Type == fullyRemoteString);
             }
-            if (searchData.IsSalaryOnly)
+            if (SearchParams.IsSalaryOnly)
             {
                 string fullyRemoteString = WorkLocationTypeEnum.FullyRemote.ToString();
 
@@ -66,27 +62,21 @@ namespace JobBoardPlatform.BLL.Search.Offers
                     .ThenInclude(details => details.SalaryRange)
                     .Where(offer => offer.JobOfferEmploymentDetails.Any(x => x.SalaryRange != null));
             }
-            if (searchData.MainTechnology != 0)
+            if (SearchParams.MainTechnology != MainPageOfferSearchParameters.AllTechnologiesIndex)
             {
-                available = available.Where(offer => offer.MainTechnologyTypeId == searchData.MainTechnology);
+                available = available.Where(offer => offer.MainTechnologyTypeId == SearchParams.MainTechnology);
             }
-            if (!string.IsNullOrEmpty(searchData.SearchString))
+            if (!string.IsNullOrEmpty(SearchParams.SearchString))
             {
-                available = SearchByKeywords(searchData, available);
+                available = SearchByKeywords(available);
             }
 
             return available;
         }
 
-        private IQueryable<JobOffer> GetSorted(OfferSearchData searchData, IQueryable<JobOffer> available)
+        private IQueryable<JobOffer> SearchByKeywords(IQueryable<JobOffer> available)
         {
-            available = available.OrderByDescending(offer => offer.PublishedAt);
-            return available;
-        }
-
-        private IQueryable<JobOffer> SearchByKeywords(OfferSearchData searchData, IQueryable<JobOffer> available)
-        {
-            string search = searchData.SearchString!.Trim();
+            string search = SearchParams.SearchString!.Trim();
             string[] keywordsTokens = search.Split().Select(x => x.ToLower())
                 .ToArray();
 
@@ -111,6 +101,12 @@ namespace JobBoardPlatform.BLL.Search.Offers
                 .OrderByDescending(x => x.Score)
                 .Select(x => x.Offer);
 
+            return available;
+        }
+
+        private IQueryable<JobOffer> GetSorted(IQueryable<JobOffer> available)
+        {
+            available = available.OrderByDescending(offer => offer.PublishedAt);
             return available;
         }
     }

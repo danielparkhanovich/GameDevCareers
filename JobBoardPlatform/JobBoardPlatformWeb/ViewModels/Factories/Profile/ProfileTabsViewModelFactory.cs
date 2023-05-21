@@ -28,10 +28,8 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             {
                 return Task.FromResult(GetAdminTabs());
             }
-            else
-            {
-                throw new Exception("Unexpected user role!");
-            }
+
+            throw new Exception("Unexpected user role!");
         }
 
         private ProfileTabsViewModel GetEmployeeTabs()

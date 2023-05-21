@@ -1,7 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
-using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Options;
@@ -11,6 +10,7 @@ using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -78,32 +78,34 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("offer-{companyname}-{offertitle}-{id}")]
         public async Task<IActionResult> Offer(OfferContentViewModel content)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (content.File == null && string.IsNullOrEmpty(content.ResumeUrl))
-                {
-                    return RedirectToAction("Offer");
-                }
-                if (content.File == null && string.IsNullOrEmpty(await resumeStorage.GetBlobName(content.ResumeUrl)))
-                {
-                    return RedirectToAction("Offer");
-                }
+                return RedirectToAction("Offer");
+            }
 
-                int offerId = content.Update.OfferId;
+            if (content.File == null && string.IsNullOrEmpty(content.ResumeUrl))
+            {
+                return RedirectToAction("Offer");
+            }
+            if (content.File == null && string.IsNullOrEmpty(await resumeStorage.GetBlobName(content.ResumeUrl)))
+            {
+                return RedirectToAction("Offer");
+            }
 
-                var actionsHandler = actionHandlerFactory.GetApplyActionHandler(offerId);
-                if (!actionsHandler.IsActionDoneRecently(Request))
-                {
-                    var postFormCommand = new PostApplicationFormCommand(applicationsRepository,
-                        offersRepository,
-                        azureOptions,
-                        User,
-                        offerId,
-                        content.Update);
-                    await postFormCommand.Execute();
+            int offerId = content.Update.OfferId;
 
-                    actionsHandler.RegisterAction(Request, Response);
-                }
+            var actionsHandler = actionHandlerFactory.GetApplyActionHandler(offerId);
+            if (!actionsHandler.IsActionDoneRecently(Request))
+            {
+                var postFormCommand = new PostApplicationFormCommand(applicationsRepository,
+                    offersRepository,
+                    azureOptions,
+                    User,
+                    offerId,
+                    content.Update);
+                await postFormCommand.Execute();
+
+                actionsHandler.RegisterAction(Request, Response);
             }
 
             return RedirectToAction("Offer");

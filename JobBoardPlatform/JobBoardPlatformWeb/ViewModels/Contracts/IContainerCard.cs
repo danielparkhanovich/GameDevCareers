@@ -2,5 +2,6 @@
 {
     public interface IContainerCard
     {
+        public int Id { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace JobBoardPlatform.DAL.Data.Enums.Sort
+﻿namespace JobBoardPlatform.BLL.Search.Enums
 {
     public enum SortType
     {

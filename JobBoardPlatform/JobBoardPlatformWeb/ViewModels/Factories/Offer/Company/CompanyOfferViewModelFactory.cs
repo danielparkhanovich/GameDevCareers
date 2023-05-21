@@ -1,32 +1,31 @@
 ﻿using JobBoardPlatform.BLL.Services.Offer.State;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
-namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
+namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
-    public class CompanyOfferViewModelFactory : IFactory<CompanyOfferCardViewModel>
+    public class CompanyOfferViewModelFactory : IViewModelFactory<JobOffer, IContainerCard>
     {
-        private readonly JobOffer offer;
-        private readonly OfferStateFactory offerStateFactory;
+        private readonly OfferState offerState;
 
 
-        public CompanyOfferViewModelFactory(JobOffer offer)
+        public CompanyOfferViewModelFactory()
         {
-            this.offer = offer;
-            this.offerStateFactory = new OfferStateFactory();
+            this.offerState = new OfferState();
         }
 
-        public async Task<CompanyOfferCardViewModel> Create()
+        public IContainerCard CreateViewModel(JobOffer offer)
         {
             var offerCard = new CompanyOfferCardViewModel();
 
-            offerCard.IsVisible = offerStateFactory.IsOfferVisible(offer);
-            offerCard.IsAvailable = offerStateFactory.IsOfferAvailable(offer);
-            offerCard.StateType = offerStateFactory.GetOfferState(offer);
+            offerCard.IsVisible = offerState.IsOfferVisible(offer);
+            offerCard.IsAvailable = offerState.IsOfferAvailable(offer);
+            offerCard.StateType = offerState.GetOfferState(offer);
 
             Map(offer, offerCard);
-            await MapCardDisplay(offer, offerCard);
+            MapCardDisplay(offer, offerCard);
 
             return offerCard;
         }
@@ -45,10 +44,10 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
             to.IsDeleted = from.IsDeleted;
         }
 
-        private async Task MapCardDisplay(JobOffer from, CompanyOfferCardViewModel to)
+        private void MapCardDisplay(JobOffer from, CompanyOfferCardViewModel to)
         {
-            var offerCardFactory = new OfferCardViewModelFactory(from);
-            var offerCardViewModel = await offerCardFactory.Create();
+            var offerCardFactory = new OfferCardViewModelFactory();
+            var offerCardViewModel = offerCardFactory.CreateViewModel(from);
 
             to.CardDisplay = offerCardViewModel;
         }

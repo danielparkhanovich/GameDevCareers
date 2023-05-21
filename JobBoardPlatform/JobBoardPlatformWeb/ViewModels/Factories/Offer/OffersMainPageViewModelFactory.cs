@@ -1,17 +1,14 @@
-﻿using JobBoardPlatform.BLL.Search.Offers;
+﻿using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.Factories.MainPage;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
+namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
     public class OffersMainPageViewModelFactory : IFactory<OffersMainPageViewModel>
     {
-        private const int PageSize = 20;
-
         private readonly IRepository<JobOffer> offersRepository;
         private readonly HttpRequest request;
         private readonly IDistributedCache distributedCache;
@@ -28,18 +25,16 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer
 
         public async Task<OffersMainPageViewModel> Create()
         {
+            var searchParamsFactory = new MainPageOfferSearchParametersFactory(request);
+            var searchParams = searchParamsFactory.Create();
+
             var viewModel = new OffersMainPageViewModel();
 
-            var searchData = new OfferSearchDataUrlFactory(request).Create();
-            viewModel.OfferSearchData = searchData;
-
-            var mainPageOfferCardsFactory = new MainPageContainerCardsViewModelFactory(offersRepository,
-                searchData,
-                distributedCache,
-                PageSize);
+            var mainPageOfferCardsFactory = new MainPageContainerViewModelFactory(offersRepository,
+                searchParams,
+                distributedCache);
             viewModel.OffersContainer = await mainPageOfferCardsFactory.Create();
-
-            viewModel.OffersContainer.Page = searchData.Page;
+            viewModel.OfferSearchData = searchParams;
 
             return viewModel;
         }

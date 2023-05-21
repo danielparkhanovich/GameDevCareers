@@ -1,9 +1,10 @@
 ﻿using JobBoardPlatform.BLL.Commands.Application;
+using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,8 +13,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyApplicationsPanelController : Controller
     {
-        private const int PageSize = 10;
-
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<OfferApplication> applicationsRepository;
 
@@ -28,12 +27,10 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("CompanyOffersPanel/applications-{offerId}-page-{page}")]
         public async virtual Task<IActionResult> Applications(int offerId, int page)
         {
-            bool[] filterToggles = new bool[4] { true, true, true, true };
+            var searchData = new CompanyPanelApplicationSearchParameters();
+            searchData.PageSize = 10;
 
-            var applicationsViewModelFactory = new CompanyApplicationsViewModelFactory(offerId,
-                page,
-                PageSize,
-                filterToggles,
+            var applicationsViewModelFactory = new CompanyApplicationsViewModelFactory(searchData,
                 applicationsRepository,
                 offersRepository);
 
@@ -57,15 +54,10 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         }
 
         [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardContainer(ContainerCardsViewModel cardsViewModel)
+        public async virtual Task<IActionResult> RefreshCardContainer(CardsContainerViewModel cardsViewModel)
         {
-            var applicationCardsFactory = new CompanyApplicationsCardsViewModelFactory(cardsViewModel.RelatedId,
-                applicationsRepository,
-                cardsViewModel.Page,
-                PageSize,
-                cardsViewModel.FilterToggles,
-                cardsViewModel.SortType,
-                cardsViewModel.SortCategory);
+            var searchData = cardsViewModel.SearchParams as CompanyPanelApplicationSearchParameters;
+            var applicationCardsFactory = new CompanyApplicationsContainerViewModelFactory(applicationsRepository, searchData!);
 
             var applicationCards = await applicationCardsFactory.Create();
 

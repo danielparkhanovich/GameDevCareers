@@ -1,12 +1,12 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
-using JobBoardPlatform.BLL.Search.Offers;
+using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +16,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminController : Controller
     {
-        private const int GenerateOffersLimit = 500;
-
         private readonly IRepository<JobOffer> offerRepository;
 
         private readonly IRepository<CompanyProfile> companyRepository;
@@ -43,20 +41,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         public async Task<IActionResult> OffersPanel()
         {
-            var offerSearchData = new OfferSearchData()
-            {
-                IsRemoteOnly = false,
-                IsSalaryOnly = false,
-                MainTechnology = 0,
-                Page = 1,
-                SearchString = string.Empty,
-                Type = OfferType.Employment
-            };
-
-            var containerFactory = new AdminPanelCardsViewModelFactory(offerRepository,
-                offerSearchData, 20, new bool[] { false, false }, 1);
-
-            var container = await containerFactory.Create();
+            var container = await GetCardsContainer();
 
             var viewModel = new AdminPanelViewModel();
             viewModel.OffersContainer = container;
@@ -68,14 +53,8 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         [HttpPost]
         public async Task<IActionResult> GenerateOffers(int companyId, int offersCountToGenerate)
         {
-            int totalToGenerate = offersCountToGenerate;
-            if (offersCountToGenerate == -1)
-            {
-                var companiesCount = await companyRepository.GetAllSet();
-                totalToGenerate *= companiesCount.Count();
-            }
-
-            if (totalToGenerate > GenerateOffersLimit)
+            bool isOverLimit = await IsGenerateCountOverLimit(offersCountToGenerate);
+            if (isOverLimit)
             {
                 return RedirectToAction("OffersPanel");
             }
@@ -100,24 +79,51 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         }
 
         [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardContainer(ContainerCardsViewModel cardsViewModel)
+        public async virtual Task<IActionResult> RefreshCardContainer()
         {
-            var offerSearchData = new OfferSearchData()
-            {
-                IsRemoteOnly = cardsViewModel.FilterToggles[0],
-                IsSalaryOnly = cardsViewModel.FilterToggles[1],
-                MainTechnology = 0,
-                Page = cardsViewModel.Page,
-                SearchString = string.Empty,
-                Type = OfferType.Employment
-            };
+            var searchParameters = GetSearchParametersFromUrl();
+            var containerFactory = new AdminPanelOffersContainerViewModelFactory(offerRepository, searchParameters!);
 
-            var viewModelFactory = new AdminPanelCardsViewModelFactory(offerRepository,
-                offerSearchData, 20, cardsViewModel.FilterToggles, cardsViewModel.Page);
-
-            var model = await viewModelFactory.Create();
+            var model = await containerFactory.Create();
 
             return PartialView("./Templates/_CardsContainer", model);
+        }
+
+        private async Task<bool> IsGenerateCountOverLimit(int countToGenerate)
+        {
+            int generateOffersLimit = 500;
+
+            int totalToGenerate = countToGenerate;
+            if (countToGenerate == -1)
+            {
+                var companiesCount = await companyRepository.GetAllSet();
+                totalToGenerate *= companiesCount.Count();
+            }
+
+            if (totalToGenerate > generateOffersLimit)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private async Task<CardsContainerViewModel> GetCardsContainer()
+        {
+            var searchParams = GetSearchParametersFromUrl();
+            var containerFactory = new AdminPanelOffersContainerViewModelFactory(offerRepository, searchParams);
+            var container = await containerFactory.Create();
+
+            return container;
+        }
+
+        private CompanyPanelOfferSearchParameters GetSearchParametersFromUrl()
+        {
+            int? profileId = null;
+            var offerSearchParametersFactory = new CompanyPanelOfferSearchParametersFactory(Request, profileId);
+            var searchParams = offerSearchParametersFactory.Create();
+
+            return searchParams;
         }
     }
 }

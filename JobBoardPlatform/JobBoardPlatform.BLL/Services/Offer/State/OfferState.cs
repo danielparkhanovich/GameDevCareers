@@ -2,8 +2,7 @@
 
 namespace JobBoardPlatform.BLL.Services.Offer.State
 {
-    // TODO: rename
-    public class OfferStateFactory
+    public class OfferState
     {
         public OfferStateType GetOfferState(JobOffer offer)
         {

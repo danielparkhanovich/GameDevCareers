@@ -1,8 +1,15 @@
-﻿namespace JobBoardPlatform.BLL.Search
+﻿using JobBoardPlatform.DAL.Models.Contracts;
+using JobBoardPlatform.DAL.Repositories.Models;
+
+namespace JobBoardPlatform.BLL.Search
 {
-    public interface ISearcher<T>
+    public interface ISearcher<TEntity, TSearch> 
+        where TEntity : class, IEntity
+        where TSearch : ISearchParameters
     {
-        int AfterFiltersCount { get; set; }
-        Task<T> Search();
+        TSearch SearchParams { get; }
+        int AfterFiltersCount { get; protected set; }
+
+        Task<List<TEntity>> Search(IRepository<TEntity> repository);
     }
 }

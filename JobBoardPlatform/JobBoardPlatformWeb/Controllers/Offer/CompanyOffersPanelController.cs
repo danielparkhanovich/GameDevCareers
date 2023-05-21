@@ -1,11 +1,11 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.DAL.Data.Enums.Sort;
+﻿using JobBoardPlatform.BLL.Search;
+using JobBoardPlatform.BLL.Search.CompanyPanel;
+using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,8 +15,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOffersPanelController : Controller
     {
-        private const int PageSize = 10;
-
         private readonly IRepository<JobOffer> offersRepository;
 
 
@@ -28,34 +26,25 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public async virtual Task<IActionResult> Offers()
         {
             int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
-            var viewModelFactory = new CompanyOfferCardsViewModelFactory(profileId, 
-                offersRepository,
-                1,
-                PageSize,
-                new bool[] { true, true},
-                SortType.Descending,
-                SortCategoryType.PublishDate);
 
-            var model = await viewModelFactory.Create();
+            var searchData = new CompanyPanelOfferSearchParameters();
+            searchData.CompanyProfileId = profileId;
+            searchData.PageSize = 10;
 
-            return View(model);
+            var containerFactory = new CompanyOffersContainerViewModelFactory(offersRepository, searchData);
+            var container = await containerFactory.Create();
+
+            return View(container);
         }
 
         [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardContainer(ContainerCardsViewModel cardsViewModel)
+        public async virtual Task<IActionResult> RefreshCardContainer(CardsContainerViewModel cardsViewModel)
         {
-            int profileId = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
-            var viewModelFactory = new CompanyOfferCardsViewModelFactory(profileId,
-                offersRepository,
-                cardsViewModel.Page,
-                PageSize,
-                cardsViewModel.FilterToggles,
-                cardsViewModel.SortType,
-                cardsViewModel.SortCategory);
+            var searchData = cardsViewModel.SearchParams as CompanyPanelOfferSearchParameters;
+            var containerFactory = new CompanyOffersContainerViewModelFactory(offersRepository, searchData!);
+            var container = await containerFactory.Create();
 
-            var applicationCards = await viewModelFactory.Create();
-
-            return PartialView("./Templates/_CardsContainer", applicationCards);
+            return PartialView("./Templates/_CardsContainer", container);
         }
 
         [HttpPost]
@@ -67,8 +56,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             offer.IsShelved = isVisible;
             await offersRepository.Update(offer);
 
-            var offerCardFactory = new CompanyOfferViewModelFactory(offer);
-            var offerCard = await offerCardFactory.Create();
+            var offerCardFactory = new CompanyOfferViewModelFactory();
+            var offerCard = offerCardFactory.CreateViewModel(offer);
 
             return PartialView("./JobOffers/_JobOfferCompanyView", offerCard);
         }
@@ -82,8 +71,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             offer.IsDeleted = isDeleted;
             await offersRepository.Update(offer);
 
-            var offerCardFactory = new CompanyOfferViewModelFactory(offer);
-            var offerCard = await offerCardFactory.Create();
+            var offerCardFactory = new CompanyOfferViewModelFactory();
+            var offerCard = offerCardFactory.CreateViewModel(offer);
 
             return PartialView("./JobOffers/_JobOfferCompanyView", offerCard);
         }

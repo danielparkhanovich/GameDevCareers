@@ -1,24 +1,22 @@
 ﻿using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 {
-    public class CompanyApplicationCardViewModelFactory : IFactory<CompanyApplicationCardViewModel>
+    public class CompanyApplicationCardViewModelFactory : IViewModelFactory<OfferApplication, IContainerCard>
     {
-        private readonly OfferApplication application;
         private readonly DaysFormatter daysFormatter;
 
 
-
-        public CompanyApplicationCardViewModelFactory(OfferApplication application)
+        public CompanyApplicationCardViewModelFactory()
         {
-            this.application = application;
             this.daysFormatter = new DaysFormatter(true);
         }
 
-        public Task<CompanyApplicationCardViewModel> Create()
+        public IContainerCard CreateViewModel(OfferApplication application)
         {
             string applicatedAgo = daysFormatter.GetString(application.CreatedAt);
             string? linkedInUrl = application.EmployeeProfile?.LinkedInUrl;
@@ -43,7 +41,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
                 Country = country
             };
 
-            return Task.FromResult(viewModel);
+            return viewModel;
         }
     }
 }

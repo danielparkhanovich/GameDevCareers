@@ -1,4 +1,5 @@
-﻿@using JobBoardPlatform.BLL.Search.Offers;
+﻿@using JobBoardPlatform.BLL.Search.Enums;
+@using JobBoardPlatform.BLL.Search;
 
 @model OffersMainPageViewModel
 @{
@@ -6,8 +7,6 @@
 
     var offers = Model.OffersContainer;
     var search = Model.OfferSearchData;
-
-    string refreshCards = @Url.Action("RefreshCardContainer");
 }
 
 <div class="container px-5 pt-4">
@@ -18,7 +17,7 @@
                     <span class="input-group-text bg-white border-end-0 ps-3 pe-1"><i class="bi bi-search"></i></span>
                     <input id="searchField" type="text" class="form-control px-2 border-start-0" placeholder="Search e.g. skill, location, company" value="@search.SearchString">
                     <button class="btn btn-primary" type="button"
-                            onclick="@($"searchWithKeywords('{OfferSearchUrlParameters.SearchString}');")">
+                            onclick="searchWithKeywords();">
                         Search
                     </button>
                 </div>
@@ -88,8 +87,6 @@
     addWidgetsListeners();
 
     function addWidgetsListeners() {
-        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Technology));
-
         var mainTechnologyWidgets = document.getElementsByClassName(widgetFieldClass);
         for (var i = 0; i < mainTechnologyWidgets.length; i++) {
 
@@ -97,70 +94,37 @@
 
             widget.addEventListener("click", function () {
                 const type = widget.getAttribute(fieldTypeAttributeName).toLowerCase();
-                switchMainTechnology(paramName, type);
+                switchMainTechnology(type);
             });
-
         }
     }
 
-    function searchWithKeywords(paramName) {
+    function searchWithKeywords() {
+        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Search));
         var searchField = document.getElementById(searchFieldId);
         const value = searchField.value;
 
         updateQueryStringParameter(paramName, value);
-
-        refreshCards();
+        refreshCards(updateOffersCount);
     }
 
-    function switchMainTechnology(paramName, type) {
-
+    function switchMainTechnology(type) {
+        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Technology));
         updateQueryStringParameter(paramName, type);
-
-        refreshCards();
+        refreshCards(updateOffersCount);
     }
 
     function toggleFilter(paramName, filter) {
         const isSet = filter.checked;
         updateQueryStringParameter(paramName, isSet);
-
-        refreshCards();
+        refreshCards(updateOffersCount);
     }
 
     function switchOfferType(type) {
 
         // Employment and commission types
 
-        refreshCards();
-    }
-
-    function refreshCards() {
-        const viewModel = @Html.Raw(Json.Serialize(Model));
-
-        const searchParams = new URLSearchParams(window.location.search)
-        let refreshCards = @Html.Raw(Json.Serialize(refreshCards));
-        refreshCards += '?' + searchParams.toString();
-
-        sendAjaxAndUpdateTable(refreshCards, viewModel, updateOffersCount);
-    }
-
-    function updateQueryStringParameter(key, value) {
-        if ('URLSearchParams' in window) {
-            var searchParams = new URLSearchParams(window.location.search)
-            var newRelativePathQuery = window.location.pathname;
-
-            if (value) {
-                searchParams.set(key, value);
-                newRelativePathQuery += '?' + searchParams.toString();
-            }
-            else {
-                searchParams.delete(key);
-                if (Array.from(searchParams).length > 0) {
-                    newRelativePathQuery += '?' + searchParams.toString();
-                }
-            }
-
-            history.pushState(null, '', newRelativePathQuery);
-        }
+        refreshCards(updateOffersCount);
     }
 
     function updateOffersCount() {

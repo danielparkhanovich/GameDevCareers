@@ -1,23 +1,24 @@
 ﻿using JobBoardPlatform.BLL.Common.Contracts;
+using JobBoardPlatform.BLL.Search.Enums;
 using JobBoardPlatform.DAL.Models.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace JobBoardPlatform.BLL.Search.Offers
+namespace JobBoardPlatform.BLL.Search.MainPage
 {
     /// <summary>
     /// Create offer search data based on current url
     /// </summary>
-    public class OfferSearchDataUrlFactory : IFactory<OfferSearchData>
+    public class MainPageOfferSearchParametersFactory : IFactory<MainPageOfferSearchParameters>
     {
         private readonly HttpRequest request;
 
 
-        public OfferSearchDataUrlFactory(HttpRequest request)
+        public MainPageOfferSearchParametersFactory(HttpRequest request)
         {
             this.request = request;
         }
 
-        public OfferSearchData Create()
+        public MainPageOfferSearchParameters Create()
         {
             string tabString = request.Path.ToString().ToLower();
             OfferType offerType = GetOfferType(tabString);
@@ -28,11 +29,12 @@ namespace JobBoardPlatform.BLL.Search.Offers
 
             bool isSalaryOnly = request.Query.ContainsKey(OfferSearchUrlParameters.SalaryOnly);
             bool isRemoteOnly = request.Query.ContainsKey(OfferSearchUrlParameters.RemoteOnly);
-            string? searchString = request.Query[OfferSearchUrlParameters.SearchString];
+            string? searchString = request.Query[OfferSearchUrlParameters.Search];
+            string? pageString = request.Query[OfferSearchUrlParameters.Page];
 
-            int page = int.TryParse(OfferSearchUrlParameters.Page, out int intOutParameter) ? intOutParameter : 1;
+            int page = int.TryParse(pageString, out int intOutParameter) ? intOutParameter : 1;
 
-            return new OfferSearchData()
+            return new MainPageOfferSearchParameters()
             {
                 Type = offerType,
                 MainTechnology = mainTechnology,
@@ -40,6 +42,7 @@ namespace JobBoardPlatform.BLL.Search.Offers
                 IsSalaryOnly = isSalaryOnly,
                 SearchString = searchString,
                 Page = page,
+                PageSize = 20
             };
         }
 
@@ -55,25 +58,24 @@ namespace JobBoardPlatform.BLL.Search.Offers
             return offerType;
         }
 
-        private int GetMainTechnology(string? technologyString)
+        private int GetMainTechnology(string? technology)
         {
-            // 0 -> any
-            if (string.IsNullOrEmpty(technologyString))
+            if (string.IsNullOrEmpty(technology))
             {
-                return 0;
+                return MainPageOfferSearchParameters.AllTechnologiesIndex;
             }
 
-            technologyString = technologyString.ToLower();
+            technology = technology.ToLower();
 
             var technologies = Enum.GetValues(typeof(MainTechnologyTypeEnum))
                 .Cast<MainTechnologyTypeEnum>();
-            if (!technologies.Any(x => x.ToString().ToLower() == technologyString))
+
+            if (!technologies.Any(x => x.ToString().ToLower() == technology))
             {
-                return 0;
+                return MainPageOfferSearchParameters.AllTechnologiesIndex;
             }
 
-            var foundIndex = technologies.FirstOrDefault(x => 
-                x.ToString().ToLower() == technologyString);
+            var foundIndex = technologies.FirstOrDefault(x => x.ToString().ToLower() == technology);
 
             return (int)foundIndex + 1;
         }

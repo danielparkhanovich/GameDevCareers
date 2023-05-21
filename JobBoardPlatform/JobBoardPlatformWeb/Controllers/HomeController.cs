@@ -1,8 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer;
+using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -24,22 +24,25 @@ namespace JobBoardPlatformWeb.Controllers
         [Route("commissions", Order = 1)]
         public async Task<IActionResult> Index()
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, Request, distributedCache);
-
+            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 
+                Request, 
+                distributedCache);
             var model = await viewModelFactory.Create();
 
             return View(model);
         }
 
+        [Route("RefreshCardContainer")]
         [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardContainer(ContainerCardsViewModel cardsViewModel)
+        public async virtual Task<IActionResult> RefreshCardContainer()
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, Request, distributedCache);
-
+            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 
+                Request, 
+                distributedCache);
             var model = await viewModelFactory.Create();
-            cardsViewModel = model.OffersContainer;
+            var container = model.OffersContainer;
 
-            return PartialView("./Templates/_CardsContainer", cardsViewModel);
+            return PartialView("./Templates/_CardsContainer", container);
         }
 
         public IActionResult Privacy()

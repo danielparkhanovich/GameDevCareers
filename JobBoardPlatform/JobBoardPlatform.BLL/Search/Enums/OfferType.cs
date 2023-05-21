@@ -1,4 +1,4 @@
-﻿namespace JobBoardPlatform.BLL.Search.Offers
+﻿namespace JobBoardPlatform.BLL.Search.Enums
 {
     public enum OfferType
     {
