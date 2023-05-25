@@ -5,7 +5,10 @@ using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
-
+using JobBoardPlatform.BLL.Services.Background;
+using JobBoardPlatform.PL.Requirements;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,10 +26,23 @@ builder.Services.AddAuthentication(
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthorizationPolicies.EmployeeOnlyPolicy, policy => policy.RequireRole(UserRoles.Employee));
-    options.AddPolicy(AuthorizationPolicies.CompanyOnlyPolicy, policy => policy.RequireRole(UserRoles.Company));
+    options.AddPolicy(AuthorizationPolicies.EmployeeOnlyPolicy, policy => policy.RequireRole(UserRoles.Employee, UserRoles.Admin));
+    options.AddPolicy(AuthorizationPolicies.CompanyOnlyPolicy, policy => policy.RequireRole(UserRoles.Company, UserRoles.Admin));
     options.AddPolicy(AuthorizationPolicies.AdminOnlyPolicy, policy => policy.RequireRole(UserRoles.Admin));
+    options.AddPolicy(AuthorizationPolicies.OfferOwnerOnlyPolicy, policy =>
+    {
+        policy.RequireRole(UserRoles.Company, UserRoles.Admin);
+        policy.AddRequirements(new OfferOwnerOrAdminRequirement("offerId"));
+    });
+    options.AddPolicy(AuthorizationPolicies.OfferPublishedOrOwnerOnlyPolicy, policy =>
+    {
+        policy.AddRequirements(new OfferPublishedOrOwnerOrAdminRequirement("id"));
+    });
 });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -43,6 +59,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
+builder.Services.AddHostedService<OfferExpirationChecker>();
 
 if (!builder.Environment.IsDevelopment()) 
 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace JobBoardPlatform.PL.Filters
@@ -7,7 +8,7 @@ namespace JobBoardPlatform.PL.Filters
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (context.HttpContext.User.Identity.IsAuthenticated)
+            if (UserSessionUtils.IsLoggedIn(context.HttpContext.User))
             {
                 context.Result = new RedirectToActionResult("Index", "Home", null);
             }

@@ -2,7 +2,6 @@
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using System;
 
 namespace JobBoardPlatform.BLL.Search.CompanyPanel
 {
@@ -12,9 +11,9 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel
         public int AfterFiltersCount { get; set; }
 
 
-        public CompanyOffersSearcher(CompanyPanelOfferSearchParameters searchData)
+        public CompanyOffersSearcher(CompanyPanelOfferSearchParameters searchParams)
         {
-            SearchParams = searchData;
+            SearchParams = searchParams;
             AfterFiltersCount = 0;
         }
 
@@ -58,15 +57,15 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel
         {
             if (SearchParams.SortCategory == SortCategoryType.PublishDate.ToString())
             {
-                available = available.OrderBy(x => x.CreatedAt);
+                available = available.OrderByDescending(x => x.CreatedAt);
             }
             else if (SearchParams.SortCategory == SortCategoryType.Alphabetically.ToString())
             {
-                available = available.OrderBy(x => x.JobTitle);
+                available = available.OrderByDescending(x => x.JobTitle);
             }
             else if (SearchParams.SortCategory == SortCategoryType.Relevenacy.ToString())
             {
-                available = available.OrderBy(x => x.NumberOfViews + x.NumberOfApplications * 2);
+                available = available.OrderByDescending(x => x.NumberOfViews + x.NumberOfApplications * 2);
             }
 
             if (SearchParams.Sort == SortType.Descending)

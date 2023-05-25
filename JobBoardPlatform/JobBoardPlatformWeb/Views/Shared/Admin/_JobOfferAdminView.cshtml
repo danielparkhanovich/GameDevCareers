@@ -1,0 +1,175 @@
+﻿@using JobBoardPlatform.BLL.Services.Offer.State;
+@using JobBoardPlatform.PL.ViewModels.Models.Offer.Widgets;
+
+@model CompanyOfferCardViewModel
+@{
+    var offer = Model;
+    int offerId = offer.CardDisplay.Id;
+
+    string applicationsUrl = string.Empty;
+    if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
+    {
+        applicationsUrl = offer.ContactAddress!;
+    }
+    else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
+    {
+        applicationsUrl = $"{@Url.Action("Applications", "CompanyApplicationsPanel", new { offerId = offerId, page = 1 })}";
+    }
+
+    string editOfferUrl = $"{@Url.Action("NewOffer", "CompanyOfferEditor", new { offerId = offerId })}";
+    string hideOfferUrl = $"{@Url.Action("ToggleOfferVisibilityState")}";
+    string closeOfferUrl = $"{@Url.Action("ToggleOfferCloseState")}";
+    string suspendOfferUrl = $"{@Url.Action("ToggleOfferSuspendState")}";
+
+    bool isAvailableToShelve = offer.IsAvailable && offer.IsPaid;
+    bool isAvailableToEdit = offer.IsAvailable && !offer.IsDeleted;
+}
+
+<div class="my-0" id=@($"company-offer-card-container-{offerId}")>
+    <div class="card border-0 shadow-sm">
+        <div class="d-flex flex-row mx-0 @(offer.IsVisible ? null : "bg-dark bg-opacity-10")">
+            <div class="col-7 mx-0 px-0">
+                @await Html.PartialAsync("./JobOffers/_JobOffer", Model.CardDisplay)
+            </div>
+            <div class="d-flex flex-row company-card-view-data w-100 justify-content-between">
+                <div>
+                    <div class="overflow-hidden h-100 pt-1" style="width:90px;">
+                        @{
+                            var widget = new MainTechnologyWidgetViewModel()
+                            {
+                                Label = Model.MainTechnology
+                            };
+                        }
+                        @await Html.PartialAsync("./JobOffers/_MainTechnologyStaticWidget", widget)
+                    </div>
+                </div>
+                <div class="d-flex flex-row justify-content-start mx-1" style="width:45px;">
+                    <i class="bi bi-eye d-flex justify-content-center align-items-center rounded-circle"></i>
+                    <div class="d-flex justify-content-center align-items-center ms-1">
+                        @offer.TotalViews
+                    </div>
+                </div>
+                <div class="d-flex flex-row justify-content-start mx-1" style="width:45px;">
+                    @if (offer.ContactType == ContactTypeEnum.Mail.ToString())
+                    {
+                        <i class="bi bi-envelope d-flex justify-content-center align-items-center rounded-circle"></i>
+                    }
+                    else if (offer.ContactType == ContactTypeEnum.ExternalForm.ToString())
+                    {
+                        <i class="bi bi-box-arrow-up-right d-flex justify-content-center align-items-center rounded-circle"></i>
+                    }
+                    else if (offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
+                    {
+                        <i class="bi bi-send d-flex justify-content-center align-items-center rounded-circle"></i>
+                    }
+                    <div class="d-flex justify-content-center align-items-center ms-1">
+                        @offer.TotalApplicants
+                    </div>
+                </div>
+                <div class="d-flex align-self-center flex-flex-column justify-content-center h-50 mx-1">
+                    @{
+                        string text = string.Empty;
+                        string img = string.Empty;
+                        string color = string.Empty;
+                        @if (offer.StateType == OfferStateType.NotPaid)
+                        {
+                            img = "bi bi-credit-card-2-front-fill";
+                            text = "Is not paid";
+                            color = "danger";
+                        }
+                        else if (offer.StateType == OfferStateType.Visible)
+                        {
+                            img = "bi bi-check-lg";
+                            text = "Published";
+                            color = "success";
+                        }
+                        else if (offer.StateType == OfferStateType.Deleted)
+                        {
+                            img = "bi bi-trash2-fill";
+                            text = "Deleted";
+                            color = "danger";
+                        }
+                        else if (offer.StateType == OfferStateType.Shelved)
+                        {
+                            img = "bi bi-eye-slash";
+                            text = "Shelved";
+                            color = "warning";
+                        }
+                        else if (offer.StateType == OfferStateType.Suspended)
+                        {
+                            img = "bi bi-flag-fill";
+                            text = "Suspended";
+                            color = "warning";
+                        }
+                    }
+                    <div class="d-flex flex-row justify-content-center align-items-center rounded-pill border border-@(color) small align-self-center pe-2" 
+                    style="width:125px;">
+                        <i class="@(img) px-2 text-@(color)" style="font-size: 1.15rem;"></i>
+                        <div class="text-@(color)">@(text)</div>
+                    </div>
+                    <div class="d-flex align-items-center rounded-pill text-@(color) border border-@(color) small align-self-center ms-3 px-2">
+                        <smalL>@Model.DaysLeft</smalL>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center pe-4 ms-3">
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Modify</a>
+                    <div class="dropdown-menu py-0">
+                        <a class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm @(isAvailableToEdit ? string.Empty : "disabled")" href="@editOfferUrl">
+                            <div>Edit</div>
+                            <i class="bi bi-pencil-square ms-1"></i>
+                        </a>
+                        <button @(isAvailableToShelve ? string.Empty : "disabled") class="w-100 d-flex flex-row justify-content-between btn @(offer.IsShelved ? "btn-outline-info" : "btn-outline-warning") btn-sm mt-1"
+                                onclick="toggleVisibility(@offerId, '@hideOfferUrl', @((!offer.IsShelved).ToString().ToLower()));">
+                            @if (!offer.IsShelved)
+                            {
+                                <div>@("Hide")</div>
+                                <i class="bi bi-eye-slash ms-1"></i>
+                            }
+                            else
+                            {
+                                <div>@("Show")</div>
+                                <i class="bi bi-eye ms-1"></i>
+                            }
+                        </button>
+                        <button class="w-100 d-flex flex-row justify-content-between btn @(offer.IsDeleted ? "btn-outline-success" : "btn-outline-danger") btn-sm mt-1"
+                                onclick="toggleDeleted(@offerId, '@closeOfferUrl', @((!offer.IsDeleted).ToString().ToLower()));">
+                            @if (!offer.IsDeleted)
+                            {
+                                <div>@("Close")</div>
+                                <i class="bi bi-x-lg ms-1"></i>
+                            }
+                            else
+                            {
+                                <div>@("Revert")</div>
+                                <i class="bi bi-activity ms-1"></i>
+                            }
+                        </button>
+                        <button class="w-100 d-flex flex-row justify-content-between btn @(offer.IsDeleted ? "btn-outline-success" : "btn-outline-dark") btn-sm mt-1"
+                                onclick="toggleDeleted(@offerId, '@closeOfferUrl', @((!offer.IsDeleted).ToString().ToLower()));">
+                            @if (!offer.IsDeleted)
+                            {
+                                <div>@("Suspend")</div>
+                                <i class="bi bi-flag"></i>
+                            }
+                            else
+                            {
+                                <div>@("Resume")</div>
+                                <i class="bi bi-activity ms-1"></i>
+                            }
+                        </button>
+                        @if (offer.StateType == OfferStateType.NotPaid)
+                        {
+                            <button class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm mt-1"
+                                onclick="toggleDeleted(@offerId, '@closeOfferUrl', @((!offer.IsDeleted).ToString().ToLower()));">
+                                <div>@("Pass payment")</div>
+                                <i class="bi bi-credit-card-2-front-fill ms-1"></i>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

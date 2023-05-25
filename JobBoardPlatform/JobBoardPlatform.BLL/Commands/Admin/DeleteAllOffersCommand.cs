@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Admin
@@ -21,8 +22,14 @@ namespace JobBoardPlatform.BLL.Commands.Admin
             var allOffers = await offersRepository.GetAll();
             foreach (var offer in allOffers)
             {
-                await offersRepository.Delete(offer.Id);
+                await DeleteOffer(offer.Id);
             }
+        }
+
+        private async Task DeleteOffer(int offerIdToDelete)
+        {
+            var deleteOfferCommand = new DeleteOfferCommand(offersRepository, offerIdToDelete);
+            await deleteOfferCommand.Execute();
         }
     }
 }

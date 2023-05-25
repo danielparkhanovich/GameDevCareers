@@ -10,7 +10,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
 {
     public class AdminPanelOffersContainerViewModelFactory : IFactory<CardsContainerViewModel>
     {
-        private const string CardPartialViewName = "./JobOffers/_JobOffer";
+        private const string CardPartialViewName = "./Admin/_JobOfferAdminView";
 
         private readonly IRepository<JobOffer> repository;
         private readonly CompanyPanelOfferSearchParameters searchParams;

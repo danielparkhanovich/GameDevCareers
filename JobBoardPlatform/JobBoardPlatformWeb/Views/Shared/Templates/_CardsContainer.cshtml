@@ -6,6 +6,7 @@
 @{
     var header = Model.Header;
     var searchParams = Model.SearchParams;
+    var sort = searchParams.Sort;
 }
 
 <div class="card border-0 rounded-0 flex-grow-1">
@@ -23,8 +24,8 @@
                         </div>
                         @if (searchParams.SortCategory == header.SortValues[i])
                         {
-                            <i class="d-flex flex-column justify-content-center 
-                            @(searchParams.Sort == SortType.Descending ? "bi bi-arrow-up" : "bi bi-arrow-down")" style="font-size: 1rem;"></i>
+                            <i class="d-flex flex-column justify-content-center
+                            @(searchParams.Sort == SortType.Ascending ? "bi bi-arrow-up" : "bi bi-arrow-down")" style="font-size: 1rem;"></i>
                         }
                         else
                         {
@@ -99,9 +100,9 @@
 
         // invert sort order on double select
         const currentSortCategory = @Html.Raw(Json.Serialize(Model.SearchParams.SortCategory));
-        if (sortCategory == SortCategory)
+        const sortParamName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Sort));
+        if (sortCategory == currentSortCategory)
         {
-            const sortParamName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Sort));
             const currentSort = @Html.Raw(Json.Serialize(Model.SearchParams.Sort));
             const inverted = 1 - currentSort;
             updateQueryStringParameter(sortParamName, inverted);

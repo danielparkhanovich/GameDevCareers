@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
-    [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOfferEditorController : Controller
     {
         private readonly IRepository<JobOffer> offersRepository;
@@ -29,6 +28,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         }
 
         [Route("edit-offer-{offerId}")]
+        [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
         public async Task<IActionResult> NewOffer(int offerId)
         {
             var viewModelFactory = new OfferDetailsViewModelFactory(offerId, offersRepository);
@@ -42,6 +42,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("edit-offer-{offerId}")]
+        [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
         public async Task<IActionResult> EditOffer(int offerId, OfferDetailsViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -63,6 +64,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
         public async Task<IActionResult> NewOffer(OfferDetailsViewModel viewModel)
         {
             if (ModelState.IsValid)

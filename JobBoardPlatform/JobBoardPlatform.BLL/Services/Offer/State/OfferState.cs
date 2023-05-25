@@ -4,7 +4,15 @@ namespace JobBoardPlatform.BLL.Services.Offer.State
 {
     public class OfferState
     {
-        public OfferStateType GetOfferState(JobOffer offer)
+        private readonly JobOffer offer;
+
+
+        public OfferState(JobOffer offer)
+        {
+            this.offer = offer;
+        }
+
+        public OfferStateType GetOfferState()
         {
             if (offer.IsDeleted)
             {
@@ -29,9 +37,9 @@ namespace JobBoardPlatform.BLL.Services.Offer.State
             throw new Exception($"Wrong offer state, for offer id: {offer.Id}");
         }
 
-        public bool IsOfferAvailable(JobOffer offer)
+        public bool IsOfferAvailableForEdit()
         {
-            var state = GetOfferState(offer);
+            var state = GetOfferState();
 
             if (state != OfferStateType.Deleted && state != OfferStateType.Suspended)
             {
@@ -41,9 +49,9 @@ namespace JobBoardPlatform.BLL.Services.Offer.State
             return false;
         }
 
-        public bool IsOfferVisible(JobOffer offer)
+        public bool IsOfferVisible()
         {
-            return GetOfferState(offer) == OfferStateType.Visible;
+            return GetOfferState() == OfferStateType.Visible;
         }
     }
 }

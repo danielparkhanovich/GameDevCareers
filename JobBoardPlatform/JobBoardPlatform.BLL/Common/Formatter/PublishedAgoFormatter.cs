@@ -1,11 +1,11 @@
 ﻿namespace JobBoardPlatform.BLL.Common.Formatter
 {
-    public class DaysFormatter : ITextFormatter<DateTime>
+    public class PublishedAgoFormatter : ITextFormatter<DateTime>
     {
         private readonly bool isPublished;
 
 
-        public DaysFormatter(bool isPublished)
+        public PublishedAgoFormatter(bool isPublished)
         {
             this.isPublished = isPublished;
         }

@@ -4,6 +4,7 @@ using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
+using JobBoardPlatform.PL.Requirements;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {

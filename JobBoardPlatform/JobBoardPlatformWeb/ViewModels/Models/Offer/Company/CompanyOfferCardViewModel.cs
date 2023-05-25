@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Offer.State;
 using JobBoardPlatform.PL.ViewModels.Contracts;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
 {
@@ -10,6 +9,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
 
         public int TotalViews { get; set; }
         public int TotalApplicants { get; set; }
+        public string DaysLeft { get; set; }
         public string MainTechnology { get; set; } = string.Empty;
         public string ContactType { get; set; } = string.Empty;
         public string? ContactAddress { get; set; }

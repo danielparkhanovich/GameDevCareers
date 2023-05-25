@@ -14,7 +14,8 @@
     string contentUrl = @Url.Action("Offer", "OfferContent", contentData);
 }
 
-<a href="@contentUrl" class="shadow card-body d-flex rounded align-content-center text-decoration-none px-2" style="padding-top:8px; padding-bottom:8px;">
+<a href="@contentUrl" class="shadow card-body d-flex rounded align-content-center text-decoration-none px-2" 
+    style="padding-top:8px; padding-bottom:8px;">
     <div class="d-flex flex-row align-items-center justify-content-center" style="width:100px; height:45px; overflow:hidden;">
         <img src=@offer.CompanyImageUrl class="border border-secondary rounded" style="width:80%; height:100%; object-fit:contain;">
     </div>
@@ -24,7 +25,7 @@
             <div class="d-flex flex-row align-items-center">
                 <div class="text-success mx-4 mb-0 text-center" style="font-weight:500">@offer.SalaryDetails</div>
                 <div class="rounded-pill border border-primary px-2 mb-0 justify-content-center align-self-center small">
-                    <div class="align-middle mb-0 h-100" style="font-size:12px;">@offer.PublishedAgo</div>
+                    <div class="align-middle mb-0 h-100 text-truncate" style="font-size:12px;">@offer.PublishedAgo</div>
                 </div>
             </div>
         </div>
@@ -45,7 +46,7 @@
                     </div>
                 }
             </div>
-            <div class="d-flex flex-row small">
+            <div class="d-flex flex-row small overflow-auto">
                 @if (offer.TechKeywords != null && offer.TechKeywords.Length > 0)
                 {
                     @foreach (var technology in offer.TechKeywords)

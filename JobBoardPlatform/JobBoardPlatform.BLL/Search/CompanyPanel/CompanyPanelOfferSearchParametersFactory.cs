@@ -24,11 +24,9 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel
             // Get all query parameters
             bool isHidePublished = request.Query.ContainsKey(OfferSearchUrlParameters.HidePublished);
             bool isHideShelved = request.Query.ContainsKey(OfferSearchUrlParameters.HideShelved);
-            string? sortCategory = request.Query[OfferSearchUrlParameters.SortCategory];
-            string? sort = request.Query[OfferSearchUrlParameters.Sort];
-            string? pageString = request.Query[OfferSearchUrlParameters.Page];
-
-            int page = int.TryParse(pageString, out int intOutParameter) ? intOutParameter : 1;
+            string? sortCategory = GetSortCategoryType();
+            SortType? sort = GetSortType();
+            int page = GetPage();
 
             return new CompanyPanelOfferSearchParameters()
             {
@@ -36,21 +34,40 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel
                 IsShowPublished = !isHidePublished,
                 IsShowShelved = !isHideShelved,
                 SortCategory = sortCategory,
-                Sort = GetSortType(sort),
+                Sort = sort,
                 Page = page,
                 PageSize = 20
             };
         }
 
-        private SortType? GetSortType(string? sort)
+        private string GetSortCategoryType()
         {
+            string? sortCategory = request.Query[OfferSearchUrlParameters.SortCategory];
+            if (sortCategory == null)
+            {
+                return SortCategoryType.PublishDate.ToString();
+            }
+
+            return sortCategory;
+        }
+
+        private SortType? GetSortType()
+        {
+            string? sort = request.Query[OfferSearchUrlParameters.Sort];
             if (sort == null)
             {
-                return null;
+                return SortType.Ascending;
             }
 
             SortType sortType = (SortType)Enum.Parse(typeof(SortType), sort, ignoreCase: true);
             return sortType;
+        }
+
+        private int GetPage()
+        {
+            string? pageString = request.Query[OfferSearchUrlParameters.Page];
+            int page = int.TryParse(pageString, out int intOutParameter) ? intOutParameter : 1;
+            return page;
         }
     }
 }

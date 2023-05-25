@@ -16,8 +16,4 @@
     <ProjectReference Include="..\JobBoardPlatform.DAL\JobBoardPlatform.DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Background\" />
-  </ItemGroup>
-
 </Project>

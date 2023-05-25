@@ -11,9 +11,11 @@ using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
+    [Authorize(Policy = AuthorizationPolicies.OfferPublishedOrOwnerOnlyPolicy)]
     public class OfferContentController : Controller
     {
         private readonly IRepository<JobOffer> offersRepository;
@@ -46,25 +48,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public async Task<IActionResult> Offer(int id, string companyname, string offertitle)
         {
             var offer = await offersRepository.Get(id);
-
             var viewModelFactory = new OfferContentDisplayViewModelFactory(offer.Id, offersRepository);
             var display = await viewModelFactory.Create();
 
             var content = new OfferContentViewModel();
             content.Display = display;
 
-            if (!offer.IsPublished)
-            {
-                if (UserRolesUtils.IsUserOwner(User, offer))
-                {
-                    // Pass only owners
-                    return View(content);
-                }
-                return RedirectToAction("Index", "Home");
-            }
-
             await TryFillApplicationForm(content);
-
             await TryIncreaseViewsCount(offer);
 
             // save original id (for safety reasons need to add encryption)
@@ -113,7 +103,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private async Task TryIncreaseViewsCount(JobOffer offer)
         {
-            if (UserRolesUtils.IsUserOwner(User, offer))
+            if (!IsIncreaseOfferViewsCount(offer))
             {
                 return;
             }
@@ -125,7 +115,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             }
 
             offer.NumberOfViews += 1;
-
             await offersRepository.Update(offer);
 
             actionsHandler.RegisterAction(Request, Response);
@@ -133,16 +122,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private async Task TryFillApplicationForm(OfferContentViewModel content)
         {
-            bool isUserLoggedIn = User.Identity.IsAuthenticated;
-
-            if (!isUserLoggedIn)
-            {
-                return;
-            }
-
-            string userRole = UserSessionUtils.GetRole(User);
-
-            if (userRole != UserRoles.Employee)
+            if (!IsUserRegistered())
             {
                 return;
             }
@@ -153,7 +133,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             var update = await applicationUpdateFactory.Create();
 
             string? resumeUrl = update.AttachedResume.ResumeUrl;
-
             if (resumeUrl != null)
             {
                 update.AttachedResume.FileName = await resumeStorage.GetBlobName(resumeUrl);
@@ -161,6 +140,18 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             }
 
             content.Update = update;
+        }
+
+        private bool IsIncreaseOfferViewsCount(JobOffer offer)
+        {
+            return UserSessionUtils.IsLoggedIn(User) && 
+                   !UserRolesUtils.IsUserOwner(User, offer) && 
+                   !UserRolesUtils.IsUserAdmin(User);
+        }
+
+        private bool IsUserRegistered()
+        {
+            return UserSessionUtils.IsLoggedIn(User) && UserRolesUtils.IsUserEmployee(User);
         }
     }
 }

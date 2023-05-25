@@ -18,6 +18,16 @@ namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
             return false;
         }
 
+        public static bool IsUserAdmin(ClaimsPrincipal user)
+        {
+            return UserSessionUtils.GetRole(user) == UserRoles.Admin;
+        }
+
+        public static bool IsUserEmployee(ClaimsPrincipal user)
+        {
+            return UserSessionUtils.GetRole(user) == UserRoles.Employee;
+        }
+
         public static bool IsUserOwner(ClaimsPrincipal user, JobOffer offer)
         {
             bool isUserLoggedIn = user.Identity.IsAuthenticated;

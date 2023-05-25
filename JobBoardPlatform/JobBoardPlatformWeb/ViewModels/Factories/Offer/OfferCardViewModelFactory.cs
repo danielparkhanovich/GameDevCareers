@@ -22,7 +22,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             var salaryFormatter = new SalaryFormatter();
             string salaryDetails = salaryFormatter.GetString(from);
 
-            var daysFormatter = new DaysFormatter(from.IsPublished);
+            var daysFormatter = new PublishedAgoFormatter(from.IsPublished);
             string publishedAgo = daysFormatter.GetString(from.PublishedAt);
 
             var techKeywords = from.TechKeywords.Select(x => x.Name).ToArray();

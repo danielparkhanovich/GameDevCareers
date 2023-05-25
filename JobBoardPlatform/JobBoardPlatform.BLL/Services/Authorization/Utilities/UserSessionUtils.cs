@@ -4,6 +4,11 @@ namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
 {
     public static class UserSessionUtils
     {
+        public static bool IsLoggedIn(ClaimsPrincipal user)
+        {
+            return user.Identity.IsAuthenticated;
+        }
+
         public static int GetIdentityId(ClaimsPrincipal user)
         {
             return int.Parse(user.FindFirst(UserSessionProperties.NameIdentifier)!.Value);

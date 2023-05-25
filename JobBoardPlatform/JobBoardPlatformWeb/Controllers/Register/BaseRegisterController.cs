@@ -2,6 +2,7 @@
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Filters;
+using JobBoardPlatform.PL.Requirements;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register

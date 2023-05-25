@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
-    [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
+    [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
     public class CompanyApplicationsPanelController : Controller
     {
         private readonly IRepository<JobOffer> offersRepository;

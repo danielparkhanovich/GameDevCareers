@@ -8,12 +8,12 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 {
     public class CompanyApplicationCardViewModelFactory : IViewModelFactory<OfferApplication, IContainerCard>
     {
-        private readonly DaysFormatter daysFormatter;
+        private readonly PublishedAgoFormatter daysFormatter;
 
 
         public CompanyApplicationCardViewModelFactory()
         {
-            this.daysFormatter = new DaysFormatter(true);
+            this.daysFormatter = new PublishedAgoFormatter(true);
         }
 
         public IContainerCard CreateViewModel(OfferApplication application)
