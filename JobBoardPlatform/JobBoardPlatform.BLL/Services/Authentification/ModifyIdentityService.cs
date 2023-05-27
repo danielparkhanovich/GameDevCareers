@@ -42,7 +42,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
 
         public async Task<AuthentificationResult> ChangePassword(T identity, string oldPassword, string newPassword)
         {
-            string hashedOldPassword = passwordHasher.HashPassword(oldPassword);
+            string hashedOldPassword = passwordHasher.GetHash(oldPassword);
 
             var user = await identityRepository.Get(identity.Id);
             var validate = validateIdentity.ValidateLogin(user, hashedOldPassword);
@@ -52,7 +52,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
                 return validate;
             }
 
-            user!.HashPassword = passwordHasher.HashPassword(newPassword);
+            user!.HashPassword = passwordHasher.GetHash(newPassword);
             await identityRepository.Update(user);
 
             var success = AuthentificationResult.Success;

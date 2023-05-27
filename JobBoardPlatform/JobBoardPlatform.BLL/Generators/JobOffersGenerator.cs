@@ -1,10 +1,13 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
+﻿using JobBoardPlatform.BLL.Generators;
 using JobBoardPlatform.BLL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
 
 namespace JobBoardPlatform.BLL.Utils
 {
+    /// <summary>
+    /// For tests only
+    /// </summary>
     internal class JobOffersGenerator
     {
         private readonly string[] TitleSeniority = new string[] { "Trainee", "Junior", "Middle", "Senior", "Regular", "Lead" };

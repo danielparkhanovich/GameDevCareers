@@ -1,41 +1,51 @@
-﻿using JobBoardPlatform.BLL.Search.CompanyPanel;
+﻿using JobBoardPlatform.BLL.Search;
+using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
-    public class CompanyOffersContainerViewModelFactory : IFactory<CardsContainerViewModel>
+    public class CompanyOffersContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<JobOffer>
     {
-        private const string CardPartialViewName = "./JobOffers/_JobOfferCompanyView";
-
         private readonly IRepository<JobOffer> repository;
-        private readonly CompanyPanelOfferSearchParameters searchData;
+        private readonly CompanyPanelOfferSearchParameters searchParams;
+        private int totalResults;
 
 
         public CompanyOffersContainerViewModelFactory(IRepository<JobOffer> repository,
-            CompanyPanelOfferSearchParameters searchData)
+            CompanyPanelOfferSearchParameters searchParams)
         {
             this.repository = repository;
-            this.searchData = searchData;
+            this.searchParams = searchParams;
         }
 
-        public async Task<CardsContainerViewModel> Create()
-        {            
-            var searcher = new CompanyOffersSearcher(searchData);
+        protected override async Task<List<IContainerCard>> GetCardsAsync()
+        {
+            var searcher = new CompanyOffersSearcher(searchParams);
+            totalResults = searcher.AfterFiltersCount;
+
             var offers = await searcher.Search(repository);
+            var cardFactory = new CompanyOfferViewModelFactory();
+            return GetCards(cardFactory, offers);
+        }
 
-            var header = new CompanyOfferHeaderViewModelFactory()
-                .CreateViewModel();
+        protected override ContainerHeaderViewModel? GetHeader()
+        {
+            var header = new CompanyOfferHeaderViewModelFactory();
+            return header.CreateViewModel();
+        }
 
-            var containerFactory = new CardsContainerViewModelFactory<CompanyOfferViewModelFactory, JobOffer>
-                (offers, header, searchData, CardPartialViewName, searcher.AfterFiltersCount);
+        protected override ISearchParameters GetSearchParams()
+        {
+            return searchParams;
+        }
 
-            var container = await containerFactory.Create();
-
-            return container;
+        protected override int GetTotalRecordsCount()
+        {
+            return totalResults;
         }
     }
 }

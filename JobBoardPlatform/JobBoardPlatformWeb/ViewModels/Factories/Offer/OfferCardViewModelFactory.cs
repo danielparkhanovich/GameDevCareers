@@ -1,14 +1,14 @@
 ﻿using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Contracts;
+using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
-    internal class OfferCardViewModelFactory : IViewModelFactory<JobOffer, IContainerCard>
+    internal class OfferCardViewModelFactory : IContainerCardFactory<JobOffer>
     {
-        public IContainerCard CreateViewModel(JobOffer offer)
+        public IContainerCard CreateCard(JobOffer offer)
         {
             var offerCardViewModel = new OfferCardViewModel();
 
@@ -23,7 +23,15 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             string salaryDetails = salaryFormatter.GetString(from);
 
             var daysFormatter = new PublishedAgoFormatter(from.IsPublished);
-            string publishedAgo = daysFormatter.GetString(from.PublishedAt);
+            string publishedAgo = string.Empty;
+            if (from.IsPublished)
+            {
+                publishedAgo = daysFormatter.GetString(from.PublishedAt);
+            }
+            else
+            {
+                publishedAgo = daysFormatter.GetString(from.CreatedAt);
+            }
 
             var techKeywords = from.TechKeywords.Select(x => x.Name).ToArray();
 

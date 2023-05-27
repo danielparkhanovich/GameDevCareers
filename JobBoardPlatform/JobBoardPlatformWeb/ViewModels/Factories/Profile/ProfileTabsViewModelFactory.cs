@@ -68,7 +68,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
         {
             string[] tabsLabels = new string[] { "Offers Panel", "Companies Panel", "Users Panel", "Settings" };
             string[] tabsActions = new string[] { "OffersPanel", "CompaniesPanel", "UsersPanel", "Settings" };
-            string[] tabsControllers = new string[] { "Admin", "Admin", "Admin", "UserSettings" };
+            string[] tabsControllers = new string[] { "AdminPanelOffers", "Admin", "Admin", "UserSettings" };
 
             var viewModel = new ProfileTabsViewModel()
             {

@@ -1,0 +1,51 @@
+﻿@using JobBoardPlatform.BLL.Search;
+
+<script>
+    function sendRequestAndUpdateElement(url, elementId, onSuccessCallback) {
+        console.log(url)
+        $.ajax({
+            url: url,
+            method: 'POST',
+            success: function (result) {
+                onSuccess(result, elementId, onSuccessCallback);
+            },
+            error: function (xhr, status, error) {
+                onError(xhr, status, error);
+            }
+        });
+    }
+
+    function sendRequestWithDataAndUpdateElement(url, elementId, data, onSuccessCallback) {
+        console.log(url)
+        $.ajax({
+            url: url,
+            data: data,
+            method: 'POST',
+            success: function (result) {
+                onSuccess(result, elementId, onSuccessCallback);
+            },
+            error: function (xhr, status, error) {
+                onError(xhr, status, error);
+            }
+        });
+    }
+
+    function onSuccess(result, elementId, onSuccessCallback) {
+        updateHtmlElement(result, elementId);
+
+        if (onSuccessCallback != null) {
+            onSuccessCallback();
+        }
+    }
+
+    function onError(xhr, status, error) { 
+        console.error(status);
+        console.error(error);
+    }
+
+    function updateHtmlElement(result, elementId) {
+        const selector = `#${elementId}`;
+        const element = $(selector);
+        element.html(result);
+    }
+</script>

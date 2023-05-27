@@ -1,9 +1,9 @@
 ﻿using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
@@ -11,16 +11,19 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
     {
         private readonly IRepository<JobOffer> offersRepository;
         private readonly HttpRequest request;
-        private readonly IDistributedCache distributedCache;
+        private readonly ICacheRepository<List<JobOffer>> offersCache;
+        private readonly ICacheRepository<int> offersCountCache;
 
 
         public OffersMainPageViewModelFactory(IRepository<JobOffer> offersRepository, 
             HttpRequest request,
-            IDistributedCache distributedCache)
+            ICacheRepository<List<JobOffer>> offersCache,
+            ICacheRepository<int> offersCountCache)
         {
             this.offersRepository = offersRepository;
             this.request = request;
-            this.distributedCache = distributedCache;
+            this.offersCache = offersCache;
+            this.offersCountCache = offersCountCache;
         }
 
         public async Task<OffersMainPageViewModel> Create()
@@ -32,7 +35,8 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 
             var mainPageOfferCardsFactory = new MainPageContainerViewModelFactory(offersRepository,
                 searchParams,
-                distributedCache);
+                offersCache, 
+                offersCountCache);
             viewModel.OffersContainer = await mainPageOfferCardsFactory.Create();
             viewModel.OfferSearchData = searchParams;
 

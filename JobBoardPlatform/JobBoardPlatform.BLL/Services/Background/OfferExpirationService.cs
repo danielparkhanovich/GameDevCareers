@@ -31,13 +31,15 @@ namespace JobBoardPlatform.BLL.Services.Background
             {
                 return GetPublishedOfferDaysLeft();
             }
-            throw new Exception("Unknown offer state");
+
+            return GetPublishedOfferDaysLeft();
+            //throw new Exception("Unknown offer state");
         }
 
         private bool IsOfferNotPaid()
         {
             var offerState = new OfferState(offer);
-            return offerState.GetOfferState() == OfferStateType.NotPaid;
+            return offerState.GetState() == OfferStateType.NotPaid;
         }
 
         private int GetNotPaidOfferDaysLeft()

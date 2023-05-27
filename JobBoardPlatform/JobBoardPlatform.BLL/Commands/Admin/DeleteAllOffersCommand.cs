@@ -9,27 +9,27 @@ namespace JobBoardPlatform.BLL.Commands.Admin
     /// </summary>
     public class DeleteAllOffersCommand : ICommand
     {
-        private readonly IRepository<JobOffer> offersRepository;
+        private readonly IRepository<JobOffer> repository;
 
 
         public DeleteAllOffersCommand(IRepository<JobOffer> offersRepository)
         {
-            this.offersRepository = offersRepository;
+            this.repository = offersRepository;
         }
 
         public async Task Execute()
         {
-            var allOffers = await offersRepository.GetAll();
-            foreach (var offer in allOffers)
+            var allRecords = await repository.GetAll();
+            foreach (var record in allRecords)
             {
-                await DeleteOffer(offer.Id);
+                await DeleteOffer(record.Id);
             }
         }
 
-        private async Task DeleteOffer(int offerIdToDelete)
+        private async Task DeleteOffer(int id)
         {
-            var deleteOfferCommand = new DeleteOfferCommand(offersRepository, offerIdToDelete);
-            await deleteOfferCommand.Execute();
+            var deleteCommand = new DeleteOfferCommand(repository, id);
+            await deleteCommand.Execute();
         }
     }
 }

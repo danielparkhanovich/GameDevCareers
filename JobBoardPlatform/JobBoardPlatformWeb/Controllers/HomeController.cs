@@ -1,23 +1,25 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
-using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace JobBoardPlatformWeb.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IDistributedCache distributedCache;
+        private readonly ICacheRepository<List<JobOffer>> offersCache;
+        private readonly ICacheRepository<int> offersCountCache;
 
 
-        public HomeController(IRepository<JobOffer> offersRepository, IDistributedCache distributedCache)
+        public HomeController(IRepository<JobOffer> offersRepository, ICacheRepository<List<JobOffer>> offersCache,
+            ICacheRepository<int> offersCountCache)
         {
             this.offersRepository = offersRepository;
-            this.distributedCache = distributedCache;
+            this.offersCache = offersCache;
+            this.offersCountCache = offersCountCache;
         }
 
         [Route("")]
@@ -25,23 +27,23 @@ namespace JobBoardPlatformWeb.Controllers
         public async Task<IActionResult> Index()
         {
             var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 
-                Request, 
-                distributedCache);
+                Request,
+                offersCache,
+                offersCountCache);
             var model = await viewModelFactory.Create();
-
             return View(model);
         }
 
-        [Route("RefreshCardContainer")]
+        [Route("RefreshCardsContainer")]
         [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardContainer()
+        public async virtual Task<IActionResult> RefreshCardsContainer()
         {
             var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 
                 Request, 
-                distributedCache);
+                offersCache,
+                offersCountCache);
             var model = await viewModelFactory.Create();
             var container = model.OffersContainer;
-
             return PartialView("./Templates/_CardsContainer", container);
         }
 

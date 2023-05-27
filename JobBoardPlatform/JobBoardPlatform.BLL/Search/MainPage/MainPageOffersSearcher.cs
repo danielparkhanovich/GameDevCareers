@@ -18,6 +18,12 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             AfterFiltersCount = 0;
         }
 
+        public MainPageOffersSearcher()
+        {
+            SearchParams = new MainPageOfferSearchParameters();
+            AfterFiltersCount = 0;
+        }
+
         public async Task<List<JobOffer>> Search(IRepository<JobOffer> repository)
         {
             var offersSet = await repository.GetAllSet();

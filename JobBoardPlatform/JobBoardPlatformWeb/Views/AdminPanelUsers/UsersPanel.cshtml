@@ -1,5 +1,6 @@
 ﻿@using JobBoardPlatform.PL.ViewModels.Models.Admin;
-@model AdminPanelViewModel
+@using JobBoardPlatform.PL.ViewModels.Models.Templates;
+@model AdminPanelOffersViewModel
 
 <div class="container-xl px-4 pt-4">
 
@@ -7,9 +8,9 @@
     @await Html.PartialAsync("./ProfileTabs/_ProfileTabs")
 
     <div class="card mb-5">
-        <div class="card-header">Job Offers</div>
+        <div class="card-header">Users</div>
         <div id="cards-container">
-            @await Html.PartialAsync("./Templates/_CardsContainer", Model.OffersContainer)
+            @await Html.PartialAsync(CardsContainerViewModel.PartialView, Model.OffersContainer)
         </div>
     </div>
 
@@ -20,18 +21,18 @@
             <div class="d-flex flex-row justify-content-between m-2 mb-4 align-items-center">
                 <select asp-for="@Model.CompanyIdToGenerate" class="form-select w-50 h-75" aria-label="Default select example">
                     <option value="-1" selected>For all</option>
-                    @foreach (var company in Model.AllCompanies)
+                    @foreach (var company in Model.AllRecords)
                     {
                         <option value="@company.Id">For @company.CompanyName</option>
                     }
                 </select>
-                <input asp-for="@Model.OffersCountToGenerate" class="form-control w-25 h-75" placeholder="offers count e.g. 10, 20, 50, 100" />
+                <input asp-for="@Model.CountToGenerate" class="form-control w-25 h-75" placeholder="offers count e.g. 10, 20, 50, 100" />
                 <button type="button" class="btn btn-outline-success m-2" 
-                onclick="location.href='@Url.Action("GenerateOffers", new { Model.CompanyIdToGenerate, Model.OffersCountToGenerate })'">
+                onclick="location.href='@Url.Action("GenerateUsers", new { Model.CountToGenerate })'">
                     Generate new offers
                 </button>
             </div>
-            <button class="btn btn-outline-danger m-2" onclick="location.href='@Url.Action("DeleteAllOffers")'">
+            <button class="btn btn-outline-danger m-2" onclick="location.href='@Url.Action("DeleteAllUsers")'">
                 Delete all
             </button>
         </div>

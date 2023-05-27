@@ -3,21 +3,21 @@ using JobBoardPlatform.BLL.Services.Background;
 using JobBoardPlatform.BLL.Services.Offer.State;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Contracts;
+using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
-    public class CompanyOfferViewModelFactory : IViewModelFactory<JobOffer, IContainerCard>
+    public class CompanyOfferViewModelFactory : IContainerCardFactory<JobOffer>
     {
-        public IContainerCard CreateViewModel(JobOffer offer)
+        public IContainerCard CreateCard(JobOffer offer)
         {
             var offerCard = new CompanyOfferCardViewModel();
 
             var offerState = new OfferState(offer);
-            offerCard.IsVisible = offerState.IsOfferVisible();
-            offerCard.IsAvailable = offerState.IsOfferAvailableForEdit();
-            offerCard.StateType = offerState.GetOfferState();
+            offerCard.IsVisibleOnMainPage = offerState.IsVisibleOnMainPage();
+            offerCard.IsAvailableForEdit = offerState.IsAvailableForEdit();
+            offerCard.StateType = offerState.GetState();
 
             Map(offer, offerCard);
             MapCardDisplay(offer, offerCard);
@@ -52,7 +52,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
         private void MapCardDisplay(JobOffer from, CompanyOfferCardViewModel to)
         {
             var offerCardFactory = new OfferCardViewModelFactory();
-            var offerCardViewModel = offerCardFactory.CreateViewModel(from);
+            var offerCardViewModel = offerCardFactory.CreateCard(from);
 
             to.CardDisplay = offerCardViewModel;
         }

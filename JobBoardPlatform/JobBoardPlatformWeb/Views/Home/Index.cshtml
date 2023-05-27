@@ -1,5 +1,6 @@
 ﻿@using JobBoardPlatform.BLL.Search.Enums;
 @using JobBoardPlatform.BLL.Search;
+@using JobBoardPlatform.PL.ViewModels.Models.Templates;
 
 @model OffersMainPageViewModel
 @{
@@ -29,8 +30,8 @@
 
         <div class="d-flex flex-row px-4">
             <ul class="nav nav-tabs flex-grow-1 border-0">
-                <li class="nav-item">
-                    <a class="nav-link @(search.Type == OfferType.Employment ? "active" : string.Empty)"
+                <li class="nav-item bg-transparent">
+                    <a class="nav-link bg-transparent @(search.Type == OfferType.Employment ? "active" : string.Empty)"
                        href="@Url.Action("Index", new { area = "", route = "" })">
                         Employment
                         @if (search.Type == OfferType.Employment)
@@ -41,8 +42,8 @@
                         }
                     </a>
                 </li>
-                <li class="nav-item px-5">
-                    <a class="nav-link @(search.Type == OfferType.Commission ? "active" : string.Empty)"
+                <li class="nav-item bg-transparent px-5">
+                    <a class="nav-link bg-transparent @(search.Type == OfferType.Commission ? "active" : string.Empty)"
                        href="/commissions">
                        Commissions
                         @if (search.Type == OfferType.Commission)
@@ -69,7 +70,7 @@
         <hr class="mt-0 mb-0">
 
         <div id="cards-container">
-            @await Html.PartialAsync("./Templates/_CardsContainer", offers)
+            @await Html.PartialAsync(CardsContainerViewModel.PartialView, offers)
         </div>
     </div>
 </div>

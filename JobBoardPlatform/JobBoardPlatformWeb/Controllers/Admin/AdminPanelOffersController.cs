@@ -1,9 +1,12 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
+using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.Controllers.Offer;
+using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
@@ -12,40 +15,33 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
-    [Authorize]
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
-    public class AdminController : Controller
+    public class AdminPanelOffersController : OfferCardsControllerBase
     {
         private readonly IRepository<JobOffer> offerRepository;
-
         private readonly IRepository<CompanyProfile> companyRepository;
-        private readonly IRepository<EmployeeProfile> employeeRepository;
         private readonly IRepository<CompanyIdentity> companyIdentityRepository;
-        private readonly IRepository<CompanyIdentity> employeeIdentityRepository;
         private readonly IRepository<TechKeyword> keywordsRepository;
 
-        public AdminController(IRepository<JobOffer> offerRepository,
+
+        public AdminPanelOffersController(IRepository<JobOffer> offerRepository,
             IRepository<CompanyProfile> companyRepository,
-            IRepository<EmployeeProfile> employeeRepository,
             IRepository<CompanyIdentity> companyIdentityRepository,
-            IRepository<CompanyIdentity> employeeIdentityRepository,
-            IRepository<TechKeyword> keywordsRepository)
+            IRepository<TechKeyword> keywordsRepository,
+            OfferCommandsExecutor commandsExecutor) 
+            : base(commandsExecutor)
         {
             this.offerRepository = offerRepository;
             this.companyRepository = companyRepository;
-            this.employeeRepository = employeeRepository;
             this.companyIdentityRepository = companyIdentityRepository;
-            this.employeeIdentityRepository = employeeIdentityRepository;
             this.keywordsRepository = keywordsRepository;
         }
 
         public async Task<IActionResult> OffersPanel()
         {
-            var container = await GetCardsContainer();
-
-            var viewModel = new AdminPanelViewModel();
-            viewModel.OffersContainer = container;
-            viewModel.AllCompanies = await companyRepository.GetAll();
+            var viewModel = new AdminPanelOffersViewModel();
+            viewModel.OffersContainer = await GetContainer();
+            viewModel.AllRecords = await companyRepository.GetAll();
 
             return View(viewModel);
         }
@@ -78,15 +74,32 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return RedirectToAction("OffersPanel");
         }
 
-        [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardContainer()
+        protected override Task<CardsContainerViewModel> GetContainer()
         {
             var searchParameters = GetSearchParametersFromUrl();
             var containerFactory = new AdminPanelOffersContainerViewModelFactory(offerRepository, searchParameters!);
+            return containerFactory.Create();
+        }
 
-            var model = await containerFactory.Create();
+        protected override Task<JobOffer> GetLoadedOffer(int offerId)
+        {
+            var loader = new LoadCompanyOffer(offerRepository, offerId);
+            return loader.Load();
+        }
 
-            return PartialView("./Templates/_CardsContainer", model);
+        protected override IContainerCard GetContainerCard(JobOffer offer)
+        {
+            var cardFactory = new AdminOfferViewModelFactory();
+            return cardFactory.CreateCard(offer);
+        }
+
+        private CompanyPanelOfferSearchParameters GetSearchParametersFromUrl()
+        {
+            int? profileId = null;
+            var offerSearchParametersFactory = new CompanyPanelOfferSearchParametersFactory(Request, profileId);
+            var searchParams = offerSearchParametersFactory.Create();
+
+            return searchParams;
         }
 
         private async Task<bool> IsGenerateCountOverLimit(int countToGenerate)
@@ -106,24 +119,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             }
 
             return false;
-        }
-
-        private async Task<CardsContainerViewModel> GetCardsContainer()
-        {
-            var searchParams = GetSearchParametersFromUrl();
-            var containerFactory = new AdminPanelOffersContainerViewModelFactory(offerRepository, searchParams);
-            var container = await containerFactory.Create();
-
-            return container;
-        }
-
-        private CompanyPanelOfferSearchParameters GetSearchParametersFromUrl()
-        {
-            int? profileId = null;
-            var offerSearchParametersFactory = new CompanyPanelOfferSearchParametersFactory(Request, profileId);
-            var searchParams = offerSearchParametersFactory.Create();
-
-            return searchParams;
         }
     }
 }

@@ -1,4 +1,9 @@
 ﻿@using JobBoardPlatform.BLL.Search;
+@using JobBoardPlatform.PL.Controllers.Offer;
+@using JobBoardPlatform.PL.Controllers.Templates;
+
+<!--sendRequestAndUpdateElement(url, elementId, callback)-->
+@await Html.PartialAsync("./Templates/_UpdateHtmlElementAjaxRequestScript")
 
 <script>
     function refreshCards(onSuccessCallback = null, isPageSwitched = false) {
@@ -6,11 +11,12 @@
             resetPageParameter();
         }
         const searchParams = new URLSearchParams(window.location.search)
-        const refreshCardsAction = "RefreshCardContainer";
+        const refreshCardsAction = @Html.Raw(Json.Serialize(OfferCardsControllerBase.RefreshCardsContainerAction));;
         let refreshCards = refreshCardsAction;
         refreshCards += '?' + searchParams.toString();
 
-        sendRequestAndUpdateContainer(refreshCards, onSuccessCallback);
+        const cardContainerId = "cards-container";
+        sendRequestAndUpdateElement(refreshCards, cardContainerId, onSuccessCallback);
     }
 
     function resetPageParameter() {
@@ -39,30 +45,5 @@
         }
 
         history.pushState(null, '', newRelativePathQuery);
-    }
-
-    function sendRequestAndUpdateContainer(url, onSuccessCallback) {
-        console.log(url)
-        $.ajax({
-            url: url,
-            method: 'POST',
-            success: function (result) {
-                updateContainer(result);
-                if (onSuccessCallback != null) {
-                    onSuccessCallback();
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error(status);
-                console.error(error);
-            }
-        });
-    }
-
-    function updateContainer(result) {
-        const cardContainerId = "cards-container";
-        const selector = `#${cardContainerId}`;
-        const element = $(selector);
-        element.html(result);
     }
 </script>

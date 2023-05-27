@@ -4,6 +4,8 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
 {
     public class OfferCardViewModel : IContainerCard
     {
+        public string PartialView => "./JobOffers/_JobOffer";
+
         // For redirections only
         public int Id { get; set; }
 

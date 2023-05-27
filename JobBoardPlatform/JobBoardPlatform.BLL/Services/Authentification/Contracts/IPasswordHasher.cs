@@ -2,6 +2,6 @@
 {
     internal interface IPasswordHasher
     {
-        string HashPassword(string password);
+        string GetHash(string password);
     }
 }

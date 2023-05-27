@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Models.Contracts;
 
-namespace JobBoardPlatform.BLL.Commands.Admin
+namespace JobBoardPlatform.BLL.Generators
 {
     internal class MockOfferData : INewOfferData
     {

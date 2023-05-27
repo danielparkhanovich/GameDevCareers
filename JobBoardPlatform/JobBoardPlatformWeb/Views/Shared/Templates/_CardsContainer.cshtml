@@ -55,7 +55,7 @@
             @foreach (var card in Model.ContainerCards)
             {
                 <div class="mx-2 my-2 card border-0">
-                    @await Html.PartialAsync(Model.CardPartialViewModelName, card)
+                    @await Html.PartialAsync(card.PartialView, card)
                 </div>
             }
         }

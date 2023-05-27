@@ -12,19 +12,19 @@ namespace JobBoardPlatform.BLL.Services.Offer.State
             this.offer = offer;
         }
 
-        public OfferStateType GetOfferState()
+        public OfferStateType GetState()
         {
             if (offer.IsDeleted)
             {
                 return OfferStateType.Deleted;
             }
-            else if (offer.IsPaid == false)
-            {
-                return OfferStateType.NotPaid;
-            }
             else if (offer.IsSuspended)
             {
                 return OfferStateType.Suspended;
+            }
+            else if (!offer.IsPaid)
+            {
+                return OfferStateType.NotPaid;
             }
             else if (offer.IsShelved)
             {
@@ -34,14 +34,16 @@ namespace JobBoardPlatform.BLL.Services.Offer.State
             {
                 return OfferStateType.Visible;
             }
-            throw new Exception($"Wrong offer state, for offer id: {offer.Id}");
+
+            return OfferStateType.Suspended;
+            //throw new Exception($"Wrong offer state, for offer id: {offer.Id}");
         }
 
-        public bool IsOfferAvailableForEdit()
+        public bool IsAvailableForEdit()
         {
-            var state = GetOfferState();
+            var state = GetState();
 
-            if (state != OfferStateType.Deleted && state != OfferStateType.Suspended)
+            if (state != OfferStateType.Deleted)
             {
                 return true;
             }
@@ -49,9 +51,9 @@ namespace JobBoardPlatform.BLL.Services.Offer.State
             return false;
         }
 
-        public bool IsOfferVisible()
+        public bool IsVisibleOnMainPage()
         {
-            return GetOfferState() == OfferStateType.Visible;
+            return GetState() == OfferStateType.Visible;
         }
     }
 }

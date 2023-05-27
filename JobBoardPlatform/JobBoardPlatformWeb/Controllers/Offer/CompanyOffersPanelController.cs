@@ -57,7 +57,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             await offersRepository.Update(offer);
 
             var offerCardFactory = new CompanyOfferViewModelFactory();
-            var offerCard = offerCardFactory.CreateViewModel(offer);
+            var offerCard = offerCardFactory.CreateCard(offer);
 
             return PartialView("./JobOffers/_JobOfferCompanyView", offerCard);
         }
@@ -72,7 +72,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             await offersRepository.Update(offer);
 
             var offerCardFactory = new CompanyOfferViewModelFactory();
-            var offerCard = offerCardFactory.CreateViewModel(offer);
+            var offerCard = offerCardFactory.CreateCard(offer);
 
             return PartialView("./JobOffers/_JobOfferCompanyView", offerCard);
         }

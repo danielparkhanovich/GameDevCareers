@@ -23,7 +23,7 @@ namespace JobBoardPlatform.PL.Requirements
         private bool IsOfferVisible(JobOffer offer)
         {
             var offerState = new OfferState(offer);
-            return offerState.IsOfferVisible();
+            return offerState.IsVisibleOnMainPage();
         }
 
         private bool IsAuthorized(JobOffer offer, ClaimsPrincipal user)

@@ -24,17 +24,17 @@
 
     bool isEdit = ViewContext.RouteData.Values.ContainsKey("edit");
 
-    bool isAvailableToShelve = offer.IsAvailable && offer.IsPaid;
-    bool isAvailableToEdit = offer.IsAvailable && !offer.IsDeleted;
+    bool isAvailableToShelve = offer.IsAvailableForEdit && offer.IsPaid;
+    bool isAvailableToEdit = offer.IsAvailableForEdit && !offer.IsDeleted;
 
     ViewData["IsFullCardDisplay"] = true;
 }
 
 <div class="my-0" id=@($"company-offer-card-container-{offerId}")>
     <div class="card border-0 shadow-sm">
-        <div class="d-flex flex-row mx-0 @(offer.IsVisible ? null : "bg-dark bg-opacity-10")">
+        <div class="d-flex flex-row mx-0 @(offer.IsVisibleOnMainPage ? null : "bg-dark bg-opacity-10")">
             <div class="col-8 mx-0 px-0">
-                @await Html.PartialAsync("./JobOffers/_JobOffer", Model.CardDisplay)
+                @await Html.PartialAsync(Model.CardDisplay.PartialView, Model.CardDisplay)
             </div>
             <div class="d-flex flex-row company-card-view-data w-100">
                 <div class="bg-dark text-light">

@@ -4,6 +4,8 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
 {
     public class CompanyApplicationCardViewModel : IContainerCard
     {
+        public string PartialView => "./JobOffers/_ApplicationCard";
+
         public int Id { get; set; }
         public int PriorityFlagId { get; set; }
         public string FullName { get; set; } = string.Empty;

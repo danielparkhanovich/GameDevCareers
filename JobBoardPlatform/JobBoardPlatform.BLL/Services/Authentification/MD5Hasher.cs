@@ -6,7 +6,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
 {
     internal class MD5Hasher : IPasswordHasher
     {
-        public string HashPassword(string password)
+        public string GetHash(string password)
         {
             string hashText;
             using (MD5 md5 = MD5.Create())

@@ -1,46 +1,52 @@
-﻿using JobBoardPlatform.BLL.Search.CompanyPanel;
-using JobBoardPlatform.BLL.Search.MainPage;
-using JobBoardPlatform.DAL.Data.Loaders;
+﻿using JobBoardPlatform.BLL.Search;
+using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Applications;
-using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 {
-    public class CompanyApplicationsContainerViewModelFactory : IFactory<CardsContainerViewModel>
+    public class CompanyApplicationsContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<OfferApplication>
     {
-        private const string CardPartialViewName = "./JobOffers/_ApplicationCard";
-
         private readonly IRepository<OfferApplication> repository;
-        private readonly CompanyPanelApplicationSearchParameters searchData;
+        private readonly CompanyPanelApplicationSearchParameters searchParams;
+        private int totalResult;
 
 
         public CompanyApplicationsContainerViewModelFactory(IRepository<OfferApplication> repository,
-            CompanyPanelApplicationSearchParameters searchData)
+            CompanyPanelApplicationSearchParameters searchParams)
         {
             this.repository = repository;
-            this.searchData = searchData;
+            this.searchParams = searchParams;
         }
 
-        public async Task<CardsContainerViewModel> Create()
+        protected override async Task<List<IContainerCard>> GetCardsAsync()
         {
-            var searcher = new OfferApplicationsSearcher(searchData);
+            var searcher = new OfferApplicationsSearcher(searchParams);
+            totalResult = searcher.AfterFiltersCount;
+
             var applications = await searcher.Search(repository);
+            var cardFactory = new CompanyApplicationCardViewModelFactory();
+            return GetCards(cardFactory, applications);
+        }
 
-            var header = new CompanyApplicationsHeaderViewModelFactory()
-                .CreateViewModel();
+        protected override ContainerHeaderViewModel? GetHeader()
+        {
+            var header = new CompanyApplicationsHeaderViewModelFactory();
+            return header.CreateViewModel();
+        }
 
-            var containerFactory = new CardsContainerViewModelFactory<CompanyApplicationCardViewModelFactory, OfferApplication>
-                (applications, header, searchData, CardPartialViewName, searcher.AfterFiltersCount);
+        protected override ISearchParameters GetSearchParams()
+        {
+            return searchParams;
+        }
 
-            var container = await containerFactory.Create();
-
-            return container;
+        protected override int GetTotalRecordsCount()
+        {
+            return totalResult;
         }
     }
 }

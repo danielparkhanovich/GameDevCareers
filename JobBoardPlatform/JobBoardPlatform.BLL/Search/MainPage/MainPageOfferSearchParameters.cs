@@ -12,8 +12,8 @@ namespace JobBoardPlatform.BLL.Search.MainPage
         public string? SearchString { get; set; }
         public bool IsSalaryOnly { get; set; }
         public bool IsRemoteOnly { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 20;
 
         public bool IsQueryParams
         {

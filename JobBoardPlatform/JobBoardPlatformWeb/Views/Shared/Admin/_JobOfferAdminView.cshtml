@@ -1,7 +1,11 @@
-﻿@using JobBoardPlatform.BLL.Services.Offer.State;
+﻿@using JobBoardPlatform.PL.ViewModels.Factories.Admin;
+@using JobBoardPlatform.PL.ViewModels.Models.Admin;
 @using JobBoardPlatform.PL.ViewModels.Models.Offer.Widgets;
+@using JobBoardPlatform.BLL.Services.Offer.State;
+@using JobBoardPlatform.PL.Controllers.Offer;
+@using JobBoardPlatform.PL.Controllers.Templates;
 
-@model CompanyOfferCardViewModel
+@model AdminOfferCardViewModel
 @{
     var offer = Model;
     int offerId = offer.CardDisplay.Id;
@@ -17,19 +21,20 @@
     }
 
     string editOfferUrl = $"{@Url.Action("NewOffer", "CompanyOfferEditor", new { offerId = offerId })}";
-    string hideOfferUrl = $"{@Url.Action("ToggleOfferVisibilityState")}";
-    string closeOfferUrl = $"{@Url.Action("ToggleOfferCloseState")}";
-    string suspendOfferUrl = $"{@Url.Action("ToggleOfferSuspendState")}";
+    string hideOfferUrl = $"{@Url.Action(OfferCardsControllerBase.ToggleVisibilityAction)}";
+    string closeOfferUrl = $"{@Url.Action(OfferCardsControllerBase.DeleteAction)}";
+    string suspendOfferUrl = $"{@Url.Action(OfferCardsControllerBase.ToggleSuspendAction)}";
+    string passPaymentOfferUrl = $"{@Url.Action(OfferCardsControllerBase.PassPaymentAction)}";
 
-    bool isAvailableToShelve = offer.IsAvailable && offer.IsPaid;
-    bool isAvailableToEdit = offer.IsAvailable && !offer.IsDeleted;
+    bool isAvailableToShelve = offer.IsAvailableForEdit && offer.IsPaid;
+    bool isAvailableToEdit = offer.IsAvailableForEdit && !offer.IsDeleted;
 }
 
-<div class="my-0" id=@($"company-offer-card-container-{offerId}")>
+<div class="my-0" id=@($"card-container-{offerId}")>
     <div class="card border-0 shadow-sm">
-        <div class="d-flex flex-row mx-0 @(offer.IsVisible ? null : "bg-dark bg-opacity-10")">
+        <div class="d-flex flex-row mx-0 @(offer.IsVisibleOnMainPage ? null : "bg-dark bg-opacity-10")">
             <div class="col-7 mx-0 px-0">
-                @await Html.PartialAsync("./JobOffers/_JobOffer", Model.CardDisplay)
+                @await Html.PartialAsync(Model.CardDisplay.PartialView, Model.CardDisplay)
             </div>
             <div class="d-flex flex-row company-card-view-data w-100 justify-content-between">
                 <div>
@@ -43,13 +48,13 @@
                         @await Html.PartialAsync("./JobOffers/_MainTechnologyStaticWidget", widget)
                     </div>
                 </div>
-                <div class="d-flex flex-row justify-content-start mx-1" style="width:45px;">
+                <div class="d-flex flex-row justify-content-start mx-1 small" style="width:30px;">
                     <i class="bi bi-eye d-flex justify-content-center align-items-center rounded-circle"></i>
-                    <div class="d-flex justify-content-center align-items-center ms-1">
+                    <div class="d-flex justify-content-center align-items-center ms-2">
                         @offer.TotalViews
                     </div>
                 </div>
-                <div class="d-flex flex-row justify-content-start mx-1" style="width:45px;">
+                <div class="d-flex flex-row justify-content-start mx-1 small" style="width:30px;">
                     @if (offer.ContactType == ContactTypeEnum.Mail.ToString())
                     {
                         <i class="bi bi-envelope d-flex justify-content-center align-items-center rounded-circle"></i>
@@ -62,7 +67,7 @@
                     {
                         <i class="bi bi-send d-flex justify-content-center align-items-center rounded-circle"></i>
                     }
-                    <div class="d-flex justify-content-center align-items-center ms-1">
+                    <div class="d-flex justify-content-center align-items-center ms-2">
                         @offer.TotalApplicants
                     </div>
                 </div>
@@ -97,18 +102,19 @@
                         }
                         else if (offer.StateType == OfferStateType.Suspended)
                         {
-                            img = "bi bi-flag-fill";
+                            img = "bi bi-flag small";
                             text = "Suspended";
-                            color = "warning";
+                            color = "black";
                         }
                     }
-                    <div class="d-flex flex-row justify-content-center align-items-center rounded-pill border border-@(color) small align-self-center pe-2" 
-                    style="width:125px;">
-                        <i class="@(img) px-2 text-@(color)" style="font-size: 1.15rem;"></i>
-                        <div class="text-@(color)">@(text)</div>
+                    <div class="rounded-pill border border-@(color) small align-self-center pe-2">
+                        <div class="d-flex flex-row justify-content-center align-items-center small">
+                            <i class="@(img) px-2 text-@(color)" style="font-size: 1rem;"></i>
+                            <div class="text-@(color)">@(text)</div>
+                        </div>   
                     </div>
                     <div class="d-flex align-items-center rounded-pill text-@(color) border border-@(color) small align-self-center ms-3 px-2">
-                        <smalL>@Model.DaysLeft</smalL>
+                        <small>@Model.DaysLeft</small>
                     </div>
                 </div>
             </div>
@@ -121,7 +127,7 @@
                             <i class="bi bi-pencil-square ms-1"></i>
                         </a>
                         <button @(isAvailableToShelve ? string.Empty : "disabled") class="w-100 d-flex flex-row justify-content-between btn @(offer.IsShelved ? "btn-outline-info" : "btn-outline-warning") btn-sm mt-1"
-                                onclick="toggleVisibility(@offerId, '@hideOfferUrl', @((!offer.IsShelved).ToString().ToLower()));">
+                                onclick="shelveOffer(@offerId, @(((!offer.IsShelved).ToString().ToLower())));">
                             @if (!offer.IsShelved)
                             {
                                 <div>@("Hide")</div>
@@ -134,7 +140,7 @@
                             }
                         </button>
                         <button class="w-100 d-flex flex-row justify-content-between btn @(offer.IsDeleted ? "btn-outline-success" : "btn-outline-danger") btn-sm mt-1"
-                                onclick="toggleDeleted(@offerId, '@closeOfferUrl', @((!offer.IsDeleted).ToString().ToLower()));">
+                                onclick="closeOffer(@offerId);">
                             @if (!offer.IsDeleted)
                             {
                                 <div>@("Close")</div>
@@ -146,9 +152,9 @@
                                 <i class="bi bi-activity ms-1"></i>
                             }
                         </button>
-                        <button class="w-100 d-flex flex-row justify-content-between btn @(offer.IsDeleted ? "btn-outline-success" : "btn-outline-dark") btn-sm mt-1"
-                                onclick="toggleDeleted(@offerId, '@closeOfferUrl', @((!offer.IsDeleted).ToString().ToLower()));">
-                            @if (!offer.IsDeleted)
+                        <button class="w-100 d-flex flex-row justify-content-between btn @(offer.IsSuspended ? "btn-outline-success" : "btn-outline-dark") btn-sm mt-1"
+                                onclick="suspendOffer(@offerId, @((!offer.IsSuspended).ToString().ToLower()));">
+                            @if (!offer.IsSuspended)
                             {
                                 <div>@("Suspend")</div>
                                 <i class="bi bi-flag"></i>
@@ -162,7 +168,7 @@
                         @if (offer.StateType == OfferStateType.NotPaid)
                         {
                             <button class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm mt-1"
-                                onclick="toggleDeleted(@offerId, '@closeOfferUrl', @((!offer.IsDeleted).ToString().ToLower()));">
+                                onclick="passPaymentOffer(@offerId);">
                                 <div>@("Pass payment")</div>
                                 <i class="bi bi-credit-card-2-front-fill ms-1"></i>
                             </button>
@@ -173,3 +179,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    function shelveOffer(cardId, flag) {
+        const action = @Html.Raw(Json.Serialize(hideOfferUrl));
+        const data = { offerId: cardId, flag: flag };
+        refreshCard(action, cardId, data);
+    }
+
+    function suspendOffer(cardId, flag) {
+        const action = @Html.Raw(Json.Serialize(suspendOfferUrl));
+        const data = { offerId: cardId, flag: flag };
+        refreshCard(action, cardId, data);
+    }
+
+    function passPaymentOffer(cardId) {
+        const action = @Html.Raw(Json.Serialize(passPaymentOfferUrl));
+        const data = { offerId: cardId };
+        refreshCard(action, cardId, data, refreshCards);
+    }
+
+    function closeOffer(cardId) {
+        const action = @Html.Raw(Json.Serialize(closeOfferUrl));
+        const data = { offerId: cardId };
+        refreshCard(action, cardId, data, refreshCards);
+    }
+
+    function refreshCard(action, id, data, onSuccessCallback = null) {
+        const cardId = `card-container-${id}`;
+        sendRequestWithDataAndUpdateElement(action, cardId, data, onSuccessCallback);
+    }
+</script>

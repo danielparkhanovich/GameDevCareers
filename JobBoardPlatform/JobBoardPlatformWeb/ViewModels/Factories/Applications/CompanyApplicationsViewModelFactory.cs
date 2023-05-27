@@ -53,7 +53,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
         private OfferCardViewModel GetOfferCard(JobOffer offer)
         {
             var offerCardFactory = new OfferCardViewModelFactory();
-            var offerCard = offerCardFactory.CreateViewModel(offer);
+            var offerCard = offerCardFactory.CreateCard(offer);
             return (offerCard as OfferCardViewModel)!;
         }
     }

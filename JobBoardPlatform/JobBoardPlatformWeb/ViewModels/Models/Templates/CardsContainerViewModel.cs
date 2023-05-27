@@ -5,13 +5,11 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Templates
 {
     public class CardsContainerViewModel
     {
+        public const string PartialView = "./Templates/_CardsContainer";
+
         public ContainerHeaderViewModel? Header { get; set; }
         public ISearchParameters SearchParams { get; set; }
-
-        // e.g. ./JobOffers/_ApplicationCard or nameof(_ApplicationCard)
-        public string CardPartialViewModelName { get; set; }
         public ICollection<IContainerCard>? ContainerCards { get; set; }
-
         public int RecordsCount { get; set; }
     }
 }

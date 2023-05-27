@@ -1,43 +1,64 @@
-﻿using JobBoardPlatform.BLL.Search.CompanyPanel;
+﻿using JobBoardPlatform.BLL.Search;
+using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.ViewModels.Contracts;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
 {
-    public class AdminPanelCompaniesContainerViewModelFactory : IFactory<CardsContainerViewModel>
+    public class AdminPanelCompaniesContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<CompanyIdentity>
     {
-        private const string CardPartialViewName = "./JobOffers/_JobOffer";
-
-        private readonly IRepository<CompanyProfile> profileRepository;
-        private readonly IRepository<CompanyIdentity> identityRepository;
+        private readonly IRepository<CompanyIdentity> repository;
         private readonly CompanyPanelOfferSearchParameters searchParams;
+        private int totalRecordsCount;
 
 
-        public AdminPanelCompaniesContainerViewModelFactory(IRepository<CompanyProfile> profileRepository,
-            IRepository<CompanyIdentity> identityRepository,
+        public AdminPanelCompaniesContainerViewModelFactory(IRepository<CompanyIdentity> repository, 
             CompanyPanelOfferSearchParameters searchParams)
         {
-            this.profileRepository = profileRepository;
-            this.identityRepository = identityRepository;
+            this.repository = repository;
             this.searchParams = searchParams;
         }
 
-        public async Task<CardsContainerViewModel> Create()
+        protected override ContainerHeaderViewModel? GetHeader()
         {
-            /*var searcher = new CompanyOffersSearcher(searchParams);
-            var companies = await searcher.Search(repository);
-
-            var header = new CompanyOfferHeaderViewModelFactory().CreateViewModel();
-
-            var containerFactory = new CardsContainerViewModelFactory<CompanyOfferViewModelFactory, JobOffer>
-                (offers, header, searchParams, CardPartialViewName, searcher.AfterFiltersCount);
-
-            var container = await containerFactory.Create();
-
-            return container;*/
+            var headerViewModelFactory = new CompanyOfferHeaderViewModelFactory();
             return null;
+        }
+
+        protected override async Task<List<IContainerCard>> GetCardsAsync()
+        {
+            var loaded = await Load();
+            totalRecordsCount = loaded.Count;
+
+            var cardFactory = new AdminCompanyCardViewModelFactory();
+
+            return GetCards(cardFactory, loaded);
+        }
+
+        protected override ISearchParameters GetSearchParams()
+        {
+            return searchParams;
+        }
+
+        protected override int GetTotalRecordsCount()
+        {
+            return totalRecordsCount;
+        }
+
+        private async Task<List<CompanyIdentity>> Load()
+        {
+            var query = await repository.GetAllSet();
+            var records = await query
+                .Include(application => application.Profile)
+                .Take(20)
+                .ToListAsync();
+
+            return records;
         }
     }
 }

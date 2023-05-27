@@ -20,6 +20,9 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public async Task Execute()
         {
+            var offer = await offersRepository.Get(offerIdToDelete);
+            offer!.IsDeleted = true;
+            await offersRepository.Update(offer);
             // await offersRepository.Delete(offerIdToDelete);
         }
     }

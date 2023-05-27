@@ -9,6 +9,9 @@ using JobBoardPlatform.BLL.Services.Background;
 using JobBoardPlatform.PL.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using JobBoardPlatform.DAL.Repositories.Cache;
+using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.BLL.Commands.Offer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +60,9 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = builder.Configuration.GetValue<string>("Redis:InstanceName");
 });
 
+builder.Services.AddTransient<ICacheRepository<List<JobOffer>>, MainPageOffersCacheRepository>();
+builder.Services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
+builder.Services.AddTransient<OfferCommandsExecutor>();
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
 builder.Services.AddHostedService<OfferExpirationChecker>();

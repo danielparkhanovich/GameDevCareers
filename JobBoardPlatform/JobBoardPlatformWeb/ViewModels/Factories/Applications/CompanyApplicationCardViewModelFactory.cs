@@ -1,12 +1,12 @@
 ﻿using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Contracts;
+using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 {
-    public class CompanyApplicationCardViewModelFactory : IViewModelFactory<OfferApplication, IContainerCard>
+    public class CompanyApplicationCardViewModelFactory : IContainerCardFactory<OfferApplication>
     {
         private readonly PublishedAgoFormatter daysFormatter;
 
@@ -16,7 +16,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
             this.daysFormatter = new PublishedAgoFormatter(true);
         }
 
-        public IContainerCard CreateViewModel(OfferApplication application)
+        public IContainerCard CreateCard(OfferApplication application)
         {
             string applicatedAgo = daysFormatter.GetString(application.CreatedAt);
             string? linkedInUrl = application.EmployeeProfile?.LinkedInUrl;

@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+﻿using JobBoardPlatform.BLL.Commands.Identities;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
@@ -31,19 +32,22 @@ namespace JobBoardPlatform.BLL.Services.Authentification
             }
 
             // hash raw password
-            string hashedPassword = passwordHasher.HashPassword(identity.HashPassword);
+            string hashedPassword = passwordHasher.GetHash(identity.HashPassword);
             identity.HashPassword = hashedPassword;
 
             var success = AuthentificationResult.Success;
 
-            success.FoundRecord = await identityRepository.Add(identity);
+            var addNewUserCommand = new AddNewUserCommand<T>(identityRepository, identity);
+            await addNewUserCommand.Execute();
+
+            success.FoundRecord = addNewUserCommand.AddedRecord;
 
             return success;
         }
 
         public async Task<AuthentificationResult> TryLoginAsync(T identity)
         {
-            string hashedPassword = passwordHasher.HashPassword(identity.HashPassword);
+            string hashedPassword = passwordHasher.GetHash(identity.HashPassword);
 
             var user = await GetUserByEmailAsync(identity.Email);
             var validate = validateIdentity.ValidateLogin(user, hashedPassword);
