@@ -5,7 +5,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Admin
 {
     public class AdminPanelCompaniesViewModel : AdminPanelViewModel<CompanyIdentity>
     {
-        public CardsContainerViewModel OffersContainer { get; set; }
+        public CardsContainerViewModel CardsContainer { get; set; }
         public List<CompanyIdentity> AllRecords { get; set; }
         public int CountToGenerate { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
+﻿using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
@@ -16,8 +16,8 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelEmployeesController : CardsControllerBase
     {
-        public const string GenerateAction = "Generate";
-        public const string DeleteAllCompanies = "DeleteAll";
+        public const string LogIntoAction = "LogInto";
+        public const string DeleteAction = "Delete";
 
         private readonly IRepository<EmployeeIdentity> identityRepository;
 
@@ -30,26 +30,26 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         public async Task<IActionResult> Panel()
         {
             var viewModel = new AdminPanelEmployeesViewModel();
-            viewModel.OffersContainer = await GetContainer();
+            viewModel.CardsContainer = await GetContainer();
             viewModel.AllRecords = await identityRepository.GetAll();
 
             return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Generate(int countToGenerate)
+        public async Task<IActionResult> LogInto(int userId)
         {
-            var generateOffersCommand = new GenerateEmployeesCommand(countToGenerate, identityRepository);
-            await generateOffersCommand.Execute();
+            // var deleteCommand = new DeleteCompanyCommand(companyIdentityRepository, userId);
+            // await deleteCommand.Execute();
 
             return RedirectToAction("Panel");
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteAll()
+        public async Task<IActionResult> Delete(int userId)
         {
-            var deleteOffersCommand = new DeleteAllEmployeesCommand(identityRepository);
-            await deleteOffersCommand.Execute();
+            var deleteCommand = new DeleteEmployeeCommand(identityRepository, userId);
+            await deleteCommand.Execute();
 
             return RedirectToAction("Panel");
         }
@@ -57,7 +57,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         protected override Task<CardsContainerViewModel> GetContainer()
         {
             var searchParameters = GetSearchParametersFromUrl();
-            var containerFactory = new AdminPanelEmployeesContainerViewModelFactory(identityRepository, 
+            var containerFactory = new AdminPanelEmployeesContainerViewModelFactory(identityRepository,
                 searchParameters!);
             return containerFactory.Create();
         }

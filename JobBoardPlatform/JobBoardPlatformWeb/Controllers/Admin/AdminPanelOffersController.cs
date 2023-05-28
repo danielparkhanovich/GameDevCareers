@@ -37,10 +37,10 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             this.keywordsRepository = keywordsRepository;
         }
 
-        public async Task<IActionResult> OffersPanel()
+        public async Task<IActionResult> Panel()
         {
             var viewModel = new AdminPanelOffersViewModel();
-            viewModel.OffersContainer = await GetContainer();
+            viewModel.CardsContainer = await GetContainer();
             viewModel.AllRecords = await companyRepository.GetAll();
 
             return View(viewModel);
@@ -52,7 +52,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             bool isOverLimit = await IsGenerateCountOverLimit(offersCountToGenerate);
             if (isOverLimit)
             {
-                return RedirectToAction("OffersPanel");
+                return RedirectToAction("Panel");
             }
 
             var generateOffersCommand = new GenerateOffersCommand(offersCountToGenerate,
@@ -62,7 +62,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 offerRepository);
             await generateOffersCommand.Execute();
 
-            return RedirectToAction("OffersPanel");
+            return RedirectToAction("Panel");
         }
 
         [HttpPost]

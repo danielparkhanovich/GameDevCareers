@@ -1,4 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.PL.Controllers.Profile;
+using JobBoardPlatform.PL.Controllers.Security;
+using JobBoardPlatform.PL.Controllers.Utils;
 using JobBoardPlatform.PL.ViewModels.Models.Profile;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
@@ -67,8 +70,14 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
         private ProfileTabsViewModel GetAdminTabs()
         {
             string[] tabsLabels = new string[] { "Offers Panel", "Companies Panel", "Users Panel", "Settings" };
-            string[] tabsActions = new string[] { "OffersPanel", "CompaniesPanel", "UsersPanel", "Settings" };
-            string[] tabsControllers = new string[] { "AdminPanelOffers", "Admin", "Admin", "UserSettings" };
+            string[] tabsActions = new string[] { "Panel", "Panel", "Panel", "Settings" };
+            string[] tabsControllers = new string[] 
+            { 
+                ControllerUtils.GetControllerName(typeof(AdminPanelOffersController)),
+                ControllerUtils.GetControllerName(typeof(AdminPanelCompaniesController)),
+                ControllerUtils.GetControllerName(typeof(AdminPanelEmployeesController)),
+                ControllerUtils.GetControllerName(typeof(UserSettingsController))
+            };
 
             var viewModel = new ProfileTabsViewModel()
             {

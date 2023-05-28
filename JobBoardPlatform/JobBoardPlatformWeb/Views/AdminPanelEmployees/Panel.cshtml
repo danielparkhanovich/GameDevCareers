@@ -1,0 +1,16 @@
+﻿@using JobBoardPlatform.PL.ViewModels.Models.Admin;
+@using JobBoardPlatform.PL.ViewModels.Models.Templates;
+@model AdminPanelEmployeesViewModel
+
+<div class="container-xl px-4 pt-4">
+
+    <!-- Account page navigation-->
+    @await Html.PartialAsync("./ProfileTabs/_ProfileTabs")
+
+    <div class="card mb-5">
+        <div class="card-header">Employees</div>
+        <div id="cards-container">
+            @await Html.PartialAsync(CardsContainerViewModel.PartialView, Model.CardsContainer)
+        </div>
+    </div>
+</div>

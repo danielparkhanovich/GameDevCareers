@@ -9,6 +9,7 @@
     var controllers = viewModel.MainTabsControllers;
     var tabs = viewModel.MainTabsLabels;
 
+    string currentController = ViewContext.RouteData.Values["Controller"].ToString();
     string currentAction = ViewContext.RouteData.Values["Action"].ToString();
 
     bool isSecondaryTab = !actions.Contains(currentAction);
@@ -22,7 +23,8 @@
             @for (int i = 0; i < tabs.Length; i++)
             {
                 <li class="nav-item">
-                    <a class="nav-link bg-transparent @(currentAction == $"{actions[i]}" ? "active ms-0" : "")"
+                    <a class="nav-link bg-transparent 
+                    @(currentAction == actions[i] && currentController == controllers[i] ? "active ms-0" : "muted")"
                    asp-controller="@controllers[i]" asp-action="@actions[i]">@tabs[i]</a>
                 </li>
             }
@@ -31,7 +33,7 @@
             @if (isSecondaryTab)
             {
                 <li class="nav-item">
-                    <a class="nav-link active ms-0">@secondaryTabTitle</a>
+                    <a class="nav-link active bg-transparent ms-0">@secondaryTabTitle</a>
                 </li>
             }
         </ul>

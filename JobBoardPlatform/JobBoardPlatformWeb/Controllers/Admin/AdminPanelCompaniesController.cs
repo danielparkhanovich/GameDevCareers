@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
+﻿using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
@@ -15,41 +15,40 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelCompaniesController : CardsControllerBase
     {
-        public const string DeleteAction = "DeleteCompany";
-        public const string GenerateAction = "Generate";
-        public const string DeleteAllCompanies = "DeleteAll";
+        public const string LogIntoAction = "LogInto";
+        public const string DeleteAction = "Delete";
 
-        private readonly IRepository<CompanyIdentity> companyIdentityRepository;
+        private readonly IRepository<CompanyIdentity> identityRepository;
 
 
-        public AdminPanelCompaniesController(IRepository<CompanyIdentity> companyIdentityRepository)
+        public AdminPanelCompaniesController(IRepository<CompanyIdentity> identityRepository)
         {
-            this.companyIdentityRepository = companyIdentityRepository;
+            this.identityRepository = identityRepository;
         }
 
         public async Task<IActionResult> Panel()
         {
             var viewModel = new AdminPanelCompaniesViewModel();
-            viewModel.OffersContainer = await GetContainer();
-            viewModel.AllRecords = await companyIdentityRepository.GetAll();
+            viewModel.CardsContainer = await GetContainer();
+            viewModel.AllRecords = await identityRepository.GetAll();
 
             return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Generate(int countToGenerate)
+        public async Task<IActionResult> LogInto(int userId)
         {
-            var generateOffersCommand = new GenerateCompaniesCommand(countToGenerate, companyIdentityRepository);
-            await generateOffersCommand.Execute();
+            // var deleteCommand = new DeleteCompanyCommand(companyIdentityRepository, userId);
+            // await deleteCommand.Execute();
 
             return RedirectToAction("Panel");
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteAll()
+        public async Task<IActionResult> Delete(int userId)
         {
-            var deleteOffersCommand = new DeleteAllCompaniesCommand(companyIdentityRepository);
-            await deleteOffersCommand.Execute();
+            var deleteCommand = new DeleteCompanyCommand(identityRepository, userId);
+            await deleteCommand.Execute();
 
             return RedirectToAction("Panel");
         }
@@ -57,7 +56,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         protected override Task<CardsContainerViewModel> GetContainer()
         {
             var searchParameters = GetSearchParametersFromUrl();
-            var containerFactory = new AdminPanelCompaniesContainerViewModelFactory(companyIdentityRepository, 
+            var containerFactory = new AdminPanelCompaniesContainerViewModelFactory(identityRepository, 
                 searchParameters!);
             return containerFactory.Create();
         }
