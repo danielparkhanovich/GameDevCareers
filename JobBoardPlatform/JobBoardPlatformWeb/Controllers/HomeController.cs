@@ -1,50 +1,36 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Cache;
-using JobBoardPlatform.DAL.Repositories.Models;
+﻿using JobBoardPlatform.BLL.Search.MainPage;
+using JobBoardPlatform.BLL.Services.Authorization;
+using JobBoardPlatform.PL.Controllers.Templates;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
+using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatformWeb.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : CardsControllerBase
     {
-        private readonly IRepository<JobOffer> offersRepository;
-        private readonly ICacheRepository<List<JobOffer>> offersCache;
-        private readonly ICacheRepository<int> offersCountCache;
+        private readonly MainPageOffersSearcherCacheDecorator searcher;
 
 
-        public HomeController(IRepository<JobOffer> offersRepository, ICacheRepository<List<JobOffer>> offersCache,
-            ICacheRepository<int> offersCountCache)
+        public HomeController(MainPageOffersSearcherCacheDecorator searcher)
         {
-            this.offersRepository = offersRepository;
-            this.offersCache = offersCache;
-            this.offersCountCache = offersCountCache;
+            this.searcher = searcher;
         }
 
         [Route("")]
         [Route("commissions", Order = 1)]
         public async Task<IActionResult> Index()
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 
-                Request,
-                offersCache,
-                offersCountCache);
+            var viewModelFactory = new OffersMainPageViewModelFactory(searcher);
             var model = await viewModelFactory.Create();
             return View(model);
         }
 
-        [Route("RefreshCardsContainer")]
-        [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardsContainer()
+        protected override async Task<CardsContainerViewModel> GetContainer()
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(offersRepository, 
-                Request, 
-                offersCache,
-                offersCountCache);
+            var viewModelFactory = new OffersMainPageViewModelFactory(searcher);
             var model = await viewModelFactory.Create();
-            var container = model.OffersContainer;
-            return PartialView("./Templates/_CardsContainer", container);
+            return model.OffersContainer;
         }
 
         public IActionResult Privacy()

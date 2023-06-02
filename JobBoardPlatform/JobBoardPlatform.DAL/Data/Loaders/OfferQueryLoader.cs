@@ -1,25 +1,13 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.DAL.Data.Loaders
 {
-    public class LoadOfferContent : ILoader<JobOffer>
+    public class OfferQueryLoader : IEntityLoader<JobOffer>
     {
-        private readonly IRepository<JobOffer> repository;
-        private readonly int offerId;
-
-
-        public LoadOfferContent(IRepository<JobOffer> repository, int offerId)
+        public IQueryable<JobOffer> Load(IQueryable<JobOffer> queryable)
         {
-            this.repository = repository;
-            this.offerId = offerId;
-        }
-
-        public async Task<JobOffer> Load()
-        {
-            var offersSet = await repository.GetAllSet();
-            var offer = await offersSet.Where(x => x.Id == offerId)
+            var offer = queryable
                 .Include(x => x.CompanyProfile)
                 .Include(x => x.WorkLocation)
                 .Include(x => x.MainTechnologyType)
@@ -29,9 +17,7 @@ namespace JobBoardPlatform.DAL.Data.Loaders
                 .Include(x => x.JobOfferEmploymentDetails)
                     .ThenInclude(y => y.EmploymentType)
                 .Include(x => x.ContactDetails)
-                    .ThenInclude(y => y.ContactType)
-                .SingleAsync();
-
+                    .ThenInclude(y => y.ContactType);
             return offer;
         }
     }

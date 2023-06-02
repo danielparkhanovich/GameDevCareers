@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Search;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
@@ -23,7 +23,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Templates
 
         protected abstract ContainerHeaderViewModel? GetHeader();
 
-        protected abstract ISearchParameters GetSearchParams();
+        protected abstract IPageSearchParams GetSearchParams();
 
         protected abstract int GetTotalRecordsCount();
 

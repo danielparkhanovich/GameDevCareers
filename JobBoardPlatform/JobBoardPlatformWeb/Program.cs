@@ -8,16 +8,20 @@ using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 using JobBoardPlatform.BLL.Services.Background;
 using JobBoardPlatform.PL.Requirements;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
 using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.BLL.Search.MainPage;
+using JobBoardPlatform.BLL.Search.Contracts;
+using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
+using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
 builder.Services.AddControllersWithViews();
 
+// Authorization/Authentication
 builder.Services.AddAuthentication(
     CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
@@ -47,26 +51,42 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
 
+// BLL
+builder.Services.AddTransient<OffersCacheManager>();
+builder.Services.AddTransient<OfferCommandsExecutor>();
+builder.Services.AddTransient<IPageSearchParamsFactory<CompanyPanelApplicationSearchParameters>, CompanyPanelApplicationSearchParametersFactory>();
+builder.Services.AddTransient<IPageSearchParamsFactory<CompanyPanelOfferSearchParameters>, CompanyPanelOfferSearchParametersFactory>();
+builder.Services.AddTransient<IPageSearchParamsFactory<MainPageOfferSearchParams>, MainPageOfferSearchParamsFactory>();
+
+builder.Services.AddTransient<OfferApplicationsSearcher>();
+builder.Services.AddTransient<CompanyOffersSearcher>();
+builder.Services.AddTransient<MainPageOffersSearcher>();
+builder.Services.AddTransient<MainPageOffersSearcherCacheDecorator>();
+
+// DAL
+// Cache
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetValue<string>("Redis:ConnectionString");
+    options.InstanceName = builder.Configuration.GetValue<string>("Redis:InstanceName");
+});
+builder.Services.AddTransient<ICacheRepository<List<JobOffer>>, MainPageOffersCacheRepository>();
+builder.Services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
+// Repository
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         x => x.MigrationsAssembly("JobBoardPlatform.DAL"));
 });
-
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration.GetValue<string>("Redis:ConnectionString");
-    options.InstanceName = builder.Configuration.GetValue<string>("Redis:InstanceName");
-});
-
-builder.Services.AddTransient<ICacheRepository<List<JobOffer>>, MainPageOffersCacheRepository>();
-builder.Services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
-builder.Services.AddTransient<OfferCommandsExecutor>();
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
+// Cloud
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
+
+// Background
 builder.Services.AddHostedService<OfferExpirationChecker>();
 
+// Actions
 if (!builder.Environment.IsDevelopment()) 
 {
     builder.Services.AddTransient<IOfferActionHandlerFactory, OfferActionHandlerFactory>();

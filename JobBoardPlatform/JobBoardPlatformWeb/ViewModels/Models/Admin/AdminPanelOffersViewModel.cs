@@ -3,7 +3,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Templates;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Admin
 {
-    public class AdminPanelOffersViewModel : AdminPanelViewModel<CompanyProfile>
+    public class AdminPanelOffersViewModel : IAdminPanelViewModel<CompanyProfile>
     {
         public CardsContainerViewModel CardsContainer { get; set; }
         public List<CompanyProfile> AllRecords { get; set; }

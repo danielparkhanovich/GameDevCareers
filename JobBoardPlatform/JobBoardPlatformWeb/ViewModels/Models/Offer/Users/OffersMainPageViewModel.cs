@@ -9,6 +9,6 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
         public int MainTechnologyType { get => OfferSearchData.MainTechnology; set => OfferSearchData.MainTechnology = value; }
 
         public CardsContainerViewModel OffersContainer { get; set; }
-        public MainPageOfferSearchParameters OfferSearchData { get; set; }
+        public MainPageOfferSearchParams OfferSearchData { get; set; }
     }
 }

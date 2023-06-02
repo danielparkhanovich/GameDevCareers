@@ -1,6 +1,5 @@
-﻿using JobBoardPlatform.BLL.Search;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
-using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
+using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
@@ -14,15 +13,12 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
     public class AdminPanelEmployeesContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<EmployeeIdentity>
     {
         private readonly IRepository<EmployeeIdentity> repository;
-        private readonly CompanyPanelOfferSearchParameters searchParams;
         private int totalRecordsCount;
 
 
-        public AdminPanelEmployeesContainerViewModelFactory(IRepository<EmployeeIdentity> repository, 
-            CompanyPanelOfferSearchParameters searchParams)
+        public AdminPanelEmployeesContainerViewModelFactory(IRepository<EmployeeIdentity> repository)
         {
             this.repository = repository;
-            this.searchParams = searchParams;
         }
 
         protected override ContainerHeaderViewModel? GetHeader()
@@ -41,9 +37,9 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
             return GetCards(cardFactory, loaded);
         }
 
-        protected override ISearchParameters GetSearchParams()
+        protected override IPageSearchParams GetSearchParams()
         {
-            return searchParams;
+            return null;
         }
 
         protected override int GetTotalRecordsCount()

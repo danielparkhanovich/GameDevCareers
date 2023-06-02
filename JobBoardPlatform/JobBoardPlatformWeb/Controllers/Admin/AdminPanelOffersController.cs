@@ -1,6 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Search.CompanyPanel;
+using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
+using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
@@ -22,19 +24,22 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         private readonly IRepository<CompanyProfile> companyRepository;
         private readonly IRepository<CompanyIdentity> companyIdentityRepository;
         private readonly IRepository<TechKeyword> keywordsRepository;
+        private readonly CompanyOffersSearcher offersSearcher;
 
 
         public AdminPanelOffersController(IRepository<JobOffer> offerRepository,
             IRepository<CompanyProfile> companyRepository,
             IRepository<CompanyIdentity> companyIdentityRepository,
             IRepository<TechKeyword> keywordsRepository,
-            OfferCommandsExecutor commandsExecutor) 
+            OfferCommandsExecutor commandsExecutor,
+            CompanyOffersSearcher offersSearcher) 
             : base(commandsExecutor)
         {
             this.offerRepository = offerRepository;
             this.companyRepository = companyRepository;
             this.companyIdentityRepository = companyIdentityRepository;
             this.keywordsRepository = keywordsRepository;
+            this.offersSearcher = offersSearcher;
         }
 
         public async Task<IActionResult> Panel()
@@ -76,30 +81,21 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         protected override Task<CardsContainerViewModel> GetContainer()
         {
-            var searchParameters = GetSearchParametersFromUrl();
-            var containerFactory = new AdminPanelOffersContainerViewModelFactory(offerRepository, searchParameters!);
+            var containerFactory = new AdminPanelOffersContainerViewModelFactory(offersSearcher);
             return containerFactory.Create();
         }
 
         protected override Task<JobOffer> GetLoadedOffer(int offerId)
         {
-            var loader = new LoadCompanyOffer(offerRepository, offerId);
-            return loader.Load();
+            throw new Exception("Need to get offers");
+            // var loader = new LoadCompanyOffer(offerRepository, offerId);
+            // return loader.Load();
         }
 
         protected override IContainerCard GetContainerCard(JobOffer offer)
         {
             var cardFactory = new AdminOfferViewModelFactory();
             return cardFactory.CreateCard(offer);
-        }
-
-        private CompanyPanelOfferSearchParameters GetSearchParametersFromUrl()
-        {
-            int? profileId = null;
-            var offerSearchParametersFactory = new CompanyPanelOfferSearchParametersFactory(Request, profileId);
-            var searchParams = offerSearchParametersFactory.Create();
-
-            return searchParams;
         }
 
         private async Task<bool> IsGenerateCountOverLimit(int countToGenerate)

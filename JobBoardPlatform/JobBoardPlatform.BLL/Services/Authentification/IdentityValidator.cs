@@ -1,40 +1,47 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.DAL.Models.Contracts;
+using JobBoardPlatform.DAL.Repositories.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.BLL.Services.Authentification
 {
     internal class IdentityValidator<T> : IIdentityValidator<T>
-        where T: class, IUserIdentityEntity
+        where T : class, IUserIdentityEntity
     {
-        public AuthentificationResult ValidateRegister(T? user)
+        private readonly IRepository<T> identityRepository;
+
+
+        public IdentityValidator(IRepository<T> identityRepository) 
         {
-            var result = new AuthentificationResult();
-
-            if (user != null)
-            {
-                result.Error = "Email is already registered";
-                return result;
-            }
-
-            return AuthentificationResult.Success;
+            this.identityRepository = identityRepository;
         }
 
-        public AuthentificationResult ValidateLogin(T? user, string hashedPassword)
+        public void ValidateRegisterAsync(T? user)
         {
-            var result = new AuthentificationResult();
+            if (user != null)
+            {
+                throw new AuthentificationException(AuthentificationException.EmailAlreadyRegistered);
+            }
+        }
 
+        public void ValidateLoginAsync(T? user, string hashedPassword)
+        {
             if (user == null)
             {
-                result.Error = "Email doesn't exist";
-                return result;
+                throw new AuthentificationException(AuthentificationException.EmailNotFound);
             }
-            else if (user.HashPassword != hashedPassword)
+            else if (hashedPassword != user.HashPassword)
             {
-                result.Error = "Wrong password";
-                return result;
+                throw new AuthentificationException(AuthentificationException.WrongPassword);
             }
+        }
 
-            return AuthentificationResult.Success;
+        private async Task<T?> GetUserByEmailAsync(string email)
+        {
+            var userSet = await identityRepository.GetAllSet();
+            var user = await userSet.FirstOrDefaultAsync(x => x.Email == email);
+            return user;
         }
     }
 }

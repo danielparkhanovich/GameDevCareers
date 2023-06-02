@@ -1,5 +1,5 @@
-﻿using JobBoardPlatform.BLL.Search;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
+﻿using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
+using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
@@ -40,7 +40,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
             return GetCards(cardFactory, loaded);
         }
 
-        protected override ISearchParameters GetSearchParams()
+        protected override IPageSearchParams GetSearchParams()
         {
             return searchParams;
         }

@@ -48,7 +48,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public async Task<IActionResult> Offer(int id, string companyname, string offertitle)
         {
             var offer = await offersRepository.Get(id);
-            var viewModelFactory = new OfferContentDisplayViewModelFactory(offer.Id, offersRepository);
+            var viewModelFactory = new OfferContentDisplayViewModelFactory();
             var display = await viewModelFactory.Create();
 
             var content = new OfferContentViewModel();

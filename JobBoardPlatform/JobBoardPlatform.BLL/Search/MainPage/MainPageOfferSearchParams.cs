@@ -1,9 +1,10 @@
-﻿using JobBoardPlatform.BLL.Search.Enums;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
+using JobBoardPlatform.BLL.Search.Enums;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JobBoardPlatform.BLL.Search.MainPage
 {
-    public class MainPageOfferSearchParameters : ISearchParameters
+    public class MainPageOfferSearchParams : IPageSearchParams
     {
         public const int AllTechnologiesIndex = 0;
 
@@ -26,10 +27,8 @@ namespace JobBoardPlatform.BLL.Search.MainPage
                 !SearchString.IsNullOrEmpty();
         }
 
-        public string? SortCategory => null;
-
-        public SortType? Sort => null;
-
-        public bool[]? FilterToggles => null;
+        public string? SortCategory { get; set; } = null;
+        public SortType? Sort { get; set; } = null;
+        public bool[]? FilterToggles { get; set; } = null;
     }
 }

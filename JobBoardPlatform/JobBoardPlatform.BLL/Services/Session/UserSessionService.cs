@@ -23,21 +23,10 @@ namespace JobBoardPlatform.BLL.Services.Session
 
         public async Task UpdateSessionStateAsync(T profile)
         {
-            string idStr = httpContext.User.FindFirst(UserSessionProperties.NameIdentifier)!.Value;
-
-            int id = int.Parse(idStr);
-
-            var profileAdapter = UserProfileAdapterFactory.CreateProfileAdapter(profile);
+            int id = UserSessionUtils.GetIdentityId(httpContext.User);
 
             await authorizationService.SignOutHttpContextAsync();
-            var updated = new AuthorizationData()
-            {
-                Id = id,
-                ProfileId = profile.Id,
-                DisplayName = profileAdapter.DisplayName,
-                DisplayImageUrl = profileAdapter.DisplayProfileImageUrl,
-                Role = profileAdapter.UserRole
-            };
+            var updated = new AuthorizationData(id, string.Empty, profile);
             await authorizationService.SignInHttpContextAsync(updated);
         }
     }

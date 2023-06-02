@@ -1,7 +1,6 @@
-﻿using JobBoardPlatform.BLL.Search;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
+﻿using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
+using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
@@ -10,26 +9,22 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
     public class CompanyOffersContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<JobOffer>
     {
-        private readonly IRepository<JobOffer> repository;
-        private readonly CompanyPanelOfferSearchParameters searchParams;
-        private int totalResults;
+        private readonly CompanyOffersSearcher searcher;
+        private int totalRecords;
 
 
-        public CompanyOffersContainerViewModelFactory(IRepository<JobOffer> repository,
-            CompanyPanelOfferSearchParameters searchParams)
+        public CompanyOffersContainerViewModelFactory(CompanyOffersSearcher searcher)
         {
-            this.repository = repository;
-            this.searchParams = searchParams;
+            this.searcher = searcher;
         }
 
         protected override async Task<List<IContainerCard>> GetCardsAsync()
         {
-            var searcher = new CompanyOffersSearcher(searchParams);
-            totalResults = searcher.AfterFiltersCount;
+            var searchResponse = await searcher.Search();
+            totalRecords = searchResponse.TotalRecordsAfterFilters;
 
-            var offers = await searcher.Search(repository);
             var cardFactory = new CompanyOfferViewModelFactory();
-            return GetCards(cardFactory, offers);
+            return GetCards(cardFactory, searchResponse.Entities);
         }
 
         protected override ContainerHeaderViewModel? GetHeader()
@@ -38,14 +33,14 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
             return header.CreateViewModel();
         }
 
-        protected override ISearchParameters GetSearchParams()
+        protected override IPageSearchParams GetSearchParams()
         {
-            return searchParams;
+            return searcher.SearchParams;
         }
 
         protected override int GetTotalRecordsCount()
         {
-            return totalResults;
+            return totalRecords;
         }
     }
 }

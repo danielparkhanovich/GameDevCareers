@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Commands.Application;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
+using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;

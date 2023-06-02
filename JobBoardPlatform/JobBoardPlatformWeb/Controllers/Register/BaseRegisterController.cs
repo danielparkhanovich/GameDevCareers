@@ -1,8 +1,8 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
+using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Filters;
-using JobBoardPlatform.PL.Requirements;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
@@ -41,14 +41,14 @@ namespace JobBoardPlatform.PL.Controllers.Register
         {
             var session = new IdentityService<TIdentity, TProfile>(HttpContext, credentialsRepository, profileRepository);
 
-            var autorization = await session.TryRegisterAsync(credentials);
-            if (autorization.IsError)
+            try
             {
-                ModelState.AddModelError("AlreadyExistsError", autorization.Error);
-            }
-            else
-            {
+                await session.TryRegisterAsync(credentials);
                 return RedirectToAction("Index", "Home");
+            }
+            catch (AuthentificationException e)
+            {
+                ModelState.AddModelError("Autorization error", e.Message);
             }
 
             return View(userLogin);

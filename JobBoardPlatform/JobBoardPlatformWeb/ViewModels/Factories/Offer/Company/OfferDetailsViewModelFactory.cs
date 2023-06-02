@@ -1,7 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.Offer.State;
-using JobBoardPlatform.DAL.Data.Loaders;
-using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
+﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
@@ -9,21 +6,11 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
     public class OfferDetailsViewModelFactory : IFactory<OfferDetailsViewModel>
     {
-        private readonly int offerId;
-        private readonly IRepository<JobOffer> offersRepository;
-
-
-        public OfferDetailsViewModelFactory(int offerId, IRepository<JobOffer> offersRepository)
-        {
-            this.offerId = offerId;
-            this.offersRepository = offersRepository;
-        }
-
         public async Task<OfferDetailsViewModel> Create()
         {
-            var offersLoader = new LoadOfferContent(offersRepository, offerId);
-            var offer = await offersLoader.Load();
+            JobOffer offer = new JobOffer();
 
+            int offerId = 0;
             var viewModel = new OfferDetailsViewModel()
             {
                 OfferId = offerId,

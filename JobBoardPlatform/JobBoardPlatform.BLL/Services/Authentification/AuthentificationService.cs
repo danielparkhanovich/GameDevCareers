@@ -1,8 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Commands.Identities;
+using JobBoardPlatform.BLL.Query;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.BLL.Services.Authentification
 {
@@ -10,69 +10,44 @@ namespace JobBoardPlatform.BLL.Services.Authentification
         where T : class, IUserIdentityEntity
     {
         private readonly IRepository<T> identityRepository;
-        private readonly IIdentityValidator<T> validateIdentity;
+        private readonly IIdentityValidator<T> identityValidator;
         private readonly IPasswordHasher passwordHasher;
+        private readonly IdentityQueryExecutor<T> identityQuery;
 
 
         public AuthentificationService(IRepository<T> repository)
         {
             this.identityRepository = repository;
-            this.validateIdentity = new IdentityValidator<T>();
+            this.identityValidator = new IdentityValidator<T>(repository);
             this.passwordHasher = new MD5Hasher();
+            this.identityQuery = new IdentityQueryExecutor<T>(repository);
         }
 
-        public async Task<AuthentificationResult> TryRegisterAsync(T identity)
+        public async Task<T> TryRegisterAsync(T identity)
         {
-            var user = await GetUserByEmailAsync(identity.Email);
-            var validate = validateIdentity.ValidateRegister(user);
-
-            if (validate.IsError)
-            {
-                return validate;
-            }
+            var user = await identityQuery.GetIdentityByEmail(identity.Email);
+            identityValidator.ValidateRegisterAsync(user);
 
             // hash raw password
             string hashedPassword = passwordHasher.GetHash(identity.HashPassword);
             identity.HashPassword = hashedPassword;
 
-            var success = AuthentificationResult.Success;
+            return await AddNewUser(identity);
+        }
 
+        public async Task<T> TryLoginAsync(T identity)
+        {
+            var user = await identityQuery.GetIdentityByEmail(identity.Email);
+            string hashedPassword = passwordHasher.GetHash(identity.HashPassword);
+            identityValidator.ValidateLoginAsync(user, hashedPassword);
+            return user;
+        }
+
+        private async Task<T> AddNewUser(T identity)
+        {
             var addNewUserCommand = new AddNewUserCommand<T>(identityRepository, identity);
             await addNewUserCommand.Execute();
-
-            success.FoundRecord = addNewUserCommand.AddedRecord;
-
-            return success;
-        }
-
-        public async Task<AuthentificationResult> TryLoginAsync(T identity)
-        {
-            string hashedPassword = passwordHasher.GetHash(identity.HashPassword);
-
-            var user = await GetUserByEmailAsync(identity.Email);
-            var validate = validateIdentity.ValidateLogin(user, hashedPassword);
-
-            if (validate.IsError)
-            {
-                return validate;
-            }
-
-            var success = AuthentificationResult.Success;
-
-            success.FoundRecord = user;
-
-            return success;
-        }
-
-        /// <summary>
-        /// Utility helper function
-        /// </summary>
-        private async Task<T?> GetUserByEmailAsync(string email)
-        {
-            var userSet = await identityRepository.GetAllSet();
-            var user = await userSet.FirstOrDefaultAsync(x => x.Email == email);
-
-            return user;
+            return addNewUserCommand.AddedRecord;
         }
     }
 }

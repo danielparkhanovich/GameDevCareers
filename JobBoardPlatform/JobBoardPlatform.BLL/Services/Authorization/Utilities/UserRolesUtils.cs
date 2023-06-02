@@ -28,6 +28,11 @@ namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
             return UserSessionUtils.GetRole(user) == UserRoles.Employee;
         }
 
+        public static bool IsUserCompany(ClaimsPrincipal user)
+        {
+            return UserSessionUtils.GetRole(user) == UserRoles.Company;
+        }
+
         public static bool IsUserOwner(ClaimsPrincipal user, JobOffer offer)
         {
             bool isUserLoggedIn = user.Identity.IsAuthenticated;

@@ -31,6 +31,12 @@
                     {
                         <div class="small">CV is not attached</div>
                     }
+                    @if (!string.IsNullOrEmpty(card.YearsOfExperience))
+                    {
+                        <div class="me-2 small">
+                            years of experience @card.YearsOfExperience
+                        </div>
+                    }
                 </div>
             </div>
             <div class="d-flex flex-row">

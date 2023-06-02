@@ -1,4 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Contracts;
@@ -28,12 +30,10 @@ namespace JobBoardPlatform.PL.Controllers.Security
         public async Task<IActionResult> Settings()
         {
             string loginIdentifier = await GetLoginIdentifier();
-
             var viewModel = new SettingsIdentityViewModel()
             {
                 LoginIdentifier = loginIdentifier,
             };
-
             return View(viewModel);
         }
 
@@ -67,30 +67,18 @@ namespace JobBoardPlatform.PL.Controllers.Security
             SettingsIdentityViewModel viewModel) 
             where TIdentity : class, IUserIdentityEntity
         {
-            var session = new ModifyIdentityService<TIdentity>(identityRepository);
+            var modify = new ModifyIdentityService<TIdentity>(identityRepository);
 
             int identityId = UserSessionUtils.GetIdentityId(User);
             var identity = await identityRepository.Get(identityId);
 
-            AuthentificationResult result = null;
-
-            if (!string.IsNullOrEmpty(viewModel.LoginIdentifier) && 
-                 identity!.Email != viewModel.LoginIdentifier)
+            if (IsChangeLogin(identity.Email, viewModel.LoginIdentifier))
             {
-                result = await session.TryChangeLoginIdentifier(identity!, viewModel.LoginIdentifier);
-                if (result.IsError)
-                {
-                    ModelState.AddModelError("AlreadyExistsError", result.Error);
-                }
+                await TryChangeLoginAsync(modify, identity, viewModel.LoginIdentifier);
             }
-            else if (!string.IsNullOrEmpty(viewModel.OldPassword) && 
-                     !string.IsNullOrEmpty(viewModel.NewPassword))
+            else if (IsChangePassword(viewModel.OldPassword, viewModel.NewPassword))
             {
-                result = await session.ChangePassword(identity!, viewModel.OldPassword, viewModel.NewPassword);
-                if (result.IsError)
-                {
-                    ModelState.AddModelError("AlreadyExistsError", result.Error);
-                }
+                await TryChangePasswordAsync(modify, identity, viewModel);
             }
         }
 
@@ -113,6 +101,44 @@ namespace JobBoardPlatform.PL.Controllers.Security
             }
 
             return loginIdentifier;
+        }
+
+        private bool IsChangeLogin(string oldLogin, string? newLogin)
+        {
+            return !string.IsNullOrEmpty(newLogin) && oldLogin != newLogin;
+        }
+
+        private async Task TryChangeLoginAsync<TIdentity>(
+            IModifyIdentityService<TIdentity> modify, TIdentity identity, string newLogin)
+            where TIdentity : class, IUserIdentityEntity
+        {
+            try
+            {
+                await modify.TryChangeLoginIdentifierAsync(identity, newLogin);
+            }
+            catch (AuthentificationException e)
+            {
+                ModelState.AddModelError("AlreadyExistsError", e.Message);
+            }
+        }
+
+        private bool IsChangePassword(string? oldPassword, string? newPassword)
+        {
+            return !string.IsNullOrEmpty(oldPassword) && !string.IsNullOrEmpty(newPassword);
+        }
+
+        private async Task TryChangePasswordAsync<TIdentity>(
+            IModifyIdentityService<TIdentity> modify, TIdentity identity, SettingsIdentityViewModel viewModel)
+            where TIdentity : class, IUserIdentityEntity
+        {
+            try
+            {
+                await modify.TryChangePasswordAsync(identity!, viewModel.OldPassword!, viewModel.NewPassword!);
+            }
+            catch (AuthentificationException e)
+            {
+                ModelState.AddModelError("AlreadyExistsError", e.Message);
+            }
         }
     }
 }

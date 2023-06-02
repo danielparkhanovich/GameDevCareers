@@ -1,9 +1,7 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
-using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Models.Contracts;
+using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Repositories.Models;
-using System.ComponentModel.Design;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
 {
@@ -11,61 +9,61 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     {
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<TechKeyword> keywordsRepository;
-        private readonly ICacheRepository<List<JobOffer>> offersCache;
-        private readonly ICacheRepository<int> offersCountCache;
+        private readonly OffersCacheManager cacheManager;
+        private readonly MainPageOffersSearcher offersSearcher;
 
 
         public OfferCommandsExecutor(IRepository<JobOffer> offersRepository,
             IRepository<TechKeyword> keywordsRepository,
-            ICacheRepository<List<JobOffer>> offersCache,
-            ICacheRepository<int> offersCountCache)
+            OffersCacheManager cacheManager,
+            MainPageOffersSearcher offersSearcher)
         {
             this.offersRepository = offersRepository;
             this.keywordsRepository = keywordsRepository;
-            this.offersCache = offersCache;
-            this.offersCountCache = offersCountCache;
+            this.cacheManager = cacheManager;
+            this.offersSearcher = offersSearcher;
         }
 
         public async Task AddAsync(int profileId, INewOfferData offerData)
         {
             var command = new AddNewOfferCommand(profileId, offerData, keywordsRepository, offersRepository);
-            await ExecuteCommandAndUpdateCache(command);
+            await ExecuteCommandAndUpdateCacheAsync(command);
         }
 
         public async Task DeleteAsync(int offerId)
         {
             var command = new DeleteOfferCommand(offersRepository, offerId);
-            await ExecuteCommandAndUpdateCache(command);
+            await ExecuteCommandAndUpdateCacheAsync(command);
         }
 
         public async Task ShelveAsync(int offerId, bool flag)
         {
             var command = new ShelveOfferCommand(offersRepository, offerId, flag);
-            await ExecuteCommandAndUpdateCache(command);
+            await ExecuteCommandAndUpdateCacheAsync(command);
         }
 
         public async Task SuspendAsync(int offerId, bool flag)
         {
             var command = new SuspendOfferCommand(offersRepository, offerId, flag);
-            await ExecuteCommandAndUpdateCache(command);
+            await ExecuteCommandAndUpdateCacheAsync(command);
         }
 
         public async Task PassPaymentAsync(int offerId)
         {
             var command = new PassPaymentOfferCommand(offersRepository, offerId);
-            await ExecuteCommandAndUpdateCache(command);
+            await ExecuteCommandAndUpdateCacheAsync(command);
         }
 
-        private async Task ExecuteCommandAndUpdateCache(ICommand command)
+        private async Task ExecuteCommandAndUpdateCacheAsync(ICommand command)
         {
             await command.Execute();
-            await UpdateCache();
+            await UpdateCacheAsync();
         }
 
-        private async Task UpdateCache()
+        private async Task UpdateCacheAsync()
         {
-            var command = new OfferUpdateCacheCommand(offersRepository, offersCache, offersCountCache);
-            await command.Execute();
+            var searchResponse = await offersSearcher.Search();
+            await cacheManager.UpdateCache(searchResponse);
         }
     }
 }

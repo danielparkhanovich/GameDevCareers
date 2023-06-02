@@ -1,8 +1,9 @@
-﻿using JobBoardPlatform.BLL.Search.Enums;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
+using JobBoardPlatform.BLL.Search.Enums;
 
-namespace JobBoardPlatform.BLL.Search.CompanyPanel
+namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
 {
-    public class CompanyPanelApplicationSearchParameters : ISearchParameters
+    public class CompanyPanelApplicationSearchParameters : IPageSearchParams
     {
         public int OfferId { get; set; }
         public bool IsShowUnseen { get; set; } = true;

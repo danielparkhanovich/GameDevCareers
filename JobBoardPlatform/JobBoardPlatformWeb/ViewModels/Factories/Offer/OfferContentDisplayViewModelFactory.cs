@@ -8,20 +8,10 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
     public class OfferContentDisplayViewModelFactory : IFactory<OfferContentDisplayViewModel>
     {
-        private readonly int offerId;
-        private readonly IRepository<JobOffer> offersRepository;
-
-
-        public OfferContentDisplayViewModelFactory(int offerId, IRepository<JobOffer> offersRepository)
-        {
-            this.offerId = offerId;
-            this.offersRepository = offersRepository;
-        }
-
         public async Task<OfferContentDisplayViewModel> Create()
         {
-            var offerContentLoader = new LoadOfferContent(offersRepository, offerId);
-            var offer = await offerContentLoader.Load();
+            throw new Exception("Need to get somehow offer");
+            JobOffer offer;
 
             var viewModel = new OfferContentDisplayViewModel();
 

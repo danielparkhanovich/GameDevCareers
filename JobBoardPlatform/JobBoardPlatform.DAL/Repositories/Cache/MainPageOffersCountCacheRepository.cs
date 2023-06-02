@@ -1,7 +1,4 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
-using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
-using System.Text;
+﻿using Microsoft.Extensions.Caching.Distributed;
 
 namespace JobBoardPlatform.DAL.Repositories.Cache
 {
@@ -13,7 +10,6 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
 
         public MainPageOffersCountCacheRepository(IDistributedCache cache) : base(cache)
         {
-
         }
 
         protected override string GetEntryKey()

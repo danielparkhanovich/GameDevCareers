@@ -1,5 +1,6 @@
-﻿using JobBoardPlatform.BLL.Search;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
+﻿using JobBoardPlatform.BLL.Search.CompanyPanel;
+using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
+using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
@@ -25,12 +26,12 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 
         protected override async Task<List<IContainerCard>> GetCardsAsync()
         {
-            var searcher = new OfferApplicationsSearcher(searchParams);
-            totalResult = searcher.AfterFiltersCount;
+            // var searcher = new OfferApplicationsSearcher(searchParams);
+            // totalResult = searcher.AfterFiltersCount;
 
-            var applications = await searcher.Search(repository);
+            // var applications = await searcher.Search(repository);
             var cardFactory = new CompanyApplicationCardViewModelFactory();
-            return GetCards(cardFactory, applications);
+            return GetCards(cardFactory, null);
         }
 
         protected override ContainerHeaderViewModel? GetHeader()
@@ -39,7 +40,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
             return header.CreateViewModel();
         }
 
-        protected override ISearchParameters GetSearchParams()
+        protected override IPageSearchParams GetSearchParams()
         {
             return searchParams;
         }

@@ -9,18 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
-    [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
+    [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOfferEditorController : Controller
     {
-        private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<TechKeyword> keywordsRepository;
+        private readonly OfferCommandsExecutor commandsExecutor;
 
 
-        public CompanyOfferEditorController(IRepository<JobOffer> offersRepository,
-            IRepository<TechKeyword> keywordsRepository)
+        public CompanyOfferEditorController(OfferCommandsExecutor commandsExecutor)
         {
-            this.offersRepository = offersRepository;
-            this.keywordsRepository = keywordsRepository;
+            this.commandsExecutor = commandsExecutor;
         }
 
         public IActionResult NewOffer()
@@ -29,52 +26,38 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         }
 
         [Route("edit-offer-{offerId}")]
+        [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
         public async Task<IActionResult> NewOffer(int offerId)
         {
-            var viewModelFactory = new OfferDetailsViewModelFactory(offerId, offersRepository);
-
+            var viewModelFactory = new OfferDetailsViewModelFactory();
             var viewModel = await viewModelFactory.Create();
 
             return View(viewModel);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("edit-offer-{offerId}")]
+        [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
         public async Task<IActionResult> EditOffer(int offerId, OfferDetailsViewModel viewModel)
         {
-            if (ModelState.IsValid)
-            {
-                int profileId = UserSessionUtils.GetProfileId(User);
-
-                var addNewOfferCommand = new AddNewOfferCommand(profileId,
-                    viewModel,
-                    keywordsRepository,
-                    offersRepository);
-
-                await addNewOfferCommand.Execute();
-
-                return RedirectToAction("Offers", "CompanyOffersPanel");
-            }
-
-            return View(viewModel);
+            return await TryAddOrModifyOffer(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> NewOffer(OfferDetailsViewModel viewModel)
         {
+            return await TryAddOrModifyOffer(viewModel);
+        }
+
+        private async Task<IActionResult> TryAddOrModifyOffer(OfferDetailsViewModel viewModel)
+        {
             if (ModelState.IsValid)
             {
                 int profileId = UserSessionUtils.GetProfileId(User);
 
-                var addNewOfferCommand = new AddNewOfferCommand(profileId,
-                    viewModel,
-                    keywordsRepository,
-                    offersRepository);
-
-                await addNewOfferCommand.Execute();
+                await commandsExecutor.AddAsync(profileId, viewModel);
 
                 return RedirectToAction("Offers", "CompanyOffersPanel");
             }

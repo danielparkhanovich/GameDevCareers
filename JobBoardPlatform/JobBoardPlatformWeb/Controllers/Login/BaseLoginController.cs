@@ -4,17 +4,17 @@ using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
-using JobBoardPlatform.PL.Requirements;
+using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
     [TypeFilter(typeof(SkipLoggedInUsersFilter))]
-    public abstract class BaseLoginController<T, V> : Controller 
-        where T: class, IUserIdentityEntity
-        where V: class, IUserProfileEntity
+    public abstract class BaseLoginController<TIdentity, TProfile> : Controller 
+        where TIdentity: class, IUserIdentityEntity
+        where TProfile: class, IUserProfileEntity
     {
-        protected IRepository<T> credentialsRepository;
-        protected IRepository<V> profileRepository;
+        protected IRepository<TIdentity> credentialsRepository;
+        protected IRepository<TProfile> profileRepository;
 
 
         public IActionResult Login()
@@ -35,21 +35,22 @@ namespace JobBoardPlatform.PL.Controllers.Login
             return View(userLogin);
         }
 
-        protected abstract T GetIdentity(UserLoginViewModel userLogin);
+        protected abstract TIdentity GetIdentity(UserLoginViewModel userLogin);
 
-        private async Task<IActionResult> TryLogin(UserLoginViewModel userLogin, T credentials)
+        private async Task<IActionResult> TryLogin(UserLoginViewModel userLogin, TIdentity credentials)
         {
-            var session = new IdentityService<T, V>(HttpContext, credentialsRepository, profileRepository);
+            var session = new IdentityService<TIdentity, TProfile>(HttpContext, credentialsRepository, profileRepository);
 
-            var autorization = await session.TryLoginAsync(credentials);
-            if (autorization.IsError)
+            try
             {
-                ModelState.AddModelError("Autorization error", autorization.Error);
-            }
-            else
-            {
+                await session.TryLoginAsync(credentials);
                 return RedirectToAction("Index", "Home");
             }
+            catch (AuthentificationException e)
+            {
+                ModelState.AddModelError("Autorization error", e.Message);
+            }
+
             return View(userLogin);
         }
     }

@@ -1,4 +1,6 @@
-﻿using JobBoardPlatform.DAL.Data.Loaders;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
+using JobBoardPlatform.BLL.Search.Templates;
+using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -6,53 +8,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.BLL.Search.MainPage
 {
-    public class MainPageOffersSearcher : ISearcher<JobOffer, MainPageOfferSearchParameters>
+    public class MainPageOffersSearcher : FilteringPageSearcherBase<JobOffer, MainPageOfferSearchParams>
     {
-        public MainPageOfferSearchParameters SearchParams { get; }
-        public int AfterFiltersCount { get; set; }
+        private readonly IRepository<JobOffer> repository;
 
 
-        public MainPageOffersSearcher(MainPageOfferSearchParameters searchParams)
+        public MainPageOffersSearcher(
+            IRepository<JobOffer> repository,
+            IPageSearchParamsFactory<MainPageOfferSearchParams> paramsFactory)
+            : base(paramsFactory)
         {
-            SearchParams = searchParams;
-            AfterFiltersCount = 0;
+            this.repository = repository;
         }
 
-        public MainPageOffersSearcher()
+        protected override IRepository<JobOffer> GetRepository()
         {
-            SearchParams = new MainPageOfferSearchParameters();
-            AfterFiltersCount = 0;
+            return repository;
         }
 
-        public async Task<List<JobOffer>> Search(IRepository<JobOffer> repository)
+        protected override IQueryable<JobOffer> GetFiltered(IQueryable<JobOffer> available)
         {
-            var offersSet = await repository.GetAllSet();
-            var available = offersSet.Where(offer =>
+            available = available.Where(offer =>
                  !offer.IsDeleted &&
                  offer.IsPaid &&
                  !offer.IsSuspended &&
                  !offer.IsShelved &&
                  offer.IsPublished);
 
-            var filtered = GetFiltered(available);
-            AfterFiltersCount = filtered.Count();
-
-            var sorted = GetSorted(filtered);
-
-            int page = SearchParams.Page;
-            int pageSize = SearchParams.PageSize;
-
-            var pageOffers = sorted.Skip((page - 1) * pageSize)
-                .Take(pageSize);
-
-            var loader = new LoadOffers(pageOffers);
-            var loaded = await loader.Load();
-
-            return loaded;
-        }
-
-        private IQueryable<JobOffer> GetFiltered(IQueryable<JobOffer> available)
-        {
             if (SearchParams.IsRemoteOnly)
             {
                 string fullyRemoteString = WorkLocationTypeEnum.FullyRemote.ToString();
@@ -68,7 +50,7 @@ namespace JobBoardPlatform.BLL.Search.MainPage
                     .ThenInclude(details => details.SalaryRange)
                     .Where(offer => offer.JobOfferEmploymentDetails.Any(x => x.SalaryRange != null));
             }
-            if (SearchParams.MainTechnology != MainPageOfferSearchParameters.AllTechnologiesIndex)
+            if (SearchParams.MainTechnology != MainPageOfferSearchParams.AllTechnologiesIndex)
             {
                 available = available.Where(offer => offer.MainTechnologyTypeId == SearchParams.MainTechnology);
             }
@@ -77,6 +59,12 @@ namespace JobBoardPlatform.BLL.Search.MainPage
                 available = SearchByKeywords(available);
             }
 
+            return available;
+        }
+
+        protected override IQueryable<JobOffer> GetSorted(IQueryable<JobOffer> available)
+        {
+            available = available.OrderByDescending(offer => offer.PublishedAt);
             return available;
         }
 
@@ -110,10 +98,9 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             return available;
         }
 
-        private IQueryable<JobOffer> GetSorted(IQueryable<JobOffer> available)
+        protected override IEntityLoader<JobOffer> GetLoader()
         {
-            available = available.OrderByDescending(offer => offer.PublishedAt);
-            return available;
+            return new OfferQueryLoader();
         }
     }
 }

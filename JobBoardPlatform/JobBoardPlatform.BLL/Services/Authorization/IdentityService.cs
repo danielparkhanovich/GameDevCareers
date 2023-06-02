@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Common.ProfileAdapter;
-using JobBoardPlatform.BLL.Services.Authentification;
+﻿using JobBoardPlatform.BLL.Services.Authentification;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
@@ -26,58 +25,31 @@ namespace JobBoardPlatform.BLL.Services.Authorization
             this.authorizationService = new AuthorizationService(httpContext);
         }
 
-        public async Task<AuthentificationResult> TryLoginAsync(TIdentity identity)
+        public async Task<TIdentity> TryLoginAsync(TIdentity identity)
         {
             var authentificationFunc = authentificationService.TryLoginAsync;
-
             return await TryAuthorize(authentificationFunc, identity);
         }
 
-        public async Task<AuthentificationResult> TryRegisterAsync(TIdentity identity)
+        public async Task<TIdentity> TryRegisterAsync(TIdentity identity)
         {
             var authentificationFunc = authentificationService.TryRegisterAsync;
-
             return await TryAuthorize(authentificationFunc, identity);
         }
 
-        private async Task<AuthentificationResult> TryAuthorize(Func<TIdentity, Task<AuthentificationResult>> authentificationFunc,
+        private async Task<TIdentity> TryAuthorize(Func<TIdentity, Task<TIdentity>> authentificationFunc,
             TIdentity identity)
         {
-            var authentification = await authentificationFunc(identity);
-            if (authentification.IsError)
-            {
-                return authentification;
-            }
-
-            var userData = await GetAuthorizationDataAsync(authentification.FoundRecord!);
-
+            var user = await authentificationFunc(identity);
+            var userData = await GetAuthorizationDataAsync(user);
             await authorizationService.SignInHttpContextAsync(userData);
-
-            return AuthentificationResult.Success;
+            return user;
         }
 
-        private async Task<AuthorizationData> GetAuthorizationDataAsync(IUserIdentityEntity userRecord)
+        private async Task<AuthorizationData> GetAuthorizationDataAsync(TIdentity user)
         {
-            var profile = await profileRepository.Get(userRecord.ProfileId);
-
-            var profileAdapter = UserProfileAdapterFactory.CreateProfileAdapter(profile);
-
-            string role = profileAdapter.UserRole;
-            if (UserRolesUtils.IsUserAdmin(userRecord.Email))
-            {
-                role = UserRoles.Admin;
-            }
-
-            var userData = new AuthorizationData()
-            {
-                Id = userRecord.Id,
-                ProfileId = profile.Id,
-                DisplayName = profileAdapter.DisplayName,
-                DisplayImageUrl = profileAdapter.DisplayProfileImageUrl,
-                Role = role
-            };
-
-            return userData;
+            var profileRecord = await profileRepository.Get(user.ProfileId);
+            return new AuthorizationData(user.Id, user.Email, profileRecord);
         }
     }
 }

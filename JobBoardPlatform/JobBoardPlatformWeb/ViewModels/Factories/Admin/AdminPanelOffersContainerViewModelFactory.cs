@@ -1,5 +1,5 @@
-﻿using JobBoardPlatform.BLL.Search;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
+﻿using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
+using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
@@ -11,16 +11,13 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
 {
     public class AdminPanelOffersContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<JobOffer>
     {
-        private readonly IRepository<JobOffer> repository;
-        private readonly CompanyPanelOfferSearchParameters searchParams;
+        private readonly CompanyOffersSearcher searcher;
         private int totalRecordsCount;
 
 
-        public AdminPanelOffersContainerViewModelFactory(IRepository<JobOffer> repository, 
-            CompanyPanelOfferSearchParameters searchParams)
+        public AdminPanelOffersContainerViewModelFactory(CompanyOffersSearcher searcher)
         {
-            this.repository = repository;
-            this.searchParams = searchParams;
+            this.searcher = searcher;
         }
 
         protected override ContainerHeaderViewModel? GetHeader()
@@ -31,19 +28,16 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
 
         protected override async Task<List<IContainerCard>> GetCardsAsync()
         {
-            var searcher = new CompanyOffersSearcher(searchParams);
-
-            var offers = await searcher.Search(repository);
-            totalRecordsCount = searcher.AfterFiltersCount;
+            var searchResponse = await searcher.Search();
+            totalRecordsCount = searchResponse.TotalRecordsAfterFilters;
 
             var cardFactory = new AdminOfferViewModelFactory();
-
-            return GetCards(cardFactory, offers);
+            return GetCards(cardFactory, searchResponse.Entities);
         }
 
-        protected override ISearchParameters GetSearchParams()
+        protected override IPageSearchParams GetSearchParams()
         {
-            return searchParams;
+            return searcher.SearchParams;
         }
 
         protected override int GetTotalRecordsCount()

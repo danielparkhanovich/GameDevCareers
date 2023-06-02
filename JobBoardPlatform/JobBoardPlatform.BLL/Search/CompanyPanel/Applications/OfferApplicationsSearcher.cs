@@ -1,44 +1,31 @@
-﻿using JobBoardPlatform.BLL.Search.Enums;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
+using JobBoardPlatform.BLL.Search.Enums;
+using JobBoardPlatform.BLL.Search.Templates;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 
-namespace JobBoardPlatform.BLL.Search.CompanyPanel
+namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
 {
-    public class OfferApplicationsSearcher : ISearcher<OfferApplication, CompanyPanelApplicationSearchParameters>
+    public class OfferApplicationsSearcher : FilteringPageSearcherBase<OfferApplication, CompanyPanelApplicationSearchParameters>
     {
-        public CompanyPanelApplicationSearchParameters SearchParams { get; set; }
-        public int AfterFiltersCount { get; set; }
+        private readonly IRepository<OfferApplication> repository;
 
 
-        public OfferApplicationsSearcher(CompanyPanelApplicationSearchParameters searchData)
+        public OfferApplicationsSearcher(
+            IRepository<OfferApplication> repository, 
+            IPageSearchParamsFactory<CompanyPanelApplicationSearchParameters> paramsFactory)
+            : base(paramsFactory)
         {
-            this.SearchParams = searchData;
-            AfterFiltersCount = 0;
+            this.repository = repository;
         }
 
-        public async Task<List<OfferApplication>> Search(IRepository<OfferApplication> repository)
+        protected override IRepository<OfferApplication> GetRepository()
         {
-            var applicationsSet = await repository.GetAllSet();
-
-            var filtered = GetFiltered(applicationsSet);
-            AfterFiltersCount = filtered.Count();
-
-            var sorted = GetSorted(filtered);
-
-            int page = SearchParams.Page;
-            int pageSize = SearchParams.PageSize;
-
-            var pageOffers = sorted.Skip((page - 1) * pageSize)
-                .Take(pageSize);
-
-            var loader = new LoadApplicationsPage(pageOffers);
-            var loaded = await loader.Load();
-
-            return loaded;
+            return repository;
         }
 
-        private IQueryable<OfferApplication> GetFiltered(IQueryable<OfferApplication> available)
+        protected override IQueryable<OfferApplication> GetFiltered(IQueryable<OfferApplication> available)
         {
             available = available.Where(application => application.JobOfferId == SearchParams.OfferId);
 
@@ -51,7 +38,7 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel
             return available;
         }
 
-        private IQueryable<OfferApplication> GetSorted(IQueryable<OfferApplication> available)
+        protected override IQueryable<OfferApplication> GetSorted(IQueryable<OfferApplication> available)
         {
             var category = SearchParams.SortCategory;
 
@@ -78,6 +65,11 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel
             }
 
             return available;
+        }
+
+        protected override IEntityLoader<OfferApplication> GetLoader()
+        {
+            return new ApplicationQueryLoader();
         }
     }
 }

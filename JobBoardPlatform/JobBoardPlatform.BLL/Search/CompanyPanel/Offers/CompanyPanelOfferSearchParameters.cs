@@ -1,8 +1,9 @@
-﻿using JobBoardPlatform.BLL.Search.Enums;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
+using JobBoardPlatform.BLL.Search.Enums;
 
-namespace JobBoardPlatform.BLL.Search.CompanyPanel
+namespace JobBoardPlatform.BLL.Search.CompanyPanel.Offers
 {
-    public class CompanyPanelOfferSearchParameters : ISearchParameters
+    public class CompanyPanelOfferSearchParameters : IPageSearchParams
     {
         public int? CompanyProfileId { get; set; }
         public bool IsShowPublished { get; set; } = true;

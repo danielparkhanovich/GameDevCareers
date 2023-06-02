@@ -31,7 +31,6 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             if (offer != null)
             {
                 dataToOffer.Map(data, offer);
-
                 await repository.Update(offer);
             }
             else
@@ -41,7 +40,6 @@ namespace JobBoardPlatform.BLL.Commands.Offer
                 offer.CreatedAt = DateTime.Now;
 
                 dataToOffer.Map(data, offer);
-
                 await repository.Add(offer);
             }
         }

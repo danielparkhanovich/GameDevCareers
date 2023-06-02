@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Search.CompanyPanel;
+﻿using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -28,7 +28,8 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 
         public async Task<CompanyApplicationsViewModel> Create()
         {
-            var offerLoader = new LoadCompanyOffer(offersRepository, searchData.OfferId);
+            throw new Exception("Get offer");
+            /*var offerLoader = new LoadCompanyOffer(offersRepository, searchData.OfferId);
             var offer = await offerLoader.Load();
 
             var viewModel = new CompanyApplicationsViewModel();
@@ -39,7 +40,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
             viewModel.TotalApplications = offer.NumberOfApplications;
             viewModel.TotalViewsCount = offer.NumberOfViews;
 
-            return viewModel;
+            return viewModel;*/
         }
 
         private async Task<CardsContainerViewModel> GetApplicationCards()
