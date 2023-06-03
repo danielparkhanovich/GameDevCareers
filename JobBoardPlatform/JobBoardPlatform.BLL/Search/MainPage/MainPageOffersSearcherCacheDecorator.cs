@@ -12,30 +12,28 @@ namespace JobBoardPlatform.BLL.Search.MainPage
         private readonly MainPageOffersSearcher searcher;
         private readonly OffersCacheManager cacheManager;
 
-        public MainPageOfferSearchParams SearchParams { get; set; }
-
 
         public MainPageOffersSearcherCacheDecorator(MainPageOffersSearcher searcher,
             OffersCacheManager cacheManager)
         {
-            this.SearchParams = searcher.SearchParams;
             this.searcher = searcher;
             this.cacheManager = cacheManager;
         }
 
-        public async Task<EntitiesFilteringSearchResponse<JobOffer>> Search()
+        public async Task<EntitiesFilteringSearchResponse<JobOffer>> Search(MainPageOfferSearchParams searchParams)
         {
-            if (SearchParams.IsQueryParams)
+            if (searchParams.IsQueryParams)
             {
-                return await GetOffersFromRepository();
+                return await GetOffersFromRepository(searchParams);
             }
             else
             {
-                return await TryGetOffersFromCache();
+                return await TryGetOffersFromCache(searchParams);
             }
         }
 
-        private async Task<EntitiesFilteringSearchResponse<JobOffer>> TryGetOffersFromCache()
+        private async Task<EntitiesFilteringSearchResponse<JobOffer>> TryGetOffersFromCache(
+            MainPageOfferSearchParams searchParams)
         {
             try
             {
@@ -43,15 +41,16 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             }
             catch (Exception ex)
             {
-                var searchResponse = await searcher.Search();
+                var searchResponse = await searcher.Search(searchParams);
                 await cacheManager.UpdateCache(searchResponse);
                 return searchResponse;
             }
         }
 
-        private Task<EntitiesFilteringSearchResponse<JobOffer>> GetOffersFromRepository()
+        private Task<EntitiesFilteringSearchResponse<JobOffer>> GetOffersFromRepository(
+            MainPageOfferSearchParams searchParams)
         {
-            return searcher.Search();
+            return searcher.Search(searchParams);
         }
     }
 }

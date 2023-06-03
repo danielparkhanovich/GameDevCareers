@@ -5,37 +5,29 @@ using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Search.Templates
 {
-    public abstract class SearchParamsUrlFactoryBase<T> : IPageSearchParamsFactory<T>
+    public abstract class SearchParamsUrlFactoryBase<T> : IPageSearchParamsUrlFactory<T>
         where T : class, IPageSearchParams, new()
     {
-        private readonly HttpRequest httpRequest;
-
-
-        public SearchParamsUrlFactoryBase(HttpRequest httpRequest)
-        {
-            this.httpRequest = httpRequest;
-        }
-
-        public T GetSearchParams()
+        public T GetSearchParams(HttpRequest httpRequest)
         {
             var searchParams = new T();
 
-            searchParams.SortCategory = GetSortCategoryType();
-            searchParams.Sort = GetSortType();
-            searchParams.Page = GetPage();
+            searchParams.SortCategory = GetSortCategoryType(httpRequest);
+            searchParams.Sort = GetSortType(httpRequest);
+            searchParams.Page = GetPage(httpRequest);
 
-            AssignFilterParams(searchParams);
+            AssignFilterParams(httpRequest, searchParams);
             return searchParams;
         }
 
-        protected abstract void AssignFilterParams(T searchParams);
+        protected abstract void AssignFilterParams(HttpRequest httpRequest, T searchParams);
 
-        protected bool IsBoolFilter(string filterName)
+        protected bool IsBoolFilter(HttpRequest httpRequest, string filterName)
         {
             return httpRequest.Query.ContainsKey(filterName);
         }
 
-        private string GetSortCategoryType()
+        private string GetSortCategoryType(HttpRequest httpRequest)
         {
             string? sortCategory = httpRequest.Query[OfferSearchUrlParameters.SortCategory];
             if (sortCategory == null)
@@ -46,7 +38,7 @@ namespace JobBoardPlatform.BLL.Search.Templates
             return sortCategory;
         }
 
-        private SortType? GetSortType()
+        private SortType? GetSortType(HttpRequest httpRequest)
         {
             string? sort = httpRequest.Query[OfferSearchUrlParameters.Sort];
             if (sort == null)
@@ -58,7 +50,7 @@ namespace JobBoardPlatform.BLL.Search.Templates
             return sortType;
         }
 
-        private int GetPage()
+        private int GetPage(HttpRequest httpRequest)
         {
             string? pageString = httpRequest.Query[OfferSearchUrlParameters.Page];
             int page = int.TryParse(pageString, out int intOutParameter) ? intOutParameter : 1;

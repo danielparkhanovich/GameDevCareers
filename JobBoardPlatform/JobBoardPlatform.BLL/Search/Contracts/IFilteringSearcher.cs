@@ -6,7 +6,6 @@ namespace JobBoardPlatform.BLL.Search.Contracts
         where TEntity : class, IEntity
         where TSearchParams : IPageSearchParams
     {
-        TSearchParams SearchParams { get; }
-        Task<EntitiesFilteringSearchResponse<TEntity>> Search();
+        Task<EntitiesFilteringSearchResponse<TEntity>> Search(TSearchParams searchParams);
     }
 }

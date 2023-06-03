@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Search.Contracts;
-using JobBoardPlatform.BLL.Search.Templates;
+﻿using JobBoardPlatform.BLL.Search.Templates;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
@@ -13,10 +12,7 @@ namespace JobBoardPlatform.BLL.Search.MainPage
         private readonly IRepository<JobOffer> repository;
 
 
-        public MainPageOffersSearcher(
-            IRepository<JobOffer> repository,
-            IPageSearchParamsFactory<MainPageOfferSearchParams> paramsFactory)
-            : base(paramsFactory)
+        public MainPageOffersSearcher(IRepository<JobOffer> repository)
         {
             this.repository = repository;
         }
@@ -35,14 +31,14 @@ namespace JobBoardPlatform.BLL.Search.MainPage
                  !offer.IsShelved &&
                  offer.IsPublished);
 
-            if (SearchParams.IsRemoteOnly)
+            if (searchParams.IsRemoteOnly)
             {
                 string fullyRemoteString = WorkLocationTypeEnum.FullyRemote.ToString();
 
                 available = available.Include(offer => offer.WorkLocation)
                     .Where(offer => offer.WorkLocation.Type == fullyRemoteString);
             }
-            if (SearchParams.IsSalaryOnly)
+            if (searchParams.IsSalaryOnly)
             {
                 string fullyRemoteString = WorkLocationTypeEnum.FullyRemote.ToString();
 
@@ -50,11 +46,11 @@ namespace JobBoardPlatform.BLL.Search.MainPage
                     .ThenInclude(details => details.SalaryRange)
                     .Where(offer => offer.JobOfferEmploymentDetails.Any(x => x.SalaryRange != null));
             }
-            if (SearchParams.MainTechnology != MainPageOfferSearchParams.AllTechnologiesIndex)
+            if (searchParams.MainTechnology != MainPageOfferSearchParams.AllTechnologiesIndex)
             {
-                available = available.Where(offer => offer.MainTechnologyTypeId == SearchParams.MainTechnology);
+                available = available.Where(offer => offer.MainTechnologyTypeId == searchParams.MainTechnology);
             }
-            if (!string.IsNullOrEmpty(SearchParams.SearchString))
+            if (!string.IsNullOrEmpty(searchParams.SearchString))
             {
                 available = SearchByKeywords(available);
             }
@@ -70,7 +66,7 @@ namespace JobBoardPlatform.BLL.Search.MainPage
 
         private IQueryable<JobOffer> SearchByKeywords(IQueryable<JobOffer> available)
         {
-            string search = SearchParams.SearchString!.Trim();
+            string search = searchParams.SearchString!.Trim();
             string[] keywordsTokens = search.Split().Select(x => x.ToLower())
                 .ToArray();
 

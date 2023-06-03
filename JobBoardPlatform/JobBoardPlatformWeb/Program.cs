@@ -54,9 +54,9 @@ builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandle
 // BLL
 builder.Services.AddTransient<OffersCacheManager>();
 builder.Services.AddTransient<OfferCommandsExecutor>();
-builder.Services.AddTransient<IPageSearchParamsFactory<CompanyPanelApplicationSearchParameters>, CompanyPanelApplicationSearchParametersFactory>();
-builder.Services.AddTransient<IPageSearchParamsFactory<CompanyPanelOfferSearchParameters>, CompanyPanelOfferSearchParametersFactory>();
-builder.Services.AddTransient<IPageSearchParamsFactory<MainPageOfferSearchParams>, MainPageOfferSearchParamsFactory>();
+builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelApplicationSearchParameters>, CompanyPanelApplicationSearchParametersFactory>();
+builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelOfferSearchParameters>, CompanyPanelOfferSearchParametersFactory>();
+builder.Services.AddTransient<IPageSearchParamsUrlFactory<MainPageOfferSearchParams>, MainPageOfferSearchParamsFactory>();
 
 builder.Services.AddTransient<OfferApplicationsSearcher>();
 builder.Services.AddTransient<CompanyOffersSearcher>();

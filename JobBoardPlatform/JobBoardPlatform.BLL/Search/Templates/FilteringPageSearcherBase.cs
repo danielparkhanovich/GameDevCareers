@@ -10,16 +10,13 @@ namespace JobBoardPlatform.BLL.Search.Templates
         where TEntity : class, IEntity
         where TSearchParams : class, IPageSearchParams, new()
     {
-        public TSearchParams SearchParams { get; }
+        protected TSearchParams searchParams;
 
 
-        public FilteringPageSearcherBase(IPageSearchParamsFactory<TSearchParams> paramsFactory)
+        public async Task<EntitiesFilteringSearchResponse<TEntity>> Search(TSearchParams searchParams)
         {
-            SearchParams = paramsFactory.GetSearchParams();
-        }
+            this.searchParams = searchParams;
 
-        public async Task<EntitiesFilteringSearchResponse<TEntity>> Search()
-        {
             var initialRecords = await GetInitial();
 
             var filtered = GetFiltered(initialRecords);
@@ -53,12 +50,9 @@ namespace JobBoardPlatform.BLL.Search.Templates
 
         private IQueryable<TEntity> GetRecordsOnPage(IQueryable<TEntity> records)
         {
-            int page = SearchParams.Page;
-            int pageSize = SearchParams.PageSize;
-
-            int recordsFromStart = (page - 1) * pageSize;
+            int recordsFromStart = (searchParams.Page - 1) * searchParams.PageSize;
             return records.Skip(recordsFromStart)
-                          .Take(pageSize);
+                          .Take(searchParams.PageSize);
         }
 
         private Task<List<TEntity>> GetLoadedList(IQueryable<TEntity> records)

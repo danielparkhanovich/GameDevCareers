@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Search.Contracts;
-using JobBoardPlatform.BLL.Search.Enums;
+﻿using JobBoardPlatform.BLL.Search.Enums;
 using JobBoardPlatform.BLL.Search.Templates;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
@@ -12,10 +11,7 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
         private readonly IRepository<OfferApplication> repository;
 
 
-        public OfferApplicationsSearcher(
-            IRepository<OfferApplication> repository, 
-            IPageSearchParamsFactory<CompanyPanelApplicationSearchParameters> paramsFactory)
-            : base(paramsFactory)
+        public OfferApplicationsSearcher(IRepository<OfferApplication> repository)
         {
             this.repository = repository;
         }
@@ -27,20 +23,20 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
 
         protected override IQueryable<OfferApplication> GetFiltered(IQueryable<OfferApplication> available)
         {
-            available = available.Where(application => application.JobOfferId == SearchParams.OfferId);
+            available = available.Where(application => application.JobOfferId == searchParams.OfferId);
 
             available = available.Where(application =>
-                 application.ApplicationFlagTypeId == 1 && SearchParams.IsShowUnseen ||
-                 application.ApplicationFlagTypeId == 2 && SearchParams.IsShowMustHire ||
-                 application.ApplicationFlagTypeId == 3 && SearchParams.IsShowAverage ||
-                 application.ApplicationFlagTypeId == 4 && SearchParams.IsShowRejected);
+                 application.ApplicationFlagTypeId == 1 && searchParams.IsShowUnseen ||
+                 application.ApplicationFlagTypeId == 2 && searchParams.IsShowMustHire ||
+                 application.ApplicationFlagTypeId == 3 && searchParams.IsShowAverage ||
+                 application.ApplicationFlagTypeId == 4 && searchParams.IsShowRejected);
 
             return available;
         }
 
         protected override IQueryable<OfferApplication> GetSorted(IQueryable<OfferApplication> available)
         {
-            var category = SearchParams.SortCategory;
+            var category = searchParams.SortCategory;
 
             if (category == SortCategoryType.PublishDate.ToString())
             {
@@ -59,7 +55,7 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
                     0);
             }
 
-            if (SearchParams.Sort == SortType.Descending)
+            if (searchParams.Sort == SortType.Descending)
             {
                 available = available.Reverse();
             }

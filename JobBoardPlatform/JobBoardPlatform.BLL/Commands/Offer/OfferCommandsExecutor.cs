@@ -62,7 +62,8 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         private async Task UpdateCacheAsync()
         {
-            var searchResponse = await offersSearcher.Search();
+            var mainPageParams = new MainPageOfferSearchParams();
+            var searchResponse = await offersSearcher.Search(mainPageParams);
             await cacheManager.UpdateCache(searchResponse);
         }
     }

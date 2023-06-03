@@ -10,16 +10,7 @@ namespace JobBoardPlatform.BLL.Search.MainPage
     /// </summary>
     public class MainPageOfferSearchParamsFactory : SearchParamsUrlFactoryBase<MainPageOfferSearchParams>
     {
-        private readonly HttpRequest httpRequest;
-
-
-        public MainPageOfferSearchParamsFactory(HttpRequest httpRequest)
-            : base(httpRequest)
-        {
-            this.httpRequest = httpRequest;
-        }
-
-        protected override void AssignFilterParams(MainPageOfferSearchParams searchParams)
+        protected override void AssignFilterParams(HttpRequest httpRequest, MainPageOfferSearchParams searchParams)
         {
             var tabString = httpRequest.Path.ToString().ToLower();
             searchParams.Type = GetOfferType(tabString);
@@ -28,8 +19,8 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             string? technologyString = httpRequest.Query[OfferSearchUrlParameters.Technology];
             searchParams.MainTechnology = GetMainTechnology(technologyString);
 
-            searchParams.IsSalaryOnly = IsBoolFilter(OfferSearchUrlParameters.SalaryOnly);
-            searchParams.IsRemoteOnly = IsBoolFilter(OfferSearchUrlParameters.RemoteOnly);
+            searchParams.IsSalaryOnly = IsBoolFilter(httpRequest, OfferSearchUrlParameters.SalaryOnly);
+            searchParams.IsRemoteOnly = IsBoolFilter(httpRequest, OfferSearchUrlParameters.RemoteOnly);
             searchParams.SearchString = httpRequest.Query[OfferSearchUrlParameters.Search];
         }
 

@@ -6,17 +6,12 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
     public class CompanyPanelApplicationSearchParametersFactory
         : SearchParamsUrlFactoryBase<CompanyPanelApplicationSearchParameters>
     {
-        public CompanyPanelApplicationSearchParametersFactory(HttpRequest httpRequest)
-            : base(httpRequest)
+        protected override void AssignFilterParams(HttpRequest httpRequest, CompanyPanelApplicationSearchParameters searchParams)
         {
-        }
-
-        protected override void AssignFilterParams(CompanyPanelApplicationSearchParameters searchParams)
-        {
-            searchParams.IsShowUnseen = IsBoolFilter(OfferSearchUrlParameters.ShowUnseen);
-            searchParams.IsShowMustHire = IsBoolFilter(OfferSearchUrlParameters.ShowMustHire);
-            searchParams.IsShowAverage = IsBoolFilter(OfferSearchUrlParameters.ShowAverage);
-            searchParams.IsShowRejected = IsBoolFilter(OfferSearchUrlParameters.ShowRejected);
+            searchParams.IsShowUnseen = IsBoolFilter(httpRequest, OfferSearchUrlParameters.ShowUnseen);
+            searchParams.IsShowMustHire = IsBoolFilter(httpRequest, OfferSearchUrlParameters.ShowMustHire);
+            searchParams.IsShowAverage = IsBoolFilter(httpRequest, OfferSearchUrlParameters.ShowAverage);
+            searchParams.IsShowRejected = IsBoolFilter(httpRequest, OfferSearchUrlParameters.ShowRejected);
             throw new Exception("Not implemented yet");
             searchParams.OfferId = 0;//httpRequest.Query[OfferSearchUrlParameters.SortCategory];
         }
