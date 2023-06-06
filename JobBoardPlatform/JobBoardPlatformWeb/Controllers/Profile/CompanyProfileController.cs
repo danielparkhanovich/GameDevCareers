@@ -6,9 +6,9 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.BLL.Commands.Profile;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

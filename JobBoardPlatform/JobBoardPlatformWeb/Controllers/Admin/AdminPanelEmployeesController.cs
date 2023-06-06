@@ -29,7 +29,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         protected override Task<CardsContainerViewModel> GetContainer()
         {
             var containerFactory = new AdminPanelEmployeesContainerViewModelFactory(identityRepository);
-            return containerFactory.Create();
+            return containerFactory.CreateAsync();
         }
 
         protected override ICommand GetLogIntoCommand(int userId)

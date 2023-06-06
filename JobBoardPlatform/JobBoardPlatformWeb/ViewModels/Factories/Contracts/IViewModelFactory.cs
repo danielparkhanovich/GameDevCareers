@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 
-namespace JobBoardPlatform.PL.ViewModels.Utilities.Contracts
+namespace JobBoardPlatform.PL.ViewModels.Factories.Contracts
 {
     public interface IViewModelFactory<TEntity, TViewModel>
         where TEntity : IEntity

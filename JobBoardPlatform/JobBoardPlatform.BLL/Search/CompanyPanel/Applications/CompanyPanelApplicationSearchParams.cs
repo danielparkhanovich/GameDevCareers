@@ -3,7 +3,7 @@ using JobBoardPlatform.BLL.Search.Enums;
 
 namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
 {
-    public class CompanyPanelApplicationSearchParameters : IPageSearchParams
+    public class CompanyPanelApplicationSearchParams : IPageSearchParams
     {
         public int OfferId { get; set; }
         public bool IsShowUnseen { get; set; } = true;

@@ -3,7 +3,7 @@
 @{
     string role = UserSessionUtils.GetRole(User);
     var factory = new ProfileTabsViewModelFactory(role);
-    var viewModel = await factory.Create();
+    var viewModel = await factory.CreateAsync();
 
     var actions = viewModel.MainTabsActions;
     var controllers = viewModel.MainTabsControllers;

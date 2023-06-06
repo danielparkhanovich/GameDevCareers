@@ -16,6 +16,8 @@ using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Commands.Admin;
+using JobBoardPlatform.BLL.Commands.Application;
+using JobBoardPlatform.BLL.Query.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,9 +56,11 @@ builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandle
 
 // BLL
 builder.Services.AddTransient<OffersCacheManager>();
+builder.Services.AddTransient<OfferQueryExecutor>();
 builder.Services.AddTransient<OfferCommandsExecutor>();
+builder.Services.AddTransient<ApplicationCommandsExecutor>();
 builder.Services.AddTransient<AdminCommandsExecutor>();
-builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelApplicationSearchParameters>, CompanyPanelApplicationSearchParametersFactory>();
+builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelApplicationSearchParams>, CompanyPanelApplicationSearchParamsFactory>();
 builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelOfferSearchParameters>, CompanyPanelOfferSearchParametersFactory>();
 builder.Services.AddTransient<IPageSearchParamsUrlFactory<MainPageOfferSearchParams>, MainPageOfferSearchParamsFactory>();
 

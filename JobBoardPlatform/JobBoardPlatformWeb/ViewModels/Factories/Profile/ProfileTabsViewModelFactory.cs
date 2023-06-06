@@ -2,12 +2,12 @@
 using JobBoardPlatform.PL.Controllers.Profile;
 using JobBoardPlatform.PL.Controllers.Security;
 using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Profile;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
 {
-    public class ProfileTabsViewModelFactory : IFactory<ProfileTabsViewModel>
+    public class ProfileTabsViewModelFactory : IViewModelAsyncFactory<ProfileTabsViewModel>
     {
         private readonly string userRole;
 
@@ -17,7 +17,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             this.userRole = userRole;
         }
 
-        public Task<ProfileTabsViewModel> Create()
+        public Task<ProfileTabsViewModel> CreateAsync()
         {
             if (userRole == UserRoles.Employee)
             {

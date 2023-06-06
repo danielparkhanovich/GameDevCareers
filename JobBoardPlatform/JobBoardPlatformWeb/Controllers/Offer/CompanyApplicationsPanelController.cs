@@ -1,8 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Commands.Application;
+using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.Controllers.Templates;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
@@ -11,30 +11,29 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
     [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
-    public class CompanyApplicationsPanelController : Controller
+    public class CompanyApplicationsPanelController : CardsControllerBase
     {
-        private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<OfferApplication> applicationsRepository;
+        private readonly OfferApplicationsSearcher searcher;
+        private readonly OfferQueryExecutor queryExecutor;
+        private readonly ApplicationCommandsExecutor commandsExecutor;
 
 
-        public CompanyApplicationsPanelController(IRepository<JobOffer> offersRepository, 
-            IRepository<OfferApplication> applicationsRepository)
+        public CompanyApplicationsPanelController(
+            OfferApplicationsSearcher searcher, 
+            OfferQueryExecutor queryExecutor,
+            ApplicationCommandsExecutor commandsExecutor)
         {
-            this.offersRepository = offersRepository;
-            this.applicationsRepository = applicationsRepository;
+            this.searcher = searcher;
+            this.queryExecutor = queryExecutor;
+            this.commandsExecutor = commandsExecutor;
         }
 
         [Route("CompanyOffersPanel/applications-{offerId}-page-{page}")]
         public async virtual Task<IActionResult> Applications(int offerId, int page)
         {
-            var searchData = new CompanyPanelApplicationSearchParameters();
-            searchData.PageSize = 10;
-
-            var applicationsViewModelFactory = new CompanyApplicationsViewModelFactory(searchData,
-                applicationsRepository,
-                offersRepository);
-
-            var applicationsViewModel = await applicationsViewModelFactory.Create();
+            var applicationsViewModelFactory = new CompanyApplicationsViewModelFactory(
+                searcher, GetSearchParams(), queryExecutor);
+            var applicationsViewModel = await applicationsViewModelFactory.CreateAsync();
 
             return View(applicationsViewModel);
         }
@@ -42,26 +41,24 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [HttpPost]
         public async virtual Task<IActionResult> SetPriority(int applicationId, int priorityIndex)
         {
-            var updateApplicationPriorityCommand = new UpdateApplicationPriorityCommand(applicationsRepository, 
-                applicationId, 
-                priorityIndex);
-            await updateApplicationPriorityCommand.Execute();
-
-            var resultPriorityIndex = updateApplicationPriorityCommand.ResultPriorityIndex;
+            int resultPriority = await commandsExecutor.UpdateApplicationPriorityCommandAsync(
+                applicationId, priorityIndex);
 
             string message = "SUCCESS";
-            return Json(new { Message = message, Priority = resultPriorityIndex });
+            return Json(new { Message = message, Priority = resultPriority });
         }
 
-        [HttpPost]
-        public async virtual Task<IActionResult> RefreshCardContainer(CardsContainerViewModel cardsViewModel)
+        protected override Task<CardsContainerViewModel> GetContainer()
         {
-            var searchData = cardsViewModel.SearchParams as CompanyPanelApplicationSearchParameters;
-            var applicationCardsFactory = new CompanyApplicationsContainerViewModelFactory(applicationsRepository, searchData!);
+            var searchParams = GetSearchParams();
+            var containerFactory = new CompanyApplicationsContainerViewModelFactory(searcher, searchParams);
+            return containerFactory.CreateAsync();
+        }
 
-            var applicationCards = await applicationCardsFactory.Create();
-
-            return PartialView("./Templates/_CardsContainer", applicationCards);
+        private CompanyPanelApplicationSearchParams GetSearchParams()
+        {
+            var searchParamsFactory = new CompanyPanelApplicationSearchParamsFactory();
+            return searchParamsFactory.GetSearchParams(Request);
         }
     }
 }

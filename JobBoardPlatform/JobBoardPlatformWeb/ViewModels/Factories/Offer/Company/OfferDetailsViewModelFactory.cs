@@ -1,12 +1,12 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
-    public class OfferDetailsViewModelFactory : IFactory<OfferDetailsViewModel>
+    public class OfferDetailsViewModelFactory : IViewModelAsyncFactory<OfferDetailsViewModel>
     {
-        public async Task<OfferDetailsViewModel> Create()
+        public async Task<OfferDetailsViewModel> CreateAsync()
         {
             JobOffer offer = new JobOffer();
 

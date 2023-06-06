@@ -9,7 +9,8 @@ namespace JobBoardPlatform.PL.Controllers.Templates
 
 
         [HttpPost]
-        public async Task<IActionResult> RefreshCardsContainer()
+        [Route(RefreshCardsContainerAction)]
+        public virtual async Task<IActionResult> RefreshCardsContainer()
         {
             var container = await GetContainer();
             return PartialView(CardsContainerViewModel.PartialView, container);

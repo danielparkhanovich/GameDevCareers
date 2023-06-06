@@ -19,22 +19,6 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 
         public void Map(JobOffer from, OfferCardViewModel to)
         {
-            var salaryFormatter = new SalaryFormatter();
-            string salaryDetails = salaryFormatter.GetString(from);
-
-            var daysFormatter = new PublishedAgoFormatter(from.IsPublished);
-            string publishedAgo = string.Empty;
-            if (from.IsPublished)
-            {
-                publishedAgo = daysFormatter.GetString(from.PublishedAt);
-            }
-            else
-            {
-                publishedAgo = daysFormatter.GetString(from.CreatedAt);
-            }
-
-            var techKeywords = from.TechKeywords.Select(x => x.Name).ToArray();
-
             to.Id = from.Id;
             to.JobTitle = from.JobTitle;
             to.Company = from.CompanyProfile.CompanyName;
@@ -42,9 +26,33 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             to.Country = from.Country;
             to.City = from.City;
             to.WorkLocationType = from.WorkLocation.Type;
-            to.SalaryDetails = salaryDetails;
-            to.PublishedAgo = publishedAgo;
-            to.TechKeywords = techKeywords;
+            to.SalaryDetails = GetSalaryDetails(from);
+            to.PublishedAgo = GetPublishedAgo(from);
+            to.TechKeywords = GetKeywords(from);
+        }
+
+        private string GetSalaryDetails(JobOffer from)
+        {
+            var salaryFormatter = new SalaryFormatter();
+            return salaryFormatter.GetString(from);
+        }
+
+        private string GetPublishedAgo(JobOffer from)
+        {
+            var daysFormatter = new PublishedAgoFormatter(from.IsPublished);
+            if (from.IsPublished)
+            {
+                return daysFormatter.GetString(from.PublishedAt);
+            }
+            else
+            {
+                return daysFormatter.GetString(from.CreatedAt);
+            }
+        }
+
+        private string[]? GetKeywords(JobOffer from)
+        {
+            return from.TechKeywords.Select(x => x.Name).ToArray();
         }
     }
 }

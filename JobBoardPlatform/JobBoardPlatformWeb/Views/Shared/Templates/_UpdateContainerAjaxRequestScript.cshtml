@@ -20,7 +20,7 @@
     }
 
     function resetPageParameter() {
-        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Page));
+        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParams.Page));
         updateQueryStringParameter(paramName, 1);
     }
 

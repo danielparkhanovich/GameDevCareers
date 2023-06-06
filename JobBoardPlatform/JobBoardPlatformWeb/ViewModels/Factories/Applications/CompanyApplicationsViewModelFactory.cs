@@ -1,52 +1,51 @@
-﻿using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
-using JobBoardPlatform.DAL.Data.Loaders;
+﻿using JobBoardPlatform.BLL.Query.Identity;
+using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 {
-    public class CompanyApplicationsViewModelFactory : IFactory<CompanyApplicationsViewModel>
+    public class CompanyApplicationsViewModelFactory : IViewModelAsyncFactory<CompanyApplicationsViewModel>
     {
-        private readonly CompanyPanelApplicationSearchParameters searchData;
-        private readonly IRepository<OfferApplication> applicationsRepository;
-        private readonly IRepository<JobOffer> offersRepository;
-        
+        private readonly OfferApplicationsSearcher searcher;
+        private readonly CompanyPanelApplicationSearchParams searchParams;
+        private readonly OfferQueryExecutor queryExecutor;
 
-        public CompanyApplicationsViewModelFactory(CompanyPanelApplicationSearchParameters searchData,
-            IRepository<OfferApplication> applicationsRepository,
-            IRepository<JobOffer> offersRepository)
+
+        public CompanyApplicationsViewModelFactory(
+            OfferApplicationsSearcher searcher, 
+            CompanyPanelApplicationSearchParams searchParams,
+            OfferQueryExecutor queryExecutor)
         {
-            this.searchData = searchData;
-            this.applicationsRepository = applicationsRepository;
-            this.offersRepository = offersRepository;
+            this.searcher = searcher;
+            this.searchParams = searchParams;
+            this.queryExecutor = queryExecutor;
         }
 
-        public async Task<CompanyApplicationsViewModel> Create()
+        public async Task<CompanyApplicationsViewModel> CreateAsync()
         {
-            throw new Exception("Get offer");
-            /*var offerLoader = new LoadCompanyOffer(offersRepository, searchData.OfferId);
-            var offer = await offerLoader.Load();
+            var offer = await queryExecutor.GetOfferById(searchParams.OfferId);
 
             var viewModel = new CompanyApplicationsViewModel();
             viewModel.Applications = await GetApplicationCards();
-
             viewModel.OfferCard = GetOfferCard(offer);
 
             viewModel.TotalApplications = offer.NumberOfApplications;
             viewModel.TotalViewsCount = offer.NumberOfViews;
 
-            return viewModel;*/
+            return viewModel;
         }
 
         private async Task<CardsContainerViewModel> GetApplicationCards()
         {
-            var applicationCardsFactory = new CompanyApplicationsContainerViewModelFactory(applicationsRepository, searchData);
-            var applicationCards = await applicationCardsFactory.Create();
+            var applicationCardsFactory = new CompanyApplicationsContainerViewModelFactory(
+                searcher, searchParams);
+
+            var applicationCards = await applicationCardsFactory.CreateAsync();
 
             return applicationCards;
         }

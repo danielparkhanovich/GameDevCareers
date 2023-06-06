@@ -1,18 +1,13 @@
-﻿using JobBoardPlatform.DAL.Data.Loaders;
-using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
+﻿using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
-    public class OfferContentDisplayViewModelFactory : IFactory<OfferContentDisplayViewModel>
+    public class OfferContentDisplayViewModelFactory : IViewModelFactory<JobOffer, OfferContentDisplayViewModel>
     {
-        public async Task<OfferContentDisplayViewModel> Create()
+        public OfferContentDisplayViewModel CreateViewModel(JobOffer offer)
         {
-            throw new Exception("Need to get somehow offer");
-            JobOffer offer;
-
             var viewModel = new OfferContentDisplayViewModel();
 
             Map(offer, viewModel);

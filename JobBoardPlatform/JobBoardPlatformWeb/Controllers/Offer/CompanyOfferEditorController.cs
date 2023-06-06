@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
+using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
@@ -31,7 +32,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public async Task<IActionResult> NewOffer(int offerId)
         {
             var viewModelFactory = new OfferDetailsViewModelFactory();
-            var viewModel = await viewModelFactory.Create();
+            var viewModel = await viewModelFactory.CreateAsync();
 
             return View(viewModel);
         }

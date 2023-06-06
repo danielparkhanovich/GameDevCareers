@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
+using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel;
@@ -77,7 +78,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
             var containerFactory = new AdminPanelOffersContainerViewModelFactory(
                 offersSearcher, searchParams);
-            return containerFactory.Create();
+            return containerFactory.CreateAsync();
         }
 
         protected override Task<JobOffer> GetLoadedOffer(int offerId)

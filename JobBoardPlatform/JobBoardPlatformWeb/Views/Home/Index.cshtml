@@ -58,12 +58,12 @@
             <div class="form-check form-switch align-self-center mx-4">
                 <label class="form-check-label" for="remoteSwitchBox")>Remote</label>
                 <input class="form-check-input" type="checkbox" id="remoteSwitchBox" style="transform: scale(1.25);"
-                       onchange="@($"toggleFilter('{OfferSearchUrlParameters.RemoteOnly}', this);")" @(search.IsRemoteOnly ? "checked" : string.Empty)>
+                       onchange="@($"toggleFilter('{OfferSearchUrlParams.RemoteOnly}', this);")" @(search.IsRemoteOnly ? "checked" : string.Empty)>
             </div>
             <div class="form-check form-switch align-self-center">
                 <label class="form-check-label" for="withSalarySwitchBox">With salary</label>
                 <input class="form-check-input" type="checkbox" id="withSalarySwitchBox" style="transform: scale(1.25);"
-                       onchange="@($"toggleFilter('{OfferSearchUrlParameters.SalaryOnly}', this);")" @(search.IsSalaryOnly ? "checked" : string.Empty)>
+                       onchange="@($"toggleFilter('{OfferSearchUrlParams.SalaryOnly}', this);")" @(search.IsSalaryOnly ? "checked" : string.Empty)>
             </div>
         </div>
 
@@ -101,7 +101,7 @@
     }
 
     function searchWithKeywords() {
-        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Search));
+        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParams.Search));
         var searchField = document.getElementById(searchFieldId);
         const value = searchField.value;
 
@@ -110,7 +110,7 @@
     }
 
     function switchMainTechnology(type) {
-        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParameters.Technology));
+        const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParams.Technology));
         updateQueryStringParameter(paramName, type);
         refreshCards(updateOffersCount);
     }

@@ -31,7 +31,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             var searchParameters = GetSearchParametersFromUrl();
             var containerFactory = new AdminPanelCompaniesContainerViewModelFactory(
                 identityRepository, searchParameters!);
-            return containerFactory.Create();
+            return containerFactory.CreateAsync();
         }
 
         private CompanyPanelOfferSearchParameters GetSearchParametersFromUrl()

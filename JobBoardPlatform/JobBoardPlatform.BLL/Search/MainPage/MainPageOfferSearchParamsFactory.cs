@@ -16,12 +16,12 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             searchParams.Type = GetOfferType(tabString);
 
             // Get all query parameters
-            string? technologyString = httpRequest.Query[OfferSearchUrlParameters.Technology];
+            string? technologyString = httpRequest.Query[OfferSearchUrlParams.Technology];
             searchParams.MainTechnology = GetMainTechnology(technologyString);
 
-            searchParams.IsSalaryOnly = IsBoolFilter(httpRequest, OfferSearchUrlParameters.SalaryOnly);
-            searchParams.IsRemoteOnly = IsBoolFilter(httpRequest, OfferSearchUrlParameters.RemoteOnly);
-            searchParams.SearchString = httpRequest.Query[OfferSearchUrlParameters.Search];
+            searchParams.IsSalaryOnly = IsBoolFilter(httpRequest, OfferSearchUrlParams.SalaryOnly);
+            searchParams.IsRemoteOnly = IsBoolFilter(httpRequest, OfferSearchUrlParams.RemoteOnly);
+            searchParams.SearchString = httpRequest.Query[OfferSearchUrlParams.Search];
         }
 
         private OfferType GetOfferType(string typeString)

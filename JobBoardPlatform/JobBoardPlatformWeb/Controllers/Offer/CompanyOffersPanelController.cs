@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
+using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
@@ -32,7 +33,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         {
             var containerFactory = new CompanyOffersContainerViewModelFactory(
                 offersSearcher, GetSearchParams());
-            var container = await containerFactory.Create();
+            var container = await containerFactory.CreateAsync();
 
             return View(container);
         }
@@ -41,7 +42,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         {
             var containerFactory = new CompanyOffersContainerViewModelFactory(
                 offersSearcher, GetSearchParams());
-            return containerFactory.Create();
+            return containerFactory.CreateAsync();
         }
 
         private CompanyPanelOfferSearchParameters GetSearchParams()

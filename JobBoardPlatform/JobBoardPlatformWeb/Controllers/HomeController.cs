@@ -17,19 +17,27 @@ namespace JobBoardPlatformWeb.Controllers
             this.searcher = searcher;
         }
 
+        [HttpPost]
+        [Route(RefreshCardsContainerAction)]
+        public override async Task<IActionResult> RefreshCardsContainer()
+        {
+            var container = await GetContainer();
+            return PartialView(CardsContainerViewModel.PartialView, container);
+        }
+
         [Route("")]
         [Route("commissions", Order = 1)]
         public async Task<IActionResult> Index()
         {
             var viewModelFactory = new OffersMainPageViewModelFactory(searcher, GetSearchParams());
-            var model = await viewModelFactory.Create();
+            var model = await viewModelFactory.CreateAsync();
             return View(model);
         }
 
         protected override async Task<CardsContainerViewModel> GetContainer()
         {
             var viewModelFactory = new OffersMainPageViewModelFactory(searcher, GetSearchParams());
-            var model = await viewModelFactory.Create();
+            var model = await viewModelFactory.CreateAsync();
             return model.OffersContainer;
         }
 

@@ -12,26 +12,25 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 {
     public class CompanyApplicationsContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<OfferApplication>
     {
-        private readonly IRepository<OfferApplication> repository;
-        private readonly CompanyPanelApplicationSearchParameters searchParams;
+        private readonly OfferApplicationsSearcher searcher;
+        private readonly CompanyPanelApplicationSearchParams searchParams;
         private int totalResult;
 
 
-        public CompanyApplicationsContainerViewModelFactory(IRepository<OfferApplication> repository,
-            CompanyPanelApplicationSearchParameters searchParams)
+        public CompanyApplicationsContainerViewModelFactory(
+            OfferApplicationsSearcher searcher, CompanyPanelApplicationSearchParams searchParams)
         {
-            this.repository = repository;
+            this.searcher = searcher;
             this.searchParams = searchParams;
         }
 
         protected override async Task<List<IContainerCard>> GetCardsAsync()
         {
-            // var searcher = new OfferApplicationsSearcher(searchParams);
-            // totalResult = searcher.AfterFiltersCount;
+            var searchResponse = await searcher.Search(searchParams);
+            totalResult = searchResponse.TotalRecordsAfterFilters;
 
-            // var applications = await searcher.Search(repository);
             var cardFactory = new CompanyApplicationCardViewModelFactory();
-            return GetCards(cardFactory, null);
+            return GetCards(cardFactory, searchResponse.Entities);
         }
 
         protected override ContainerHeaderViewModel? GetHeader()

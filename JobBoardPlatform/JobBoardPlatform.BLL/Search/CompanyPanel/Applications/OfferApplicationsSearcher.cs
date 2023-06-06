@@ -6,7 +6,7 @@ using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
 {
-    public class OfferApplicationsSearcher : FilteringPageSearcherBase<OfferApplication, CompanyPanelApplicationSearchParameters>
+    public class OfferApplicationsSearcher : FilteringPageSearcherBase<OfferApplication, CompanyPanelApplicationSearchParams>
     {
         private readonly IRepository<OfferApplication> repository;
 

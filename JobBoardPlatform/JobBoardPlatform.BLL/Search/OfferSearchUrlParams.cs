@@ -1,6 +1,6 @@
 ﻿namespace JobBoardPlatform.BLL.Search
 {
-    public class OfferSearchUrlParameters
+    public class OfferSearchUrlParams
     {
         // Offers
         public const string Technology = "maintechnology";
@@ -9,6 +9,7 @@
         public const string Search = "search";
         public const string HidePublished = "hidepublished";
         public const string HideShelved = "hideshelved";
+        public const string OfferId = "offerid";
 
         // General
         public const string Page = "page";

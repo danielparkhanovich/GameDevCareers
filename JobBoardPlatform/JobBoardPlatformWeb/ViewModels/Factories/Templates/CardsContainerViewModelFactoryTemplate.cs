@@ -1,15 +1,15 @@
 ﻿using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.PL.ViewModels.Contracts;
+using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
-using JobBoardPlatform.PL.ViewModels.Utilities.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Templates
 {
-    public abstract class CardsContainerViewModelFactoryTemplate<T> : IFactory<CardsContainerViewModel>
+    public abstract class CardsContainerViewModelFactoryTemplate<T> : IViewModelAsyncFactory<CardsContainerViewModel>
         where T : IEntity
     {
-        public async Task<CardsContainerViewModel> Create()
+        public async Task<CardsContainerViewModel> CreateAsync()
         {
             var viewModel = new CardsContainerViewModel()
             {

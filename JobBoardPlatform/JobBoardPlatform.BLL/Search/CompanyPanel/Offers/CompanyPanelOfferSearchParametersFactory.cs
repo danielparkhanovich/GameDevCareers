@@ -11,8 +11,8 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Offers
     {
         protected override void AssignFilterParams(HttpRequest httpRequest, CompanyPanelOfferSearchParameters searchParams)
         {
-            searchParams.IsShowPublished = !IsBoolFilter(httpRequest, OfferSearchUrlParameters.HidePublished);
-            searchParams.IsShowShelved = !IsBoolFilter(httpRequest, OfferSearchUrlParameters.HideShelved);
+            searchParams.IsShowPublished = !IsBoolFilter(httpRequest, OfferSearchUrlParams.HidePublished);
+            searchParams.IsShowShelved = !IsBoolFilter(httpRequest, OfferSearchUrlParams.HideShelved);
             throw new Exception("Not implemented yet");
             searchParams.CompanyProfileId = 0;//httpRequest.Query[OfferSearchUrlParameters.SortCategory];
         }
