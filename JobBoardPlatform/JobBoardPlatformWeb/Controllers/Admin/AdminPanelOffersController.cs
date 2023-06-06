@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
 using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Search.MainPage;
@@ -20,26 +21,24 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelOffersController : OfferCardsControllerBase
     {
-        private readonly IRepository<JobOffer> offerRepository;
         private readonly IRepository<CompanyProfile> companyRepository;
-        private readonly IRepository<CompanyIdentity> companyIdentityRepository;
-        private readonly IRepository<TechKeyword> keywordsRepository;
         private readonly CompanyOffersSearcher offersSearcher;
+        private readonly AdminCommandsExecutor adminCommandsExecutor;
+        private readonly OfferQueryExecutor queryExecutor;
 
 
-        public AdminPanelOffersController(IRepository<JobOffer> offerRepository,
+        public AdminPanelOffersController(
             IRepository<CompanyProfile> companyRepository,
-            IRepository<CompanyIdentity> companyIdentityRepository,
-            IRepository<TechKeyword> keywordsRepository,
             OfferCommandsExecutor commandsExecutor,
-            CompanyOffersSearcher offersSearcher) 
+            AdminCommandsExecutor adminCommandsExecutor,
+            CompanyOffersSearcher offersSearcher,
+            OfferQueryExecutor queryExecutor) 
             : base(commandsExecutor)
         {
-            this.offerRepository = offerRepository;
             this.companyRepository = companyRepository;
-            this.companyIdentityRepository = companyIdentityRepository;
-            this.keywordsRepository = keywordsRepository;
             this.offersSearcher = offersSearcher;
+            this.adminCommandsExecutor = adminCommandsExecutor;
+            this.queryExecutor = queryExecutor;
         }
 
         public async Task<IActionResult> Panel()
@@ -60,36 +59,30 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 return RedirectToAction("Panel");
             }
 
-            var generateOffersCommand = new GenerateOffersCommand(offersCountToGenerate,
-                companyId, 
-                companyIdentityRepository, 
-                keywordsRepository, 
-                offerRepository);
-            await generateOffersCommand.Execute();
-
+            await adminCommandsExecutor.GenerateOffers(companyId, offersCountToGenerate);
             return RedirectToAction("Panel");
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteAllOffers()
         {
-            var deleteOffersCommand = new DeleteAllOffersCommand(offerRepository);
-            await deleteOffersCommand.Execute();
-
+            await adminCommandsExecutor.DeleteAllOffers();
             return RedirectToAction("OffersPanel");
         }
 
         protected override Task<CardsContainerViewModel> GetContainer()
         {
-            var containerFactory = new AdminPanelOffersContainerViewModelFactory(offersSearcher);
+            var searchParamsFactory = new CompanyPanelOfferSearchParametersFactory();
+            var searchParams = searchParamsFactory.GetSearchParams(Request);
+
+            var containerFactory = new AdminPanelOffersContainerViewModelFactory(
+                offersSearcher, searchParams);
             return containerFactory.Create();
         }
 
         protected override Task<JobOffer> GetLoadedOffer(int offerId)
         {
-            throw new Exception("Need to get offers");
-            // var loader = new LoadCompanyOffer(offerRepository, offerId);
-            // return loader.Load();
+            return queryExecutor.GetOfferById(offerId);
         }
 
         protected override IContainerCard GetContainerCard(JobOffer offer)

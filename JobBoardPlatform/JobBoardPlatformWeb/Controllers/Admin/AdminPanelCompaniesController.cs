@@ -37,8 +37,8 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         private CompanyPanelOfferSearchParameters GetSearchParametersFromUrl()
         {
             int? profileId = null;
-            var offerSearchParametersFactory = new CompanyPanelOfferSearchParametersFactory(Request);
-            var searchParams = offerSearchParametersFactory.GetSearchParams();
+            var offerSearchParametersFactory = new CompanyPanelOfferSearchParametersFactory();
+            var searchParams = offerSearchParametersFactory.GetSearchParams(Request);
             return searchParams;
         }
 

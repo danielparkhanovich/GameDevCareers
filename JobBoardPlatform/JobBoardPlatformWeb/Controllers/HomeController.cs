@@ -21,16 +21,22 @@ namespace JobBoardPlatformWeb.Controllers
         [Route("commissions", Order = 1)]
         public async Task<IActionResult> Index()
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(searcher);
+            var viewModelFactory = new OffersMainPageViewModelFactory(searcher, GetSearchParams());
             var model = await viewModelFactory.Create();
             return View(model);
         }
 
         protected override async Task<CardsContainerViewModel> GetContainer()
         {
-            var viewModelFactory = new OffersMainPageViewModelFactory(searcher);
+            var viewModelFactory = new OffersMainPageViewModelFactory(searcher, GetSearchParams());
             var model = await viewModelFactory.Create();
             return model.OffersContainer;
+        }
+
+        private MainPageOfferSearchParams GetSearchParams()
+        {
+            var searchParamsFactory = new MainPageOfferSearchParamsFactory();
+            return searchParamsFactory.GetSearchParams(Request);
         }
 
         public IActionResult Privacy()

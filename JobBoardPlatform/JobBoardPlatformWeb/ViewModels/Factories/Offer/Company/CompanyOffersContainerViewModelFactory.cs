@@ -10,17 +10,20 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
     public class CompanyOffersContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<JobOffer>
     {
         private readonly CompanyOffersSearcher searcher;
+        private readonly CompanyPanelOfferSearchParameters searchParams;
         private int totalRecords;
 
 
-        public CompanyOffersContainerViewModelFactory(CompanyOffersSearcher searcher)
+        public CompanyOffersContainerViewModelFactory(
+            CompanyOffersSearcher searcher, CompanyPanelOfferSearchParameters searchParams)
         {
             this.searcher = searcher;
+            this.searchParams = searchParams;
         }
 
         protected override async Task<List<IContainerCard>> GetCardsAsync()
         {
-            var searchResponse = await searcher.Search();
+            var searchResponse = await searcher.Search(searchParams);
             totalRecords = searchResponse.TotalRecordsAfterFilters;
 
             var cardFactory = new CompanyOfferViewModelFactory();
@@ -35,7 +38,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 
         protected override IPageSearchParams GetSearchParams()
         {
-            return searcher.SearchParams;
+            return searchParams;
         }
 
         protected override int GetTotalRecordsCount()

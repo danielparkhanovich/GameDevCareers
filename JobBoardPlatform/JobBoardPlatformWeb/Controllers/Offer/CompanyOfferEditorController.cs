@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Commands.Offer;
+﻿using JobBoardPlatform.BLL.Commands.Admin;
+using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;

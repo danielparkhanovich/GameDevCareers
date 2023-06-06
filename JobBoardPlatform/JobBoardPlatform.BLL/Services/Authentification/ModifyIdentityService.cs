@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Query;
+﻿using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;

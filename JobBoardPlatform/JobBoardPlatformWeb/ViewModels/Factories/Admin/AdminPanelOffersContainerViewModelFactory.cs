@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Search.Contracts;
+using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
@@ -12,12 +12,15 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
     public class AdminPanelOffersContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<JobOffer>
     {
         private readonly CompanyOffersSearcher searcher;
+        private readonly CompanyPanelOfferSearchParameters searchParams;
         private int totalRecordsCount;
 
 
-        public AdminPanelOffersContainerViewModelFactory(CompanyOffersSearcher searcher)
+        public AdminPanelOffersContainerViewModelFactory(
+            CompanyOffersSearcher searcher, CompanyPanelOfferSearchParameters searchParams)
         {
             this.searcher = searcher;
+            this.searchParams = searchParams;
         }
 
         protected override ContainerHeaderViewModel? GetHeader()
@@ -28,7 +31,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
 
         protected override async Task<List<IContainerCard>> GetCardsAsync()
         {
-            var searchResponse = await searcher.Search();
+            var searchResponse = await searcher.Search(searchParams);
             totalRecordsCount = searchResponse.TotalRecordsAfterFilters;
 
             var cardFactory = new AdminOfferViewModelFactory();
@@ -37,7 +40,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
 
         protected override IPageSearchParams GetSearchParams()
         {
-            return searcher.SearchParams;
+            return searchParams;
         }
 
         protected override int GetTotalRecordsCount()

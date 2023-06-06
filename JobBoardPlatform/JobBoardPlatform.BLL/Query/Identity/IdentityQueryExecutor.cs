@@ -1,15 +1,14 @@
-﻿
-using JobBoardPlatform.DAL.Models.Contracts;
+﻿using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 
-namespace JobBoardPlatform.BLL.Query
+namespace JobBoardPlatform.BLL.Query.Identity
 {
     internal class IdentityQueryExecutor<T> where T : class, IUserIdentityEntity
     {
         private readonly IRepository<T> repository;
 
 
-        public IdentityQueryExecutor(IRepository<T> repository) 
+        public IdentityQueryExecutor(IRepository<T> repository)
         {
             this.repository = repository;
         }

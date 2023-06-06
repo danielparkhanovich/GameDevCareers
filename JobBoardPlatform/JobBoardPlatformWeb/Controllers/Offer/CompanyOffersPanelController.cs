@@ -1,4 +1,6 @@
-﻿using JobBoardPlatform.BLL.Commands.Offer;
+﻿using JobBoardPlatform.BLL.Commands.Admin;
+using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
@@ -14,18 +16,22 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     public class CompanyOffersPanelController : OfferCardsControllerBase
     {
         private readonly CompanyOffersSearcher offersSearcher;
+        private readonly OfferQueryExecutor queryExecutor;
 
 
         public CompanyOffersPanelController(CompanyOffersSearcher offersSearcher,
-            OfferCommandsExecutor commandsExecutor)
+            OfferCommandsExecutor commandsExecutor,
+            OfferQueryExecutor queryExecutor)
             : base(commandsExecutor)
         {
             this.offersSearcher = offersSearcher;
+            this.queryExecutor = queryExecutor;
         }
 
         public async virtual Task<IActionResult> Offers()
         {
-            var containerFactory = new CompanyOffersContainerViewModelFactory(offersSearcher);
+            var containerFactory = new CompanyOffersContainerViewModelFactory(
+                offersSearcher, GetSearchParams());
             var container = await containerFactory.Create();
 
             return View(container);
@@ -33,13 +39,20 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         protected override Task<CardsContainerViewModel> GetContainer()
         {
-            var containerFactory = new CompanyOffersContainerViewModelFactory(offersSearcher);
+            var containerFactory = new CompanyOffersContainerViewModelFactory(
+                offersSearcher, GetSearchParams());
             return containerFactory.Create();
+        }
+
+        private CompanyPanelOfferSearchParameters GetSearchParams()
+        {
+            var searchParamsFactory = new CompanyPanelOfferSearchParametersFactory();
+            return searchParamsFactory.GetSearchParams(Request);
         }
 
         protected override Task<JobOffer> GetLoadedOffer(int offerId)
         {
-            throw new NotImplementedException();
+            return queryExecutor.GetOfferById(offerId);
         }
 
         protected override IContainerCard GetContainerCard(JobOffer offer)

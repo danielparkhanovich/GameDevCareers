@@ -1,12 +1,11 @@
-﻿
-using JobBoardPlatform.DAL.Models.Contracts;
+﻿using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoardPlatform.BLL.Query
+namespace JobBoardPlatform.BLL.Query.Identity
 {
     internal class GetIdentityByEmailQuery<T> : IQuery<T>
-        where T: class, IUserIdentityEntity
+        where T : class, IUserIdentityEntity
     {
         private readonly IRepository<T> repository;
         private readonly string email;
