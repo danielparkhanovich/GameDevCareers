@@ -70,6 +70,11 @@ namespace JobBoardPlatform.PL.Requirements
             string? routeId = httpContext?.Request.RouteValues[requirement.IdParameterName]?.ToString();
             if (string.IsNullOrEmpty(routeId))
             {
+                routeId = httpContext?.Request.Query[requirement.IdParameterName];
+            }
+
+            if (string.IsNullOrEmpty(routeId))
+            {
                 throw new Exception("Missing route id parameter");
             }
             return routeId!;

@@ -8,11 +8,11 @@ namespace JobBoardPlatform.PL.Controllers.Templates
         public const string RefreshCardsContainerAction = "RefreshCardsContainer";
 
 
-        [HttpPost]
-        [Route(RefreshCardsContainerAction)]
+        [HttpPost("[action]")]
         public virtual async Task<IActionResult> RefreshCardsContainer()
         {
             var container = await GetContainer();
+            var test = Request;
             return PartialView(CardsContainerViewModel.PartialView, container);
         }
 

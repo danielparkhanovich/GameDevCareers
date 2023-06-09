@@ -6,22 +6,35 @@
 @await Html.PartialAsync("./Templates/_UpdateHtmlElementAjaxRequestScript")
 
 <script>
+    function refreshCard(action, id, data, onSuccessCallback = null) {
+        const cardId = `card-container-${id}`;
+        sendRequestWithDataAndUpdateElement(action, cardId, data, onSuccessCallback);
+    }
+
+    function refreshCardsAfterRequest(action, id, data) {
+        sendRequestWithData(action, data, refreshCards);
+    }
+
     function refreshCards(onSuccessCallback = null, isPageSwitched = false) {
         if (!isPageSwitched) {
             resetPageParameter();
         }
-        const searchParams = new URLSearchParams(window.location.search)
-        const refreshCardsAction = @Html.Raw(Json.Serialize(OfferCardsControllerBase.RefreshCardsContainerAction));;
-        let refreshCards = refreshCardsAction;
-        refreshCards += '?' + searchParams.toString();
-
+        const refreshCardsAction = getRefreshCardsAction();
         const cardContainerId = "cards-container";
-        sendRequestAndUpdateElement(refreshCards, cardContainerId, onSuccessCallback);
+        sendRequestAndUpdateElement(refreshCardsAction, cardContainerId, onSuccessCallback);
     }
 
     function resetPageParameter() {
         const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParams.Page));
         updateQueryStringParameter(paramName, 1);
+    }
+
+    function getRefreshCardsAction() {
+        const searchParams = new URLSearchParams(window.location.search)
+        const refreshCardsAction = @Html.Raw(Json.Serialize(OfferCardsControllerBase.RefreshCardsContainerAction));
+        let refreshCards = refreshCardsAction;
+        refreshCards += '?' + searchParams.toString();
+        return refreshCards;
     }
 
     function updateQueryStringParameter(key, value) {

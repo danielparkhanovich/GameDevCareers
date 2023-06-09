@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Search.Enums;
+﻿using JobBoardPlatform.BLL.Search;
+using JobBoardPlatform.BLL.Search.Enums;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
@@ -7,10 +8,10 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
     {
         public ContainerHeaderViewModel CreateViewModel()
         {
-            var filterLabels = new string[]
+            var filter = new (string, string)[]
             {
-                "Published",
-                "Shelved"
+                ("Published", OfferSearchUrlParams.HidePublished),
+                ("Shelved", OfferSearchUrlParams.HideShelved),
             };
 
             var sort = new (string, string)[]
@@ -19,14 +20,14 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
                 ("Alphabetically", SortCategoryType.Alphabetically.ToString()),
                 ("Relevenacy", SortCategoryType.Relevenacy.ToString())
             };
-            var sortLabels = sort.Select(x => x.Item1).ToArray();
-            var sortValues = sort.Select(x => x.Item2).ToArray();
 
             var viewModel = new ContainerHeaderViewModel()
             {
-                FilterLabels = filterLabels,
-                SortLabels = sortLabels,
-                SortValues = sortValues,
+                FilterLabels = filter.Select(x => x.Item1).ToArray(),
+                FilterValues = filter.Select(x => x.Item2).ToArray(),
+                SortLabels = sort.Select(x => x.Item1).ToArray(),
+                SortValues = sort.Select(x => x.Item2).ToArray(),
+                IsInvertFilters = true,
             };
 
             return viewModel;

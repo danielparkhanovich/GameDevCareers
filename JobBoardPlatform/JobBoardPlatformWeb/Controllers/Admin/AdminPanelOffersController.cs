@@ -1,12 +1,7 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
-using JobBoardPlatform.BLL.Commands.Application;
-using JobBoardPlatform.BLL.Commands.Offer;
+﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
-using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Controllers.Offer;
@@ -19,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
+    [Route("admin-panel-offers")]
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelOffersController : OfferCardsControllerBase
     {

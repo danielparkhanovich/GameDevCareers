@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatformWeb.Controllers
 {
+    [Route("")]
     public class HomeController : CardsControllerBase
     {
         private readonly MainPageOffersSearcherCacheDecorator searcher;
@@ -15,14 +16,6 @@ namespace JobBoardPlatformWeb.Controllers
         public HomeController(MainPageOffersSearcherCacheDecorator searcher)
         {
             this.searcher = searcher;
-        }
-
-        [HttpPost]
-        [Route(RefreshCardsContainerAction)]
-        public override async Task<IActionResult> RefreshCardsContainer()
-        {
-            var container = await GetContainer();
-            return PartialView(CardsContainerViewModel.PartialView, container);
         }
 
         [Route("")]
@@ -47,17 +40,20 @@ namespace JobBoardPlatformWeb.Controllers
             return searchParamsFactory.GetSearchParams(Request);
         }
 
+        [Route("privacy")]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [Route("error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View("None");
         }
 
+        [Route("log-out")]
         public async Task<IActionResult> LogOut()
         {
             var sessionManager = new AuthorizationService(HttpContext);

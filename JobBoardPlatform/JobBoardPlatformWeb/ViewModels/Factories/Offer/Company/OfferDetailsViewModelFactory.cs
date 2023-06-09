@@ -4,16 +4,13 @@ using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
-    public class OfferDetailsViewModelFactory : IViewModelAsyncFactory<OfferDetailsViewModel>
+    public class OfferDetailsViewModelFactory : IViewModelFactory<JobOffer, OfferDetailsViewModel>
     {
-        public async Task<OfferDetailsViewModel> CreateAsync()
+        public OfferDetailsViewModel Create(JobOffer offer)
         {
-            JobOffer offer = new JobOffer();
-
-            int offerId = 0;
             var viewModel = new OfferDetailsViewModel()
             {
-                OfferId = offerId,
+                OfferId = offer.Id,
                 JobTitle = offer.JobTitle,
                 City = offer.City,
                 Country = offer.Country,

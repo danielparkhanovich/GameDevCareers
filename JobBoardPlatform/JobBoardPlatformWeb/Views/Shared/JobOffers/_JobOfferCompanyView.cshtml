@@ -30,7 +30,7 @@
     bool isAvailableToEdit = offer.IsAvailableForEdit && !offer.IsDeleted;
 }
 
-<div class="my-0" id=@($"card-container-{offerId}")>
+<div class="my-0">
     <div class="card border-0 shadow-sm">
         <div class="d-flex flex-row mx-0 @(offer.IsVisibleOnMainPage ? null : "bg-dark bg-opacity-10")">
             <div class="col-7 mx-0 px-0">
@@ -77,7 +77,7 @@
                         @if (offer.StateType == OfferStateType.NotPaid)
                         {
                             img = "bi bi-credit-card-2-front-fill";
-                            text = "pay for ad";
+                            text = "not paid";
                             color = "primary";
                         }
                         else if (offer.StateType == OfferStateType.Visible)
@@ -105,28 +105,47 @@
                             color = "black";
                         }
                     }
-                    <div class="rounded-pill border border-@(color) small align-self-center pe-2" style="width: 90px;">
+                    <div class="rounded-pill border border-@(color) small align-self-center pe-2" style="width: 100px;">
                         <div class="d-flex flex-row justify-content-center align-items-center small">
                             <i class="@(img) ps-2 pe-1 text-@(color) small" style="padding-top: 3px;"></i>
                             <div class="text-@(color)">@(text)</div>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-center rounded-pill text-@(color) border border-@(color) small align-self-center ms-3 px-2" style="width: 60px;">
+                    <div class="d-flex align-items-center justify-content-center rounded-pill text-@(color) border border-@(color) small align-self-center ms-3 px-2" style="width: 70px;">
                         <small>@Model.DaysLeft</small>
                     </div>
                 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center pe-4 ms-3">
                 <div class="dropdown">
-                    <a class="nav-link dropdown-toggle rounded border border-primary px-2 mb-0 justify-content-center align-self-center" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                        <small>modify</small>
+                    <a class="nav-link dropdown-toggle rounded border border-primary px-2 mb-0 justify-content-center align-self-center" 
+                    data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        <small>more</small>
                     </a>
                     <div class="dropdown-menu py-0">
-                        <a class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm @(isAvailableToEdit ? string.Empty : "disabled")" href="@editOfferUrl">
-                            <div>Edit</div>
-                            <i class="bi bi-pencil-square ms-1"></i>
-                        </a>
-                        <button @(isAvailableToShelve ? string.Empty : "disabled") class="w-100 d-flex flex-row justify-content-between btn @(offer.IsShelved ? "btn-outline-info" : "btn-outline-warning") btn-sm mt-1"
+                        @if (offer.StateType == OfferStateType.NotPaid)
+                        {
+                            <button class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm mb-1"
+                                onclick="passPaymentOffer(@offerId);">
+                                <div>@("Pay for ad")</div>
+                                <i class="bi bi-credit-card-2-front-fill ms-1"></i>
+                            </button>
+                        }
+                        @if (offer.StateType != OfferStateType.NotPaid && offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
+                        {
+                            <a class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm mb-1" href="@applicationsUrl">
+                                <div>Applications</div>
+                                <i class="bi bi-send ms-1"></i>
+                            </a>
+                        }
+                        @if (isAvailableToEdit)
+                        {
+                            <a class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm" href="@editOfferUrl">
+                                <div>Edit</div>
+                                <i class="bi bi-pencil-square ms-1"></i>
+                            </a>
+                        }
+                        <button class="w-100 @(isAvailableToShelve ? "d-flex" : "d-none") flex-row justify-content-between btn @(offer.IsShelved ? "btn-outline-info" : "btn-outline-warning") btn-sm mt-1"
                                 onclick="shelveOffer(@offerId, @(((!offer.IsShelved).ToString().ToLower())));">
                             @if (!offer.IsShelved)
                             {
@@ -152,14 +171,6 @@
                                 <i class="bi bi-activity ms-1"></i>
                             }
                         </button>
-                        @if (offer.StateType == OfferStateType.NotPaid)
-                        {
-                            <button class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm mt-1"
-                                onclick="passPaymentOffer(@offerId);">
-                                <div>@("Pass payment")</div>
-                                <i class="bi bi-credit-card-2-front-fill ms-1"></i>
-                            </button>
-                        }
                     </div>
                 </div>
             </div>
@@ -190,10 +201,5 @@
         const action = @Html.Raw(Json.Serialize(closeOfferUrl));
         const data = { offerId: cardId };
         refreshCard(action, cardId, data, refreshCards);
-    }
-
-    function refreshCard(action, id, data, onSuccessCallback = null) {
-        const cardId = `card-container-${id}`;
-        sendRequestWithDataAndUpdateElement(action, cardId, data, onSuccessCallback);
     }
 </script>

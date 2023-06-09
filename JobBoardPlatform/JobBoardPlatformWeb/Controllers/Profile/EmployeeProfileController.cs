@@ -63,7 +63,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             }
 
             var viewModelFactory = new EmployeeProfileViewModelFactory(blobName, blobSize);
-            var viewModel = viewModelFactory.CreateViewModel(profile);
+            var viewModel = viewModelFactory.Create(profile);
 
             return viewModel;
         }

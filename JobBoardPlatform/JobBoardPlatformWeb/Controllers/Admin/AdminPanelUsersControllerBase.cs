@@ -1,11 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Commands;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Controllers.Templates;
-using JobBoardPlatform.PL.Controllers.Utils;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;

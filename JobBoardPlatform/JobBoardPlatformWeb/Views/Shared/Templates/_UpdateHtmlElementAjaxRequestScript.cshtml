@@ -38,14 +38,33 @@
         }
     }
 
-    function onError(xhr, status, error) { 
+    function updateHtmlElement(result, elementId) {
+        console.log(result);
+        const selector = `#${elementId}`;
+        const element = $(selector);
+        element.html(result);
+    }
+
+    function onError(xhr, status, error) {
+        console.error(xhr.responseText);
         console.error(status);
         console.error(error);
     }
 
-    function updateHtmlElement(result, elementId) {
-        const selector = `#${elementId}`;
-        const element = $(selector);
-        element.html(result);
+    function sendRequestWithData(url, data, onSuccessCallback) {
+        console.log(url)
+        $.ajax({
+            url: url,
+            data: data,
+            method: 'POST',
+            success: function (result) {
+                if (onSuccessCallback != null) {
+                    onSuccessCallback();
+                }
+            },
+            error: function (xhr, status, error) {
+                onError(xhr, status, error);
+            }
+        });
     }
 </script>

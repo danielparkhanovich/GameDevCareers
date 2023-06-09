@@ -8,9 +8,11 @@ using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
+    [Route("admin-panel-companies")]
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelCompaniesController : AdminPanelUsersControllerBase<CompanyIdentity, AdminPanelCompaniesViewModel>
     {
@@ -28,9 +30,9 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         protected override Task<CardsContainerViewModel> GetContainer()
         {
-            var searchParameters = GetSearchParametersFromUrl();
+            var searchParams = GetSearchParametersFromUrl();
             var containerFactory = new AdminPanelCompaniesContainerViewModelFactory(
-                identityRepository, searchParameters!);
+                identityRepository, searchParams);
             return containerFactory.CreateAsync();
         }
 

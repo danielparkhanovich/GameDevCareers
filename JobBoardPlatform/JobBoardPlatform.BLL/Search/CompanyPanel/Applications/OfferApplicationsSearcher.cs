@@ -40,7 +40,7 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
 
             if (category == SortCategoryType.PublishDate.ToString())
             {
-                available = available.OrderBy(x => x.CreatedAt);
+                available = available.OrderByDescending(x => x.CreatedAt);
             }
             else if (category == SortCategoryType.Alphabetically.ToString())
             {
@@ -48,7 +48,7 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
             }
             else if (category == SortCategoryType.Relevenacy.ToString())
             {
-                available = available.OrderBy(x =>
+                available = available.OrderByDescending(x =>
                     x.ApplicationFlagTypeId == 1 ? 1 :
                     x.ApplicationFlagTypeId == 2 ? 3 :
                     x.ApplicationFlagTypeId == 3 ? 2 :

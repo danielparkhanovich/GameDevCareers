@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using JobBoardPlatform.BLL.Search.Contracts;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.BLL.Search.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -30,6 +29,10 @@ namespace JobBoardPlatform.BLL.Search.Templates
         protected int GetIntFilter(HttpRequest request, string filterName)
         {
             string? filterString = request.Query[filterName];
+            if (string.IsNullOrEmpty(filterString))
+            {
+                // filterString = request.RouteValues[filterName];
+            }
             return int.Parse(filterString!);
         }
 

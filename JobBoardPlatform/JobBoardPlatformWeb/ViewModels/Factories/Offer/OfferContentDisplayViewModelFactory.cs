@@ -6,7 +6,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
     public class OfferContentDisplayViewModelFactory : IViewModelFactory<JobOffer, OfferContentDisplayViewModel>
     {
-        public OfferContentDisplayViewModel CreateViewModel(JobOffer offer)
+        public OfferContentDisplayViewModel Create(JobOffer offer)
         {
             var viewModel = new OfferContentDisplayViewModel();
 

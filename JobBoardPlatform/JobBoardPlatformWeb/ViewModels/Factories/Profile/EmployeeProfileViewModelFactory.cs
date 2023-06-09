@@ -16,7 +16,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             this.resumeSize = resumeSize;
         }
 
-        public EmployeeProfileViewModel CreateViewModel(EmployeeProfile profile)
+        public EmployeeProfileViewModel Create(EmployeeProfile profile)
         {
             var viewModel = new EmployeeProfileViewModel()
             {

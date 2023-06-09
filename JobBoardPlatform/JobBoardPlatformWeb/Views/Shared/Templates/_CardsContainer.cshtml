@@ -39,7 +39,8 @@
                 @for (int i = 0; i < header.FilterLabels.Length; i++)
                 {
                     <div class="form-check form-switch me-3">
-                        <input id="@($"filter-toggle-{i}")" class="form-check-input" type="checkbox" @(searchParams.FilterToggles[i] ? "checked" : string.Empty) onchange="filterRecords(this, @i);">
+                        <input id="@($"filter-toggle-{i}")" class="form-check-input" type="checkbox" @(searchParams.FilterToggles[i] ? "checked" : string.Empty) 
+                        onchange="filterRecords(this, '@header.FilterValues[i]', @(header.IsInvertFilters ? "true" : "false"));">
                         <label class="form-check-label" for="@($"filter-toggle-{i}")">@Html.Raw(header.FilterLabels[i])</label>
                     </div>
                 }
@@ -54,7 +55,7 @@
         {
             @foreach (var card in Model.ContainerCards)
             {
-                <div class="mx-2 my-2 card border-0">
+                <div class="mx-2 my-2 card border-0" id=@($"card-container-{card.Id}")>
                     @await Html.PartialAsync(card.PartialView, card)
                 </div>
             }
@@ -88,8 +89,11 @@
 
 <script>
 
-    function filterRecords(paramName, toggle) {
-        const isChecked = toggle.checked;
+    function filterRecords(toggle, paramName, invertToggle = false) {
+        let isChecked = toggle.checked;
+        if (invertToggle) {
+            isChecked = !isChecked;
+        }
         updateQueryStringParameter(paramName, isChecked);
         refreshCards();
     }

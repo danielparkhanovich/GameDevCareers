@@ -92,7 +92,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private OfferContentDisplayViewModel GetOfferContentDisplayViewModel(JobOffer offer)
         {
             var viewModelFactory = new OfferContentDisplayViewModelFactory();
-            return viewModelFactory.CreateViewModel(offer);
+            return viewModelFactory.Create(offer);
         }
 
         private async Task TryIncreaseViewsCount(JobOffer offer)

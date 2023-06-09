@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Commands;
 using JobBoardPlatform.BLL.Commands.Identities;
-using JobBoardPlatform.BLL.Search.CompanyPanel;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -8,9 +7,11 @@ using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
+    [Route("admin-panel-employees")]
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelEmployeesController : AdminPanelUsersControllerBase<EmployeeIdentity, AdminPanelEmployeesViewModel>
     {

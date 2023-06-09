@@ -31,10 +31,6 @@
                 </div>
             </div>
             <div class="d-flex flex-row justify-content-center">
-                <div class="align-self-center form-check form-switch me-3">
-                    <input id="edit-toggle" class="form-check-input" type="checkbox">
-                    <label class="form-check-label" for="edit-toggle">Edit</label>
-                </div>
                 <a asp-controller="CompanyOfferEditor" asp-action="NewOffer" class="btn btn-primary">
                     New Ad
                 </a>
@@ -47,51 +43,6 @@
 </div>
 
 <script>
-    const cardDataClass = "company-card-view-data";
-    const cardActionsClass = "company-card-actions";
-
-    const editToggle = document.getElementById("edit-toggle");
-
-    editToggle.addEventListener("change", (event) => {
-        toggleVisibilityOfCards()
-    });
-
-    function toggleVisibilityOfCards()
-    {
-        const isEdit = editToggle.checked;
-
-        const cardsCompanyData = document.getElementsByClassName(cardDataClass);
-        const cardsActions = document.getElementsByClassName(cardActionsClass);
-
-        for (let i = 0; i < cardsCompanyData.length; i++)
-        {
-            const cardData = cardsCompanyData[i];
-            const cardAction = cardsActions[i];
-
-            toggleCardVisibility(isEdit, cardData, cardAction);
-        }
-    }
-
-    function toggleCardVisibility(isEdit, cardData, cardAction)
-    {
-        if (isEdit) 
-        {
-            cardData.classList.remove("d-flex");
-            cardData.classList.add("d-none");
-
-            cardAction.classList.remove("d-none");
-            cardAction.classList.add("d-flex");
-        }
-        else 
-        {
-            cardData.classList.remove("d-none");
-            cardData.classList.add("d-flex");
-
-            cardAction.classList.remove("d-flex");
-            cardAction.classList.add("d-none");
-        }
-    }
-
     function toggleVisibility(offerId, action, isVisible) 
     {
         const data = { offerId: offerId, isVisible: isVisible };

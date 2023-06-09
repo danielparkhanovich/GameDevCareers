@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Search.Templates;
+﻿using Azure.Core;
+using JobBoardPlatform.BLL.Search.Templates;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Search.CompanyPanel.Offers
@@ -9,12 +10,11 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Offers
     public class CompanyPanelOfferSearchParametersFactory
         : SearchParamsUrlFactoryBase<CompanyPanelOfferSearchParameters>
     {
-        protected override void AssignFilterParams(HttpRequest httpRequest, CompanyPanelOfferSearchParameters searchParams)
+        protected override void AssignFilterParams(
+            HttpRequest request, CompanyPanelOfferSearchParameters searchParams)
         {
-            searchParams.IsShowPublished = !IsBoolFilter(httpRequest, OfferSearchUrlParams.HidePublished);
-            searchParams.IsShowShelved = !IsBoolFilter(httpRequest, OfferSearchUrlParams.HideShelved);
-            throw new Exception("Not implemented yet");
-            searchParams.CompanyProfileId = 0;//httpRequest.Query[OfferSearchUrlParameters.SortCategory];
+            searchParams.IsShowPublished = !IsBoolFilter(request, OfferSearchUrlParams.HidePublished);
+            searchParams.IsShowShelved = !IsBoolFilter(request, OfferSearchUrlParams.HideShelved);
         }
     }
 }

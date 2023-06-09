@@ -32,7 +32,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
             var profile = await profileRepository.Get(id);
 
-            var profileViewModel = viewModelFactory.CreateViewModel(profile);
+            var profileViewModel = viewModelFactory.Create(profile);
 
             return profileViewModel;
         }

@@ -6,7 +6,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
 {
     public class CompanyProfileViewModelFactory : IViewModelFactory<CompanyProfile, CompanyProfileViewModel>
     {
-        public CompanyProfileViewModel CreateViewModel(CompanyProfile profile)
+        public CompanyProfileViewModel Create(CompanyProfile profile)
         {
             var viewModel = new CompanyProfileViewModel()
             {

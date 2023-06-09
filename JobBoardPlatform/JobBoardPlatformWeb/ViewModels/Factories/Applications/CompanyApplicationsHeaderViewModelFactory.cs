@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Search.Enums;
+﻿using JobBoardPlatform.BLL.Search;
+using JobBoardPlatform.BLL.Search.Enums;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Applications
@@ -7,12 +8,12 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Applications
     {
         public ContainerHeaderViewModel CreateViewModel()
         {
-            var filterLabels = new string[]
+            var filter = new (string, string)[]
             {
-                "Unseen",
-                "<i class=\"bi bi-star\"></i>",
-                "<i class=\"bi bi-question-lg\"></i>",
-                "<i class=\"bi bi-x-lg\"></i>"
+                ("Unseen", OfferSearchUrlParams.HideUnseen),
+                ("<i class=\"bi bi-star\"></i>", OfferSearchUrlParams.HideMustHire),
+                ("<i class=\"bi bi-question-lg\"></i>", OfferSearchUrlParams.HideAverage),
+                ("<i class=\"bi bi-x-lg\"></i>", OfferSearchUrlParams.HideRejected)
             };
 
             var sort = new (string, string)[]
@@ -22,14 +23,13 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Applications
                 ("Relevenacy", SortCategoryType.Relevenacy.ToString())
             };
 
-            var sortLabels = sort.Select(x => x.Item1).ToArray();
-            var sortValues = sort.Select(x => x.Item2).ToArray();
-
             var viewModel = new ContainerHeaderViewModel()
             {
-                FilterLabels = filterLabels,
-                SortLabels = sortLabels,
-                SortValues = sortValues,
+                FilterLabels = filter.Select(x => x.Item1).ToArray(),
+                FilterValues = filter.Select(x => x.Item2).ToArray(),
+                SortLabels = sort.Select(x => x.Item1).ToArray(),
+                SortValues = sort.Select(x => x.Item2).ToArray(),
+                IsInvertFilters = true,
             };
 
             return viewModel;

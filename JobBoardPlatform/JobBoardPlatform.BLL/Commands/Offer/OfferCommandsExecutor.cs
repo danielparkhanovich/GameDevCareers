@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
-using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Models.Contracts;
 using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;

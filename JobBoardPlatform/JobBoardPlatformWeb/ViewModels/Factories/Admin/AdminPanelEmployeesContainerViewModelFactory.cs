@@ -39,7 +39,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
 
         protected override IPageSearchParams GetSearchParams()
         {
-            return null;
+            return new CompanyPanelOfferSearchParameters();
         }
 
         protected override int GetTotalRecordsCount()

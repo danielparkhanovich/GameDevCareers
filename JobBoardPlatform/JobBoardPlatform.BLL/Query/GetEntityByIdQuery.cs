@@ -23,7 +23,7 @@ namespace JobBoardPlatform.BLL.Query
         {
             var set = await repository.GetAllSet();
             var loaded = loader.Load(set);
-            return await set.SingleAsync(x => x.Id == id);
+            return await loaded.SingleAsync(x => x.Id == id);
         }
     }
 }

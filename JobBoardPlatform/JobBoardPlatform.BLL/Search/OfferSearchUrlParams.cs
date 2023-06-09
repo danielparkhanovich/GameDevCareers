@@ -9,7 +9,7 @@
         public const string Search = "search";
         public const string HidePublished = "hidepublished";
         public const string HideShelved = "hideshelved";
-        public const string OfferId = "offerid";
+        public const string OfferId = "offerId";
 
         // General
         public const string Page = "page";
@@ -17,9 +17,9 @@
         public const string SortCategory = "sortcategory";
 
         // Applications
-        public const string ShowUnseen = "showunseen";
-        public const string ShowMustHire = "showmusthire";
-        public const string ShowAverage = "showaverage";
-        public const string ShowRejected = "showrejected";
+        public const string HideUnseen = "hideunseen";
+        public const string HideMustHire = "hidemusthire";
+        public const string HideAverage = "hideaverage";
+        public const string HideRejected = "hiderejected";
     }
 }

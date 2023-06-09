@@ -1,6 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
-using JobBoardPlatform.BLL.Commands.Application;
-using JobBoardPlatform.BLL.Commands.Offer;
+﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
@@ -13,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
+    [Route("manage-ads")]
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOffersPanelController : OfferCardsControllerBase
     {
@@ -29,7 +28,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             this.queryExecutor = queryExecutor;
         }
 
-        public async virtual Task<IActionResult> Offers()
+        [Route("offers")]
+        public async Task<IActionResult> Offers()
         {
             var containerFactory = new CompanyOffersContainerViewModelFactory(
                 offersSearcher, GetSearchParams());
@@ -48,7 +48,9 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private CompanyPanelOfferSearchParameters GetSearchParams()
         {
             var searchParamsFactory = new CompanyPanelOfferSearchParametersFactory();
-            return searchParamsFactory.GetSearchParams(Request);
+            var searchParams = searchParamsFactory.GetSearchParams(Request);
+            searchParams.CompanyProfileId = UserSessionUtils.GetProfileId(User);
+            return searchParams;
         }
 
         protected override Task<JobOffer> GetLoadedOffer(int offerId)

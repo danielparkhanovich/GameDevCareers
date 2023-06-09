@@ -9,11 +9,10 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
         protected override void AssignFilterParams(
             HttpRequest request, CompanyPanelApplicationSearchParams searchParams)
         {
-            searchParams.IsShowUnseen = IsBoolFilter(request, OfferSearchUrlParams.ShowUnseen);
-            searchParams.IsShowMustHire = IsBoolFilter(request, OfferSearchUrlParams.ShowMustHire);
-            searchParams.IsShowAverage = IsBoolFilter(request, OfferSearchUrlParams.ShowAverage);
-            searchParams.IsShowRejected = IsBoolFilter(request, OfferSearchUrlParams.ShowRejected);
-            searchParams.OfferId = GetIntFilter(request, OfferSearchUrlParams.OfferId);
+            searchParams.IsShowUnseen = !IsBoolFilter(request, OfferSearchUrlParams.HideUnseen);
+            searchParams.IsShowMustHire = !IsBoolFilter(request, OfferSearchUrlParams.HideMustHire);
+            searchParams.IsShowAverage = !IsBoolFilter(request, OfferSearchUrlParams.HideAverage);
+            searchParams.IsShowRejected = !IsBoolFilter(request, OfferSearchUrlParams.HideRejected);
         }
     }
 }
