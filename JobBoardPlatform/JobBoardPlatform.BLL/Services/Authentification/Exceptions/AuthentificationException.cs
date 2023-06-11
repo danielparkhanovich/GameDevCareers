@@ -5,7 +5,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Exceptions
     {
         public const string EmailNotFound = "Email is not found";
         public const string EmailAlreadyRegistered = "Email is already registered";
-        public const string EmailWrong = "Email is wrong";
+        public const string EmailWrong = "Wrong email";
         public const string WrongPassword = "Wrong password";
 
 

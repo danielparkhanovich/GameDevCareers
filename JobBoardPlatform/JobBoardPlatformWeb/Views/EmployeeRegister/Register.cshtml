@@ -3,47 +3,19 @@
     ViewData["Title"] = "Employee";
 }
 
-<div class="d-flex flex-column aligns-items-center justify-content-center mh-100">
+<div class="d-flex flex-column aligns-items-center justify-content-center min-vh-100 mx-auto" style="max-width: 762px; margin-top: -56px;">
     <h1 class="text-center">Register</h1>
+    <!-- Render authorization buttons -->
+    @{
+            ViewData["AuthorizationButtonsText"] = "Register with";
+    }
+    @await Html.PartialAsync("./Login/_LoginProviderButtons", Model)
+
     <!-- Render shared login form and pass controller name -->
     @{
         ViewData["LoginControllerName"] = "EmployeeLogin";
     }
-    <div class="container px-5">
-        <form method="post" class="d-flex flex-column aligns-items-center my-4">
-            @await Html.PartialAsync("./Register/_Register", Model)
-         </form>
-        <div class="col-md-12 text-center mt-2">
-            <hr class="my-12" />
-            <div>
-                <p>or register with:</p>
-                <button type="button" class="btn btn-secondary btn-floating mx-1 mb-3">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-google fs-5 mx-2"></i>
-                        <div>Register with Google</div>
-                    </div>
-                </button>
-                <button type="button" class="btn btn-secondary btn-floating mx-1 mb-3">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-github fs-5 mx-2"></i>
-                        <div>Register with Github</div>
-                    </div>
-                </button>
-                <button type="button" class="btn btn-secondary btn-floating mx-1 mb-3">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-linkedin fs-5 mx-2"></i>
-                        <div>Register with LinkedIn</div>
-                    </div>
-                </button>
-                <button type="button" class="btn btn-secondary btn-floating mx-1 mb-3">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-facebook fs-5 mx-2"></i>
-                        <div>Register with Facebook</div>
-                    </div>
-                </button>
-            </div>
-        </div>
-    </div>
+    @await Html.PartialAsync("./Register/_Register", Model)
 </div>
 
 @section Scripts {
