@@ -10,6 +10,7 @@ using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.BLL.Commands.Profile;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -53,16 +54,11 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
 
             var profile = await profileRepository.Get(id);
+            var metadata = await userProfileResumeStorage.GetBlobMetadataAsync(profile.ResumeUrl);
+            string resumeName = metadata.Name;
+            string resumeSize = metadata.Size;
 
-            string blobName = string.Empty;
-            string blobSize = string.Empty;
-            if (!string.IsNullOrEmpty(profile.ResumeUrl))
-            {
-                blobName = await userProfileResumeStorage.GetBlobName(profile.ResumeUrl);
-                blobSize = await userProfileResumeStorage.GetBlobSize(profile.ResumeUrl);
-            }
-
-            var viewModelFactory = new EmployeeProfileViewModelFactory(blobName, blobSize);
+            var viewModelFactory = new EmployeeProfileViewModelFactory(resumeName, resumeSize);
             var viewModel = viewModelFactory.Create(profile);
 
             return viewModel;

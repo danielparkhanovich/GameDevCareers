@@ -8,7 +8,8 @@ namespace JobBoardPlatform.PL.Filters
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (UserSessionUtils.IsLoggedIn(context.HttpContext.User))
+            if (UserSessionUtils.IsLoggedIn(context.HttpContext.User) && 
+                UserSessionUtils.IsHasAnyRole(context.HttpContext.User))
             {
                 context.Result = new RedirectToActionResult("Index", "Home", null);
             }

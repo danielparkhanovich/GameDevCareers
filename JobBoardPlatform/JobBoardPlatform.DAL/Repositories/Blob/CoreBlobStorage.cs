@@ -1,6 +1,8 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using JobBoardPlatform.DAL.Options;
+using JobBoardPlatform.DAL.Repositories.Blob.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -49,9 +51,9 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
 
         public async Task<string> UpdateAsync(string? path, IFormFile newFile)
         {
-            if (!path.IsNullOrEmpty())
+            if (await IsExistsAsync(path))
             {
-                await DeleteAsync(path);
+                await DeleteAsync(path!);
             }
 
             var newPath = await AddAsync(newFile);
@@ -74,45 +76,41 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
             await blobClient.DeleteAsync();
         }
 
-        public async Task<string> GetBlobName(string path)
+        /// <returns>Blob file metadata or empty object in case if not found</returns>
+        public async Task<FileMetadata> GetBlobMetadataAsync(string? resumeUrl)
         {
-            var blobProperties = await GetBlobProperties(path);
-
-            string fileName = string.Empty;
-
-            if (blobProperties.Metadata.ContainsKey(NameProperty)) 
+            if (await IsExistsAsync(resumeUrl))
             {
-                fileName = blobProperties.Metadata[NameProperty];
+                return await GetFileMetadataAsync(resumeUrl!);
             }
-
-            return fileName.ToString();
+            else
+            {
+                return new FileMetadata();
+            }
         }
 
-        public async Task<string> GetBlobSize(string path)
+        public async Task<bool> IsExistsAsync(string? path)
         {
-            var blobProperties = await GetBlobProperties(path);
-
-            long fileSizeInBytes = blobProperties.ContentLength;
-
-            float fileSize = (float)fileSizeInBytes / 1024;
-            string format = "Kb";
-
-            if (fileSize > 1024)
+            if (string.IsNullOrEmpty(path))
             {
-                fileSize /= 1024;
-                format = "Mb";
+                return false;
             }
 
-            var fileSizeFormatted = fileSize.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-
-            return $"{fileSizeFormatted} {format}";
+            try
+            {
+                await GetFileMetadataAsync(path);
+                return true;
+            }
+            catch (BlobStorageException e)
+            {
+                return false;
+            }
         }
 
         protected virtual Dictionary<string, string> GetMetadata(IFormFile file)
         {
             var metadata = new Dictionary<string, string>();
             metadata[NameProperty] = file.FileName;
-
             return metadata;
         }
 
@@ -121,6 +119,45 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
         protected abstract string GetFileName(IFormFile file);
 
         protected abstract BlobHttpHeaders GetBlobHttpHeaders();
+
+        private async Task<FileMetadata> GetFileMetadataAsync(string path)
+        {
+            return new FileMetadata()
+            {
+                Name = await GetBlobName(path),
+                Size = await GetBlobSize(path),
+            };
+        }
+
+        private async Task<string> GetBlobName(string path)
+        {
+            var blobProperties = await GetBlobProperties(path);
+
+            string fileName = string.Empty;
+            if (blobProperties.Metadata.ContainsKey(NameProperty))
+            {
+                fileName = blobProperties.Metadata[NameProperty];
+            }
+
+            return fileName.ToString();
+        }
+
+        private async Task<string> GetBlobSize(string path)
+        {
+            var blobProperties = await GetBlobProperties(path);
+            long fileSizeInBytes = blobProperties.ContentLength;
+            return FormatSizeString(fileSizeInBytes);
+        }
+
+        private async Task<BlobProperties> GetBlobProperties(string path)
+        {
+            BlobContainerClient containerClient = await GetContainerClientAsync();
+
+            var fileName = path.Split('/').Last();
+            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+
+            return await TryGetPropertiesFromRequestAsync(blobClient);
+        }
 
         private async Task<BlobContainerClient> GetContainerClientAsync()
         {
@@ -134,15 +171,31 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
             return containerClient;
         }
 
-        private async Task<BlobProperties> GetBlobProperties(string path)
+        private async Task<BlobProperties> TryGetPropertiesFromRequestAsync(BlobClient blobClient)
         {
-            BlobContainerClient containerClient = await GetContainerClientAsync();
+            try
+            {
+                return await blobClient.GetPropertiesAsync();
+            }
+            catch (RequestFailedException e)
+            {
+                throw new BlobStorageException(BlobStorageException.ItemNotFound, e);
+            }
+        }
 
-            var fileName = path.Split('/').Last();
-            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+        private string FormatSizeString(long fileSizeInBytes)
+        {
+            float fileSize = (float)fileSizeInBytes / 1024;
+            string format = "Kb";
 
-            var properties = await blobClient.GetPropertiesAsync();
-            return properties;
+            if (fileSize > 1024)
+            {
+                fileSize /= 1024;
+                format = "Mb";
+            }
+
+            var fileSizeFormatted = fileSize.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            return $"{fileSizeFormatted} {format}";
         }
     }
 }

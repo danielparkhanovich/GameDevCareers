@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Common;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -35,13 +36,6 @@ namespace JobBoardPlatform.BLL.Services.Authentification
             {
                 throw new AuthentificationException(AuthentificationException.WrongPassword);
             }
-        }
-
-        private async Task<T?> GetUserByEmailAsync(string email)
-        {
-            var userSet = await identityRepository.GetAllSet();
-            var user = await userSet.FirstOrDefaultAsync(x => x.Email == email);
-            return user;
         }
     }
 }

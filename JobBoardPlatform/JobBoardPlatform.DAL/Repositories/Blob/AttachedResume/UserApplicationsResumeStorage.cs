@@ -3,7 +3,7 @@ using JobBoardPlatform.DAL.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace JobBoardPlatform.DAL.Repositories.Blob
+namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
 {
     public class UserApplicationsResumeStorage : CoreBlobStorage
     {

@@ -6,20 +6,21 @@ using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Services.Authentification
 {
-    public class AuthentificationService<T> : IAuthentificationService<T> 
+    /// <summary>
+    /// Example providers: Google/Facebook...
+    /// </summary>
+    public class AuthentificationServiceWithIdentityProvider<T> : IAuthentificationService<T> 
         where T : class, IUserIdentityEntity
     {
         private readonly IRepository<T> identityRepository;
         private readonly IIdentityValidator<T> identityValidator;
-        private readonly IPasswordHasher passwordHasher;
         private readonly IdentityQueryExecutor<T> identityQuery;
 
 
-        public AuthentificationService(IRepository<T> repository)
+        public AuthentificationServiceWithIdentityProvider(IRepository<T> repository)
         {
             this.identityRepository = repository;
             this.identityValidator = new IdentityValidator<T>(repository);
-            this.passwordHasher = new MD5Hasher();
             this.identityQuery = new IdentityQueryExecutor<T>(repository);
         }
 
@@ -27,18 +28,13 @@ namespace JobBoardPlatform.BLL.Services.Authentification
         {
             var user = await identityQuery.GetIdentityByEmail(identity.Email);
             identityValidator.ValidateRegisterAsync(user);
-
-            string hashedPassword = passwordHasher.GetHash(identity.HashPassword);
-            identity.HashPassword = hashedPassword;
-
             return await AddNewUser(identity);
         }
 
         public async Task<T> TryLoginAsync(T identity)
         {
             var user = await identityQuery.GetIdentityByEmail(identity.Email);
-            string hashedPassword = passwordHasher.GetHash(identity.HashPassword);
-            identityValidator.ValidateLoginAsync(user, hashedPassword);
+            identityValidator.ValidateLoginAsync(user, user.HashPassword);
             return user;
         }
 

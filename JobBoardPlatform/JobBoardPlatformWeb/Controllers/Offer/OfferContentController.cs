@@ -13,6 +13,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using Microsoft.AspNetCore.Authorization;
 using JobBoardPlatform.BLL.Query.Identity;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -73,12 +74,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             {
                 return RedirectToAction("Offer");
             }
-
-            if (content.File == null && string.IsNullOrEmpty(content.ResumeUrl))
-            {
-                return RedirectToAction("Offer");
-            }
-            if (content.File == null && string.IsNullOrEmpty(await resumeStorage.GetBlobName(content.ResumeUrl)))
+            else if (content.File == null && await resumeStorage.IsExistsAsync(content.ResumeUrl))
             {
                 return RedirectToAction("Offer");
             }
@@ -132,16 +128,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private async Task TryFillResumeField(OfferApplicationUpdateViewModel update)
         {
             string? resumeUrl = update.AttachedResume.ResumeUrl;
-            if (resumeUrl != null)
-            {
-                update.AttachedResume.FileName = await resumeStorage.GetBlobName(resumeUrl);
-                update.AttachedResume.FileSize = await resumeStorage.GetBlobSize(resumeUrl);
-            }
+            FileMetadata metadata = await resumeStorage.GetBlobMetadataAsync(resumeUrl);
+            update.AttachedResume.FileName = metadata.Name;
+            update.AttachedResume.FileSize = metadata.Size;
         }
 
         private bool IsIncreaseOfferViewsCount(JobOffer offer)
         {
-            return UserSessionUtils.IsLoggedIn(User) && 
+            return UserSessionUtils.IsLoggedIn(User) &&
                    !UserRolesUtils.IsUserOwner(User, offer) && 
                    !UserRolesUtils.IsUserAdmin(User);
         }

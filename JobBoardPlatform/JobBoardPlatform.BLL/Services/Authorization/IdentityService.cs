@@ -17,11 +17,13 @@ namespace JobBoardPlatform.BLL.Services.Authorization
         private readonly IAuthorizationService authorizationService;
 
 
-        public IdentityService(HttpContext httpContext, 
-            IRepository<TIdentity> userRepository, IRepository<TProfile> profileRepository)
+        public IdentityService(
+            HttpContext httpContext,
+            IAuthentificationService<TIdentity> authentificationService, 
+            IRepository<TProfile> profileRepository)
         {
             this.profileRepository = profileRepository;
-            this.authentificationService = new AuthentificationService<TIdentity>(userRepository);
+            this.authentificationService = authentificationService;
             this.authorizationService = new AuthorizationService(httpContext);
         }
 

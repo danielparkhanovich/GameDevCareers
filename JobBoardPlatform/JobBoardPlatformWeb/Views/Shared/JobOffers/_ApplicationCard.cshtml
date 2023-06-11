@@ -172,6 +172,6 @@
 
         const action = @Html.Raw(Json.Serialize(CompanyApplicationsPanelController.SetPriorityAction));
         const data = { applicationId: applicationId, priorityIndex: priorityIndex };
-        refreshCard(action, applicationId, data);
+        refreshCardsAfterRequest(action, applicationId, data);
     }
 </script>

@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
+﻿using JobBoardPlatform.BLL.Services.Authentification;
+using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -39,7 +40,9 @@ namespace JobBoardPlatform.PL.Controllers.Register
 
         private async Task<IActionResult> TryRegister(TViewModel userLogin, TIdentity credentials)
         {
-            var session = new IdentityService<TIdentity, TProfile>(HttpContext, credentialsRepository, profileRepository);
+            var authentification = new AuthentificationService<TIdentity>(credentialsRepository);
+            var session = new IdentityService<TIdentity, TProfile>(
+                HttpContext, authentification, profileRepository);
 
             try
             {

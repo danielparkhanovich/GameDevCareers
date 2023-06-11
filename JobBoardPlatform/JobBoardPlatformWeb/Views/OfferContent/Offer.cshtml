@@ -1,6 +1,7 @@
 ﻿
 @model OfferContentViewModel
 @{
+    ViewData["Title"] = $"{Model.Display.JobTitle} for {Model.Display.CompanyName}";
     var offerDescription = Model.Display;
 
     bool isFullyRemote = offerDescription.WorkLocationType == WorkLocationTypeEnum.FullyRemote.ToString();

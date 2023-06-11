@@ -3,7 +3,7 @@ using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Query.Identity
 {
-    internal class IdentityQueryExecutor<T> where T : class, IUserIdentityEntity
+    public class IdentityQueryExecutor<T> where T : class, IUserIdentityEntity
     {
         private readonly IRepository<T> repository;
 

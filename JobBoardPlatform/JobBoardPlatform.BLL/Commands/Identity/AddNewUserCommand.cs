@@ -20,6 +20,7 @@ namespace JobBoardPlatform.BLL.Commands.Identities
         {
             this.repository = repository;
             this.identity = identity;
+            this.AddedRecord = null;
         }
 
         public async Task Execute()

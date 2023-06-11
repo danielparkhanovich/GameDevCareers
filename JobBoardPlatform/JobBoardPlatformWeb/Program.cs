@@ -15,9 +15,14 @@ using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
-using JobBoardPlatform.BLL.Commands.Admin;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Query.Identity;
+using JobBoardPlatform.BLL.Services.Authorization.Contracts;
+using JobBoardPlatform.BLL.Services.Authorization;
+using JobBoardPlatform.DAL.Models.Employee;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +36,40 @@ builder.Services.AddAuthentication(
     {
         option.LoginPath = "/Login";
         option.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration.GetValue<string>("Authentication:Google:ClientId");
+        options.ClientSecret = builder.Configuration.GetValue<string>("Authentication:Google:ClientSecret");
+        options.Scope.Add("profile");
+        options.ClaimActions.MapJsonKey("picture", "picture");
+    })
+    .AddFacebook(options =>
+    {
+        options.AppId = builder.Configuration.GetValue<string>("Authentication:Facebook:ClientId");
+        options.AppSecret = builder.Configuration.GetValue<string>("Authentication:Facebook:ClientSecret");
+        options.Fields.Add("picture");
+        options.Events = new OAuthEvents
+        {
+            OnCreatingTicket = context =>
+            {
+                var identity = (ClaimsIdentity)context.Principal!.Identity!;
+                var profileImg = context.User
+                    .GetProperty("picture").GetProperty("data").GetProperty("url").ToString();
+                identity.AddClaim(new Claim("picture", profileImg));
+                return Task.CompletedTask;
+            }
+        };
+    })
+    .AddGitHub(options =>
+    {
+        options.ClientId = builder.Configuration.GetValue<string>("Authentication:GitHub:ClientId");
+        options.ClientSecret = builder.Configuration.GetValue<string>("Authentication:GitHub:ClientSecret");
+    })
+    .AddLinkedIn(options =>
+    {
+        options.ClientId = builder.Configuration.GetValue<string>("Authentication:LinkedIn:ClientId");
+        options.ClientSecret = builder.Configuration.GetValue<string>("Authentication:LinkedIn:ClientSecret");
     }
 );
 
@@ -55,6 +94,8 @@ builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
 
 // BLL
+builder.Services.AddTransient<IdentityQueryExecutor<EmployeeIdentity>>();
+builder.Services.AddTransient<IIdentityServiceWithProvider<EmployeeIdentity>, EmployeeIdentityServiceWithProvider>();
 builder.Services.AddTransient<OffersCacheManager>();
 builder.Services.AddTransient<OfferQueryExecutor>();
 builder.Services.AddTransient<OfferCommandsExecutor>();
@@ -102,6 +143,7 @@ else
     builder.Services.AddTransient<IOfferActionHandlerFactory, OfferActionEmptyHandlerFactory>();
 }
 //
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -119,6 +161,8 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseCors();
 
 app.MapControllerRoute(
     name: "default",

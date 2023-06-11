@@ -5,6 +5,7 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
+using JobBoardPlatform.BLL.Services.Authentification;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
@@ -39,7 +40,9 @@ namespace JobBoardPlatform.PL.Controllers.Login
 
         private async Task<IActionResult> TryLogin(UserLoginViewModel userLogin, TIdentity credentials)
         {
-            var session = new IdentityService<TIdentity, TProfile>(HttpContext, credentialsRepository, profileRepository);
+            var authentification = new AuthentificationService<TIdentity>(credentialsRepository);
+            var session = new IdentityService<TIdentity, TProfile>(
+                HttpContext, authentification, profileRepository);
 
             try
             {

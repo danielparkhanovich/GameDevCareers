@@ -9,6 +9,11 @@ namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
             return user.Identity.IsAuthenticated;
         }
 
+        public static bool IsHasAnyRole(ClaimsPrincipal user)
+        {
+            return user.FindFirst(UserSessionProperties.Role) != null;
+        }
+
         public static int GetIdentityId(ClaimsPrincipal user)
         {
             return int.Parse(user.FindFirst(UserSessionProperties.NameIdentifier)!.Value);

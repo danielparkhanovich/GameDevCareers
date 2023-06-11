@@ -3,6 +3,7 @@ using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
