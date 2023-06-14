@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,40 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Navbar_Title" xml:space="preserve">
-    <value>Find your next job in game development</value>
-  </data>
-  <data name="OfferType_Commission" xml:space="preserve">
-    <value>Commission</value>
-  </data>
-  <data name="OfferType_Employment" xml:space="preserve">
-    <value>Employment</value>
-  </data>
-  <data name="Technology_Widget_All" xml:space="preserve">
-    <value>All</value>
-  </data>
-  <data name="Technology_Widget_Audio" xml:space="preserve">
-    <value>Audio</value>
-  </data>
-  <data name="Technology_Widget_Graphics3D" xml:space="preserve">
-    <value>Graphics 3D</value>
-  </data>
-  <data name="Technology_Widget_LevelDesign" xml:space="preserve">
-    <value>Level Design</value>
-  </data>
-  <data name="Technology_Widget_Programming" xml:space="preserve">
-    <value>Programming</value>
-  </data>
-  <data name="Button_Search_Text" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="Toggle_Remote_Text" xml:space="preserve">
-    <value>Remote</value>
-  </data>
   <data name="Toggle_With_Salary_Text" xml:space="preserve">
-    <value>With salary</value>
-  </data>
-  <data name="Field_Search_Placeholder_Text" xml:space="preserve">
-    <value>Search e.g. skill, location, company</value>
+    <value>Test</value>
   </data>
 </root>

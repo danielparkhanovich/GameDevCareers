@@ -20,7 +20,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
         public AuthentificationServiceWithIdentityProvider(IRepository<T> repository)
         {
             this.identityRepository = repository;
-            this.identityValidator = new IdentityValidator<T>(repository);
+            this.identityValidator = new IdentityValidator<T>();
             this.identityQuery = new IdentityQueryExecutor<T>(repository);
         }
 

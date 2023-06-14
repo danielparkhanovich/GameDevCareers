@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using JobBoardPlatform.BLL.Services.Session;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
 {
@@ -6,7 +8,11 @@ namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
     {
         public static bool IsLoggedIn(ClaimsPrincipal user)
         {
-            return user.Identity.IsAuthenticated;
+            if (TryGetRole(user) == null)
+            {
+                return false;
+            }
+            return user.Identity!.IsAuthenticated;
         }
 
         public static bool IsHasAnyRole(ClaimsPrincipal user)
@@ -26,7 +32,12 @@ namespace JobBoardPlatform.BLL.Services.Authorization.Utilities
 
         public static string GetRole(ClaimsPrincipal user)
         {
-            return user.FindFirst(UserSessionProperties.Role)!.Value;
+            return TryGetRole(user)!;
+        }
+
+        private static string? TryGetRole(ClaimsPrincipal user)
+        {
+            return user.FindFirst(UserSessionProperties.Role)?.Value;
         }
     }
 }

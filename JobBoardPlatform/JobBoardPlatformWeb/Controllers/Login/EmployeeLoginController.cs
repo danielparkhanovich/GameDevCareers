@@ -4,11 +4,11 @@ using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
-using JobBoardPlatform.BLL.Services.Authentification.Common;
 using JobBoardPlatform.BLL.Services.Authorization.Contracts;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using AspNet.Security.OAuth.GitHub;
 using AspNet.Security.OAuth.LinkedIn;
+using JobBoardPlatform.BLL.Services.Authorization.Policies.IdentityProviders;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
@@ -46,61 +46,79 @@ namespace JobBoardPlatform.PL.Controllers.Login
 
         [HttpGet]
         [Route("google")]
-        public async Task LoginWithGoogle()
+        public Task LoginWithGoogle()
         {
-            var redirectUrl = Url.Action("LoginWithGoogleCallback");
-            await HttpContext.ChallengeAsync(
-                GoogleDefaults.AuthenticationScheme, new AuthenticationProperties()
-            {
-                RedirectUri = redirectUrl
-            });
+            return ChallengeAsync(
+                GoogleDefaults.AuthenticationScheme, 
+                "LoginWithGoogleCallback");
         }
 
         [HttpGet]
         [Route("facebook")]
-        public async Task LoginWithFacebook()
+        public Task LoginWithFacebook()
         {
-            var redirectUrl = Url.Action("LoginWithGoogleCallback");
-            await HttpContext.ChallengeAsync(
-                FacebookDefaults.AuthenticationScheme, new AuthenticationProperties()
-            {
-                RedirectUri = redirectUrl
-            });
+            return ChallengeAsync(
+                FacebookDefaults.AuthenticationScheme, 
+                "LoginWithFacebookCallback");
         }
 
         [HttpGet]
-        [Route("gitHub")]
-        public async Task LoginWithGitHub()
+        [Route("github")]
+        public Task LoginWithGitHub()
         {
-            var redirectUrl = Url.Action("LoginWithGoogleCallback");
-            await HttpContext.ChallengeAsync(
-                GitHubAuthenticationDefaults.AuthenticationScheme, new AuthenticationProperties()
-            {
-                RedirectUri = redirectUrl
-            });
+            return ChallengeAsync(
+                GitHubAuthenticationDefaults.AuthenticationScheme, 
+                "LoginWithGitHubCallback");
         }
 
         [HttpGet]
-        [Route("linkedIn")]
-        public async Task LoginWithLinkedIn()
+        [Route("linkedin")]
+        public Task LoginWithLinkedIn()
         {
-            var redirectUrl = Url.Action("LoginWithGoogleCallback");
-            await HttpContext.ChallengeAsync(
-                LinkedInAuthenticationDefaults.AuthenticationScheme, new AuthenticationProperties()
-            {
-                RedirectUri = redirectUrl
-            });
-        }
-
-        private async Task ChallengeAsync(string scheme)
-        {
-
+            return ChallengeAsync(
+                LinkedInAuthenticationDefaults.AuthenticationScheme, 
+                "LoginWithLinkedInCallback");
         }
 
         [Route("google-callback")]
-        public async Task<IActionResult> LoginWithGoogleCallback()
+        public Task<IActionResult> LoginWithGoogleCallback()
         {
-            await identityService.TryLoginOrRegisterAsync(HttpContext, AuthentificationValues.GoogleProfileImageKey);
+            return TryLoginOrRegisterAsync(new GoogleProviderClaimKeys());
+        }
+
+        [Route("facebook-callback")]
+        public Task<IActionResult> LoginWithFacebookCallback()
+        {
+            return TryLoginOrRegisterAsync(new FacebookProviderClaimKeys());
+        }
+
+        [Route("github-callback")]
+        public Task<IActionResult> LoginWithGitHubCallback()
+        {
+            return TryLoginOrRegisterAsync(new GitHubProviderClaimKeys());
+        }
+
+        [Route("linkedin-callback")]
+        public Task<IActionResult> LoginWithLinkedInCallback()
+        {
+            return TryLoginOrRegisterAsync(new LinkedInProviderClaimKeys());
+        }
+
+        private async Task ChallengeAsync(string scheme, string callback)
+        {
+            var redirectUrl = Url.Action(callback, "EmployeeLogin", new { area = "", route = "signin-employee" });
+            await HttpContext.ChallengeAsync(
+                scheme, new AuthenticationProperties()
+                {
+                    RedirectUri = redirectUrl
+                }
+            );
+        }
+
+        private async Task<IActionResult> TryLoginOrRegisterAsync(IIdentityProviderClaimKeys claimKeys)
+        {
+
+            await identityService.TryLoginOrRegisterAsync(HttpContext, claimKeys);
             return RedirectToAction("Index", "Home");
         }
     }

@@ -17,7 +17,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification
         public ModifyIdentityService(IRepository<T> repository)
         {
             this.identityRepository = repository;
-            this.identityValidator = new IdentityValidator<T>(repository);
+            this.identityValidator = new IdentityValidator<T>();
             this.passwordHasher = new MD5Hasher();
             this.identityQuery = new IdentityQueryExecutor<T>(repository);
         }
