@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using JobBoardPlatform.BLL.Services.Session.Tokens;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -14,23 +15,20 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
             this.cache = cache;
         }
 
-        public async Task UpdateAsync(T entry)
+        public async Task UpdateAsync(string entryKey, T entry)
         {
             var serialized = GetSerialized(entry);
             var bytes = TryGetBytesFromSerialized(serialized);
-            await cache.SetAsync(GetEntryKey(), bytes, GetOptions());
+            await cache.SetAsync(entryKey, bytes, GetOptions());
         }
 
-        public async Task<T> GetAsync()
+        public async Task<T> GetAsync(string entryKey)
         {
-            var bytes = await cache.GetAsync(GetEntryKey());
+            var bytes = await cache.GetAsync(entryKey);
             var serialized = TrySerializedFromBytes(bytes);
             var entry = TryDeserializeEntry(serialized);
             return entry!;
         }
-
-        protected abstract string GetEntryKey();
-
         protected abstract DistributedCacheEntryOptions GetOptions();
 
         private string GetSerialized(T entry)
@@ -42,10 +40,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
         {
             if (IsSerializedEmpty(serialized))
             {
-                throw new Exception(
-                    $"Unable to update cache. " +
-                    $"Forbidden to update to empty state. " +
-                    $"Cannot get bytes from: {serialized}");
+                throw CacheEntryException.UnableToUpdateEntry(serialized);
             }
             var bytes = GetBytesFromSerialized(serialized);
             return bytes;
@@ -60,10 +55,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
         {
             if (bytes == null)
             {
-                throw new Exception(
-                    $"Unable to get data from the cache. " +
-                    $"Received data is empty. " +
-                    $"Cannot get serialized from: {bytes}");
+                throw CacheEntryException.UnableToGetDataEntry(bytes);
             }
             var serialized = GetSerializedFromBytes(bytes);
             return serialized;
@@ -79,9 +71,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
             var entry = JsonConvert.DeserializeObject<T>(serialized);
             if (entry == null)
             {
-                throw new Exception(
-                    $"Unable to get data from the cache. " +
-                    $"Deserialization exception.");
+                throw CacheEntryException.UnableToGetEntryDeserialization();
             }
             return entry;
         }

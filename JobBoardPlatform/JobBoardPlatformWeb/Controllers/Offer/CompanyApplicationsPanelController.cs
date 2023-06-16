@@ -4,7 +4,6 @@ using JobBoardPlatform.BLL.Search;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.PL.Controllers.Templates;
-using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
@@ -20,13 +19,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private readonly OfferApplicationsSearcher searcher;
         private readonly OfferQueryExecutor queryExecutor;
-        private readonly ApplicationCommandsExecutor commandsExecutor;
+        private readonly OfferApplicationCommandsExecutor commandsExecutor;
 
 
         public CompanyApplicationsPanelController(
             OfferApplicationsSearcher searcher, 
             OfferQueryExecutor queryExecutor,
-            ApplicationCommandsExecutor commandsExecutor)
+            OfferApplicationCommandsExecutor commandsExecutor)
         {
             this.searcher = searcher;
             this.queryExecutor = queryExecutor;

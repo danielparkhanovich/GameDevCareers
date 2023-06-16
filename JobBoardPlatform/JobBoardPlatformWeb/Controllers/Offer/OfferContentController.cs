@@ -20,7 +20,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Authorize(Policy = AuthorizationPolicies.OfferPublishedOrOwnerOnlyPolicy)]
     public class OfferContentController : Controller
     {
-        private readonly ApplicationCommandsExecutor commandsExecutor;
+        private readonly OfferApplicationCommandsExecutor commandsExecutor;
         private readonly OfferQueryExecutor queryExecutor;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<EmployeeProfile> profileRepository;
@@ -30,7 +30,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
 
         public OfferContentController(
-            ApplicationCommandsExecutor commandsExecutor,
+            OfferApplicationCommandsExecutor commandsExecutor,
             OfferQueryExecutor queryExecutor,
             IRepository<JobOffer> offersRepository,
             IRepository<EmployeeProfile> profileRepository,

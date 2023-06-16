@@ -49,7 +49,7 @@ namespace JobBoardPlatform.PL.Controllers.Login
         public Task LoginWithGoogle()
         {
             return ChallengeAsync(
-                GoogleDefaults.AuthenticationScheme, 
+                GoogleDefaults.AuthenticationScheme,
                 "LoginWithGoogleCallback");
         }
 
@@ -106,7 +106,7 @@ namespace JobBoardPlatform.PL.Controllers.Login
 
         private async Task ChallengeAsync(string scheme, string callback)
         {
-            var redirectUrl = Url.Action(callback, "EmployeeLogin", new { area = "", route = "signin-employee" });
+            var redirectUrl = Url.Action(callback);
             await HttpContext.ChallengeAsync(
                 scheme, new AuthenticationProperties()
                 {
@@ -117,7 +117,6 @@ namespace JobBoardPlatform.PL.Controllers.Login
 
         private async Task<IActionResult> TryLoginOrRegisterAsync(IIdentityProviderClaimKeys claimKeys)
         {
-
             await identityService.TryLoginOrRegisterAsync(HttpContext, claimKeys);
             return RedirectToAction("Index", "Home");
         }

@@ -6,6 +6,9 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 {
     public class OffersCacheManager
     {
+        private const string MainPageOffersEntryKey = "MainPageOffers";
+        private const string MainPageOffersCountEntryKey = "MainPageOffersCount";
+
         private readonly ICacheRepository<List<JobOffer>> offersCache;
         private readonly ICacheRepository<int> offersCountCache;
 
@@ -20,8 +23,8 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public async Task<EntitiesFilteringSearchResponse<JobOffer>> GetOffersFromCache()
         {
-            var offers = await offersCache.GetAsync();
-            int totalRecordsAfterFilters = await offersCountCache.GetAsync();
+            var offers = await offersCache.GetAsync(MainPageOffersEntryKey);
+            int totalRecordsAfterFilters = await offersCountCache.GetAsync(MainPageOffersCountEntryKey);
             return new EntitiesFilteringSearchResponse<JobOffer>()
             {
                 TotalRecordsAfterFilters = totalRecordsAfterFilters,
@@ -29,13 +32,13 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             };
         }
 
-        public Task UpdateCache(EntitiesFilteringSearchResponse<JobOffer> searchResponse)
+        public async Task UpdateCache(EntitiesFilteringSearchResponse<JobOffer> searchResponse)
         {
             var entities = searchResponse.Entities;
             int totalRecordsAfterFilters = searchResponse.TotalRecordsAfterFilters;
 
-            var updateCacheCommand = new UpdateOfferCacheCommand(entities, totalRecordsAfterFilters, offersCache, offersCountCache);
-            return updateCacheCommand.Execute();
+            await offersCache.UpdateAsync(MainPageOffersEntryKey, entities);
+            await offersCountCache.UpdateAsync(MainPageOffersCountEntryKey, totalRecordsAfterFilters);
         }
     }
 }

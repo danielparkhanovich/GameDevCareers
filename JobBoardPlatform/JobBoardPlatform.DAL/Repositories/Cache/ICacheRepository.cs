@@ -2,7 +2,7 @@
 {
     public interface ICacheRepository<T>
     {
-        Task UpdateAsync(T entry);
-        Task<T> GetAsync();
+        Task UpdateAsync(string entryKey, T entry);
+        Task<T> GetAsync(string entryKey);
     }
 }

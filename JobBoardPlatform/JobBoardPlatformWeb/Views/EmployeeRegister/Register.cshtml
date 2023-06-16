@@ -11,11 +11,13 @@
     }
     @await Html.PartialAsync("./Login/_LoginProviderButtons", Model)
 
-    <!-- Render shared login form and pass controller name -->
-    @{
-        ViewData["LoginControllerName"] = "EmployeeLogin";
-    }
-    @await Html.PartialAsync("./Register/_Register", Model)
+    <form method="post">
+        <!-- Render shared login form and pass controller name -->
+        @{
+            ViewData["LoginControllerName"] = "EmployeeLogin";
+        }
+        @await Html.PartialAsync("./Register/_Register", Model)
+    </form>
 </div>
 
 @section Scripts {

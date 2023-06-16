@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 
-namespace JobBoardPlatform.DAL.Repositories.Cache
+namespace JobBoardPlatform.DAL.Repositories.Cache.Tokens
 {
-    public class MainPageOffersCountCacheRepository : CacheRepositoryCore<int>
+    public class RegistrationTokensCacheRepository : CacheRepositoryCore<RegistrationToken>
     {
-        private const int CacheExpirationTimeInMinutes = 5;
+        private const int CacheExpirationTimeInMinutes = 10;
 
 
-        public MainPageOffersCountCacheRepository(IDistributedCache cache) : base(cache)
+        public RegistrationTokensCacheRepository(IDistributedCache cache) : base(cache)
         {
 
         }

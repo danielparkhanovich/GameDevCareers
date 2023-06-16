@@ -9,7 +9,7 @@ using JobBoardPlatform.BLL.Commands.Contracts;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {
-    public class ApplicationCommandsExecutor
+    public class OfferApplicationCommandsExecutor
     {
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
@@ -17,7 +17,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
 
 
-        public ApplicationCommandsExecutor(
+        public OfferApplicationCommandsExecutor(
             IRepository<OfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
             IOptions<AzureOptions> azureOptions,

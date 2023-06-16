@@ -23,6 +23,11 @@ using JobBoardPlatform.DAL.Models.Employee;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Security.Claims;
+using JobBoardPlatform.BLL.Services.Email;
+using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
+using JobBoardPlatform.BLL.Services.Session.Contracts;
+using JobBoardPlatform.BLL.Services.Session.Tokens;
+using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,12 +99,16 @@ builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
 
 // BLL
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailGateway"));
+
+builder.Services.AddTransient<IRegistrationTokensService, RegistrationTokensService>();
 builder.Services.AddTransient<IdentityQueryExecutor<EmployeeIdentity>>();
 builder.Services.AddTransient<IIdentityServiceWithProvider<EmployeeIdentity>, EmployeeIdentityServiceWithProvider>();
 builder.Services.AddTransient<OffersCacheManager>();
 builder.Services.AddTransient<OfferQueryExecutor>();
 builder.Services.AddTransient<OfferCommandsExecutor>();
-builder.Services.AddTransient<ApplicationCommandsExecutor>();
+builder.Services.AddTransient<OfferApplicationCommandsExecutor>();
 builder.Services.AddTransient<AdminCommandsExecutor>();
 builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelApplicationSearchParams>, CompanyPanelApplicationSearchParamsFactory>();
 builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelOfferSearchParameters>, CompanyPanelOfferSearchParametersFactory>();
@@ -119,6 +128,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 builder.Services.AddTransient<ICacheRepository<List<JobOffer>>, MainPageOffersCacheRepository>();
 builder.Services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
+builder.Services.AddTransient<ICacheRepository<RegistrationToken>, RegistrationTokensCacheRepository>();
 // Repository
 builder.Services.AddDbContext<DataContext>(options =>
 {
