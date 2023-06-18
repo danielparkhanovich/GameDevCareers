@@ -1,7 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob;
@@ -14,6 +13,7 @@ using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using Microsoft.AspNetCore.Authorization;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {

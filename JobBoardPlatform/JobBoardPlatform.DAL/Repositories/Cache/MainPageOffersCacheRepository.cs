@@ -5,7 +5,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
 {
     public class MainPageOffersCacheRepository : CacheRepositoryCore<List<JobOffer>>
     {
-        private const int CacheExpirationTimeInMinutes = 5;
+        private const int CacheExpirationTimeInMinutes = 60;
 
 
         public MainPageOffersCacheRepository(IDistributedCache cache) : base(cache)
@@ -16,7 +16,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
         protected override DistributedCacheEntryOptions GetOptions()
         {
             return new DistributedCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheExpirationTimeInMinutes));
+                .SetSlidingExpiration(TimeSpan.FromMinutes(CacheExpirationTimeInMinutes));
         }
     }
 }

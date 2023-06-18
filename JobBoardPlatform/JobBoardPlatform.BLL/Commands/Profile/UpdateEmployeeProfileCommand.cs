@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Models.Contracts;
+using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
 {
-    public class UpdateEmployeeProfileCommand : UpdateProfileCommandBase<EmployeeProfile, IEmployeeProfileData>
+    public class UpdateEmployeeProfileCommand : UpdateProfileCommandBase<EmployeeIdentity, EmployeeProfile, IEmployeeProfileData>
     {
         private readonly IBlobStorage userProfileImagesStorage;
         private readonly IBlobStorage userResumesStorage;
@@ -16,9 +17,10 @@ namespace JobBoardPlatform.BLL.Commands.Profile
             IEmployeeProfileData profileData, 
             IRepository<EmployeeProfile> repository,
             HttpContext httpContext,
+            IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession,
             IBlobStorage userProfileImagesStorage,
             IBlobStorage userResumesStorage) 
-            : base(profileId, profileData, repository, httpContext)
+            : base(profileId, profileData, repository, httpContext, userSession)
         {
             this.userProfileImagesStorage = userProfileImagesStorage;
             this.userResumesStorage = userResumesStorage;

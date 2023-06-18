@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Commands;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Controllers.Templates;

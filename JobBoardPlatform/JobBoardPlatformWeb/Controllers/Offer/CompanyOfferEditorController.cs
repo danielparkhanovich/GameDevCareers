@@ -1,10 +1,6 @@
-﻿using JobBoardPlatform.BLL.Commands.Admin;
-using JobBoardPlatform.BLL.Commands.Application;
-using JobBoardPlatform.BLL.Commands.Offer;
+﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using Microsoft.AspNetCore.Authorization;

@@ -2,7 +2,7 @@
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.PL.Controllers.Templates;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;

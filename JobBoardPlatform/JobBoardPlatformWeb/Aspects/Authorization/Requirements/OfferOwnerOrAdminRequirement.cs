@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using System.Security.Claims;
 

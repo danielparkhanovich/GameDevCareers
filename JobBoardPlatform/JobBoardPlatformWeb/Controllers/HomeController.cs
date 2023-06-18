@@ -1,8 +1,9 @@
 ﻿using JobBoardPlatform.BLL.Search.MainPage;
-using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.PL.Controllers.Templates;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatformWeb.Controllers
@@ -56,9 +57,7 @@ namespace JobBoardPlatformWeb.Controllers
         [Route("log-out")]
         public async Task<IActionResult> LogOut()
         {
-            var sessionManager = new AuthorizationService(HttpContext);
-            await sessionManager.SignOutHttpContextAsync();
-
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
     }

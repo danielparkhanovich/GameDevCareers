@@ -1,14 +1,13 @@
-﻿using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.DAL.Models.Employee;
-using JobBoardPlatform.PL.ViewModels.Models.Authentification;
+﻿using JobBoardPlatform.DAL.Models.Employee;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
-using JobBoardPlatform.BLL.Services.Authorization.Contracts;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using AspNet.Security.OAuth.GitHub;
 using AspNet.Security.OAuth.LinkedIn;
-using JobBoardPlatform.BLL.Services.Authorization.Policies.IdentityProviders;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization.IdentityProviders;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
@@ -20,28 +19,15 @@ namespace JobBoardPlatform.PL.Controllers.Login
         public const string LoginWithGitHubAction = "LoginWithGitHub";
         public const string LoginWithLinkedInAction = "LoginWithLinkedIn";
 
-        private readonly IIdentityServiceWithProvider<EmployeeIdentity> identityService;
+        private readonly IAuthenticationWithProviderService<EmployeeIdentity> identityService;
 
 
         public EmployeeLoginController(
-            IIdentityServiceWithProvider<EmployeeIdentity> identityService,
-            IRepository<EmployeeIdentity> credentialsRepository,
-            IRepository<EmployeeProfile> profileRepository)
+            IAuthenticationWithProviderService<EmployeeIdentity> identityService,
+            ILoginService<EmployeeIdentity, EmployeeProfile> loginService) 
+            : base(loginService)
         {
             this.identityService = identityService;
-            this.credentialsRepository = credentialsRepository;
-            this.profileRepository = profileRepository;
-        }
-
-        protected override EmployeeIdentity GetIdentity(UserLoginViewModel userLogin)
-        {
-            var credentials = new EmployeeIdentity()
-            {
-                Email = userLogin.Email,
-                HashPassword = userLogin.Password
-            };
-
-            return credentials;
         }
 
         [HttpGet]

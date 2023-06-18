@@ -1,7 +1,8 @@
 ﻿@using System.Security.Claims;
-@using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+@using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 @using JobBoardPlatform.PL.Controllers.Profile;
 @using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
+
 @{
     string? userName = User.FindFirstValue(UserSessionProperties.DisplayName);
     if (string.IsNullOrEmpty(userName))

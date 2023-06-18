@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Generators;
-using JobBoardPlatform.BLL.Services.Authentification;
+using JobBoardPlatform.BLL.Services.AccountManagement.Common;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
 

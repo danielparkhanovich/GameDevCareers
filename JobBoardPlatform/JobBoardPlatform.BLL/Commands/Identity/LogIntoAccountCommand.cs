@@ -1,7 +1,5 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Commands.Identities
@@ -10,21 +8,18 @@ namespace JobBoardPlatform.BLL.Commands.Identities
         where TIdentity : class, IUserIdentityEntity
         where TProfile : class, IUserProfileEntity
     {
-        private readonly AuthorizationService authorizationService;
-        private readonly IRepository<TIdentity> identityRepository;
-        private readonly IRepository<TProfile> profileRepository;
+        private readonly HttpContext httpContext;
+        private readonly AuthorizationService<TIdentity, TProfile> authorizationService;
         private readonly int idLogInto;
 
 
         public LogIntoAccountCommand(
-            HttpContext httpContext, 
-            IRepository<TIdentity> identityRepository,
-            IRepository<TProfile> profileRepository,
+            HttpContext httpContext,
+            AuthorizationService<TIdentity, TProfile> authorizationService,
             int idLogInto)
         {
-            this.authorizationService = new AuthorizationService(httpContext);
-            this.identityRepository = identityRepository;
-            this.profileRepository = profileRepository;
+            this.httpContext = httpContext;
+            this.authorizationService = authorizationService;
             this.idLogInto = idLogInto;
         }
 
@@ -36,20 +31,12 @@ namespace JobBoardPlatform.BLL.Commands.Identities
 
         private Task SignOut()
         {
-            return authorizationService.SignOutHttpContextAsync();
+            return authorizationService.SignOutHttpContextAsync(httpContext);
         }
 
         private async Task SignIntoAccount()
         {
-            var authorizationData = await GetAuthorizationDataAsync(idLogInto);
-            await authorizationService.SignInHttpContextAsync(authorizationData);
-        }
-
-        private async Task<AuthorizationData> GetAuthorizationDataAsync(int idLogInto)
-        {
-            var identity = await identityRepository.Get(idLogInto);
-            var profile = await profileRepository.Get(identity.ProfileId);
-            return new AuthorizationData(idLogInto, identity.Email, profile);
+            await authorizationService.SignInHttpContextAsync(httpContext, idLogInto);
         }
     }
 }

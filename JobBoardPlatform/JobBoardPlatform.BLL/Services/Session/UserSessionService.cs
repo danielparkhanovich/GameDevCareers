@@ -1,33 +1,28 @@
-﻿using JobBoardPlatform.BLL.Common.ProfileAdapter;
-using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.BLL.Services.Authorization.Contracts;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.Session.Contracts;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Services.Session
 {
-    public class UserSessionService<T> : IUserSessionService<T>
-        where T: class, IUserProfileEntity
+    public class UserSessionService<TEntity, TProfile> : IUserSessionService<TEntity, TProfile>
+        where TEntity : class, IUserIdentityEntity
+        where TProfile : class, IUserProfileEntity
     {
-        private readonly HttpContext httpContext;
-        private readonly IAuthorizationService authorizationService;
+        private readonly IAuthorizationService<TEntity, TProfile> authorizationService;
 
 
-        public UserSessionService(HttpContext httpContext)
+        public UserSessionService(IAuthorizationService<TEntity, TProfile> authorizationService)
         {
-            this.httpContext = httpContext;
-            this.authorizationService = new AuthorizationService(httpContext);
+            this.authorizationService = authorizationService;
         }
 
-        public async Task UpdateSessionStateAsync(T profile)
+        public async Task UpdateSessionStateAsync(HttpContext httpContext)
         {
             int id = UserSessionUtils.GetIdentityId(httpContext.User);
-
-            await authorizationService.SignOutHttpContextAsync();
-            var updated = new AuthorizationData(id, string.Empty, profile);
-            await authorizationService.SignInHttpContextAsync(updated);
+            await authorizationService.SignOutHttpContextAsync(httpContext);
+            await authorizationService.SignInHttpContextAsync(httpContext, id);
         }
     }
 }

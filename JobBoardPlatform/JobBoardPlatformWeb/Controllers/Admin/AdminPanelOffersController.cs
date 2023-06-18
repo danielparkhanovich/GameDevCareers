@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Controllers.Offer;

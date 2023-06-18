@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Commands.Admin;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Offer;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Controllers.Templates;
 using JobBoardPlatform.PL.ViewModels.Contracts;

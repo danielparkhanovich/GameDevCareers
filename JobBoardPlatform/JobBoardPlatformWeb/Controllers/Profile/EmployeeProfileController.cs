@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using JobBoardPlatform.DAL.Options;
@@ -11,6 +10,8 @@ using JobBoardPlatform.BLL.Commands.Profile;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using JobBoardPlatform.BLL.Services.Session;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -18,14 +19,18 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     public class EmployeeProfileController : BaseProfileController<EmployeeProfile, EmployeeProfileViewModel>
     {
         protected IBlobStorage userProfileResumeStorage;
+        private readonly IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession;
 
 
-        public EmployeeProfileController(IOptions<AzureOptions> azureOptions, 
-            IRepository<EmployeeProfile> profileRepository)
+        public EmployeeProfileController(
+            IOptions<AzureOptions> azureOptions, 
+            IRepository<EmployeeProfile> profileRepository,
+            IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession)
         {
             this.userProfileImagesStorage = new UserProfileImagesStorage(azureOptions);
             this.profileRepository = profileRepository;            
             this.userProfileResumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
+            this.userSession = userSession;
         }
 
         [HttpPost]
@@ -42,6 +47,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             var updateProfileCommand = new DeleteEmployeeResumeCommand(id,
                 profileRepository,
                 userProfileResumeStorage,
+                userSession,
                 HttpContext);
 
             await updateProfileCommand.Execute();
@@ -72,6 +78,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
                 viewModel,
                 profileRepository,
                 HttpContext,
+                userSession,
                 userProfileImagesStorage,
                 userProfileResumeStorage);
 

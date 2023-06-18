@@ -1,6 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Commands;
 using JobBoardPlatform.BLL.Commands.Identities;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Admin;
@@ -16,15 +18,16 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     public class AdminPanelEmployeesController : AdminPanelUsersControllerBase<EmployeeIdentity, AdminPanelEmployeesViewModel>
     {
         private readonly IRepository<EmployeeIdentity> identityRepository;
-        private readonly IRepository<EmployeeProfile> profileRepository;
+        private readonly AuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService;
 
 
         public AdminPanelEmployeesController(
-            IRepository<EmployeeIdentity> identityRepository, IRepository<EmployeeProfile> profileRepository)
+            IRepository<EmployeeIdentity> identityRepository, 
+            AuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService)
             : base(identityRepository)
         {
             this.identityRepository = identityRepository;
-            this.profileRepository = profileRepository;
+            this.authorizationService = authorizationService;
         }
 
         protected override Task<CardsContainerViewModel> GetContainer()
@@ -36,7 +39,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         protected override ICommand GetLogIntoCommand(int userId)
         {
             return new LogIntoAccountCommand<EmployeeIdentity, EmployeeProfile>(
-                HttpContext, identityRepository, profileRepository, userId);
+                HttpContext, authorizationService, userId);
         }
 
         protected override ICommand GetDeleteCommand(int userId)

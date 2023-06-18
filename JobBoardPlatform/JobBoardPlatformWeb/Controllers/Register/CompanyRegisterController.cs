@@ -1,18 +1,23 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.ViewModels.Models.Admin;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
-    public class CompanyRegisterController : BaseRegisterController<CompanyIdentity, CompanyProfile, CompanyRegisterViewModel>
+    public class CompanyRegisterController : BaseRegisterController<CompanyRegisterViewModel>
     {
-        public CompanyRegisterController(IRepository<CompanyIdentity> credentialsRepository,
-            IRepository<CompanyProfile> profileRepository)
+        private readonly IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor;
+        private readonly ILoginService<CompanyIdentity, CompanyProfile> loginService;
+
+
+        public CompanyRegisterController(
+            IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor,
+            ILoginService<CompanyIdentity, CompanyProfile> loginService)
         {
-            this.credentialsRepository = credentialsRepository;
-            this.profileRepository = profileRepository;
+            this.registrationInteractor = registrationInteractor;
+            this.loginService = loginService;
         }
 
         public IActionResult RegisterPromotion()
@@ -20,20 +25,27 @@ namespace JobBoardPlatform.PL.Controllers.Register
             return View();
         }
 
-        protected override CompanyIdentity GetIdentity(CompanyRegisterViewModel companyRegister)
+        public override async Task<IActionResult> Register(CompanyRegisterViewModel userRegister)
         {
-            var companyProfile = new CompanyProfile();
-            companyProfile.CompanyName = companyRegister.CompanyName;
-
-            var credentials = new CompanyIdentity()
+            if (ModelState.IsValid)
             {
-                Email = companyRegister.Email,
-                HashPassword = companyRegister.Password
-            };
+                var redirect = await registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
+                return RedirectToAction(redirect.ActionName, redirect.Data);
+            }
 
-            credentials.Profile = companyProfile;
+            return View(userRegister);
+        }
 
-            return credentials;
+        public override async Task<IActionResult> TryConfirmRegistration(string tokenId)
+        {
+            await registrationInteractor.FinishRegistration(tokenId, HttpContext);
+            return View();
+        }
+
+        public override async Task<IActionResult> TryConfirmRegistration(string email, string passwordHash)
+        {
+            await loginService.TryLoginAsync(email, passwordHash, HttpContext);
+            return View();
         }
     }
 }

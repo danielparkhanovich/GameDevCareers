@@ -1,7 +1,6 @@
 using JobBoardPlatform.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
@@ -17,17 +16,25 @@ using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Query.Identity;
-using JobBoardPlatform.BLL.Services.Authorization.Contracts;
-using JobBoardPlatform.BLL.Services.Authorization;
 using JobBoardPlatform.DAL.Models.Employee;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Security.Claims;
 using JobBoardPlatform.BLL.Services.Email;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
-using JobBoardPlatform.BLL.Services.Session.Contracts;
-using JobBoardPlatform.BLL.Services.Session.Tokens;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
+using JobBoardPlatform.BLL.Services.Authentification.Register;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.BLL.Services.AccountManagement.Common;
+using JobBoardPlatform.BLL.Services.Authentification.Login;
+using JobBoardPlatform.BLL.Services.AccountManagement;
+using JobBoardPlatform.BLL.Services.Session;
+using JobBoardPlatform.PL.Interactors.Registration;
+using JobBoardPlatform.PL.ViewModels.Models.Authentification;
+using JobBoardPlatform.BLL.Commands.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -99,12 +106,27 @@ builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
 
 // BLL
+builder.Services.AddTransient<IEmailEmployeeRegistrationService, EmailEmployeeRegistrationService>();
+builder.Services.AddTransient<IEmailCompanyRegistrationService, EmailCompanyRegistrationService>();
+builder.Services.AddTransient<IAuthenticationWithProviderService<EmployeeIdentity>, EmployeeAuthenticationWithProviderService>();
+builder.Services.AddTransient(typeof(IRegistrationService<>), typeof(RegistrationService<>));
+builder.Services.AddTransient<IRegistrationTokensService, RegistrationTokensService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailGateway"));
 
-builder.Services.AddTransient<IRegistrationTokensService, RegistrationTokensService>();
+builder.Services.AddTransient<IPasswordHasher, MD5Hasher>();
+builder.Services.AddTransient<IPasswordGenerator, PasswordGenerator>();
+
+builder.Services.AddTransient(typeof(IAuthorizationService<,>), typeof(AuthorizationService<,>));
+builder.Services.AddTransient(typeof(IUserSessionService<,>), typeof(UserSessionService<,>));
+builder.Services.AddTransient(typeof(ILoginService<,>), typeof(LoginService<,>));
+builder.Services.AddTransient(typeof(IModifyIdentityService<>), typeof(ModifyIdentityService<>));
+
 builder.Services.AddTransient<IdentityQueryExecutor<EmployeeIdentity>>();
-builder.Services.AddTransient<IIdentityServiceWithProvider<EmployeeIdentity>, EmployeeIdentityServiceWithProvider>();
+builder.Services.AddTransient<IdentityQueryExecutor<CompanyIdentity>>();
+builder.Services.AddTransient<UserManager<EmployeeIdentity>>();
+builder.Services.AddTransient<UserManager<CompanyIdentity>>();
+
 builder.Services.AddTransient<OffersCacheManager>();
 builder.Services.AddTransient<OfferQueryExecutor>();
 builder.Services.AddTransient<OfferCommandsExecutor>();
@@ -118,6 +140,10 @@ builder.Services.AddTransient<OfferApplicationsSearcher>();
 builder.Services.AddTransient<CompanyOffersSearcher>();
 builder.Services.AddTransient<MainPageOffersSearcher>();
 builder.Services.AddTransient<MainPageOffersSearcherCacheDecorator>();
+
+// PL Interactors
+builder.Services.AddTransient<IRegistrationInteractor<UserRegisterViewModel>, EmailEmployeeRegistrationInteractor>();
+builder.Services.AddTransient<IRegistrationInteractor<CompanyRegisterViewModel>, EmailCompanyRegistrationInteractor>();
 
 // DAL
 // Cache

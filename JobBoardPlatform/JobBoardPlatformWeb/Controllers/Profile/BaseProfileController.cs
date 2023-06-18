@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.Authorization.Utilities;
-using JobBoardPlatform.BLL.Services.MessageBus.Notifications;
+﻿using JobBoardPlatform.BLL.Services.MessageBus.Notifications;
 using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Blob;

@@ -3,7 +3,7 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoardPlatform.BLL.Tests
+namespace JobBoardPlatform.BLL.IntegrationTests
 {
     public class PostApplicationFormCommandTest
     {

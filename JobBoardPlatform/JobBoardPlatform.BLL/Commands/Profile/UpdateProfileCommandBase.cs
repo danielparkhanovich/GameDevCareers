@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
 {
-    public abstract class UpdateProfileCommandBase<TProfile, TData> : ICommand 
+    public abstract class UpdateProfileCommandBase<TEntity, TProfile, TData> : ICommand 
+        where TEntity : class, IUserIdentityEntity
         where TProfile : class, IUserProfileEntity
         where TData : class
     {
@@ -13,16 +14,21 @@ namespace JobBoardPlatform.BLL.Commands.Profile
         private readonly TData data;
         private readonly IRepository<TProfile> repository;
         private readonly HttpContext httpContext;
+        private readonly IUserSessionService<TEntity, TProfile> userSession;
 
 
-        public UpdateProfileCommandBase(int profileId, TData profileData, 
+        public UpdateProfileCommandBase(
+            int profileId, 
+            TData profileData, 
             IRepository<TProfile> repository, 
-            HttpContext httpContext)
+            HttpContext httpContext,
+            IUserSessionService<TEntity, TProfile> userSession)
         {
             this.id = profileId;
             this.data = profileData;
             this.repository = repository;
             this.httpContext = httpContext;
+            this.userSession = userSession;
         }
 
         public async Task Execute()
@@ -31,17 +37,11 @@ namespace JobBoardPlatform.BLL.Commands.Profile
 
             var viewModel = data;
 
-            // TODO: validate data here for stream size
-            // and extension... and add a model error
-
             await UploadFiles(viewModel, profile);
-
             MapDataToModel(viewModel, profile);
-
             await repository.Update(profile);
 
-            var userSession = new UserSessionService<TProfile>(httpContext);
-            await userSession.UpdateSessionStateAsync(profile);
+            await userSession.UpdateSessionStateAsync(httpContext);
         }
 
         protected abstract Task UploadFiles(TData from, TProfile to);

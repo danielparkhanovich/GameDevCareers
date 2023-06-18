@@ -1,11 +1,9 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
-using JobBoardPlatform.BLL.Services.Authentification;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
@@ -14,9 +12,13 @@ namespace JobBoardPlatform.PL.Controllers.Login
         where TIdentity: class, IUserIdentityEntity
         where TProfile: class, IUserProfileEntity
     {
-        protected IRepository<TIdentity> credentialsRepository;
-        protected IRepository<TProfile> profileRepository;
+        private readonly ILoginService<TIdentity, TProfile> loginService;
 
+
+        public BaseLoginController(ILoginService<TIdentity, TProfile> loginService)
+        {
+            this.loginService = loginService;
+        }
 
         public IActionResult Login()
         {
@@ -29,27 +31,19 @@ namespace JobBoardPlatform.PL.Controllers.Login
         {
             if (ModelState.IsValid)
             {
-                var credentials = GetIdentity(userLogin);
-
-                return await TryLogin(userLogin, credentials);
+                return await TryLogin(userLogin);
             }
             return View(userLogin);
         }
 
-        protected abstract TIdentity GetIdentity(UserLoginViewModel userLogin);
-
-        private async Task<IActionResult> TryLogin(UserLoginViewModel userLogin, TIdentity credentials)
+        private async Task<IActionResult> TryLogin(UserLoginViewModel userLogin)
         {
-            var authentification = new AuthentificationService<TIdentity>(credentialsRepository);
-            var session = new IdentityService<TIdentity, TProfile>(
-                HttpContext, authentification, profileRepository);
-
             try
             {
-                await session.TryLoginAsync(credentials);
+                await loginService.TryLoginAsync(userLogin.Email, userLogin.Password, HttpContext);
                 return RedirectToAction("Index", "Home");
             }
-            catch (AuthentificationException e)
+            catch (AuthenticationException e)
             {
                 ModelState.AddModelError("Autorization error", e.Message);
             }

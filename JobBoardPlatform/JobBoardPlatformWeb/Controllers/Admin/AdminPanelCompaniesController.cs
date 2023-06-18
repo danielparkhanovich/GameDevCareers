@@ -1,7 +1,9 @@
 ﻿using JobBoardPlatform.BLL.Commands;
 using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Admin;
@@ -17,15 +19,16 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     public class AdminPanelCompaniesController : AdminPanelUsersControllerBase<CompanyIdentity, AdminPanelCompaniesViewModel>
     {
         private readonly IRepository<CompanyIdentity> identityRepository;
-        private readonly IRepository<CompanyProfile> profileRepository;
+        private readonly AuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
 
 
         public AdminPanelCompaniesController(
-            IRepository<CompanyIdentity> identityRepository, IRepository<CompanyProfile> profileRepository) 
+            IRepository<CompanyIdentity> identityRepository, 
+            AuthorizationService<CompanyIdentity, CompanyProfile> authorizationService) 
             : base(identityRepository)
         {
             this.identityRepository = identityRepository;
-            this.profileRepository = profileRepository;
+            this.authorizationService = authorizationService;
         }
 
         protected override Task<CardsContainerViewModel> GetContainer()
@@ -47,7 +50,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         protected override ICommand GetLogIntoCommand(int userId)
         {
             return new LogIntoAccountCommand<CompanyIdentity, CompanyProfile>(
-                HttpContext, identityRepository, profileRepository, userId);
+                HttpContext, authorizationService, userId);
         }
 
         protected override ICommand GetDeleteCommand(int userId)

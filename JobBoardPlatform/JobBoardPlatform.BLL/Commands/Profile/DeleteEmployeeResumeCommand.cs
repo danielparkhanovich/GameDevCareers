@@ -11,17 +11,20 @@ namespace JobBoardPlatform.BLL.Commands.Profile
         private readonly int id;
         private readonly IRepository<EmployeeProfile> repository;
         private readonly IBlobStorage resumeStorage;
+        private readonly IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession;
         private readonly HttpContext httpContext;
 
 
         public DeleteEmployeeResumeCommand(int id, 
             IRepository<EmployeeProfile> repository,
             IBlobStorage resumeStorage,
+            IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession,
             HttpContext httpContext)
         {
             this.id = id;
             this.repository = repository;
             this.resumeStorage = resumeStorage;
+            this.userSession = userSession;
             this.httpContext = httpContext;
         }
 
@@ -33,9 +36,7 @@ namespace JobBoardPlatform.BLL.Commands.Profile
             profile.ResumeUrl = null;
 
             await repository.Update(profile);
-
-            var userSession = new UserSessionService<EmployeeProfile>(httpContext);
-            await userSession.UpdateSessionStateAsync(profile);
+            await userSession.UpdateSessionStateAsync(httpContext);
         }
     }
 }

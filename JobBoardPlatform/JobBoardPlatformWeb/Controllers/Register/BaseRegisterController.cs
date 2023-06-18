@@ -1,21 +1,14 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification;
-using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
-using JobBoardPlatform.BLL.Services.Authorization;
-using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Models;
+﻿using JobBoardPlatform.BLL.Models.Contracts;
 using JobBoardPlatform.PL.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
     [TypeFilter(typeof(SkipLoggedInUsersFilter))]
-    public abstract class BaseRegisterController<TIdentity, TProfile, TViewModel> : Controller
-        where TIdentity : class, IUserIdentityEntity
-        where TProfile : class, IUserProfileEntity
-        where TViewModel : class
+    public abstract class BaseRegisterController<T> : Controller where T : class, IUserLoginData
     {
-        protected IRepository<TIdentity> credentialsRepository;
-        protected IRepository<TProfile> profileRepository;
+        public const string TryConfirmRegistrationAction = "TryConfirmRegistration";
+        public const string CheckVerifyingTokenAction = "CheckVerifyingToken";
 
 
         public IActionResult Register()
@@ -23,38 +16,20 @@ namespace JobBoardPlatform.PL.Controllers.Register
             return View();
         }
 
+        [Route("verifying")]
+        public IActionResult CheckVerifyingToken()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(TViewModel userRegister)
-        {
-            if (ModelState.IsValid)
-            {
-                var credential = GetIdentity(userRegister);
+        public abstract Task<IActionResult> Register(T userRegister);
 
-                return await TryRegister(userRegister, credential);
-            }
-            return View(userRegister);
-        }
+        [Route("{tokenId}")]
+        public abstract Task<IActionResult> TryConfirmRegistration(string tokenId);
 
-        protected abstract TIdentity GetIdentity(TViewModel userLogin);
-
-        private async Task<IActionResult> TryRegister(TViewModel userLogin, TIdentity credentials)
-        {
-            var authentification = new AuthentificationService<TIdentity>(credentialsRepository);
-            var session = new IdentityService<TIdentity, TProfile>(
-                HttpContext, authentification, profileRepository);
-
-            try
-            {
-                await session.TryRegisterAsync(credentials);
-                return RedirectToAction("Index", "Home");
-            }
-            catch (AuthentificationException e)
-            {
-                ModelState.AddModelError("Autorization error", e.Message);
-            }
-
-            return View(userLogin);
-        }
+        [Route("{email}-{passwordHash}")]
+        public abstract Task<IActionResult> TryConfirmRegistration(string email, string passwordHash);
     }
 }

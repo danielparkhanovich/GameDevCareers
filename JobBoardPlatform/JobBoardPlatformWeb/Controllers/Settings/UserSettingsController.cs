@@ -1,11 +1,9 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
-using JobBoardPlatform.BLL.Services.Authorization.Utilities;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
-using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Models.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +13,16 @@ namespace JobBoardPlatform.PL.Controllers.Security
     [Authorize]
     public class UserSettingsController : Controller
     {
-        private readonly IRepository<EmployeeIdentity> employeeIdentityRepository;
-        private readonly IRepository<CompanyIdentity> companyIdentityRepository;
+        private readonly IModifyIdentityService<EmployeeIdentity> employeeModifyService;
+        private readonly IModifyIdentityService<CompanyIdentity> companyModifyService;
 
 
-        public UserSettingsController(IRepository<EmployeeIdentity> employeeIdentityRepository,
-            IRepository<CompanyIdentity> companyIdentityRepository)
+        public UserSettingsController(
+            IModifyIdentityService<EmployeeIdentity> employeeModifyService,
+            IModifyIdentityService<CompanyIdentity> companyModifyService)
         {
-            this.employeeIdentityRepository = employeeIdentityRepository;
-            this.companyIdentityRepository = companyIdentityRepository;
+            this.employeeModifyService = employeeModifyService;
+            this.companyModifyService = companyModifyService;
         }
 
         [Route("settings")]
@@ -48,11 +47,11 @@ namespace JobBoardPlatform.PL.Controllers.Security
 
                 if (userRole == UserRoles.Employee)
                 {
-                    await UpdateIdentity(employeeIdentityRepository, viewModel);
+                    await UpdateIdentity(viewModel, employeeModifyService);
                 }
                 else if (userRole == UserRoles.Company)
                 {
-                    await UpdateIdentity(companyIdentityRepository, viewModel);
+                    await UpdateIdentity(viewModel, companyModifyService);
                 }
                 else
                 {
@@ -63,22 +62,19 @@ namespace JobBoardPlatform.PL.Controllers.Security
             return RedirectToAction("Settings");
         }
 
-        private async Task UpdateIdentity<TIdentity>(IRepository<TIdentity> identityRepository,
-            SettingsIdentityViewModel viewModel) 
+        private async Task UpdateIdentity<TIdentity>(
+            SettingsIdentityViewModel viewModel, IModifyIdentityService<TIdentity> modifyService) 
             where TIdentity : class, IUserIdentityEntity
         {
-            var modify = new ModifyIdentityService<TIdentity>(identityRepository);
-
             int identityId = UserSessionUtils.GetIdentityId(User);
-            var identity = await identityRepository.Get(identityId);
 
-            if (IsChangeLogin(identity.Email, viewModel.LoginIdentifier))
+            if (IsChangeLogin("TOOD: Replace", viewModel.LoginIdentifier))
             {
-                await TryChangeLoginAsync(modify, identity, viewModel.LoginIdentifier);
+                await TryChangeLoginAsync(modifyService, identityId, "TOOD: Replace", viewModel.LoginIdentifier!);
             }
             else if (IsChangePassword(viewModel.OldPassword, viewModel.NewPassword))
             {
-                await TryChangePasswordAsync(modify, identity, viewModel);
+                await TryChangePasswordAsync(modifyService, identityId, viewModel);
             }
         }
 
@@ -91,15 +87,15 @@ namespace JobBoardPlatform.PL.Controllers.Security
 
             if (userRole == UserRoles.Employee)
             {
-                var employeeIdentity = await employeeIdentityRepository.Get(identityId);
-                loginIdentifier = employeeIdentity!.Email;
+                // var employeeIdentity = await employeeIdentityRepository.Get(identityId);
+                // loginIdentifier = employeeIdentity!.Email;
             }
             else if (userRole == UserRoles.Company)
             {
-                var companyIdentity = await companyIdentityRepository.Get(identityId);
-                loginIdentifier = companyIdentity!.Email;
+                // var companyIdentity = await companyIdentityRepository.Get(identityId);
+                // loginIdentifier = companyIdentity!.Email;
             }
-
+            return "TODO: replace";
             return loginIdentifier;
         }
 
@@ -109,14 +105,14 @@ namespace JobBoardPlatform.PL.Controllers.Security
         }
 
         private async Task TryChangeLoginAsync<TIdentity>(
-            IModifyIdentityService<TIdentity> modify, TIdentity identity, string newLogin)
+            IModifyIdentityService<TIdentity> modify, int userId, string currentPassword, string newLogin)
             where TIdentity : class, IUserIdentityEntity
         {
             try
             {
-                await modify.TryChangeLoginIdentifierAsync(identity, newLogin);
+                await modify.TryChangeLoginIdentifierAsync(userId, newLogin, currentPassword);
             }
-            catch (AuthentificationException e)
+            catch (AuthenticationException e)
             {
                 ModelState.AddModelError("AlreadyExistsError", e.Message);
             }
@@ -128,14 +124,14 @@ namespace JobBoardPlatform.PL.Controllers.Security
         }
 
         private async Task TryChangePasswordAsync<TIdentity>(
-            IModifyIdentityService<TIdentity> modify, TIdentity identity, SettingsIdentityViewModel viewModel)
+            IModifyIdentityService<TIdentity> modify, int userId, SettingsIdentityViewModel viewModel)
             where TIdentity : class, IUserIdentityEntity
         {
             try
             {
-                await modify.TryChangePasswordAsync(identity!, viewModel.OldPassword!, viewModel.NewPassword!);
+                await modify.TryChangePasswordAsync(userId, viewModel.OldPassword!, viewModel.NewPassword!);
             }
-            catch (AuthentificationException e)
+            catch (AuthenticationException e)
             {
                 ModelState.AddModelError("AlreadyExistsError", e.Message);
             }
