@@ -5,8 +5,6 @@ using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IO;
 using System.Net;
 
 namespace JobBoardPlatform.DAL.Repositories.Blob

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using JobBoardPlatform.DAL.Options;
 using System.Security.Claims;
 using JobBoardPlatform.BLL.Commands.Contracts;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {
@@ -13,19 +14,19 @@ namespace JobBoardPlatform.BLL.Commands.Application
     {
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IOptions<AzureOptions> azureOptions;
+        private readonly UserApplicationsResumeStorage resumeStorage;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
 
 
         public OfferApplicationCommandsExecutor(
             IRepository<OfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
-            IOptions<AzureOptions> azureOptions,
+            UserApplicationsResumeStorage resumeStorage,
             IOfferActionHandlerFactory actionHandlerFactory)
         {
             this.applicationsRepository = applicationsRepository;
             this.offersRepository = offersRepository;
-            this.azureOptions = azureOptions;
+            this.resumeStorage = resumeStorage;
             this.actionHandlerFactory = actionHandlerFactory;
         }
 
@@ -36,7 +37,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             if (!actionsHandler.IsActionDoneRecently(request))
             {
                 var postFormCommand = new PostApplicationFormCommand(
-                    applicationsRepository, offersRepository, azureOptions, user, offerId, form);
+                    applicationsRepository, offersRepository, resumeStorage, user, offerId, form);
                 await postFormCommand.Execute();
 
                 actionsHandler.RegisterAction(request, response);

@@ -7,7 +7,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
 {
     public class UserProfileImagesStorage : CoreBlobStorage
     {
-        private const string ContainerName = "userprofileimagescontainer";
+        public const string ContainerName = "userprofileimagescontainer";
 
         private readonly BlobHttpHeaders blobHttpHeaders;
 

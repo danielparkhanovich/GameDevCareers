@@ -35,6 +35,8 @@ using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.BLL.Commands.Identity;
+using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -165,6 +167,9 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
 // Cloud
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
+builder.Services.AddTransient<UserProfileImagesStorage>();
+builder.Services.AddTransient<UserApplicationsResumeStorage>();
+builder.Services.AddTransient<UserProfileAttachedResumeStorage>();
 
 // Background
 builder.Services.AddHostedService<OfferExpirationChecker>();

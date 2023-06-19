@@ -14,26 +14,27 @@ namespace JobBoardPlatform.BLL.Commands.Application
     {
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IOptions<AzureOptions> azureOptions;
-        private readonly int offerId;
+        private readonly UserApplicationsResumeStorage resumeStorage;
         private readonly ClaimsPrincipal user;
+        private readonly int offerId;
         private readonly IApplicationForm form;
 
 
         public PostApplicationFormCommand(
             IRepository<OfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
-            IOptions<AzureOptions> azureOptions,
+            UserApplicationsResumeStorage resumeStorage,
             ClaimsPrincipal user,
             int offerId,
             IApplicationForm form)
         {
             this.applicationsRepository = applicationsRepository;
             this.offersRepository = offersRepository;
-            this.azureOptions = azureOptions;
             this.user = user;
-            this.offerId = offerId;
             this.form = form;
+            this.offerId = offerId;
+            this.resumeStorage = resumeStorage;
+            this.resumeStorage.SetOfferIdProperty(offerId.ToString());
         }
 
         public async Task Execute()
@@ -83,8 +84,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             }
             else if (form.AttachedResume.File != null)
             {
-                var applicationsResumesStorage = new UserApplicationsResumeStorage(azureOptions, offerId);
-                var url = await applicationsResumesStorage.UpdateAsync(null, form.AttachedResume.File);
+                var url = await resumeStorage.UpdateAsync(null, form.AttachedResume.File);
                 application.ResumeUrl = url;
             }
         }

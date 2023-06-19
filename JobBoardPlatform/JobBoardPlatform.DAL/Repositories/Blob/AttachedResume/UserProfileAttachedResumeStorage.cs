@@ -7,7 +7,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
 {
     public class UserProfileAttachedResumeStorage : CoreBlobStorage
     {
-        private const string ContainerName = "userprofileattachedresumecontainer";
+        public const string ContainerName = "userprofileattachedresumecontainer";
 
         private readonly BlobHttpHeaders blobHttpHeaders;
 

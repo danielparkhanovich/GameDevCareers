@@ -7,28 +7,37 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
 {
     public class UserApplicationsResumeStorage : CoreBlobStorage
     {
-        private const string ContainerName = "userapplicationsresumecontainer";
+        public const string ContainerName = "userapplicationsresumecontainer";
         private const string OfferIdProperty = "offerId";
 
         private readonly BlobHttpHeaders blobHttpHeaders;
         private readonly int offerId;
+        private Dictionary<string, string> additionalMetadata;
 
 
-        public UserApplicationsResumeStorage(IOptions<AzureOptions> azureOptions, int offerId) : base(azureOptions)
+        public UserApplicationsResumeStorage(IOptions<AzureOptions> azureOptions) : base(azureOptions)
         {
             blobHttpHeaders = new BlobHttpHeaders()
             {
                 ContentType = "application/pdf"
             };
 
-            this.offerId = offerId;
+            additionalMetadata = new Dictionary<string, string>();
+        }
+
+        public void SetOfferIdProperty(string value)
+        {
+            additionalMetadata.Add(OfferIdProperty, value);
         }
 
         protected override Dictionary<string, string> GetMetadata(IFormFile file)
         {
             var metadata = base.GetMetadata(file);
 
-            metadata[OfferIdProperty] = offerId.ToString();
+            foreach (var kvp in additionalMetadata)
+            {
+                metadata.Add(kvp.Key, kvp.Value);
+            }
 
             return metadata;
         }

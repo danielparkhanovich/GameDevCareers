@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobBoardPlatform.BLL", "Job
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{537F52C4-CEB4-47CD-92A1-4A3471F07273}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobBoardPlatform.BLL.IntegrationTests", "JobBoardPlatform.BLL.Tests\JobBoardPlatform.BLL.IntegrationTests.csproj", "{3206E5FA-D785-4713-A042-FC100593AB1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobBoardPlatform.IntegrationTests", "JobBoardPlatform.BLL.Tests\JobBoardPlatform.IntegrationTests.csproj", "{3206E5FA-D785-4713-A042-FC100593AB1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
