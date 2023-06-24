@@ -1,7 +1,7 @@
 using JobBoardPlatform.BLL.IntegrationTests.Fixtures;
 using JobBoardPlatform.IntegrationTests.Utils;
 
-namespace JobBoardPlatform.BLL.IntegrationTests.Commands
+namespace JobBoardPlatform.IntegrationTests.Commands.Users
 {
     public class DeleteEmployeeCommandTest : IClassFixture<DataManagementFixture>, IDisposable
     {
@@ -13,8 +13,8 @@ namespace JobBoardPlatform.BLL.IntegrationTests.Commands
         public DeleteEmployeeCommandTest(DataManagementFixture fixture)
         {
             this.fixture = fixture;
-            this.testsUtils = new RepositoryIntegrationTestsUtils(fixture.ServiceProvider);
-            this.assert = new RepositoryAssert(testsUtils);
+            testsUtils = new RepositoryIntegrationTestsUtils(fixture.ServiceProvider);
+            assert = new RepositoryAssert(testsUtils);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace JobBoardPlatform.BLL.IntegrationTests.Commands
 
             var deleteCommand = await testsUtils.GetDeleteEmployeeCommandByEmail(userEmail);
             await deleteCommand.Execute();
-            
+
             await assert.UserNotExists(userEmail, userProfile.Id);
             await assert.ResumeNotExists(userEmail);
         }

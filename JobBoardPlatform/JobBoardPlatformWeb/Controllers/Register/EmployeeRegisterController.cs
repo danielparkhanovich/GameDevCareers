@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
+    [Route("register-employee")]
     public class EmployeeRegisterController : BaseRegisterController<UserRegisterViewModel>
     {
         private readonly IRegistrationInteractor<UserRegisterViewModel> registrationInteractor;

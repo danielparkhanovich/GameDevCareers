@@ -47,13 +47,11 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         {
             int id = UserSessionUtils.GetProfileId(User);
 
-            var updateProfileCommand = new DeleteEmployeeResumeCommand(id,
-                profileRepository,
-                resumeStorage,
-                userSession,
-                HttpContext);
+            var deleteResumeCommand = new DeleteEmployeeResumeCommand(
+                id, profileRepository, resumeStorage);
 
-            await updateProfileCommand.Execute();
+            await deleteResumeCommand.Execute();
+            await userSession.UpdateSessionStateAsync(HttpContext);
 
             return RedirectToAction("Profile");
         }
