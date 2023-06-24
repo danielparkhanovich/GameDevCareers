@@ -14,27 +14,26 @@ namespace JobBoardPlatform.BLL.Commands.Application
     {
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly UserApplicationsResumeStorage resumeStorage;
-        private readonly ClaimsPrincipal user;
-        private readonly int offerId;
+        private readonly IApplicationsResumeBlobStorage resumeStorage;
         private readonly IApplicationForm form;
+        private readonly int offerId;
+        private readonly int? userProfileId;
 
 
         public PostApplicationFormCommand(
             IRepository<OfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
-            UserApplicationsResumeStorage resumeStorage,
-            ClaimsPrincipal user,
+            IApplicationsResumeBlobStorage resumeStorage,
+            IApplicationForm form,
             int offerId,
-            IApplicationForm form)
+            int? userProfileId)
         {
             this.applicationsRepository = applicationsRepository;
             this.offersRepository = offersRepository;
-            this.user = user;
+            this.resumeStorage = resumeStorage;
             this.form = form;
             this.offerId = offerId;
-            this.resumeStorage = resumeStorage;
-            this.resumeStorage.SetOfferIdProperty(offerId.ToString());
+            this.userProfileId = userProfileId;
         }
 
         public async Task Execute()
@@ -51,7 +50,6 @@ namespace JobBoardPlatform.BLL.Commands.Application
         {
             var application = new OfferApplication();
             MapPersonalInformation(application);
-            AddUserProfileIfUserLoggedIn(application);
             await AddAttachedResume(application);
 
             return application;
@@ -65,15 +63,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             application.FullName = form.FullName;
             application.Email = form.Email;
             application.Description = form.AdditionalInformation;
-        }
-
-        private void AddUserProfileIfUserLoggedIn(OfferApplication application)
-        {
-            if (UserSessionUtils.IsLoggedIn(user))
-            {
-                int profileId = UserSessionUtils.GetIdentityId(user);
-                application.EmployeeProfileId = profileId;
-            }
+            application.EmployeeProfileId = userProfileId;
         }
 
         private async Task AddAttachedResume(OfferApplication application)
@@ -84,7 +74,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             }
             else if (form.AttachedResume.File != null)
             {
-                var url = await resumeStorage.UpdateAsync(null, form.AttachedResume.File);
+                var url = await resumeStorage.AssignResumeToOfferAsync(offerId, form.AttachedResume.File);
                 application.ResumeUrl = url;
             }
         }

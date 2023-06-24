@@ -2,11 +2,11 @@
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using JobBoardPlatform.DAL.Options;
 using System.Security.Claims;
 using JobBoardPlatform.BLL.Commands.Contracts;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {
@@ -14,14 +14,14 @@ namespace JobBoardPlatform.BLL.Commands.Application
     {
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly UserApplicationsResumeStorage resumeStorage;
+        private readonly IApplicationsResumeBlobStorage resumeStorage;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
 
 
         public OfferApplicationCommandsExecutor(
             IRepository<OfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
-            UserApplicationsResumeStorage resumeStorage,
+            IApplicationsResumeBlobStorage resumeStorage,
             IOfferActionHandlerFactory actionHandlerFactory)
         {
             this.applicationsRepository = applicationsRepository;
@@ -31,13 +31,13 @@ namespace JobBoardPlatform.BLL.Commands.Application
         }
 
         public async Task TryPostApplicationFormAsync(
-            int offerId, ClaimsPrincipal user, HttpRequest request, HttpResponse response, IApplicationForm form)
+            int offerId, int? userProfileId, HttpRequest request, HttpResponse response, IApplicationForm form)
         {
             var actionsHandler = actionHandlerFactory.GetApplyActionHandler(offerId);
             if (!actionsHandler.IsActionDoneRecently(request))
             {
                 var postFormCommand = new PostApplicationFormCommand(
-                    applicationsRepository, offersRepository, resumeStorage, user, offerId, form);
+                    applicationsRepository, offersRepository, resumeStorage, form, offerId, userProfileId);
                 await postFormCommand.Execute();
 
                 actionsHandler.RegisterAction(request, response);

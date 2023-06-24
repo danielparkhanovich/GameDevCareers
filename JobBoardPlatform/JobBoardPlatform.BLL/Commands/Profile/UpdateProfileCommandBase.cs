@@ -13,22 +13,16 @@ namespace JobBoardPlatform.BLL.Commands.Profile
         private readonly int id;
         private readonly TData data;
         private readonly IRepository<TProfile> repository;
-        private readonly HttpContext httpContext;
-        private readonly IUserSessionService<TEntity, TProfile> userSession;
 
 
         public UpdateProfileCommandBase(
             int profileId, 
             TData profileData, 
-            IRepository<TProfile> repository, 
-            HttpContext httpContext,
-            IUserSessionService<TEntity, TProfile> userSession)
+            IRepository<TProfile> repository)
         {
             this.id = profileId;
             this.data = profileData;
             this.repository = repository;
-            this.httpContext = httpContext;
-            this.userSession = userSession;
         }
 
         public async Task Execute()
@@ -40,8 +34,6 @@ namespace JobBoardPlatform.BLL.Commands.Profile
             await UploadFiles(viewModel, profile);
             MapDataToModel(viewModel, profile);
             await repository.Update(profile);
-
-            await userSession.UpdateSessionStateAsync(httpContext);
         }
 
         protected abstract Task UploadFiles(TData from, TProfile to);

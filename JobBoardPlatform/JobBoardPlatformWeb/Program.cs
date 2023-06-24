@@ -167,9 +167,10 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
 // Cloud
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
-builder.Services.AddTransient<UserProfileImagesStorage>();
-builder.Services.AddTransient<UserApplicationsResumeStorage>();
-builder.Services.AddTransient<UserProfileAttachedResumeStorage>();
+builder.Services.AddTransient<CoreBlobStorage>();
+builder.Services.AddTransient<IUserProfileImagesStorage, UserProfileImagesStorage >();
+builder.Services.AddTransient<IApplicationsResumeBlobStorage, UserApplicationsResumeStorage>();
+builder.Services.AddTransient<IProfileResumeBlobStorage, UserProfileAttachedResumeStorage>();
 
 // Background
 builder.Services.AddHostedService<OfferExpirationChecker>();

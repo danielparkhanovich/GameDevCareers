@@ -27,5 +27,10 @@ namespace JobBoardPlatform.BLL.Commands.Identity
         {
             return queryExecutor.GetIdentityByEmail(email);
         }
+
+        public Task<T> GetUserByIdWithIncludedProfile(int id)
+        {
+            return queryExecutor.GetIdentityById(id);
+        }
     }
 }

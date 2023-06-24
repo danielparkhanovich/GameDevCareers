@@ -42,7 +42,6 @@ namespace JobBoardPlatform.DAL.Models.Company
         public int NumberOfApplications { get; set; }
         public int NumberOfViews { get; set; }
 
-
         public virtual ICollection<JobOfferEmploymentDetails> JobOfferEmploymentDetails { get; set; }
         public virtual ICollection<TechKeyword> TechKeywords { get; set; }
         public virtual ICollection<OfferApplication> OfferApplications { get; set; }

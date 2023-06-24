@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Employee;
-using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -10,14 +10,14 @@ namespace JobBoardPlatform.BLL.Commands.Profile
     {
         private readonly int id;
         private readonly IRepository<EmployeeProfile> repository;
-        private readonly IBlobStorage resumeStorage;
+        private readonly IProfileResumeBlobStorage resumeStorage;
         private readonly IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession;
         private readonly HttpContext httpContext;
 
 
         public DeleteEmployeeResumeCommand(int id, 
             IRepository<EmployeeProfile> repository,
-            IBlobStorage resumeStorage,
+            IProfileResumeBlobStorage resumeStorage,
             IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession,
             HttpContext httpContext)
         {
@@ -32,7 +32,7 @@ namespace JobBoardPlatform.BLL.Commands.Profile
         {
             var profile = await repository.Get(id);
 
-            await resumeStorage.DeleteAsync(profile.ResumeUrl!);
+            await resumeStorage.DeleteIfNotAssignedToOffersAsync(profile.ResumeUrl!);
             profile.ResumeUrl = null;
 
             await repository.Update(profile);

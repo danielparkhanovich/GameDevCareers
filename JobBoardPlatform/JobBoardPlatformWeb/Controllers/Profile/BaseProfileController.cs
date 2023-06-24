@@ -1,8 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.MessageBus.Notifications;
-using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.DAL.Repositories.Blob;
-using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +11,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         where TProfile : class, IUserProfileEntity
         where TViewModel : class, IProfileViewModel
     {
-        protected IRepository<TProfile> profileRepository;
-        protected IBlobStorage userProfileImagesStorage;
-
-
         public async Task<IActionResult> Profile()
         {
             var viewModel = await GetProfileViewModel();

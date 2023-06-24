@@ -10,25 +10,28 @@ using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
 using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Session;
+using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyProfileController : BaseProfileController<CompanyProfile, CompanyProfileViewModel>
     {
+        private readonly IRepository<CompanyProfile> profileRepository;
+        private readonly IUserProfileImagesStorage imageStorage;
         private readonly IViewModelFactory<CompanyProfile, CompanyProfileViewModel> viewModelFactory;
         private readonly IUserSessionService<CompanyIdentity, CompanyProfile> userSession;
 
 
         public CompanyProfileController(
-            IOptions<AzureOptions> azureOptions, 
             IRepository<CompanyProfile> profileRepository,
+            IUserProfileImagesStorage imageStorage,
             IUserSessionService<CompanyIdentity, CompanyProfile> userSession)
         {
-            this.userProfileImagesStorage = new UserProfileImagesStorage(azureOptions);
             this.profileRepository = profileRepository;
-            this.viewModelFactory = new CompanyProfileViewModelFactory();
+            this.imageStorage = imageStorage;
             this.userSession = userSession;
+            this.viewModelFactory = new CompanyProfileViewModelFactory();
         }
 
         protected override async Task<CompanyProfileViewModel> GetProfileViewModel()
@@ -48,11 +51,10 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             var updateProfileCommand = new UpdateCompanyProfileCommand(id,
                 viewModel,
                 profileRepository,
-                HttpContext,
-                userSession,
-                userProfileImagesStorage);
-
+                imageStorage);
             await updateProfileCommand.Execute();
+
+            await userSession.UpdateSessionStateAsync(HttpContext);
         }
     }
 }

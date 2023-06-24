@@ -1,6 +1,6 @@
 ﻿namespace JobBoardPlatform.DAL.Repositories.Blob
 {
-    public class FileMetadata
+    public class BlobDescription
     {
         public string Name { get; set; } = string.Empty;
         public string Size { get; set; } = string.Empty;

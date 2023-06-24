@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob;
-using Microsoft.Extensions.Options;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
@@ -14,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -25,7 +25,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<EmployeeProfile> profileRepository;
         private readonly IRepository<EmployeeIdentity> identityRepository;
-        private readonly IBlobStorage resumeStorage;
+        private readonly IProfileResumeBlobStorage resumeStorage;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
 
 
@@ -36,14 +36,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             IRepository<EmployeeProfile> profileRepository,
             IRepository<EmployeeIdentity> identityRepository,
             IOfferActionHandlerFactory actionHandlerFactory,
-            IOptions<AzureOptions> azureOptions)
+            IProfileResumeBlobStorage resumeStorage)
         {
             this.commandsExecutor = commandsExecutor;
             this.queryExecutor = queryExecutor;
             this.offersRepository = offersRepository;
             this.profileRepository = profileRepository;
             this.identityRepository = identityRepository;
-            this.resumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
+            this.resumeStorage = resumeStorage;
             this.actionHandlerFactory = actionHandlerFactory;
         }
 
@@ -80,7 +80,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             }
 
             int offerId = content.Update.OfferId;
-            await commandsExecutor.TryPostApplicationFormAsync(offerId, User, Request, Response, content.Update);
+            await commandsExecutor.TryPostApplicationFormAsync(
+                offerId, TryGetUserProfileId(), Request, Response, content.Update);
 
             return RedirectToAction("Offer");
         }
@@ -128,7 +129,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private async Task TryFillResumeField(OfferApplicationUpdateViewModel update)
         {
             string? resumeUrl = update.AttachedResume.ResumeUrl;
-            FileMetadata metadata = await resumeStorage.GetBlobMetadataAsync(resumeUrl);
+            BlobDescription metadata = await resumeStorage.GetMetadataAsync(resumeUrl);
             update.AttachedResume.FileName = metadata.Name;
             update.AttachedResume.FileSize = metadata.Size;
         }
@@ -143,6 +144,16 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private bool IsUserRegistered()
         {
             return UserSessionUtils.IsLoggedIn(User) && UserRolesUtils.IsUserEmployee(User);
+        }
+
+        private int? TryGetUserProfileId()
+        {
+            int? profileId = null;
+            if (UserSessionUtils.IsLoggedIn(User))
+            {
+                profileId = UserSessionUtils.GetIdentityId(User);
+            }
+            return profileId;
         }
     }
 }

@@ -1,38 +1,53 @@
 ﻿using Azure.Storage.Blobs.Models;
-using JobBoardPlatform.DAL.Options;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 
 namespace JobBoardPlatform.DAL.Repositories.Blob
 {
-    public class UserProfileImagesStorage : CoreBlobStorage
+    public class UserProfileImagesStorage : IUserProfileImagesStorage
     {
         public const string ContainerName = "userprofileimagescontainer";
 
+        private readonly CoreBlobStorage blobStorage;
         private readonly BlobHttpHeaders blobHttpHeaders;
 
 
-        public UserProfileImagesStorage(IOptions<AzureOptions> azureOptions) : base(azureOptions)
+        public UserProfileImagesStorage(CoreBlobStorage blobStorage)
         {
-            blobHttpHeaders = new BlobHttpHeaders()
+            this.blobStorage = blobStorage;
+            this.blobStorage.SetContainerName(ContainerName);
+
+            this.blobHttpHeaders = new BlobHttpHeaders()
             {
                 ContentType = "image/bitmap"
             };
         }
 
-        protected override string GetContainerName()
+        public async Task<string> ChangeImageAsync(string? path, IFormFile newFile)
         {
-            return ContainerName;
+            await blobStorage.DeleteIfExistsAsync(path);
+
+            var exportData = GetExportData(newFile);
+            return await blobStorage.AddAsync(exportData);
         }
 
-        protected override BlobHttpHeaders GetBlobHttpHeaders()
+        public Task DeleteImageIfExistsAsync(string? path)
         {
-            return blobHttpHeaders;
+            return blobStorage.DeleteIfExistsAsync(path);
         }
 
-        protected override string GetFileName(IFormFile file)
+        public Task<bool> IsImageExistsAsync(string? path)
         {
-             return $"{Guid.NewGuid()}{PropertiesSeparator}{file.FileName}";
+            return blobStorage.IsExistsAsync(path);
+        }
+
+        private BlobExportData GetExportData(IFormFile file)
+        {
+            return new BlobExportData()
+            {
+                File = file,
+                BlobHttpHeaders = blobHttpHeaders,
+                Metadata = new Dictionary<string, string>()
+            };
         }
     }
 }

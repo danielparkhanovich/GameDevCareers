@@ -18,18 +18,21 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
     public class EmployeeProfileController : BaseProfileController<EmployeeProfile, EmployeeProfileViewModel>
     {
-        protected IBlobStorage userProfileResumeStorage;
+        private readonly IRepository<EmployeeProfile> profileRepository;
+        private readonly IUserProfileImagesStorage imageStorage;
+        private readonly IProfileResumeBlobStorage resumeStorage;
         private readonly IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession;
 
 
         public EmployeeProfileController(
-            IOptions<AzureOptions> azureOptions, 
             IRepository<EmployeeProfile> profileRepository,
+            IUserProfileImagesStorage imageStorage,
+            IProfileResumeBlobStorage resumeStorage,
             IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession)
         {
-            this.userProfileImagesStorage = new UserProfileImagesStorage(azureOptions);
+            this.imageStorage = imageStorage;
+            this.resumeStorage = resumeStorage;
             this.profileRepository = profileRepository;            
-            this.userProfileResumeStorage = new UserProfileAttachedResumeStorage(azureOptions);
             this.userSession = userSession;
         }
 
@@ -46,7 +49,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
             var updateProfileCommand = new DeleteEmployeeResumeCommand(id,
                 profileRepository,
-                userProfileResumeStorage,
+                resumeStorage,
                 userSession,
                 HttpContext);
 
@@ -60,7 +63,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             int id = int.Parse(User.FindFirstValue(UserSessionProperties.ProfileIdentifier));
 
             var profile = await profileRepository.Get(id);
-            var metadata = await userProfileResumeStorage.GetBlobMetadataAsync(profile.ResumeUrl);
+            var metadata = await resumeStorage.GetMetadataAsync(profile.ResumeUrl);
             string resumeName = metadata.Name;
             string resumeSize = metadata.Size;
 
@@ -77,12 +80,12 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             var updateProfileCommand = new UpdateEmployeeProfileCommand(id,
                 viewModel,
                 profileRepository,
-                HttpContext,
-                userSession,
-                userProfileImagesStorage,
-                userProfileResumeStorage);
+                imageStorage,
+                resumeStorage);
 
             await updateProfileCommand.Execute();
+
+            await userSession.UpdateSessionStateAsync(HttpContext);
         }
     }
 }

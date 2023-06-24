@@ -6,6 +6,9 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Azure.Storage.Blobs;
+using JobBoardPlatform.DAL.Models.Company;
+using System;
+using JobBoardPlatform.DAL.Models.Employee;
 
 namespace JobBoardPlatform.BLL.IntegrationTests.Fixtures
 {
@@ -23,6 +26,15 @@ namespace JobBoardPlatform.BLL.IntegrationTests.Fixtures
             ServiceProvider = serviceCollection.BuildServiceProvider();
         }
 
+        public void Dispose()
+        {
+            var blobServiceClient = new BlobServiceClient(GetStorageEmulatorConnectionString());
+            DisposeContainer(blobServiceClient, UserProfileImagesStorage.ContainerName);
+            DisposeContainer(blobServiceClient, UserApplicationsResumeStorage.ContainerName);
+            DisposeContainer(blobServiceClient, UserProfileAttachedResumeStorage.ContainerName);
+            DisposeSqlRepository();
+        }
+
         private void AddSqlRepository(ServiceCollection serviceCollection)
         {
             serviceCollection.AddDbContext<DataContext>(options =>
@@ -38,31 +50,42 @@ namespace JobBoardPlatform.BLL.IntegrationTests.Fixtures
             {
                 GetLocalStorageOptions(options);
             });
-            serviceCollection.AddTransient<UserProfileImagesStorage>();
-            serviceCollection.AddTransient<UserProfileAttachedResumeStorage>();
-            serviceCollection.AddTransient<UserApplicationsResumeStorage>();
+            serviceCollection.AddTransient<CoreBlobStorage>();
+            serviceCollection.AddTransient<IUserProfileImagesStorage, UserProfileImagesStorage>();
+            serviceCollection.AddTransient<IApplicationsResumeBlobStorage, UserApplicationsResumeStorage>();
+            serviceCollection.AddTransient<IProfileResumeBlobStorage, UserProfileAttachedResumeStorage>();
         }
 
         private void GetLocalStorageOptions(AzureOptions options)
         {
             options.Account = "devstoreaccount1";
             options.ResourceGroup = "Test";
-            // Connection string for the emulator
-            options.ConnectionString = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;";
+            options.ConnectionString = GetStorageEmulatorConnectionString();
         }
 
-        public void Dispose()
+        private string GetStorageEmulatorConnectionString()
         {
-            var blobServiceClient = new BlobServiceClient("DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;");
-            DisposeContainer(blobServiceClient, UserProfileImagesStorage.ContainerName);
-            DisposeContainer(blobServiceClient, UserProfileAttachedResumeStorage.ContainerName);
-            DisposeContainer(blobServiceClient, UserApplicationsResumeStorage.ContainerName);
+            return "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;";
         }
 
         private void DisposeContainer(BlobServiceClient client, string containerName)
         {
             var container = client.GetBlobContainerClient(containerName);
             container.DeleteIfExists();
+        }
+
+        private void DisposeSqlRepository()
+        {
+            var dataContext = ServiceProvider.GetService<DataContext>()!;
+            var dbSetProperties = dataContext.GetType().GetProperties()
+            .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>));
+
+            foreach (var property in dbSetProperties)
+            {
+                var dbSet = (IEnumerable<object>)property.GetValue(dataContext);
+                dataContext.RemoveRange(dbSet);
+            }
+            dataContext.SaveChanges();
         }
     }
 }

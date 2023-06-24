@@ -1,34 +1,30 @@
 ﻿using JobBoardPlatform.BLL.Models.Contracts;
-using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
 {
     public class UpdateCompanyProfileCommand : UpdateProfileCommandBase<CompanyIdentity, CompanyProfile, ICompanyProfileData>
     {
-        private readonly IBlobStorage userProfileImagesStorage;
+        private readonly IUserProfileImagesStorage imageStorage;
 
 
         public UpdateCompanyProfileCommand(int profileId, 
             ICompanyProfileData profileData, 
             IRepository<CompanyProfile> repository,
-            HttpContext httpContext,
-            IUserSessionService<CompanyIdentity, CompanyProfile> userSession,
-            IBlobStorage userProfileImagesStorage) 
-            : base(profileId, profileData, repository, httpContext, userSession)
+            IUserProfileImagesStorage imageStorage) 
+            : base(profileId, profileData, repository)
         {
-            this.userProfileImagesStorage = userProfileImagesStorage;
+            this.imageStorage = imageStorage;
         }
 
         protected override async Task UploadFiles(ICompanyProfileData from, CompanyProfile to)
         {
             if (from.ProfileImage != null)
             {
-                var imageUrl = await userProfileImagesStorage.UpdateAsync(to.ProfileImageUrl, from.ProfileImage);
+                var imageUrl = await imageStorage.ChangeImageAsync(to.ProfileImageUrl, from.ProfileImage);
                 to.ProfileImageUrl = imageUrl;
             }
         }

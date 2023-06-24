@@ -2,6 +2,7 @@
 using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -9,33 +10,31 @@ namespace JobBoardPlatform.BLL.Commands.Profile
 {
     public class UpdateEmployeeProfileCommand : UpdateProfileCommandBase<EmployeeIdentity, EmployeeProfile, IEmployeeProfileData>
     {
-        private readonly IBlobStorage userProfileImagesStorage;
-        private readonly IBlobStorage userResumesStorage;
+        private readonly IUserProfileImagesStorage imageStorage;
+        private readonly IProfileResumeBlobStorage resumeStorage;
 
 
         public UpdateEmployeeProfileCommand(int profileId,
             IEmployeeProfileData profileData, 
             IRepository<EmployeeProfile> repository,
-            HttpContext httpContext,
-            IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession,
-            IBlobStorage userProfileImagesStorage,
-            IBlobStorage userResumesStorage) 
-            : base(profileId, profileData, repository, httpContext, userSession)
+            IUserProfileImagesStorage imageStorage,
+            IProfileResumeBlobStorage resumeStorage) 
+            : base(profileId, profileData, repository)
         {
-            this.userProfileImagesStorage = userProfileImagesStorage;
-            this.userResumesStorage = userResumesStorage;
+            this.imageStorage = imageStorage;
+            this.resumeStorage = resumeStorage;
         }
 
         protected override async Task UploadFiles(IEmployeeProfileData from, EmployeeProfile to)
         {
             if (from.ProfileImage != null)
             {
-                var imageUrl = await userProfileImagesStorage.UpdateAsync(to.ProfileImageUrl, from.ProfileImage);
+                var imageUrl = await imageStorage.ChangeImageAsync(to.ProfileImageUrl, from.ProfileImage);
                 to.ProfileImageUrl = imageUrl;
             }
             if (from.File != null)
             {
-                var resumeUrl = await userResumesStorage.UpdateAsync(to.ResumeUrl, from.File);
+                var resumeUrl = await resumeStorage.ChangeResumeAsync(to.ResumeUrl, from.File);
                 to.ResumeUrl = resumeUrl;
             }
         }

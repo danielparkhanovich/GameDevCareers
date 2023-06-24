@@ -1,60 +1,88 @@
 ﻿using Azure.Storage.Blobs.Models;
-using JobBoardPlatform.DAL.Options;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
 {
-    public class UserApplicationsResumeStorage : CoreBlobStorage
+    public class UserApplicationsResumeStorage : IApplicationsResumeBlobStorage
     {
         public const string ContainerName = "userapplicationsresumecontainer";
-        private const string OfferIdProperty = "offerId";
+        protected const string RelatedOffersProperty = "relatedOffersIds";
 
-        private readonly BlobHttpHeaders blobHttpHeaders;
-        private readonly int offerId;
-        private Dictionary<string, string> additionalMetadata;
+        private readonly CoreBlobStorage blobStorage;
+        private readonly BlobHttpHeaders httpHeaders;
 
 
-        public UserApplicationsResumeStorage(IOptions<AzureOptions> azureOptions) : base(azureOptions)
+        public UserApplicationsResumeStorage(CoreBlobStorage blobStorage)
         {
-            blobHttpHeaders = new BlobHttpHeaders()
+            this.blobStorage = blobStorage;
+            this.blobStorage.SetContainerName(ContainerName);
+
+            this.httpHeaders = new BlobHttpHeaders()
             {
                 ContentType = "application/pdf"
             };
-
-            additionalMetadata = new Dictionary<string, string>();
         }
 
-        public void SetOfferIdProperty(string value)
+        public async Task<string> AssignResumeToOfferAsync(int offerId, IFormFile newFile)
         {
-            additionalMetadata.Add(OfferIdProperty, value);
+            var exportData = GetExportData(newFile);
+            AddRelatedOffersIdsProperty(offerId, exportData.Metadata);
+
+            return await blobStorage.AddAsync(exportData);
         }
 
-        protected override Dictionary<string, string> GetMetadata(IFormFile file)
+        public async Task UnassignFromOfferOnOfferClosedAsync(int offerId, string filePath)
         {
-            var metadata = base.GetMetadata(file);
-
-            foreach (var kvp in additionalMetadata)
+            (var appliedOffersIds, var metadata) = await GetUpdatedOffersListFromMetadataAsync(offerId, filePath);
+            if (appliedOffersIds.Count == 0)
             {
-                metadata.Add(kvp.Key, kvp.Value);
+                await blobStorage.DeleteIfExistsAsync(filePath);
+                return;
             }
 
-            return metadata;
+            await blobStorage.SetMetadataAsync(filePath, metadata);
         }
 
-        protected override string GetContainerName()
+        private async Task<(List<int>, IDictionary<string, string>)> GetUpdatedOffersListFromMetadataAsync(
+            int offerId, string filePath)
         {
-            return ContainerName;
+            (var appliedOffersIds, var metadata) = await GetRelatedOffersFromMetadataAsync(filePath);
+            appliedOffersIds.Remove(offerId);
+
+            metadata[RelatedOffersProperty] = JsonSerializer.Serialize(appliedOffersIds);
+
+            return (appliedOffersIds, metadata);
         }
 
-        protected override BlobHttpHeaders GetBlobHttpHeaders()
+        /// <returns>(updated offers ids after removed offerId, updated metadata)</returns>
+        private async Task<(List<int>, IDictionary<string, string>)> GetRelatedOffersFromMetadataAsync(string filePath)
         {
-            return blobHttpHeaders;
+            var metadata = await blobStorage.GetBlobProperties(filePath);
+            var appliedOffersIds = JsonSerializer.Deserialize<List<int>>(metadata[RelatedOffersProperty])!;
+            return (appliedOffersIds, metadata);
         }
 
-        protected override string GetFileName(IFormFile file)
+        private BlobExportData GetExportData(IFormFile file)
         {
-            return $"{Guid.NewGuid()}{PropertiesSeparator}{offerId}{PropertiesSeparator}{file.FileName}";
+            return new BlobExportData()
+            {
+                File = file,
+                BlobHttpHeaders = httpHeaders,
+                Metadata = new Dictionary<string, string>()
+            };
+        }
+
+        private void AddRelatedOffersIdsProperty(int offerId, IDictionary<string, string> metadata)
+        {
+            AddPropertyToExportMetadata(RelatedOffersProperty, new List<int>() { offerId }, metadata);
+        }
+
+        private void AddPropertyToExportMetadata<T>(
+            string propertyName, T propertyValue, IDictionary<string, string> metadata)
+        {
+            string serializedValue = JsonSerializer.Serialize(propertyValue);
+            metadata.Add(propertyName, serializedValue);
         }
     }
 }
