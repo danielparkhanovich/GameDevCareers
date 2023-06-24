@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs.Models;
+using JobBoardPlatform.DAL.Repositories.Blob.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
@@ -34,13 +35,24 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
 
         public async Task UnassignFromOfferOnOfferClosedAsync(int offerId, string filePath)
         {
+            try 
+            {
+                await UnassignFromOfferAndTryDeleteAsync(offerId, filePath);
+            }
+            catch (BlobStorageException e)
+            {
+                await blobStorage.DeleteIfExistsAsync(filePath);
+            }
+        }
+
+        private async Task UnassignFromOfferAndTryDeleteAsync(int offerId, string filePath)
+        {
             (var appliedOffersIds, var metadata) = await GetUpdatedOffersListFromMetadataAsync(offerId, filePath);
             if (appliedOffersIds.Count == 0)
             {
                 await blobStorage.DeleteIfExistsAsync(filePath);
                 return;
             }
-
             await blobStorage.SetMetadataAsync(filePath, metadata);
         }
 
@@ -59,6 +71,12 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
         private async Task<(List<int>, IDictionary<string, string>)> GetRelatedOffersFromMetadataAsync(string filePath)
         {
             var metadata = await blobStorage.GetBlobProperties(filePath);
+
+            if (!metadata.ContainsKey(RelatedOffersProperty))
+            {
+                throw new BlobStorageException("Property not found");
+            }
+
             var appliedOffersIds = JsonSerializer.Deserialize<List<int>>(metadata[RelatedOffersProperty])!;
             return (appliedOffersIds, metadata);
         }

@@ -1,10 +1,8 @@
 ﻿using JobBoardPlatform.BLL.Models.Contracts;
-using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
 {
