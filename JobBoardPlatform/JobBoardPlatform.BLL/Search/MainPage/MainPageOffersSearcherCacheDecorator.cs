@@ -10,11 +10,11 @@ namespace JobBoardPlatform.BLL.Search.MainPage
     public class MainPageOffersSearcherCacheDecorator : IFilteringSearcher<JobOffer, MainPageOfferSearchParams>
     {
         private readonly MainPageOffersSearcher searcher;
-        private readonly OffersCacheManager cacheManager;
+        private readonly IOffersCacheManager cacheManager;
 
 
-        public MainPageOffersSearcherCacheDecorator(MainPageOffersSearcher searcher,
-            OffersCacheManager cacheManager)
+        public MainPageOffersSearcherCacheDecorator(
+            MainPageOffersSearcher searcher, IOffersCacheManager cacheManager)
         {
             this.searcher = searcher;
             this.cacheManager = cacheManager;

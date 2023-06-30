@@ -62,6 +62,14 @@ namespace JobBoardPlatform.PL.Controllers.Security
             return RedirectToAction("Settings");
         }
 
+        [HttpPost("Delete")]
+        public async Task<IActionResult> Delete(int userId)
+        {
+            //var deleteCommand = GetDeleteCommand(userId);
+            //await deleteCommand.Execute();
+            return Ok();
+        }
+
         private async Task UpdateIdentity<TIdentity>(
             SettingsIdentityViewModel viewModel, IModifyIdentityService<TIdentity> modifyService) 
             where TIdentity : class, IUserIdentityEntity

@@ -26,7 +26,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         public AdminPanelOffersController(
             IRepository<CompanyProfile> companyRepository,
-            OfferCommandsExecutor commandsExecutor,
+            IOffersManager commandsExecutor,
             AdminCommandsExecutor adminCommandsExecutor,
             CompanyOffersSearcher offersSearcher,
             OfferQueryExecutor queryExecutor) 

@@ -7,6 +7,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -34,7 +35,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return View(viewModel);
         }
 
-        [HttpPost]
+        [HttpPost("LogInto")]
         public async Task<IActionResult> LogInto(int userId)
         {
             var logIntoCommand = GetLogIntoCommand(userId);
@@ -42,12 +43,12 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return RedirectToAction("Home");
         }
 
-        [HttpPost]
+        [HttpPost("Delete")]
         public async Task<IActionResult> Delete(int userId)
         {
             var deleteCommand = GetDeleteCommand(userId);
             await deleteCommand.Execute();
-            return RedirectToAction("Panel");
+            return Ok();
         }
 
         protected abstract ICommand GetLogIntoCommand(int userId);

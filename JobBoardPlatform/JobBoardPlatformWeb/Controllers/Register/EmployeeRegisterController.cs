@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
@@ -25,8 +26,11 @@ namespace JobBoardPlatform.PL.Controllers.Register
         {
             if (ModelState.IsValid)
             {
-                var redirect = await registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
-                return RedirectToAction(redirect.ActionName, redirect.Data);
+                var redirect = await TryProcessRegistration(userRegister);
+                if (redirect != RedirectData.NoRedirect)
+                {
+                    return RedirectToAction(redirect.ActionName, redirect.Data);
+                }
             }
 
             return View(userRegister);
@@ -35,13 +39,26 @@ namespace JobBoardPlatform.PL.Controllers.Register
         public override async Task<IActionResult> TryConfirmRegistration(string tokenId)
         {
             await registrationInteractor.FinishRegistration(tokenId, HttpContext);
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         public override async Task<IActionResult> TryConfirmRegistration(string email, string passwordHash)
         {
             await loginService.TryLoginAsync(email, passwordHash, HttpContext);
-            return View();
+            return RedirectToAction("Index", "Home");
+        }
+
+        private Task<RedirectData> TryProcessRegistration(UserRegisterViewModel userRegister)
+        {
+            try
+            {
+                return registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
+            }
+            catch (AuthenticationException e)
+            {
+                ModelState.AddModelError(e.GetType().ToString(), e.Message);
+                return Task.FromResult(RedirectData.NoRedirect);
+            }
         }
     }
 }

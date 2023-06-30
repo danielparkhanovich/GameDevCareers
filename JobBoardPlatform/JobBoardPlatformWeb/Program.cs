@@ -37,6 +37,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
+using JobBoardPlatform.DAL.Repositories.Blob.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,6 +114,7 @@ builder.Services.AddTransient<IEmailCompanyRegistrationService, EmailCompanyRegi
 builder.Services.AddTransient<IAuthenticationWithProviderService<EmployeeIdentity>, EmployeeAuthenticationWithProviderService>();
 builder.Services.AddTransient(typeof(IRegistrationService<>), typeof(RegistrationService<>));
 builder.Services.AddTransient<IRegistrationTokensService, RegistrationTokensService>();
+builder.Services.AddScoped<IRegistrationLinkFactory, RegistrationLinkFactory>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailGateway"));
 
@@ -129,9 +131,9 @@ builder.Services.AddTransient<IdentityQueryExecutor<CompanyIdentity>>();
 builder.Services.AddTransient<UserManager<EmployeeIdentity>>();
 builder.Services.AddTransient<UserManager<CompanyIdentity>>();
 
-builder.Services.AddTransient<OffersCacheManager>();
+builder.Services.AddTransient<IOffersManager, OffersManager>();
+builder.Services.AddTransient<IOffersCacheManager, OffersCacheManager>();
 builder.Services.AddTransient<OfferQueryExecutor>();
-builder.Services.AddTransient<OfferCommandsExecutor>();
 builder.Services.AddTransient<OfferApplicationCommandsExecutor>();
 builder.Services.AddTransient<AdminCommandsExecutor>();
 builder.Services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelApplicationSearchParams>, CompanyPanelApplicationSearchParamsFactory>();
@@ -167,8 +169,9 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
 // Cloud
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
+builder.Services.AddTransient<IBlobStorageSettings, BlobStorageSettings>();
 builder.Services.AddTransient<CoreBlobStorage>();
-builder.Services.AddTransient<IUserProfileImagesStorage, UserProfileImagesStorage >();
+builder.Services.AddTransient<IUserProfileImagesStorage, UserProfileImagesStorage>();
 builder.Services.AddTransient<IApplicationsResumeBlobStorage, UserApplicationsResumeStorage>();
 builder.Services.AddTransient<IProfileResumeBlobStorage, UserProfileAttachedResumeStorage>();
 

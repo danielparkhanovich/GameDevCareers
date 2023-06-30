@@ -28,7 +28,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Login
 
         public async Task<TEntity> ForceLoginAsync(string email, HttpContext httpContext)
         {
-            var user = await userManager.GetUserByEmail(email);
+            var user = await userManager.GetUserByEmailAsync(email);
             ValidateEmail(user);
 
             await authorizationService.SignInHttpContextAsync(httpContext, user.Id);
@@ -37,7 +37,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Login
 
         public async Task<TEntity> TryLoginAsync(string email, string enteredPassword, HttpContext httpContext)
         {
-            var user = await userManager.GetUserByEmail(email);
+            var user = await userManager.GetUserByEmailAsync(email);
             ValidateEmail(user);
             ValidateEnteredPassword(user.HashPassword, enteredPassword);
 

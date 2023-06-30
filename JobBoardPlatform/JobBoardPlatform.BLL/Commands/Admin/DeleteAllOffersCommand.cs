@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Admin
@@ -10,11 +11,15 @@ namespace JobBoardPlatform.BLL.Commands.Admin
     public class DeleteAllOffersCommand : ICommand
     {
         private readonly IRepository<JobOffer> repository;
+        private readonly IOffersManager offersManager;
 
 
-        public DeleteAllOffersCommand(IRepository<JobOffer> offersRepository)
+        public DeleteAllOffersCommand(
+            IRepository<JobOffer> offersRepository,
+            IOffersManager offersManager)
         {
             this.repository = offersRepository;
+            this.offersManager = offersManager;
         }
 
         public async Task Execute()
@@ -22,14 +27,8 @@ namespace JobBoardPlatform.BLL.Commands.Admin
             var allRecords = await repository.GetAll();
             foreach (var record in allRecords)
             {
-                await DeleteOffer(record.Id);
+                await offersManager.DeleteAsync(record.Id);
             }
-        }
-
-        private async Task DeleteOffer(int id)
-        {
-            var deleteCommand = new DeleteOfferCommand(repository, id);
-            await deleteCommand.Execute();
         }
     }
 }

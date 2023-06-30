@@ -20,7 +20,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
 
         public CompanyOffersPanelController(CompanyOffersSearcher offersSearcher,
-            OfferCommandsExecutor commandsExecutor,
+            IOffersManager commandsExecutor,
             OfferQueryExecutor queryExecutor)
             : base(commandsExecutor)
         {

@@ -1,6 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.DAL.Data;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -61,10 +62,10 @@ namespace JobBoardPlatform.BLL.Services.Background
             return expirationService.IsExpired();
         }
 
-        private async Task DeleteOffer(IRepository<JobOffer> offersRepository, int offerIdToDelete)
+        private Task DeleteOffer(IServiceProvider serviceProvider, int offerIdToDelete)
         {
-            var deleteOfferCommand = new DeleteOfferCommand(offersRepository, offerIdToDelete);
-            await deleteOfferCommand.Execute();
+            var offersManager = serviceProvider.GetRequiredService<IOffersManager>();
+            return offersManager.DeleteAsync(offerIdToDelete);
         }
     }
 }

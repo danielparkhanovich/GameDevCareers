@@ -5,9 +5,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
-using JobBoardPlatform.BLL.Services.Session.Tokens;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
 using Microsoft.AspNetCore.Http;
 
@@ -38,7 +36,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public async Task TrySendConfirmationTokenAndPasswordAsync(string email)
         {
-            if (userManager.GetUserByEmail(email) != null)
+            if (userManager.GetUserByEmailAsync(email) != null)
             {
                 throw new AuthenticationException(AuthenticationException.WrongEmail);
             }
@@ -54,7 +52,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             var user = GetCompanyIdentity(token.RelatedLogin, token.PasswordHash);
             await userManager.AddNewUser(user);
 
-            var addedUser = userManager.GetUserByEmail(user.Email);
+            var addedUser = userManager.GetUserByEmailAsync(user.Email);
             await authorizationService.SignInHttpContextAsync(httpContext, addedUser.Id);
         }
 

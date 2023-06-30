@@ -24,7 +24,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public async Task<TEntity> TryRegisterAsync(string email, string password)
         {
-            if (userManager.GetUserByEmail(email) != null)
+            if (userManager.GetUserByEmailAsync(email) != null)
             {
                 throw new AuthenticationException(AuthenticationException.WrongEmail);
             }
@@ -33,7 +33,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             var user = GetUserIdentity(email, passwordHash);
 
             await userManager.AddNewUser(user);
-            return await userManager.GetUserByEmail(email);
+            return await userManager.GetUserByEmailAsync(email);
         }
 
         private TEntity GetUserIdentity(string email, string passwordHash)

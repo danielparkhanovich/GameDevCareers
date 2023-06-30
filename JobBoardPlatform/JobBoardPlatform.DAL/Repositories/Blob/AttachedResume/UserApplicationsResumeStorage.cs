@@ -1,23 +1,25 @@
 ﻿using Azure.Storage.Blobs.Models;
 using JobBoardPlatform.DAL.Repositories.Blob.Exceptions;
+using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
+using JobBoardPlatform.DAL.Repositories.Blob.Settings;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
 namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
 {
-    public class UserApplicationsResumeStorage : IApplicationsResumeBlobStorage
+    public sealed class UserApplicationsResumeStorage : IApplicationsResumeBlobStorage
     {
-        public const string ContainerName = "userapplicationsresumecontainer";
-        protected const string RelatedOffersProperty = "relatedOffersIds";
+        private const string RelatedOffersProperty = "relatedOffersIds";
 
+        private readonly string containerName = "userapplicationsresumecontainer";
         private readonly CoreBlobStorage blobStorage;
         private readonly BlobHttpHeaders httpHeaders;
 
 
-        public UserApplicationsResumeStorage(CoreBlobStorage blobStorage)
+        public UserApplicationsResumeStorage(CoreBlobStorage blobStorage, IBlobStorageSettings storageSettings)
         {
             this.blobStorage = blobStorage;
-            this.blobStorage.SetContainerName(ContainerName);
+            this.containerName = storageSettings.GetContainerName(this.GetType());
 
             this.httpHeaders = new BlobHttpHeaders()
             {
@@ -30,7 +32,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
             var exportData = GetExportData(newFile);
             AddRelatedOffersIdsProperty(offerId, exportData.Metadata);
 
-            return await blobStorage.AddAsync(exportData);
+            return await blobStorage.AddAsync(exportData, containerName);
         }
 
         public async Task UnassignFromOfferOnOfferClosedAsync(int offerId, string filePath)
@@ -41,8 +43,13 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
             }
             catch (BlobStorageException e)
             {
-                await blobStorage.DeleteIfExistsAsync(filePath);
+                await blobStorage.DeleteIfExistsAsync(filePath, containerName);
             }
+        }
+
+        public Task<bool> IsExistsAsync(string? filePath)
+        {
+            return blobStorage.IsExistsAsync(filePath, containerName);
         }
 
         private async Task UnassignFromOfferAndTryDeleteAsync(int offerId, string filePath)
@@ -50,10 +57,10 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
             (var appliedOffersIds, var metadata) = await GetUpdatedOffersListFromMetadataAsync(offerId, filePath);
             if (appliedOffersIds.Count == 0)
             {
-                await blobStorage.DeleteIfExistsAsync(filePath);
+                await blobStorage.DeleteIfExistsAsync(filePath, containerName);
                 return;
             }
-            await blobStorage.SetMetadataAsync(filePath, metadata);
+            await blobStorage.SetMetadataAsync(filePath, metadata, containerName);
         }
 
         private async Task<(List<int>, IDictionary<string, string>)> GetUpdatedOffersListFromMetadataAsync(
@@ -70,7 +77,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
         /// <returns>(updated offers ids after removed offerId, updated metadata)</returns>
         private async Task<(List<int>, IDictionary<string, string>)> GetRelatedOffersFromMetadataAsync(string filePath)
         {
-            var metadata = await blobStorage.GetBlobProperties(filePath);
+            var metadata = await blobStorage.GetBlobProperties(filePath, containerName);
 
             if (!metadata.ContainsKey(RelatedOffersProperty))
             {

@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Common.ProfileAdapter;
 using JobBoardPlatform.DAL.Models.Contracts;
-using System.Security.Principal;
 
 namespace JobBoardPlatform.BLL.Services.Authentification.Authorization
 {

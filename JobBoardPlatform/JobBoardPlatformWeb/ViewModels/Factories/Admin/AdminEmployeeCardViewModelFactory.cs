@@ -12,6 +12,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
             var card = new AdminEmployeeCardViewModel();
 
             card.Id = employee.Id;
+            card.Email = employee.Email;
             card.Name = employee.Profile.Name;
             card.Surname = employee.Profile.Surname;
             card.Country = employee.Profile.Country;

@@ -5,7 +5,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Authorization
 {
     public static class UserRolesUtils
     {
-        private const string ReservedAdminIdentifier = "admin@gmail.com";
+        private const string ReservedAdminIdentifier = "scanax2@gmail.com";
 
 
         public static bool IsUserAdmin(string userIdentifier)

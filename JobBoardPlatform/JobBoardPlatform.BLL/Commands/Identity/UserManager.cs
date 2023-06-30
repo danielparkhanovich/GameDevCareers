@@ -23,7 +23,7 @@ namespace JobBoardPlatform.BLL.Commands.Identity
             await addNewUserCommand.Execute();
         }
 
-        public Task<T> GetUserByEmail(string email)
+        public Task<T> GetUserByEmailAsync(string email)
         {
             return queryExecutor.GetIdentityByEmail(email);
         }

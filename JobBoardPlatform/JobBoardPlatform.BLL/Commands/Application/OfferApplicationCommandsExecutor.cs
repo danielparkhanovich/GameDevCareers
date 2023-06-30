@@ -14,6 +14,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
     {
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
+        private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage resumeStorage;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
 
@@ -21,11 +22,13 @@ namespace JobBoardPlatform.BLL.Commands.Application
         public OfferApplicationCommandsExecutor(
             IRepository<OfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
+            IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage resumeStorage,
             IOfferActionHandlerFactory actionHandlerFactory)
         {
             this.applicationsRepository = applicationsRepository;
             this.offersRepository = offersRepository;
+            this.profileResumeStorage = profileResumeStorage;
             this.resumeStorage = resumeStorage;
             this.actionHandlerFactory = actionHandlerFactory;
         }
@@ -37,7 +40,13 @@ namespace JobBoardPlatform.BLL.Commands.Application
             if (!actionsHandler.IsActionDoneRecently(request))
             {
                 var postFormCommand = new PostApplicationFormCommand(
-                    applicationsRepository, offersRepository, resumeStorage, form, offerId, userProfileId);
+                    applicationsRepository, 
+                    offersRepository, 
+                    profileResumeStorage, 
+                    resumeStorage, 
+                    form, 
+                    offerId, 
+                    userProfileId);
                 await postFormCommand.Execute();
 
                 actionsHandler.RegisterAction(request, response);

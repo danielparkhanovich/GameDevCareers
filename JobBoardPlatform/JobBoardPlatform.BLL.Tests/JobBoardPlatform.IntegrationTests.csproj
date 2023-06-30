@@ -30,4 +30,8 @@
     <ProjectReference Include="..\JobBoardPlatform.DAL\JobBoardPlatform.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Account\Registration\" />
+  </ItemGroup>
+
 </Project>

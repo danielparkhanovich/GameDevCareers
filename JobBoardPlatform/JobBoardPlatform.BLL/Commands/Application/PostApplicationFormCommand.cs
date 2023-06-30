@@ -14,6 +14,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
     {
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
+        private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage resumeStorage;
         private readonly IApplicationForm form;
         private readonly int offerId;
@@ -23,6 +24,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         public PostApplicationFormCommand(
             IRepository<OfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
+            IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage resumeStorage,
             IApplicationForm form,
             int offerId,
@@ -30,6 +32,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         {
             this.applicationsRepository = applicationsRepository;
             this.offersRepository = offersRepository;
+            this.profileResumeStorage = profileResumeStorage;
             this.resumeStorage = resumeStorage;
             this.form = form;
             this.offerId = offerId;
@@ -70,6 +73,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         {
             if (form.AttachedResume.ResumeUrl != null)
             {
+                await profileResumeStorage.AssignResumeToOfferAsync(offerId, form.AttachedResume.ResumeUrl);
                 application.ResumeUrl = form.AttachedResume.ResumeUrl;
             }
             else if (form.AttachedResume.File != null)

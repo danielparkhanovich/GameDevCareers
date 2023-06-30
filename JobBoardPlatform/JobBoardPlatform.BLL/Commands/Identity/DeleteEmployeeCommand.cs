@@ -44,7 +44,7 @@ namespace JobBoardPlatform.BLL.Commands.Identities
         private async Task DeleteDataFromFileStorages(EmployeeProfile profile)
         {
             await imagesStorage.DeleteImageIfExistsAsync(profile.ProfileImageUrl);
-            await resumesStorage.DeleteIfNotAssignedToOffersAsync(profile.ResumeUrl);
+            await resumesStorage.DetachResumeFromProfileAndTryDeleteAsync(profile.ResumeUrl);
         }
     }
 }

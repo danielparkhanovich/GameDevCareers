@@ -10,21 +10,25 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<CompanyIdentity> companyIdentityRepository;
         private readonly IRepository<TechKeyword> keywordsRepository;
-        private readonly OffersCacheManager cacheManager;
+        private readonly IOffersCacheManager cacheManager;
         private readonly MainPageOffersSearcher offersSearcher;
+        private readonly IOffersManager offersManager;
 
 
-        public AdminCommandsExecutor(IRepository<JobOffer> offersRepository,
+        public AdminCommandsExecutor(
+            IRepository<JobOffer> offersRepository,
             IRepository<CompanyIdentity> companyIdentityRepository,
             IRepository<TechKeyword> keywordsRepository,
-            OffersCacheManager cacheManager,
-            MainPageOffersSearcher offersSearcher)
+            IOffersCacheManager cacheManager,
+            MainPageOffersSearcher offersSearcher,
+            IOffersManager offersManager)
         {
             this.offersRepository = offersRepository;
             this.companyIdentityRepository = companyIdentityRepository;
             this.keywordsRepository = keywordsRepository;
             this.cacheManager = cacheManager;
             this.offersSearcher = offersSearcher;
+            this.offersManager = offersManager;
         }
 
         public async Task GenerateOffers(int companyId, int offersCountToGenerate)
@@ -36,7 +40,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public async Task DeleteAllOffers()
         {
-            var command = new DeleteAllOffersCommand(offersRepository);
+            var command = new DeleteAllOffersCommand(offersRepository, offersManager);
             await ExecuteCommandAndUpdateCacheAsync(command);
         }
 

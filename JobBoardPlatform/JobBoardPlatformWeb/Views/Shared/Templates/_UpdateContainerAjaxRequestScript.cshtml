@@ -31,7 +31,7 @@
 
     function getRefreshCardsAction() {
         const searchParams = new URLSearchParams(window.location.search)
-        const refreshCardsAction = @Html.Raw(Json.Serialize(OfferCardsControllerBase.RefreshCardsContainerAction));
+        const refreshCardsAction = @Html.Raw(Json.Serialize(@Url.Action(OfferCardsControllerBase.RefreshCardsContainerAction)));
         let refreshCards = refreshCardsAction;
         refreshCards += '?' + searchParams.toString();
         return refreshCards;

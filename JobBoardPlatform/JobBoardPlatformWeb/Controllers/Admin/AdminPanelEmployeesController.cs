@@ -2,7 +2,6 @@
 using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
-using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Blob;
@@ -12,7 +11,6 @@ using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -24,7 +22,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         private readonly IRepository<EmployeeProfile> profileRepository;
         private readonly IUserProfileImagesStorage imagesStorage;
         private readonly IProfileResumeBlobStorage resumesStorage;
-        private readonly AuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService;
+        private readonly IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService;
 
 
         public AdminPanelEmployeesController(
@@ -32,7 +30,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             IRepository<EmployeeProfile> profileRepository,
             IUserProfileImagesStorage imagesStorage,
             IProfileResumeBlobStorage resumesStorage,
-            AuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService)
+            IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService)
             : base(identityRepository)
         {
             this.identityRepository = identityRepository;

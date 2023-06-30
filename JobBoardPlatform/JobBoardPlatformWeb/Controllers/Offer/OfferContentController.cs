@@ -3,7 +3,6 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Options;
-using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
@@ -14,6 +13,7 @@ using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using static System.Net.Mime.MediaTypeNames;
+using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {

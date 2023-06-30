@@ -3,10 +3,7 @@ using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
-using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
-using JobBoardPlatform.BLL.Services.Session.Tokens;
-using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +14,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
     {
         private readonly IEmailSender emailSender;
         private readonly IRegistrationTokensService tokensService;
+        private readonly IRegistrationLinkFactory linkFactory;
         private readonly IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService;
         private readonly UserManager<EmployeeIdentity> userManager;
 
@@ -24,18 +22,20 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         public EmailEmployeeRegistrationService(
             IEmailSender emailSender, 
             IRegistrationTokensService tokensService,
+            IRegistrationLinkFactory linkFactory,
             IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService,
             UserManager<EmployeeIdentity> userManager)
         {
             this.emailSender = emailSender;
             this.tokensService = tokensService;
+            this.linkFactory = linkFactory;
             this.authorizationService = authorizationService;
             this.userManager = userManager;
         }
 
         public async Task TrySendConfirmationTokenAsync(string email, string password)
         {
-            if (userManager.GetUserByEmail(email) != null)
+            if (await userManager.GetUserByEmailAsync(email) != null)
             {
                 throw new AuthenticationException(AuthenticationException.WrongEmail);
             }
@@ -50,13 +50,13 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             var user = GetEmployeeIdentity(token);
             await userManager.AddNewUser(user);
 
-            var addedUser = userManager.GetUserByEmail(user.Email);
+            var addedUser = await userManager.GetUserByEmailAsync(user.Email);
             await authorizationService.SignInHttpContextAsync(httpContext, addedUser.Id);
         }
 
         private string GetConfirmationUrl(string tokenId)
         {
-            return $"{tokenId}";
+            return linkFactory.CreateConfirmationLink(tokenId);
         }
 
         private Task<RegistrationToken> TryGetTokenAsync(string tokenId)

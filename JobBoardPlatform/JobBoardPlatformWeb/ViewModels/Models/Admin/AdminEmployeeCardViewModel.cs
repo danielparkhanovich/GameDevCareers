@@ -6,6 +6,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Admin
     {
         public string PartialView => "./Admin/_EmployeeCardAdminView";
         public int Id { get; set; }
+        public string? Email { get; set; } = string.Empty;
         public string? Name { get; set; } = string.Empty;
         public string? Surname { get; set; } = string.Empty;
         public string? Country { get; set; } = string.Empty;

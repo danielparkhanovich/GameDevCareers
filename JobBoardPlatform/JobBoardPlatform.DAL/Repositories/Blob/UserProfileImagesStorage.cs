@@ -1,20 +1,21 @@
 ﻿using Azure.Storage.Blobs.Models;
+using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
+using JobBoardPlatform.DAL.Repositories.Blob.Settings;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.DAL.Repositories.Blob
 {
     public class UserProfileImagesStorage : IUserProfileImagesStorage
     {
-        public const string ContainerName = "userprofileimagescontainer";
-
+        private readonly string containerName;
         private readonly CoreBlobStorage blobStorage;
         private readonly BlobHttpHeaders blobHttpHeaders;
 
 
-        public UserProfileImagesStorage(CoreBlobStorage blobStorage)
+        public UserProfileImagesStorage(CoreBlobStorage blobStorage, IBlobStorageSettings storageSettings)
         {
             this.blobStorage = blobStorage;
-            this.blobStorage.SetContainerName(ContainerName);
+            this.containerName = storageSettings.GetContainerName(this.GetType());
 
             this.blobHttpHeaders = new BlobHttpHeaders()
             {
@@ -24,20 +25,20 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
 
         public async Task<string> ChangeImageAsync(string? path, IFormFile newFile)
         {
-            await blobStorage.DeleteIfExistsAsync(path);
+            await blobStorage.DeleteIfExistsAsync(path, containerName);
 
             var exportData = GetExportData(newFile);
-            return await blobStorage.AddAsync(exportData);
+            return await blobStorage.AddAsync(exportData, containerName);
         }
 
         public Task DeleteImageIfExistsAsync(string? path)
         {
-            return blobStorage.DeleteIfExistsAsync(path);
+            return blobStorage.DeleteIfExistsAsync(path, containerName);
         }
 
         public Task<bool> IsImageExistsAsync(string? path)
         {
-            return blobStorage.IsExistsAsync(path);
+            return blobStorage.IsExistsAsync(path, containerName);
         }
 
         private BlobExportData GetExportData(IFormFile file)

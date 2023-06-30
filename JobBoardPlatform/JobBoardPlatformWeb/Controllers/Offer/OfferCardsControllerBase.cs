@@ -18,10 +18,10 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public const string DeleteAction = "CloseOffer";
         public const string PassPaymentAction = "PassPaymentOffer";
 
-        private readonly OfferCommandsExecutor commandsExecutor;
+        private readonly IOffersManager commandsExecutor;
 
 
-        public OfferCardsControllerBase(OfferCommandsExecutor commandsExecutor)
+        public OfferCardsControllerBase(IOffersManager commandsExecutor)
         {
             this.commandsExecutor = commandsExecutor;
         }

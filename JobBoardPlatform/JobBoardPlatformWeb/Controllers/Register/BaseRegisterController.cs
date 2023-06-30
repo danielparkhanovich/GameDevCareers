@@ -26,10 +26,10 @@ namespace JobBoardPlatform.PL.Controllers.Register
         [ValidateAntiForgeryToken]
         public abstract Task<IActionResult> Register(T userRegister);
 
-        [Route("{tokenId}")]
+        [Route("confirm/{tokenId}")]
         public abstract Task<IActionResult> TryConfirmRegistration(string tokenId);
 
-        [Route("{email}-{passwordHash}")]
+        [Route("confirm/{email}/{passwordHash}")]
         public abstract Task<IActionResult> TryConfirmRegistration(string email, string passwordHash);
     }
 }

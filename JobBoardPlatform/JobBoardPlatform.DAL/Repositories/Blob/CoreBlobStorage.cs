@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.DAL.Repositories.Blob.Exceptions;
+using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Net;
@@ -15,7 +16,6 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
         private const string NameProperty = "Name";
 
         private readonly BlobServiceClient blobServiceClient;
-        private string containerName = string.Empty;
 
 
         public CoreBlobStorage(IOptions<AzureOptions> azureOptions)
@@ -23,17 +23,12 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
             blobServiceClient = new BlobServiceClient(azureOptions.Value.ConnectionString);
         }
 
-        public void SetContainerName(string containerName)
-        {
-            this.containerName = containerName;
-        }
-
-        public async Task<string> AddAsync(BlobExportData exportData)
+        public async Task<string> AddAsync(BlobExportData exportData, string containerName)
         {
             var file = exportData.File;
 
             string fileName = GetFileName(file);
-            BlobClient blobClient = await GetBlobClientAsync(fileName);
+            BlobClient blobClient = await GetBlobClientAsync(fileName, containerName);
 
             var metadata = exportData.Metadata;
             metadata[NameProperty] = file.FileName;
@@ -52,34 +47,34 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
             return WebUtility.UrlDecode(blobClient.Uri.ToString());
         }
 
-        public async Task DeleteIfExistsAsync(string? filePath)
+        public async Task DeleteIfExistsAsync(string? filePath, string containerName)
         {
             if (string.IsNullOrEmpty(filePath)) 
             {
                 return;
             }
 
-            BlobClient blobClient = await GetBlobClientFromPathAsync(filePath);
+            BlobClient blobClient = await GetBlobClientFromPathAsync(filePath, containerName);
             await blobClient.DeleteIfExistsAsync();
         }
 
-        public async Task<bool> IsExistsAsync(string? filePath)
+        public async Task<bool> IsExistsAsync(string? filePath, string containerName)
         {
             if (string.IsNullOrEmpty(filePath))
             {
                 return false;
             }
 
-            BlobClient blobClient = await GetBlobClientFromPathAsync(filePath);
+            BlobClient blobClient = await GetBlobClientFromPathAsync(filePath, containerName);
             return await blobClient.ExistsAsync();
         }
 
         /// <returns>Blob blob metadata or empty object in case if not found</returns>
-        public async Task<BlobDescription> TryGetBlobDescriptionAsync(string? resumeUrl)
+        public async Task<BlobDescription> TryGetBlobDescriptionAsync(string? resumeUrl, string containerName)
         {
-            if (await IsExistsAsync(resumeUrl))
+            if (await IsExistsAsync(resumeUrl, containerName))
             {
-                return await GetBlobMetadataAsync(resumeUrl!);
+                return await GetBlobMetadataAsync(resumeUrl!, containerName);
             }
             else
             {
@@ -87,14 +82,15 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
             }
         }
 
-        public async Task<IDictionary<string, string>> GetBlobProperties(string path)
+        public async Task<IDictionary<string, string>> GetBlobProperties(string path, string containerName)
         {
-            return (await TryGetPropertiesFromRequestAsync(path)).Metadata;
+            return (await TryGetPropertiesFromRequestAsync(path, containerName)).Metadata;
         }
 
-        public async Task SetMetadataAsync(string filePath, IDictionary<string, string> metadata)
+        public async Task SetMetadataAsync(
+            string filePath, IDictionary<string, string> metadata, string containerName)
         {
-            var blobClient = await GetBlobClientFromPathAsync(filePath);
+            var blobClient = await GetBlobClientFromPathAsync(filePath, containerName);
             blobClient.SetMetadata(metadata);
         }
 
@@ -103,18 +99,18 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
             return $"{Guid.NewGuid()}{PropertiesSeparator}{formFile.FileName}";
         }
 
-        private async Task<BlobDescription> GetBlobMetadataAsync(string filePath)
+        private async Task<BlobDescription> GetBlobMetadataAsync(string filePath, string containerName)
         {
             return new BlobDescription()
             {
-                Name = await GetBlobName(filePath),
-                Size = await GetBlobSize(filePath),
+                Name = await GetBlobName(filePath, containerName),
+                Size = await GetBlobSize(filePath, containerName),
             };
         }
 
-        private async Task<string> GetBlobName(string filePath)
+        private async Task<string> GetBlobName(string filePath, string containerName)
         {
-            var blobProperties = await GetBlobProperties(filePath);
+            var blobProperties = await GetBlobProperties(filePath, containerName);
 
             string fileName = string.Empty;
             if (blobProperties.ContainsKey(NameProperty))
@@ -125,40 +121,41 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
             return fileName.ToString();
         }
 
-        private async Task<string> GetBlobSize(string path)
+        private async Task<string> GetBlobSize(string path, string containerName)
         {
-            var blobProperties = await TryGetPropertiesFromRequestAsync(path);
+            var blobProperties = await TryGetPropertiesFromRequestAsync(path, containerName);
             long fileSizeInBytes = blobProperties.ContentLength;
             return FormatSizeString(fileSizeInBytes);
         }
 
-        private Task<BlobClient> GetBlobClientFromPathAsync(string path)
+        private Task<BlobClient> GetBlobClientFromPathAsync(string path, string containerName)
         {
             var fileName = path.Split('/').Last();
-            return GetBlobClientAsync(fileName);
+            return GetBlobClientAsync(fileName, containerName);
         }
 
-        private async Task<BlobClient> GetBlobClientAsync(string fileName)
+        private async Task<BlobClient> GetBlobClientAsync(string fileName, string containerName)
         {
-            BlobContainerClient containerClient = await GetContainerClientOrCreateIfNotExistsAsync();
+            BlobContainerClient containerClient = await GetContainerClientOrCreateIfNotExistsAsync(containerName);
             return containerClient.GetBlobClient(fileName);
         }
 
-        private async Task<BlobContainerClient> GetContainerClientOrCreateIfNotExistsAsync()
+        private async Task<BlobContainerClient> GetContainerClientOrCreateIfNotExistsAsync(string containerName)
         {
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
             if (!containerClient.Exists())
             {
-                containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName, PublicAccessType.Blob);
+                containerClient = await blobServiceClient.CreateBlobContainerAsync(
+                    containerName, PublicAccessType.Blob);
             }
             return containerClient;
         }
 
-        private async Task<BlobProperties> TryGetPropertiesFromRequestAsync(string path)
+        private async Task<BlobProperties> TryGetPropertiesFromRequestAsync(string path, string containerName)
         {
             try
             {
-                BlobClient blobClient = await GetBlobClientFromPathAsync(path);
+                BlobClient blobClient = await GetBlobClientFromPathAsync(path, containerName);
                 return await blobClient.GetPropertiesAsync();
             }
             catch (RequestFailedException e)

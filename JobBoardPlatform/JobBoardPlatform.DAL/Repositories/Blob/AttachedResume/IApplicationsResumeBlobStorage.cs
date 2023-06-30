@@ -8,5 +8,6 @@ namespace JobBoardPlatform.DAL.Repositories.Blob.AttachedResume
         /// <returns>url path to the resume file</returns>
         Task<string> AssignResumeToOfferAsync(int offerId, IFormFile newFile);
         Task UnassignFromOfferOnOfferClosedAsync(int offerId, string filePath);
+        Task<bool> IsExistsAsync(string? filePath);
     }
 }

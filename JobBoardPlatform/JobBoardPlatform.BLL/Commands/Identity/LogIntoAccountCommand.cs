@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification.Login;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.AspNetCore.Http;
 
@@ -9,13 +9,13 @@ namespace JobBoardPlatform.BLL.Commands.Identities
         where TProfile : class, IUserProfileEntity
     {
         private readonly HttpContext httpContext;
-        private readonly AuthorizationService<TIdentity, TProfile> authorizationService;
+        private readonly IAuthorizationService<TIdentity, TProfile> authorizationService;
         private readonly int idLogInto;
 
 
         public LogIntoAccountCommand(
             HttpContext httpContext,
-            AuthorizationService<TIdentity, TProfile> authorizationService,
+            IAuthorizationService<TIdentity, TProfile> authorizationService,
             int idLogInto)
         {
             this.httpContext = httpContext;

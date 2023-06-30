@@ -11,12 +11,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOfferEditorController : Controller
     {
-        private readonly OfferCommandsExecutor commandsExecutor;
+        private readonly OffersManager commandsExecutor;
         private readonly OfferQueryExecutor queryExecutor;
 
 
         public CompanyOfferEditorController(
-            OfferCommandsExecutor commandsExecutor, OfferQueryExecutor queryExecutor)
+            OffersManager commandsExecutor, OfferQueryExecutor queryExecutor)
         {
             this.commandsExecutor = commandsExecutor;
             this.queryExecutor = queryExecutor;
