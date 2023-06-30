@@ -4,6 +4,7 @@ using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.PL.Interactors.Notifications;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
@@ -45,7 +46,8 @@ namespace JobBoardPlatform.PL.Controllers.Login
             }
             catch (AuthenticationException e)
             {
-                ModelState.AddModelError("Autorization error", e.Message);
+                NotificationsManager.Instance.SetErrorNotification(
+                    NotificationsManager.LoginSection, "Wrong email or password", TempData);
             }
 
             return View(userLogin);

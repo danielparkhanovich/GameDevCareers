@@ -4,7 +4,7 @@
 }
 
 <div class="d-flex flex-column aligns-items-center justify-content-center min-vh-100 mx-auto" style="max-width: 762px; margin-top: -56px;">
-    <h1 class="text-center">Register</h1>
+    <h2 class="text-center">Apply with Just One Click!</h2>
     <!-- Render authorization buttons -->
     @{
             ViewData["AuthorizationButtonsText"] = "Register with";
@@ -19,9 +19,3 @@
         @await Html.PartialAsync("./Register/_Register", Model)
     </form>
 </div>
-
-@section Scripts {
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
-}

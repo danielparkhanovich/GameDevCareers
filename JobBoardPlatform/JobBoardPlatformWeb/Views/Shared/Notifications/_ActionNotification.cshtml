@@ -1,0 +1,9 @@
+﻿@using JobBoardPlatform.PL.Interactors.Notifications;
+@model NotificationData
+
+@if (Model != null)
+{
+    <div class="small alert alert-dismissible @(Model.Type == NotificationType.ActionDone ? "alert-primary" : "alert-danger")">
+        <i class="@(Model.Type == NotificationType.ActionDone ? "bi bi-envelope" : "bi bi-exclamation-diamond-fill") me-1"></i> @Model.Text
+    </div>
+}

@@ -28,6 +28,18 @@ namespace JobBoardPlatformWeb.Controllers
             return View(model);
         }
 
+        [Route("terms-of-service")]
+        public IActionResult TermsOfService()
+        {
+            return View();
+        }
+
+        [Route("privacy-policy")]
+        public IActionResult PrivacyPolicy()
+        {
+            return View();
+        }
+
         protected override async Task<CardsContainerViewModel> GetContainer()
         {
             var viewModelFactory = new OffersMainPageViewModelFactory(searcher, GetSearchParams());
@@ -39,12 +51,6 @@ namespace JobBoardPlatformWeb.Controllers
         {
             var searchParamsFactory = new MainPageOfferSearchParamsFactory();
             return searchParamsFactory.GetSearchParams(Request);
-        }
-
-        [Route("privacy")]
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [Route("error")]

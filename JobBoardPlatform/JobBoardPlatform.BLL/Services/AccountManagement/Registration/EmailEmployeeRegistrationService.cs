@@ -37,7 +37,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         {
             if (await userManager.GetUserByEmailAsync(email) != null)
             {
-                throw new AuthenticationException(AuthenticationException.WrongEmail);
+                throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }
 
             var token = await tokensService.RegisterNewTokenAsync(email, password);

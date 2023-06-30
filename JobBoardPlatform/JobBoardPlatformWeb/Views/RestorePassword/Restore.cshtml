@@ -1,0 +1,30 @@
+﻿@using JobBoardPlatform.PL.Controllers.RestorePassword;
+@using JobBoardPlatform.PL.Controllers.Utils;
+@using JobBoardPlatform.PL.Interactors.Notifications;
+@{
+    var restorePassword = NotificationsManager.Instance.TryGetNotification(
+        NotificationsManager.RestorePasswordSection, TempData);
+}
+
+@await Html.PartialAsync("./Notifications/_ActionNotification", restorePassword)
+
+<div class="d-flex flex-column aligns-items-center justify-content-center min-vh-100 mx-auto" style="max-width: 512px; margin-top: -56px;">
+    <div class="d-flex flex-column aligns-items-center justify-content-center mh-100">
+        <h2 class="text-center mb-4">Forgot your password?</h2>
+        <div class="mb-5">
+            Enter the email address associated with your account and 
+            we'll send you a link to reset your password.
+        </div>
+        <div>
+            <form method="post" class="d-flex flex-column aligns-items-center">
+                <div class="form-floating mb-3">
+                    <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                    <label for="floatingInput">Email address</label>
+                </div>
+                <div class="col-md-12 text-center mt-4 mb-4">
+                    <button type="submit" class="btn btn-primary px-5 py-1 btn-lg rounded-pill">Restore password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

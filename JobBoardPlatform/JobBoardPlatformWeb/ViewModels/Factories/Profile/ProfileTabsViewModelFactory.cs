@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.PL.Controllers.Profile;
+using JobBoardPlatform.PL.Controllers.RestorePassword;
 using JobBoardPlatform.PL.Controllers.Security;
 using JobBoardPlatform.PL.Controllers.Utils;
 using JobBoardPlatform.PL.ViewModels.Factories.Contracts;

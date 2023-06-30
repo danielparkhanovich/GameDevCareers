@@ -38,6 +38,9 @@ using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Blob.Settings;
+using FluentValidation;
+using System;
+using JobBoardPlatform.PL.Aspects.DataValidators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +110,8 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
+
+builder.Services.AddScoped<IValidator<UserRegisterViewModel>, UserRegisterValidator>();
 
 // BLL
 builder.Services.AddTransient<IEmailEmployeeRegistrationService, EmailEmployeeRegistrationService>();
