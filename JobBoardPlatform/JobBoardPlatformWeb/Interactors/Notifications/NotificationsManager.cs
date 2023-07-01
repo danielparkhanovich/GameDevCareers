@@ -5,7 +5,7 @@ namespace JobBoardPlatform.PL.Interactors.Notifications
     public class NotificationsManager : INotificationsManager
     {
         public const string RegisterSection = "registerSection";
-        public const string RestorePasswordSection = "restorePassword";
+        public const string ResetPasswordSection = "restorePassword";
         public const string LoginSection = "loginSection";
 
         public static INotificationsManager Instance

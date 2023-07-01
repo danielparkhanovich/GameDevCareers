@@ -1,4 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Commands.Identity;
+using JobBoardPlatform.BLL.Services.AccountManagement.Password;
+using JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
@@ -14,7 +16,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
     {
         private readonly IEmailSender emailSender;
         private readonly IRegistrationTokensService tokensService;
-        private readonly IRegistrationLinkFactory linkFactory;
+        private readonly IConfirmationLinkFactory linkFactory;
         private readonly IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService;
         private readonly UserManager<EmployeeIdentity> userManager;
 
@@ -22,7 +24,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         public EmailEmployeeRegistrationService(
             IEmailSender emailSender, 
             IRegistrationTokensService tokensService,
-            IRegistrationLinkFactory linkFactory,
+            IConfirmationLinkFactory linkFactory,
             IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService,
             UserManager<EmployeeIdentity> userManager)
         {

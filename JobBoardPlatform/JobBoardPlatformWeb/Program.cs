@@ -30,7 +30,6 @@ using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.AccountManagement.Common;
 using JobBoardPlatform.BLL.Services.Authentification.Login;
-using JobBoardPlatform.BLL.Services.AccountManagement;
 using JobBoardPlatform.BLL.Services.Session;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
@@ -39,8 +38,9 @@ using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Blob.Settings;
 using FluentValidation;
-using System;
 using JobBoardPlatform.PL.Aspects.DataValidators;
+using JobBoardPlatform.BLL.Services.AccountManagement.Password;
+using JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -112,14 +112,17 @@ builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
 
 builder.Services.AddScoped<IValidator<UserRegisterViewModel>, UserRegisterValidator>();
+builder.Services.AddScoped<IValidator<UserPasswordViewModel>, UserPasswordValidator>();
 
 // BLL
 builder.Services.AddTransient<IEmailEmployeeRegistrationService, EmailEmployeeRegistrationService>();
 builder.Services.AddTransient<IEmailCompanyRegistrationService, EmailCompanyRegistrationService>();
+builder.Services.AddTransient(typeof(IResetPasswordService<,>), typeof(RestorePasswordService<,>));
 builder.Services.AddTransient<IAuthenticationWithProviderService<EmployeeIdentity>, EmployeeAuthenticationWithProviderService>();
 builder.Services.AddTransient(typeof(IRegistrationService<>), typeof(RegistrationService<>));
 builder.Services.AddTransient<IRegistrationTokensService, RegistrationTokensService>();
-builder.Services.AddScoped<IRegistrationLinkFactory, RegistrationLinkFactory>();
+builder.Services.AddTransient<IRestorePasswordTokensService, RestorePasswordTokensService>();
+builder.Services.AddScoped<IConfirmationLinkFactory, ConfirmationLinkFactory>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailGateway"));
 
@@ -164,6 +167,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddTransient<ICacheRepository<List<JobOffer>>, MainPageOffersCacheRepository>();
 builder.Services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
 builder.Services.AddTransient<ICacheRepository<RegistrationToken>, RegistrationTokensCacheRepository>();
+builder.Services.AddTransient<ICacheRepository<RestorePasswordToken>, RestorePasswordTokensCacheRepository>();
 // Repository
 builder.Services.AddDbContext<DataContext>(options =>
 {

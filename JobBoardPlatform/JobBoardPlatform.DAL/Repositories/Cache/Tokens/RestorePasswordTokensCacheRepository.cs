@@ -2,12 +2,12 @@
 
 namespace JobBoardPlatform.DAL.Repositories.Cache.Tokens
 {
-    public class RegistrationTokensCacheRepository : CacheRepositoryCore<RegistrationToken>
+    public class RestorePasswordTokensCacheRepository : CacheRepositoryCore<RestorePasswordToken>
     {
         private const int CacheExpirationTimeInMinutes = 60;
 
 
-        public RegistrationTokensCacheRepository(IDistributedCache cache) : base(cache)
+        public RestorePasswordTokensCacheRepository(IDistributedCache cache) : base(cache)
         {
 
         }

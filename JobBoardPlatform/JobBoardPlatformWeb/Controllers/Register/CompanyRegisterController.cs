@@ -21,6 +21,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
             this.loginService = loginService;
         }
 
+        [Route("pricing")]
         public IActionResult RegisterPromotion()
         {
             return View();

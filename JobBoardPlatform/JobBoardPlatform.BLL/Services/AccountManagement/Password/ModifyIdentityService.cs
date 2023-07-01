@@ -4,7 +4,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 
-namespace JobBoardPlatform.BLL.Services.AccountManagement
+namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 {
     public class ModifyIdentityService<T> : IModifyIdentityService<T>
         where T : class, IUserIdentityEntity
@@ -17,7 +17,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement
         public ModifyIdentityService(
             IRepository<T> repository, IPasswordHasher passwordHasher, UserManager<T> userManager)
         {
-            this.identityRepository = repository;
+            identityRepository = repository;
             this.passwordHasher = passwordHasher;
             this.userManager = userManager;
         }
@@ -38,16 +38,23 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement
             return user;
         }
 
+        public async Task<IUserIdentityEntity> ForceChangePasswordAsync(string email, string password)
+        {
+            var user = await userManager.GetUserByEmailAsync(email);
+            await UpdateUserPassword(user, password);
+            return user;
+        }
+
         private async Task<T> UpdateUserLogin(T user, string newLogin)
         {
             user.Email = newLogin;
             return await identityRepository.Update(user);
         }
 
-        private async Task UpdateUserPassword(T user, string newPassword)
+        private Task UpdateUserPassword(T user, string newPassword)
         {
             user.HashPassword = passwordHasher.GetHash(newPassword);
-            await identityRepository.Update(user);
+            return identityRepository.Update(user);
         }
 
         private async Task ValidateNewLogin(string newLogin)
@@ -58,9 +65,10 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement
             }
         }
 
-        private void ValidatePassword(string oldPassword, string newPasswordHash)
+        private void ValidatePassword(string oldPassword, string newPassword)
         {
             string oldPasswordHash = passwordHasher.GetHash(oldPassword);
+            string newPasswordHash = passwordHasher.GetHash(newPassword);
             if (oldPasswordHash != newPasswordHash)
             {
                 throw new AuthenticationException(AuthenticationException.WrongPassword);

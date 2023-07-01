@@ -18,4 +18,10 @@
         ViewData["RegisterControllerName"] = "EmployeeRegister";
     }
     @await Html.PartialAsync("./Login/_Login", Model)
+    <div class="col-md-12 text-center mt-2">
+        <b>
+            <label class="text-dark">New account?</label>
+            <a asp-controller="EmployeeRegister" asp-action="Register" class="text-primary" style="text-decoration: none;">Register</a>
+        </b>
+    </div>
 </div>

@@ -1,9 +1,9 @@
 ﻿using JobBoardPlatform.BLL.Commands.Identity;
+using JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
-using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
@@ -38,7 +38,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         {
             if (userManager.GetUserByEmailAsync(email) != null)
             {
-                throw new AuthenticationException(AuthenticationException.WrongEmail);
+                throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }
 
             string password = passwordGenerator.GeneratePassword();

@@ -1,15 +1,13 @@
 ﻿using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Interactors.Registration
 {
-    public class RegistrationLinkFactory : IRegistrationLinkFactory
+    public class ConfirmationLinkFactory : IConfirmationLinkFactory
     {
         private readonly IHttpContextAccessor contextAccessor;
 
 
-        public RegistrationLinkFactory(IHttpContextAccessor contextAccessor)
+        public ConfirmationLinkFactory(IHttpContextAccessor contextAccessor)
         {
             this.contextAccessor = contextAccessor;
         }

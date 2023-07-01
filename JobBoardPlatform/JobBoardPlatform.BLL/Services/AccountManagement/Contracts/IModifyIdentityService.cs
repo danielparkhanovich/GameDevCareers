@@ -7,5 +7,6 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Contracts
     {
         Task<IUserIdentityEntity> TryChangeLoginIdentifierAsync(int userId, string newLogin, string currentPassword);
         Task<IUserIdentityEntity> TryChangePasswordAsync(int userId, string oldPassword, string newPassword);
+        Task<IUserIdentityEntity> ForceChangePasswordAsync(string email, string password);
     }
 }

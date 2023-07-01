@@ -4,11 +4,17 @@
     ViewData["Title"] = "Index";
 }
 
-<div class="d-flex flex-column aligns-items-center justify-content-center mh-100">
-    <h1 class="text-center">Login in to Employer Panel</h1>
+<div class="d-flex flex-column aligns-items-center justify-content-center min-vh-100 mx-auto" style="max-width: 762px; margin-top: -56px;">
+    <h2 class="text-center">Login in to Employer Panel</h2>
     <!-- Render shared login form and pass controller name -->
     @{
         ViewData["RegisterControllerName"] = "CompanyRegister";
     }
     @await Html.PartialAsync("./Login/_Login", Model)
+    <div class="col-md-12 text-center mt-2">
+        <b>
+            <label class="text-dark">Do you want to post a job?</label>
+            <a asp-controller="Home" asp-action="Register" class="text-primary" style="text-decoration: none;">Post job</a>
+        </b>
+    </div>
 </div>
