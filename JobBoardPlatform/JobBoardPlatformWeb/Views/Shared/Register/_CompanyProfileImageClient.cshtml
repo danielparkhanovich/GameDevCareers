@@ -1,0 +1,42 @@
+﻿@model IProfileViewModel
+@{
+    string? userImageUrl = ViewData.Model.ProfileImageUrl;
+    if (string.IsNullOrEmpty(userImageUrl))
+    {
+        userImageUrl = "/Resources/defaultCompany.png";
+    }
+}
+
+<div class="text-center mb-4 me-4" style="width:30%;">
+    <div>
+        <label asp-for="ProfileImage" class="form-label small mb-1">Company logo <span class="text-danger">*</span></label>
+    </div>
+    <!-- Profile picture image-->
+    <img class="img-account-profile rounded-circle mb-2" id="profileImage" width="192" height="192" src=@userImageUrl alt="User profile image" style="object-fit:contain;">
+    <!-- Profile picture help     block-->
+    <div class="small font-italic text-muted mb-2">JPG or PNG no larger than 5 MB</div>
+    <!-- Profile picture upload button-->
+    <input asp-for="ProfileImage" name="ProfileImage" class="form-control" id="profileImage-input" type="file" accept="image/png, image/jpeg" style="display:none" />
+    <button class="btn btn-outline-primary" id="profileImage-button" type="button">Upload logo</button>
+</div>
+
+<script>
+    var img = document.getElementById("profileImage");
+    var input = document.getElementById("profileImage-input");
+    var button = document.getElementById("profileImage-button");
+
+    button.addEventListener("click", function () {
+        input.click();
+    });
+
+    img.addEventListener("click", function () {
+        input.click();
+    });
+
+    input.onchange = evt => {
+        const [file] = input.files
+        if (file) {
+            img.src = URL.createObjectURL(file)
+        }
+    }
+</script>

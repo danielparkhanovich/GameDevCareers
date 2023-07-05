@@ -2,7 +2,12 @@
 @model ITechKeywords
 
 <div class="form-group">
-    <input id="keywordsInput" type="text" class="form-control" />
+    <div class="dropdown w-25 mb-4" style="position: relative">
+        <input type="text" id="techInput" class="form-control" placeholder="Enter a technology e.g. Unity" autocomplete="off">
+        <div id="techOptions" class="dropdown-menu w-100 rounded-0" aria-labelledby="techInput" style="max-height: 200px; overflow-y: auto;">
+            <!-- Technology options will be dynamically added here -->
+        </div>
+    </div>
     <div id="keywordsList" class="list-group mt-2 d-flex flex-row flex-wrap">
         <div id="templateTechKeyWordWidget" class="rounded-pill align-content-center justify-content-center bg-info px-2 mx-1 techKeyWord-container" style="display:none;">
             <div class="d-flex flex-row techKeyword-sub-container">
@@ -18,34 +23,39 @@
 </div>
 
 <script>
-    var keywordsInput = document.getElementById('keywordsInput')
+    var keywordsInput = document.getElementById('techInput')
 
     keywordsInput.addEventListener('keydown', function (event) {
         if (event.keyCode === 13) {
             event.preventDefault();
-            var input = this.value.trim();
-            if (input !== '') 
-            {
-                var index = document.getElementsByClassName('techKeyword-container-added').length;
-                var keywordWidget = document.getElementById('templateTechKeyWordWidget');
-
-                addNewTechnologyWidget(keywordWidget, index);
-            }
+            addTechKeyword(this.value);
             this.value = '';
         }
     });
 
-    function addNewTechnologyWidget(template, index) {
+    function addTechKeyword(value)
+    {
+        var input = value.trim();
+        if (input !== '') {
+            var index = document.getElementsByClassName('techKeyword-container-added').length;
+            var keywordWidget = document.getElementById('templateTechKeyWordWidget');
+
+            addNewTechnologyWidget(keywordWidget, index, input);
+        }
+        value = '';
+    }
+
+    function addNewTechnologyWidget(template, index, inputValue) {
 
         var newElement = template.cloneNode(true);
 
         var input = newElement.querySelector('.techKeywordValue');
         input.setAttribute("asp-for", "TechKeywords[" + index + "]");
         input.setAttribute("index-in-list", index);
-        input.value = keywordsInput.value;
+        input.value = inputValue;
 
         var content = newElement.querySelector('.techKeyWordContent');
-        content.innerHTML = keywordsInput.value;
+        content.innerHTML = inputValue;
 
         newElement.style.display = null;
         newElement.classList.add("techKeyword-container-added");
@@ -73,5 +83,135 @@
             input.setAttribute("index-in-list", index);
             input.setAttribute("asp-for", "TechKeywords[" + index + "]");
         }
+    }
+
+    // Dropdown
+    // TODO: replace the fixed array to request for keywords from a database
+    var techOptions = [
+        "C++",
+        "C#",
+        "Java",
+        "Python",
+        "JavaScript",
+        "Lua",
+        "Unity",
+        "Unreal Engine",
+        "Godot",
+        "GameMaker",
+        "Phaser",
+        "Construct",
+        "SDL",
+        "SFML",
+        "OpenGL",
+        "DirectX",
+        "HTML5",
+        "CSS",
+        "TypeScript",
+        "React",
+        "Angular",
+        "Vue.js",
+        "Node.js",
+        "Firebase",
+        "MongoDB",
+        "SQLite",
+        "Git",
+        "Visual Studio",
+        "Atom",
+        "Sublime Text",
+        "VS Code",
+        "Blender",
+        "Maya",
+        "3ds Max",
+        "Photoshop",
+        "Illustrator",
+        "GIMP",
+        "Inkscape",
+        "Spine",
+        "DragonBones",
+        "Tiled",
+        "TexturePacker",
+        "Audacity",
+        "FMOD",
+        "Wwise",
+        "Playmaker",
+        "Bolt",
+        "Inklewriter",
+        "Twine",
+        "GameSparks",
+        "Photon",
+        "Steamworks",
+        "PlayFab",
+        "AppLovin",
+        "AdMob"
+        // Add more game development-related technologies and engines as needed
+    ];
+
+    var techInput = $('#techInput');
+    var techOptionsList = $('#techOptions');
+    var maxPropositions = 20; // Maximum number of propositions to display
+
+    // Event handler for the techInput field
+    techInput.on('input', function () {
+        var typedValue = techInput.val().trim().toLowerCase();
+
+        // Clear previous options
+        techOptionsList.empty();
+
+        var matchingOptions = techOptions.filter(function (option) {
+            return option.toLowerCase().indexOf(typedValue) !== -1;
+        });
+
+        // Limit the number of matching options
+        if (matchingOptions.length > maxPropositions) {
+            matchingOptions = matchingOptions.slice(0, maxPropositions);
+        }
+
+        if (matchingOptions.length == 0)
+        {
+            matchingOptions.push(typedValue);
+        }
+
+        // Add matching options to the dropdown menu
+        $.each(matchingOptions, function(index, option) {
+            var listItem = $('<a class="dropdown-item"></a>').text(option);
+            listItem.on('click', function() {
+                //techInput.val(option);
+                techInput.val('');
+                addTechKeyword(option);
+                techOptionsList.hide();
+            });
+
+            // Highlight matching letters
+            var highlightedOption = highlightMatchingLetters(option, typedValue);
+            listItem.html(highlightedOption);
+
+            techOptionsList.append(listItem);
+        });
+
+        // Show/hide the dropdown menu based on matching options
+        if (matchingOptions.length > 0) {
+            techOptionsList.show();
+        } else {
+            techOptionsList.hide();
+        }
+    });
+
+    // Close the dropdown menu when clicking outside of it
+    $(document).on('click', function (event) {
+        if (techOptionsList.is(":visible"))
+        {
+            techInput.val("");
+        }
+        if (!$(event.target).closest('.dropdown').length) {
+            techOptionsList.hide();
+        }
+    });
+
+    // Function to highlight matching letters
+    function highlightMatchingLetters(option, typedValue) {
+        var regex = new RegExp(typedValue, 'gi');
+        return option.replace(regex, function(match) {
+            return '<span class="text-success fw-bold">' + match + '</span>';
+        });
     }
 </script>

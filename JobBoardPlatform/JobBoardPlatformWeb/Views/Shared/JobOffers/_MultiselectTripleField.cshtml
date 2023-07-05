@@ -2,47 +2,57 @@
 @model IOfferSalary
 
 <div>
-    <div class="d-flex flex-row justify-content-between gx-3 mb-3 offer-salary-container" id="template">
-        <div class="flex-grow-1 pe-5">
-            <label asp-for="EmploymentTypes[0]" class="form-label small mb-1">Employment type <span class="text-danger">*</span></label>
-            <select asp-for="EmploymentTypes[0]" class="form-select" aria-label="Employment type">
-                <option value="1" selected>Permanent</option>
-                <option value="2">Mandate contract</option>
-                <option value="3">B2B</option>
-            </select>
-        </div>
-        <div class="d-flex flex-row justify-content-center me-5">
-            <div>
-                <label asp-for="SalaryFromRange[0]" class="form-label small mb-1">Monthly salary from (gross)</label>
-                <input asp-for="SalaryFromRange[0]" class="form-control" type="text" placeholder="From">
+    <div id="offer-employment-details-container">
+        <div id="offer-employment-details-template">
+            <div class="d-flex flex-row justify-content-between gx-3 mb-3 offer-employment-details">
+                <div class="flex-grow-1 pe-3">
+                    <select asp-for="EmploymentTypes[0]" class="form-select h-100" aria-label="Employment type">
+                        <option value="0" selected>Employment type <span class="text-danger">*</span></option>
+                        <option value="1">Permanent</option>
+                        <option value="2">Mandate contract</option>
+                        <option value="3">B2B</option>
+                    </select>
+                </div>
+                <div class="d-flex flex-row justify-content-center me-3 flex-grow-1">
+                    <div class="form-floating flex-grow-1 me-3">
+                        <input asp-for="SalaryFromRange[0]" type="text" class="form-control" placeholder="Monthly salary from (gross)">
+                        <label asp-for="SalaryFromRange[0]">Monthly salary from (gross)</label>
+                    </div>
+                    <div class="form-floating flex-grow-1">
+                        <input asp-for="SalaryToRange[0]" type="text" class="form-control" placeholder="Monthly salary to (gross)">
+                        <label asp-for="SalaryToRange[0]">Monthly salary to (gross)</label>
+                    </div>
+                </div>
+                <div>
+                    <select asp-for="SalaryCurrencyType[0]" class="form-select h-100" aria-label="Default select example">
+                        <option value="0" selected>Currency</option>
+                        <option value="1">PLN</option>
+                        <option value="2">EUR</option>
+                    </select>
+                </div>
             </div>
-            <div class="align-self-center pt-4 mx-2"> - </div>
-            <div>
-                <label asp-for="SalaryToRange[0]" class="form-label small mb-1">Monthly salary to (gross)</label>
-                <input asp-for="SalaryToRange[0]" class="form-control" type="text" placeholder="To">
-            </div>
-        </div>
-        <div class="flex-grow-1">
-            <label asp-for="SalaryCurrencyType[0]" class="form-label small mb-1">Currency</label>
-            <select asp-for="SalaryCurrencyType[0]" class="form-select" aria-label="Default select example">
-                <option value="1" selected>PLN</option>
-                <option value="2">EUR</option>
-            </select>
-        </div>
-        <div class="justify-content-end flex-column" id="removeButtonContainer">
-            <button type="button" class="bg-transparent border-0 h-50" id="removeButton" style="display:none;">
-                <i class="bi bi-x-lg text-danger" style="font-size: 1.35rem;"></i>
-            </button>
         </div>
     </div>
-    <button type="button" id="addButton" class="btn btn-primary btn-block mb-2">Add one more employment type</button>
+    <button type="button" id="addButton" class="btn btn-outline-primary btn-block mb-2">Add one more employment type</button>
+    <button type="button" id="deleteButton" class="d-none btn btn-outline-danger btn-block mb-2">Delete employment type</button>
 </div>
 
 <script>
+
+    var employmentTypeContainer = document.getElementById('offer-employment-details-container');
+    var deleteButton = document.getElementById('deleteButton');
+    deleteButton.addEventListener('click', function () {
+        var lastAddedEmploymentType = employmentTypeContainer.lastElementChild;
+        console.log("removed " + lastAddedEmploymentType.innerHTML);
+        lastAddedEmploymentType.remove();
+        setAddDeleteButtonsVisibility();
+    });
+
+    var employmentTypeTemplate = document.getElementById('offer-employment-details-template');
     var addButton = document.getElementById('addButton');
     addButton.addEventListener('click', function () {
         // Get the current index of employment items
-        var index = document.getElementsByClassName('offer-salary-container').length;
+        var index = document.getElementsByClassName('offer-employment-details').length;
 
         if (index > 2)
         {
@@ -50,8 +60,7 @@
         }
 
         // Create new employment container
-        var salaryContainer = document.getElementById('template');
-        var newEmploymentHTML = salaryContainer.innerHTML;
+        var newEmploymentHTML = employmentTypeTemplate.innerHTML;
 
         newEmploymentHTML = newEmploymentHTML.replaceAll("[0]", "[" + index + "]");
 
@@ -59,25 +68,37 @@
         var tempElement = document.createElement('div');
         tempElement.innerHTML = newEmploymentHTML;
 
-        tempElement.className = 'row gx-3 mb-3 offer-salary-container';
-
-        var removeButton = tempElement.querySelector('#removeButton');
-        removeButton.style.display = null;
-        removeButton.addEventListener('click', function () {
-            var parentContainer = removeButton.closest(".offer-salary-container");
-            parentContainer.remove();
-            addButton.style.display = null;
-        });
-
-        console.log(newEmploymentHTML);
-
         // Append the new employment container to the form
         var newEmploymentContainer = tempElement;
-        addButton.parentNode.insertBefore(newEmploymentContainer, addButton);
+        //insertAfter(newEmploymentContainer, employmentTypeTemplate);
+        employmentTypeTemplate.parentNode.insertBefore(newEmploymentContainer, employmentTypeTemplate.nextSibling);
 
-        if (document.getElementsByClassName('offer-salary-container').length > 2) 
-        {
-            addButton.style.display = "none";
-        }
+        setAddDeleteButtonsVisibility();
     });
+
+    function setAddDeleteButtonsVisibility()
+    {
+        const addedTypes = document.getElementsByClassName('offer-employment-details').length;
+        if (addedTypes > 2) 
+        {
+            addButton.classList.add("d-none");
+        }
+        else
+        {
+            addButton.classList.remove("d-none");
+        }
+
+        if (addedTypes > 1)
+        {
+            deleteButton.classList.remove("d-none");
+        }
+        else
+        {
+            deleteButton.classList.add("d-none");
+        }
+    }
+
+    function insertAfter(referenceNode, newNode) {
+        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    }
 </script>
