@@ -1,0 +1,130 @@
+﻿
+<div class="container mt-4">
+    <div class="btn-group" role="group" aria-label="Text Formatting Buttons">
+        <button type="button" class="btn btn-secondary" id="boldBtn"><strong>B</strong></button>
+        <button type="button" class="btn btn-secondary" id="italicBtn"><em>I</em></button>
+        <button type="button" class="btn btn-secondary" id="linkBtn">Link</button>
+        <button type="button" class="btn btn-secondary" id="headingBtn">Heading</button>
+        <button type="button" class="btn btn-secondary" id="bulletsBtn">Bullets</button>
+        <button type="button" class="btn btn-secondary" id="numbersBtn">Numbers</button>
+    </div>
+    <textarea id="jobDescription" class="form-control mt-2" rows="6" placeholder="Enter job description"></textarea>
+    <div class="mt-2">
+        <h6>Formatted Text Preview:</h6>
+        <div id="formattedTextPreview" contenteditable="true"></div>
+    </div>
+</div>
+
+<script>
+    // Text Formatting Buttons
+    var boldBtn = $('#boldBtn');
+    var italicBtn = $('#italicBtn');
+    var linkBtn = $('#linkBtn');
+    var headingBtn = $('#headingBtn');
+    var bulletsBtn = $('#bulletsBtn');
+    var numbersBtn = $('#numbersBtn');
+
+    // Job Description Textarea
+    var jobDescription = $('#jobDescription');
+
+    // Formatted Text Preview
+    var formattedTextPreview = $('#formattedTextPreview');
+
+    // Button Click Event Handlers
+    boldBtn.on('click', function () {
+        applyTextFormatting('bold');
+    });
+
+    italicBtn.on('click', function () {
+        applyTextFormatting('italic');
+    });
+
+    linkBtn.on('click', function () {
+        var url = prompt('Enter the URL:');
+        if (url) {
+            applyTextFormatting('link', url);
+        }
+    });
+
+    headingBtn.on('click', function () {
+        applyTextFormatting('heading');
+    });
+
+    bulletsBtn.on('click', function () {
+        applyTextFormatting('bullets');
+    });
+
+    numbersBtn.on('click', function () {
+        applyTextFormatting('numbers');
+    });
+
+    // Event handler for jobDescription textarea input
+    jobDescription.on('input', function () {
+        var formattedText = formatText(jobDescription.val());
+        formattedText += ' ';
+        formattedTextPreview.html(formattedText);
+    });
+
+    // Function to apply text formatting
+    function applyTextFormatting(format, value) {
+        var textarea = jobDescription.get(0);
+        var startPos = textarea.selectionStart;
+        var endPos = textarea.selectionEnd;
+        var selectedText = textarea.value.substring(startPos, endPos);
+        var replacementText = '';
+
+        switch (format) {
+            case 'bold':
+                replacementText = '**' + selectedText + '**';
+                break;
+            case 'italic':
+                replacementText = '*' + selectedText + '*';
+                break;
+            case 'link':
+                replacementText = '[' + selectedText + '](' + value + ')';
+                break;
+            case 'heading':
+                replacementText = '## ' + selectedText + '\n';
+                break;
+            case 'bullets':
+                replacementText = '- ' + selectedText.replace(/\n/g, '\n- ');
+                break;
+            case 'numbers':
+                var lines = selectedText.split('\n');
+                replacementText = '';
+                for (var i = 0; i < lines.length; i++) {
+                    replacementText += (i + 1) + '. ' + lines[i] + '\n';
+                }
+                break;
+            default:
+                break;
+        }
+
+        // Update textarea value with formatted text
+        textarea.value = textarea.value.substring(0, startPos) + replacementText + textarea.value.substring(endPos);
+
+        // Set the updated selection range
+        textarea.selectionStart = startPos + replacementText.length;
+        textarea.selectionEnd = startPos + replacementText.length;
+        textarea.focus();
+
+        // Update formatted text preview
+        var formattedText = formatText(jobDescription.val());
+        formattedTextPreview.text(formattedText);
+        jobDescription.trigger('input');
+    }
+
+    // Function to format the text
+    function formatText(text) {
+        var formattedText = text;
+        formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        formattedText = formattedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        formattedText = formattedText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+        formattedText = formattedText.replace(/^##\s(.*)$/gm, '<h2>$1</h2>');
+        formattedText = formattedText.replace(/^- (.*)$/gm, '<li>$1</li>');
+        formattedText = formattedText.replace(/^\d+\. (.*)$/gm, '<li>$1</li>');
+        formattedText = formattedText.replace(/\n/g, '<br>');
+
+        return formattedText;
+    }
+</script>

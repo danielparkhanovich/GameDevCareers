@@ -77,19 +77,19 @@
                     </p>
                     <div class="d-flex flex-row">
                         <div class="form-check me-5">
-                            <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                            <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
                             <label class="form-check-label" for="optionsRadios1">
                                 Office
                             </label>
                         </div>
                         <div class="form-check me-5">
-                            <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked="">
+                            <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
                             <label class="form-check-label" for="optionsRadios2">
                                 Hybrid
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked="">
+                            <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
                             <label class="form-check-label" for="optionsRadios3">
                                 Fully Remote
                             </label>
@@ -109,9 +109,6 @@
             </div>
 
             <div class="mb-2">
-                <div class="card-header border-bottom-0 bg-transparent">
-                    <strong>Job description</strong>
-                </div>
                 <div class="card-body">
                     <div class="gx-3 mb-3">
                         <label asp-for="@Model.MainTechnologyType" class="form-label small mb-1">Main Technology <span class="text-danger">*</span></label>
@@ -121,31 +118,87 @@
                         <label asp-for="@Model.TechKeywords" class="form-label small mb-1">Tech stack</label>
                         @await Html.PartialAsync("./JobOffers/_TechKeywordsWidgets", Model)
                     </div>
-                    <div class="gx-3 mb-3">
-                        <label asp-for="@Model.JobDescription" class="form-label small mb-1">Description <span class="text-danger">*</span></label>
-                        <textarea asp-for="@Model.JobDescription" class="form-control" type="text" placeholder="Enter description">
-                            @Model.JobDescription
-                        </textarea>
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <div class="card-header border-bottom-0 bg-transparent">
+                    <strong>Job description</strong>
+                </div>
+                <div class="card-body">
+                    <div class="gx-3 mb-3" style="color: black">
+                        <style>
+                            a {
+                                color: black;
+                            }
+                        </style>
+                        <textarea class="content" name="example"></textarea>
                     </div>
                 </div>
             </div>
 
-            <div>
+            <div class="mb-2">
                 <div class="card-header border-bottom-0 bg-transparent">
                     <strong>Applications</strong>
                 </div>
                 <div class="card-body">
-                    <div class="gx-3 mb-3">
-                        <label asp-for="@Model.ContactType" class="form-label small mb-1">Contact form <span class="text-danger">*</span></label>
-                        <select asp-for="@Model.ContactType" class="form-select" aria-label="Contact type">
-                            <option value="1" selected>Email</option>
+                    <div class="gx-3 mb-3" style="height:58px;">
+                        <select id="contactFormTypeSelect" asp-for="@Model.ContactType" class="form-select h-100" aria-label="Contact type">
+                            <option value="0" selected>Select contact form <span class="text-danger">*</span></option>
+                            <option value="1">Email</option>
                             <option value="2">External form</option>
                             <option value="3">GameDev.Hunt</option>
                         </select>
                     </div>
                     <div class="gx-3">
-                        <label asp-for="@Model.ContactAddress" class="form-label small mb-1">Contact address <span class="text-danger">*</span></label>
-                        <input asp-for="@Model.ContactAddress" class="form-control" type="text" placeholder="Enter email/url">
+                        <div id="emailContactInputField" class="form-floating gx-3">
+                            <input type="text" class="form-control" placeholder="Email address">
+                            <label>Email address <span class="text-danger">*</span></label>
+                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div>
+                        <div id="externalFormContactInputField" class="form-floating gx-3">
+                            <input type="text" class="form-control" placeholder="External form address">
+                            <label>External form address <span class="text-danger">*</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <div class="card-header border-bottom-0 bg-transparent">
+                    <strong>Agreements</strong>
+                </div>
+                <div class="card-body">
+                    <div class="mb-5">
+                        <div class="text-muted">Information clause</div>
+                        <textarea class="form-control" rows="8">Informujemy, że administratorem danych jest _______ z siedzibą w _______, ul. _______(dalej jako "administrator"). Masz prawo do żądania dostępu do swoich danych osobowych, ich sprostowania, usunięcia lub ograniczenia przetwarzania, prawo do wniesienia sprzeciwu wobec przetwarzania, a także prawo do przenoszenia danych oraz wniesienia skargi do organu nadzorczego. Dane osobowe przetwarzane będą w celu realizacji procesu rekrutacji. Podanie danych w zakresie wynikającym z ustawy z dnia 26 czerwca 1974 r. Kodeks pracy jest obowiązkowe. W pozostałym zakresie podanie danych jest dobrowolne. Odmowa podania danych obowiązkowych może skutkować brakiem możliwości przeprowadzenia procesu rekrutacji. Administrator przetwarza dane obowiązkowe na podstawie ciążącego na nim obowiązku prawnego, zaś w zakresie danych dodatkowych podstawą przetwarzania jest zgoda. Dane osobowe będą przetwarzane do czasu zakończenia postępowania rekrutacyjnego i przez okres możliwości dochodzenia ewentualnych roszczeń, a w przypadku wyrażenia zgody na udział w przyszłych postępowaniach rekrutacyjnych - do czasu wycofania tej zgody. Zgoda na przetwarzanie danych osobowych może zostać wycofana w dowolnym momencie. Odbiorcą danych jest serwis  oraz inne podmioty, którym powierzyliśmy przetwarzanie danych w związku z rekrutacją.</textarea>
+                    </div>
+                    <div class="mb-5">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="dataInFutureRecruitmentToggle">
+                            <label class="form-check-label" for="dataInFutureRecruitmentToggle">
+                                Display consent for future recruitment
+                            </label>
+                        </div>
+                        <div id="dataInFutureRecruitmentConsentArea">
+                            <div class="text-muted">Processing data in future recruitment</div>
+                            <textarea class="form-control" rows="4">Wyrażam zgodę na przetwarzanie moich danych osobowych dla celów przyszłych rekrutacji.</textarea>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="customConsentToggle">
+                            <label class="form-check-label" for="customConsentToggle">
+                                Display your custom consent
+                            </label>
+                        </div>
+                        <div id="customConsentArea">
+                            <div class="form-floating flex-grow-1 mb-2">
+                                <input type="text" class="form-control" placeholder="Your consent title" disabled>
+                                <label>Your consent title</label>
+                            </div>
+                            <textarea class="form-control" rows="4" disabled></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -157,3 +210,179 @@
         </div>
     </form>
 </div>
+
+<script>
+    // Description WYSWIG editor
+    $('.content').richText({
+          // text formatting
+          bold:true,
+          italic:true,
+          underline:true,
+          // text alignment
+          leftAlign:false,
+          centerAlign:false,
+          rightAlign:false,
+          justify:false,
+          // lists
+          ol:true,
+          ul:true,
+          // title
+          heading:true,
+          // fonts
+          fonts:false,
+          fontColor:false,
+          backgroundColor: false,
+          fontSize:false,
+          // uploads
+          imageUpload:true,
+          fileUpload:false,
+          // media
+          videoEmbed: false,
+          // link
+          urls:true,
+          // tables
+          table:false,
+          // code
+          removeStyles:true,
+          code:false,
+          // colors
+          colors: [],
+          // dropdowns
+          fileHTML:'',
+          imageHTML:'',
+          // translations
+          translations: {
+            'title':'Title',
+            'white':'White',
+            'black':'Black',
+            'brown':'Brown',
+            'beige':'Beige',
+            'darkBlue':'Dark Blue',
+            'blue':'Blue',
+            'lightBlue':'Light Blue',
+            'darkRed':'Dark Red',
+            'red':'Red',
+            'darkGreen':'Dark Green',
+            'green':'Green',
+            'purple':'Purple',
+            'darkTurquois':'Dark Turquois',
+            'turquois':'Turquois',
+            'darkOrange':'Dark Orange',
+            'orange':'Orange',
+            'yellow':'Yellow',
+            'imageURL':'Image URL',
+            'fileURL':'File URL',
+            'linkText':'Link text',
+            'url':'URL',
+            'size':'Size',
+            'responsive':'<a href="https://www.jqueryscript.net/tags.php?/Responsive/">Responsive</a>',
+            'text':'Text',
+            'openIn':'Open in',
+            'sameTab':'Same tab',
+            'newTab':'New tab',
+            'align':'Align',
+            'left':'Left',
+            'justify':'Justify',
+            'center':'Center',
+            'right':'Right',
+            'rows':'Rows',
+            'columns':'Columns',
+            'add':'Add',
+            'pleaseEnterURL':'Please enter an URL',
+            'videoURLnotSupported':'Video URL not supported',
+            'pleaseSelectImage':'Please select an image',
+            'pleaseSelectFile':'Please select a file',
+            'bold':'Bold',
+            'italic':'Italic',
+            'underline':'Underline',
+            'alignLeft':'Align left',
+            'alignCenter':'Align centered',
+            'alignRight':'Align right',
+            'addOrderedList':'Add ordered list',
+            'addUnorderedList':'Add unordered list',
+            'addHeading':'Add Heading/title',
+            'addFont':'Add font',
+            'addFontColor':'Add font color',
+            'addFontSize':'Add font size',
+            'addImage':'Add image',
+            'addVideo':'Add video',
+            'addFile':'Add file',
+            'addURL':'Add URL',
+            'addTable':'Add table',
+            'removeStyles':'Remove styles',
+            'code':'Show HTML code',
+            'undo':'Undo',
+            'redo':'Redo',
+            'close':'Close'
+          },
+          // privacy
+          youtubeCookies:false,
+          // preview
+          preview:false,
+          // placeholder
+          placeholder:'',
+          // dev settings
+          useSingleQuotes:false,
+          height: 0,
+          heightPercentage: 0,
+          id:"",
+          class:"",
+          useParagraph:false,
+          maxlength: 0,
+          useTabForNext:false,
+          callback: undefined,
+    });
+
+    const contactFormTypeSelect = $('#contactFormTypeSelect');
+
+    // Contact address variations
+    const emailContactInputField = $('#emailContactInputField');
+    const externalFormContactInputField = $('#externalFormContactInputField');
+    toggleContactAddressInputField(contactFormTypeSelect.val());
+
+    contactFormTypeSelect.change(function() 
+    {
+        var selectValue = $(this).val();
+        toggleContactAddressInputField(selectValue);
+    });
+
+    function toggleContactAddressInputField(selectValue)
+    {
+        emailContactInputField.hide();
+        externalFormContactInputField.hide();
+
+        if (selectValue === '1') 
+        {
+            emailContactInputField.show();
+        } 
+        else if (selectValue === '2') 
+        {
+            externalFormContactInputField.show();
+        }
+    }
+
+    // Agreements
+    const dataInFutureRecruitmentConsentArea = $('#dataInFutureRecruitmentConsentArea');
+    const customConsentArea = $('#customConsentArea');
+    const optionalConsentAreas = [dataInFutureRecruitmentConsentArea, customConsentArea];
+
+    const dataInFutureRecruitmentToggle = $('#dataInFutureRecruitmentToggle');
+    const customConsentToggle = $('#customConsentToggle');
+    const optionalConsentToggles = [dataInFutureRecruitmentToggle, customConsentToggle];
+
+    for (let i = 0; i < optionalConsentToggles.length; i++)
+    {
+        const consentToggle = optionalConsentToggles[i];
+        const consentArea = optionalConsentAreas[i];
+        consentToggle.change(function () {
+            const isCheckedToggle = $(this).prop('checked')
+            toggleEnableForConsentArea(consentArea, isCheckedToggle)
+        });
+        toggleEnableForConsentArea(consentArea, consentToggle.prop('checked'));
+    }
+
+    function toggleEnableForConsentArea(consentArea, isCheckedToggle)
+    {
+        consentArea.find('*').prop('disabled', !isCheckedToggle);
+    }
+</script>
