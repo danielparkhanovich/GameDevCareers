@@ -1,5 +1,5 @@
-﻿using JobBoardPlatform.BLL.Commands.Mappers;
-using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 

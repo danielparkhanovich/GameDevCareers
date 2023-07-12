@@ -1,6 +1,6 @@
-﻿@model IProfileViewModel
+﻿@model IProfileImage
 @{
-    string? userImageUrl = ViewData.Model.ProfileImageUrl;
+    string? userImageUrl = Model.ImageUrl;
     if (string.IsNullOrEmpty(userImageUrl))
     {
         userImageUrl = "/Resources/defaultUserProfileImage.png";
@@ -13,7 +13,7 @@
     <!-- Profile picture help block-->
     <div class="small font-italic text-muted mb-2">JPG or PNG no larger than 5 MB</div>
     <!-- Profile picture upload button-->
-    <input asp-for="ProfileImage" name="ProfileImage" class="form-control" id="profileImage-input" type="file" accept="image/png, image/jpeg" style="display:none" />
+    <input asp-for="File" class="form-control" id="profileImage-input" type="file" accept="image/png, image/jpeg" style="display:none" />
     <button class="btn btn-primary" id="profileImage-button" type="button">Upload new image</button>
     <input type="submit" value="Upload" style="display:none" />
 </div>

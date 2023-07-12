@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 
@@ -20,7 +20,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             to.Description = from.JobDescription;
             to.Country = from.Country;
             to.City = from.City;
-            to.Address = from.Address;
+            to.Address = from.Street;
 
             to.WorkLocationId = from.WorkLocationType;
             to.MainTechnologyTypeId = from.MainTechnologyType;
@@ -38,10 +38,10 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
         private void MapContactDetails(INewOfferData from, JobOffer to)
         {
             var contactDetails = new ContactDetails();
-            contactDetails.ContactTypeId = from.ContactType;
+            contactDetails.ContactTypeId = from.ApplicationsContactType;
 
-            // ContactAddress is null in case of private messages on the website
-            contactDetails.ContactAddress = from.ContactAddress;
+            // ApplicationsContactEmailAddress is null in case of private messages on the website
+            contactDetails.ContactAddress = from.ApplicationsContactEmail;
 
             to.ContactDetails = contactDetails;
         }

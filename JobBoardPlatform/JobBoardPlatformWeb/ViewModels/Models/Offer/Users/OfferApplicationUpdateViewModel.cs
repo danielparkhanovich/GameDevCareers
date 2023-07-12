@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users

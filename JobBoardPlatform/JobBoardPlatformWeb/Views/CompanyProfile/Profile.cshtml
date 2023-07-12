@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Company";
 
-    string? userImageUrl = Model.ProfileImageUrl;
+    string? userImageUrl = Model.ProfileImage.ImageUrl;
     if (string.IsNullOrEmpty(userImageUrl))
     {
         userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
@@ -30,7 +30,8 @@
                     <div class="card-header">Company Details</div>
                     <div class="card-body">
 
-                        @await Html.PartialAsync("./Profile/_UserProfileImage", Model)
+                        <!--User avatar-->
+                        <partial name="./Profile/_UserProfileImage" for="@Model.ProfileImage" />
 
                         <div class="row gx-3 mb-3">
                             <div class="col-md-12">
@@ -40,12 +41,12 @@
                         </div>
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">
-                                <label asp-for="@Model.Country" class="small mb-1">Country</label>
-                                <input asp-for="@Model.Country" class="form-control" type="text" placeholder="Enter your company country" value=@Model.Country>
+                                <label asp-for="@Model.OfficeCountry" class="small mb-1">Country</label>
+                                <input asp-for="@Model.OfficeCountry" class="form-control" type="text" placeholder="Enter your company country" value=@Model.OfficeCountry>
                             </div>
                             <div class="col-md-6">
-                                <label asp-for="@Model.City" class="small mb-1">City</label>
-                                <input asp-for="@Model.City" class="form-control" type="text" placeholder="Enter your company city" value=@Model.City>
+                                <label asp-for="@Model.OfficeCity" class="small mb-1">City</label>
+                                <input asp-for="@Model.OfficeCity" class="form-control" type="text" placeholder="Enter your company city" value=@Model.OfficeCity>
                             </div>
                         </div>
                         <div class="mb-3">

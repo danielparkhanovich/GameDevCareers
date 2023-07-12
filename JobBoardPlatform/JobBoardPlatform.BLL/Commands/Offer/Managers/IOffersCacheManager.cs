@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
-using JobBoardPlatform.BLL.Search.Contracts;
+﻿using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Offer

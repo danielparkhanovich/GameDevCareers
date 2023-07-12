@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace JobBoardPlatform.BLL.Commands.Contracts
+namespace JobBoardPlatform.BLL.Boundaries
 {
     public interface IAttachedResume
     {

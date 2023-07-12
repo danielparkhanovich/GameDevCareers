@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
@@ -25,9 +25,9 @@ namespace JobBoardPlatform.BLL.Commands.Profile
 
         protected override async Task UploadFiles(IEmployeeProfileData from, EmployeeProfile to)
         {
-            if (from.ProfileImage != null)
+            if (from.ProfileImage != null && from.ProfileImage.File != null)
             {
-                var imageUrl = await imageStorage.ChangeImageAsync(to.ProfileImageUrl, from.ProfileImage);
+                var imageUrl = await imageStorage.ChangeImageAsync(to.ProfileImageUrl, from.ProfileImage.File);
                 to.ProfileImageUrl = imageUrl;
             }
             if (from.File != null)
@@ -47,9 +47,9 @@ namespace JobBoardPlatform.BLL.Commands.Profile
             {
                 to.ResumeUrl = from.ResumeUrl;
             }
-            if (!string.IsNullOrEmpty(from.ProfileImageUrl))
+            if (!string.IsNullOrEmpty(from.ProfileImage.ImageUrl))
             {
-                to.ProfileImageUrl = from.ProfileImageUrl;
+                to.ProfileImageUrl = from.ProfileImage.ImageUrl;
             }
 
             to.Surname = from.Surname;

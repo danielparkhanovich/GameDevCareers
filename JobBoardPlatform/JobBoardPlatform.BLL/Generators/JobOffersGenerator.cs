@@ -1,5 +1,5 @@
-﻿using JobBoardPlatform.BLL.Generators;
-using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Generators;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
 
@@ -46,13 +46,13 @@ namespace JobBoardPlatform.BLL.Utils
                 MainTechnologyType = (int)mainTechnology + 1,
                 Country = address.Item1,
                 City = address.Item2,
-                Address = address.Item3,
+                Street = address.Item3,
                 SalaryFromRange = details?.Select(x => x.Item1).ToArray() ?? null,
                 SalaryToRange = details?.Select(x => x.Item2).ToArray() ?? null,
                 SalaryCurrencyType = details?.Select(x => (int)x.Item3 + 1).ToArray() ?? null,
                 EmploymentTypes = details?.Select(x => (int)x.Item4 + 1).ToArray() ?? new int[1] { 1 },
-                ContactType = (int)contact.Item1 + 1,
-                ContactAddress = contact.Item2,
+                ApplicationsContactType = (int)contact.Item1 + 1,
+                ApplicationsContactEmail = contact.Item2,
                 JobDescription = Description,
                 JobTitle = title,
                 TechKeywords = techKeywords,
@@ -183,7 +183,6 @@ namespace JobBoardPlatform.BLL.Utils
 
                 if (random.NextDouble() < 0.5)
                 {
-                    // TODO: add currency Converter
                     currency = CurrencyTypeEnum.EUR;
                     fromSalary = (int)(fromSalary * 0.22f * 1.35f);
                     toSalary = (int)(toSalary * 0.22f * 0.35f);

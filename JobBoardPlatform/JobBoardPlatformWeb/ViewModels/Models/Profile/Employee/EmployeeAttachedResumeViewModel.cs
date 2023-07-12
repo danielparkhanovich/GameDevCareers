@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Profile.Employee
 {

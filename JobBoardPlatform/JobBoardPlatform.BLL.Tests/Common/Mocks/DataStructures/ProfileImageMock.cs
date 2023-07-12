@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures
 {
-    public class AttachedResumeMock : IAttachedResume
+    public class ProfileImageMock : IProfileImage
     {
         public IFormFile? File { get; set; }
-        public string? ResumeUrl { get; set; }
-        public string? FileName { get; set; }
-        public string? FileSize { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

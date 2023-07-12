@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;

@@ -1,0 +1,349 @@
+﻿@model EditOfferViewModel
+
+<div>    
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent">
+            <strong>Position info</strong>
+        </div>
+        <div class="card-body">
+            <div class="form-floating gx-3 mb-3">
+                <input asp-for="OfferDetails.JobTitle" type="text" class="form-control" placeholder="Job title">
+                <label asp-for="OfferDetails.JobTitle">Job title <span class="text-danger">*</span></label>
+                <span asp-validation-for="OfferDetails.JobTitle" class="text-danger"></span>
+            </div>
+            <div class="d-flex flex-row gx-3 mb-3">
+                <div class="form-floating flex-grow-1">
+                    <input asp-for="OfferDetails.City" type="text" class="form-control" placeholder="City">
+                    <label asp-for="OfferDetails.City">City <span class="text-danger">*</span></label>
+                    <span asp-validation-for="OfferDetails.City" class="text-danger"></span>
+                </div>
+                <div class="form-floating flex-grow-1 mx-2">
+                    <input asp-for="OfferDetails.Country" type="text" class="form-control" placeholder="Country">
+                    <label asp-for="OfferDetails.Country">Country <span class="text-danger">*</span></label>
+                    <span asp-validation-for="OfferDetails.Country" class="text-danger"></span>
+                </div>
+                <div class="form-floating flex-grow-1">
+                    <input asp-for="OfferDetails.Street" type="text" class="form-control" placeholder="Street">
+                    <label asp-for="OfferDetails.Street">Street</label>
+                    <span asp-validation-for="OfferDetails.Street" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent">
+            <strong>Work location</strong>
+        </div>
+        <div class="card-body">
+            <p>
+                Is it possible to remote work for candidate? <span class="text-danger">*</span>
+            </p>
+            <div class="d-flex flex-row">
+                <div class="form-check me-5">
+                    <input asp-for="OfferDetails.WorkLocationType" class="form-check-input" type="radio" value="1" checked>
+                    <label asp-for="OfferDetails.WorkLocationType" class="form-check-label">
+                        Office
+                    </label>
+                </div>
+                <div class="form-check me-5">
+                    <input asp-for="OfferDetails.WorkLocationType" class="form-check-input" type="radio" value="2">
+                    <label asp-for="OfferDetails.WorkLocationType" class="form-check-label">
+                        Hybrid
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input asp-for="OfferDetails.WorkLocationType" class="form-check-input" type="radio" value="3">
+                    <label asp-for="OfferDetails.WorkLocationType" class="form-check-label">
+                        Fully Remote
+                    </label>
+                </div>
+                <span asp-validation-for="OfferDetails.WorkLocationType" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent">
+            <strong>Employment details</strong>
+        </div>
+        <div class="card-body">
+            <p>How much the candidate will earn monthly? You can add two additional employment types.</p>
+            <partial name="./JobOffers/_MultiselectTripleField" for="@Model.OfferDetails" />
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <div class="card-body">
+            <div class="gx-3 mb-3">
+                <label class="form-label small mb-1">Main Technology <span class="text-danger">*</span></label>
+                <partial name="./JobOffers/_MainTechnologiesWidgets" for="@Model.OfferDetails" />
+            </div>
+            <div class="gx-3 mb-3">
+                <label class="form-label small mb-1">Tech stack</label>
+                <partial name="./JobOffers/_TechKeywordsWidgets" for="@Model.OfferDetails" />
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent">
+            <strong>Job description</strong>
+        </div>
+        <div class="card-body">
+            <div class="gx-3 mb-3" style="color: black">
+                <style>
+                    a {
+                        color: black;
+                    }
+                </style>
+                <textarea asp-for="OfferDetails.JobDescription" class="content" name="example"></textarea>
+                <span asp-validation-for="OfferDetails.JobDescription" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent">
+            <strong>Applications</strong>
+        </div>
+        <div class="card-body">
+            <div class="gx-3 mb-3" style="height:58px;">
+                <select id="contactFormTypeSelect" asp-for="OfferDetails.ApplicationsContactType" class="form-select h-100" aria-label="Contact type">
+                    <option value="0" selected>Select contact form <span class="text-danger">*</span></option>
+                    <option value="1">Email</option>
+                    <option value="2">External form</option>
+                    <option value="3">GameDev.Hunt</option>
+                </select>
+                <span asp-validation-for="OfferDetails.ApplicationsContactType" class="text-danger"></span>
+            </div>
+            <div class="gx-3">
+                <div id="emailContactInputField" class="form-floating gx-3">
+                    <input asp-for="OfferDetails.ApplicationsContactEmail" type="text" class="form-control" placeholder="Email address">
+                    <label>Email address <span class="text-danger">*</span></label>
+                    <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div id="externalFormContactInputField" class="form-floating gx-3">
+                    <input asp-for="OfferDetails.ApplicationsContactExternalFormUrl" type="text" class="form-control" placeholder="External form address">
+                    <label>External form address <span class="text-danger">*</span></label>
+                </div>
+                <span asp-validation-for="OfferDetails.ApplicationsContactEmail" class="text-danger"></span>
+                <span asp-validation-for="OfferDetails.ApplicationsContactExternalFormUrl" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent">
+            <strong>Agreements</strong>
+        </div>
+        <div class="card-body">
+            <div class="mb-5">
+                <div class="text-muted">Information clause</div>
+                <textarea asp-for="OfferDetails.InformationClause" class="form-control" rows="8">Informujemy, że administratorem danych jest _______ z siedzibą w _______, ul. _______(dalej jako "administrator"). Masz prawo do żądania dostępu do swoich danych osobowych, ich sprostowania, usunięcia lub ograniczenia przetwarzania, prawo do wniesienia sprzeciwu wobec przetwarzania, a także prawo do przenoszenia danych oraz wniesienia skargi do organu nadzorczego. Dane osobowe przetwarzane będą w celu realizacji procesu rekrutacji. Podanie danych w zakresie wynikającym z ustawy z dnia 26 czerwca 1974 r. Kodeks pracy jest obowiązkowe. W pozostałym zakresie podanie danych jest dobrowolne. Odmowa podania danych obowiązkowych może skutkować brakiem możliwości przeprowadzenia procesu rekrutacji. Administrator przetwarza dane obowiązkowe na podstawie ciążącego na nim obowiązku prawnego, zaś w zakresie danych dodatkowych podstawą przetwarzania jest zgoda. Dane osobowe będą przetwarzane do czasu zakończenia postępowania rekrutacyjnego i przez okres możliwości dochodzenia ewentualnych roszczeń, a w przypadku wyrażenia zgody na udział w przyszłych postępowaniach rekrutacyjnych - do czasu wycofania tej zgody. Zgoda na przetwarzanie danych osobowych może zostać wycofana w dowolnym momencie. Odbiorcą danych jest serwis  oraz inne podmioty, którym powierzyliśmy przetwarzanie danych w związku z rekrutacją.</textarea>
+                <span asp-validation-for="OfferDetails.InformationClause" class="text-danger"></span>
+            </div>
+            <div class="mb-5">
+                <div class="form-check mb-2">
+                    <input asp-for="OfferDetails.IsDisplayConsentForFutureRecruitment" class="form-check-input" type="checkbox" id="dataInFutureRecruitmentToggle">
+                    <label asp-for="OfferDetails.IsDisplayConsentForFutureRecruitment" class="form-check-label" for="dataInFutureRecruitmentToggle">
+                        Display consent for future recruitment
+                    </label>
+                </div>
+                <div id="dataInFutureRecruitmentConsentArea">
+                    <div class="text-muted">Processing data in future recruitment</div>
+                    <textarea asp-for="OfferDetails.ConsentForFutureRecruitmentContent" class="form-control" rows="4">Wyrażam zgodę na przetwarzanie moich danych osobowych dla celów przyszłych rekrutacji.</textarea>
+                    <span asp-validation-for="OfferDetails.ConsentForFutureRecruitmentContent" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-2">
+                <div class="form-check mb-2">
+                    <input asp-for="OfferDetails.IsDisplayCustomConsent" class="form-check-input" type="checkbox" id="customConsentToggle">
+                    <label asp-for="OfferDetails.IsDisplayCustomConsent" class="form-check-label" for="customConsentToggle">
+                        Display your custom consent
+                    </label>
+                </div>
+                <div id="customConsentArea">
+                    <div class="form-floating flex-grow-1 mb-2">
+                        <input asp-for="OfferDetails.CustomConsentTitle" type="text" class="form-control" placeholder="Your consent title" disabled>
+                        <label asp-for="OfferDetails.CustomConsentTitle">Your consent title</label>
+                    </div>
+                    <span asp-validation-for="OfferDetails.CustomConsentTitle" class="text-danger"></span>
+
+                    <textarea asp-for="OfferDetails.CustomConsentContent" class="form-control" rows="4" disabled></textarea>
+                    <span asp-validation-for="OfferDetails.CustomConsentContent" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // WYSWIG editor initialization in description section
+    $('.content').richText({
+        // text formatting
+        bold: true,
+        italic: true,
+        underline: true,
+        // text alignment
+        leftAlign: false,
+        centerAlign: false,
+        rightAlign: false,
+        justify: false,
+        // lists
+        ol: true,
+        ul: true,
+        // title
+        heading: true,
+        // fonts
+        fonts: false,
+        fontColor: false,
+        backgroundColor: false,
+        fontSize: false,
+        // uploads
+        imageUpload: true,
+        fileUpload: false,
+        // media
+        videoEmbed: false,
+        // link
+        urls: true,
+        // tables
+        table: false,
+        // code
+        removeStyles: true,
+        code: false,
+        // colors
+        colors: [],
+        // dropdowns
+        fileHTML: '',
+        imageHTML: '',
+        // translations
+        translations: {
+            'title': 'Title',
+            'white': 'White',
+            'black': 'Black',
+            'brown': 'Brown',
+            'beige': 'Beige',
+            'darkBlue': 'Dark Blue',
+            'blue': 'Blue',
+            'lightBlue': 'Light Blue',
+            'darkRed': 'Dark Red',
+            'red': 'Red',
+            'darkGreen': 'Dark Green',
+            'green': 'Green',
+            'purple': 'Purple',
+            'darkTurquois': 'Dark Turquois',
+            'turquois': 'Turquois',
+            'darkOrange': 'Dark Orange',
+            'orange': 'Orange',
+            'yellow': 'Yellow',
+            'imageURL': 'Image URL',
+            'fileURL': 'File URL',
+            'linkText': 'Link text',
+            'url': 'URL',
+            'size': 'Size',
+            'responsive': '<a href="https://www.jqueryscript.net/tags.php?/Responsive/">Responsive</a>',
+            'text': 'Text',
+            'openIn': 'Open in',
+            'sameTab': 'Same tab',
+            'newTab': 'New tab',
+            'align': 'Align',
+            'left': 'Left',
+            'justify': 'Justify',
+            'center': 'Center',
+            'right': 'Right',
+            'rows': 'Rows',
+            'columns': 'Columns',
+            'add': 'Add',
+            'pleaseEnterURL': 'Please enter an URL',
+            'videoURLnotSupported': 'Video URL not supported',
+            'pleaseSelectImage': 'Please select an image',
+            'pleaseSelectFile': 'Please select a file',
+            'bold': 'Bold',
+            'italic': 'Italic',
+            'underline': 'Underline',
+            'alignLeft': 'Align left',
+            'alignCenter': 'Align centered',
+            'alignRight': 'Align right',
+            'addOrderedList': 'Add ordered list',
+            'addUnorderedList': 'Add unordered list',
+            'addHeading': 'Add Heading/title',
+            'addFont': 'Add font',
+            'addFontColor': 'Add font color',
+            'addFontSize': 'Add font size',
+            'addImage': 'Add image',
+            'addVideo': 'Add video',
+            'addFile': 'Add file',
+            'addURL': 'Add URL',
+            'addTable': 'Add table',
+            'removeStyles': 'Remove styles',
+            'code': 'Show HTML code',
+            'undo': 'Undo',
+            'redo': 'Redo',
+            'close': 'Close'
+        },
+        // privacy
+        youtubeCookies: false,
+        // preview
+        preview: false,
+        // placeholder
+        placeholder: '',
+        // dev settings
+        useSingleQuotes: false,
+        height: 0,
+        heightPercentage: 0,
+        id: "",
+        class: "",
+        useParagraph: false,
+        maxlength: 0,
+        useTabForNext: false,
+        callback: undefined,
+    });
+
+    const contactFormTypeSelect = $('#contactFormTypeSelect');
+
+    // switches in contact address section
+    const emailContactInputField = $('#emailContactInputField');
+    const externalFormContactInputField = $('#externalFormContactInputField');
+    toggleContactAddressInputField(contactFormTypeSelect.val());
+
+    contactFormTypeSelect.change(function () {
+        var selectValue = $(this).val();
+        toggleContactAddressInputField(selectValue);
+    });
+
+    function toggleContactAddressInputField(selectValue) {
+        emailContactInputField.hide();
+        externalFormContactInputField.hide();
+
+        if (selectValue === '1') {
+            emailContactInputField.show();
+        }
+        else if (selectValue === '2') {
+            externalFormContactInputField.show();
+        }
+    }
+
+    // toggles in contact address section
+    const dataInFutureRecruitmentConsentArea = $('#dataInFutureRecruitmentConsentArea');
+    const customConsentArea = $('#customConsentArea');
+    const optionalConsentAreas = [dataInFutureRecruitmentConsentArea, customConsentArea];
+
+    const dataInFutureRecruitmentToggle = $('#dataInFutureRecruitmentToggle');
+    const customConsentToggle = $('#customConsentToggle');
+    const optionalConsentToggles = [dataInFutureRecruitmentToggle, customConsentToggle];
+
+    for (let i = 0; i < optionalConsentToggles.length; i++) {
+        const consentToggle = optionalConsentToggles[i];
+        const consentArea = optionalConsentAreas[i];
+        consentToggle.change(function () {
+            const isCheckedToggle = $(this).prop('checked')
+            toggleEnableForConsentArea(consentArea, isCheckedToggle)
+        });
+        toggleEnableForConsentArea(consentArea, consentToggle.prop('checked'));
+    }
+
+    function toggleEnableForConsentArea(consentArea, isCheckedToggle) {
+        consentArea.find('*').prop('disabled', !isCheckedToggle);
+    }
+</script>

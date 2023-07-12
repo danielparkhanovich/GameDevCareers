@@ -3,10 +3,10 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using JobBoardPlatform.BLL.Commands.Contracts;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using static System.Net.Mime.MediaTypeNames;
+using JobBoardPlatform.BLL.Boundaries;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {

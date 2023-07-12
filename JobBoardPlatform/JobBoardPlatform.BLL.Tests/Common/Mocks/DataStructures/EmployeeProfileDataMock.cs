@@ -1,17 +1,16 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures
 {
     public class EmployeeProfileDataMock : IEmployeeProfileData
     {
-        public IFormFile? ProfileImage { get; set; }
+        public IProfileImage ProfileImage { get; set; } = new ProfileImageMock();
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public string? Country { get; set; }
         public string? City { get; set; }
         public string? Description { get; set; }
-        public string? ProfileImageUrl { get; set; }
         public string? YearsOfExperience { get; set; }
         public string? LinkedInUrl { get; set; }
         public IFormFile? File { get; set; }

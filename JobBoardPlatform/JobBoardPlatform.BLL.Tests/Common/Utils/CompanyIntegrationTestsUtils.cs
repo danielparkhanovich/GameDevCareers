@@ -1,9 +1,8 @@
-﻿using JobBoardPlatform.BLL.Commands.Identities;
+﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Commands.Profile;
-using JobBoardPlatform.BLL.Generators;
-using JobBoardPlatform.BLL.Models.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
@@ -193,7 +192,13 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         public Task SetUserImageInProfile(string email)
         {
             var image = IntegrationTestFilesManager.GetEmployeeProfileImageFile();
-            var profileData = new CompanyProfileDataMock() { ProfileImage = image };
+            var profileData = new CompanyProfileDataMock() 
+            { 
+                ProfileImage = new ProfileImageMock()
+                {
+                    File = image
+                }
+            };
             return UpdateCompanyProfile(email, profileData);
         }
 

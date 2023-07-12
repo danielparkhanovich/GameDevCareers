@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.MessageBus.Notifications;
 using JobBoardPlatform.DAL.Models.Contracts;
-using JobBoardPlatform.PL.ViewModels.Models.Profile.Contracts;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

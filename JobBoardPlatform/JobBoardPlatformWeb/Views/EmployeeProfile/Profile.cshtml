@@ -4,7 +4,7 @@
 
     var user = Model;
 
-    string? userImageUrl = user.ProfileImageUrl;
+    string? userImageUrl = user.ProfileImage.ImageUrl;
     if (string.IsNullOrEmpty(userImageUrl))
     {
         userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
@@ -32,7 +32,8 @@
                     <div class="card-header">User Details</div>
                     <div class="card-body">
 
-                        @await Html.PartialAsync("./Profile/_UserProfileImage", Model)
+                        <!--User avatar-->
+                        <partial name="./Profile/_UserProfileImage" for="@Model.ProfileImage" />
 
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">

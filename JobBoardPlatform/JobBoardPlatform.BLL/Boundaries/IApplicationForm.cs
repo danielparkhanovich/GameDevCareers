@@ -1,4 +1,4 @@
-﻿namespace JobBoardPlatform.BLL.Commands.Contracts
+﻿namespace JobBoardPlatform.BLL.Boundaries
 {
     public interface IApplicationForm
     {

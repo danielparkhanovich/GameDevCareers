@@ -1,5 +1,9 @@
 ﻿
 @model ITechKeywords
+@{
+    var test = Model;
+    var test1 = "";
+}
 
 <div class="form-group">
     <div class="dropdown w-25 mb-4" style="position: relative">
@@ -49,8 +53,10 @@
 
         var newElement = template.cloneNode(true);
 
+        console.log(index);
+
         var input = newElement.querySelector('.techKeywordValue');
-        input.setAttribute("asp-for", "TechKeywords[" + index + "]");
+        //input.setAttribute("asp-for", "TechKeywords[" + index + "]");
         input.setAttribute("index-in-list", index);
         input.value = inputValue;
 

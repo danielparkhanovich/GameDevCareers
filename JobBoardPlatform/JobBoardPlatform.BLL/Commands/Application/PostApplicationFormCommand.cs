@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Commands.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Options;

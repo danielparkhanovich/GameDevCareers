@@ -35,8 +35,8 @@
                             <input asp-for="@Model.Country" class="form-control" type="text" placeholder="Enter country">
                         </div>
                         <div class="flex-grow-1">
-                            <label asp-for="@Model.Address" class="form-label small mb-1">Address</label>
-                            <input asp-for="@Model.Address" class="form-control" type="text" placeholder="Enter address">
+                            <label asp-for="@Model.Street" class="form-label small mb-1">Address</label>
+                            <input asp-for="@Model.Street" class="form-control" type="text" placeholder="Enter address">
                         </div>
                     </div>
                 </div>
@@ -81,16 +81,16 @@
                 <div class="card-header">Applications</div>
                 <div class="card-body">
                     <div class="gx-3 mb-3">
-                        <label asp-for="@Model.ContactType" class="form-label small mb-1">Contact form <span class="text-danger">*</span></label>
-                        <select asp-for="@Model.ContactType" class="form-select" aria-label="Contact type">
+                        <label asp-for="@Model.ApplicationsContactType" class="form-label small mb-1">Contact form <span class="text-danger">*</span></label>
+                        <select asp-for="@Model.ApplicationsContactType" class="form-select" aria-label="Contact type">
                             <option value="1" selected>Email</option>
                             <option value="2">External form</option>
                             <option value="3">GameDev.Hunt</option>
                         </select>
                     </div>
                     <div class="gx-3">
-                        <label asp-for="@Model.ContactAddress" class="form-label small mb-1">Contact address <span class="text-danger">*</span></label>
-                        <input asp-for="@Model.ContactAddress" class="form-control" type="text" placeholder="Enter email/url">
+                        <label asp-for="@Model.ApplicationsContactEmail" class="form-label small mb-1">Contact address <span class="text-danger">*</span></label>
+                        <input asp-for="@Model.ApplicationsContactEmail" class="form-control" type="text" placeholder="Enter email/url">
                     </div>
                 </div>
             </div>

@@ -1,7 +1,6 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
-using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
@@ -22,9 +21,9 @@ namespace JobBoardPlatform.BLL.Commands.Profile
 
         protected override async Task UploadFiles(ICompanyProfileData from, CompanyProfile to)
         {
-            if (from.ProfileImage != null)
+            if (from.ProfileImage != null && from.ProfileImage.File != null)
             {
-                var imageUrl = await imageStorage.ChangeImageAsync(to.ProfileImageUrl, from.ProfileImage);
+                var imageUrl = await imageStorage.ChangeImageAsync(to.ProfileImageUrl, from.ProfileImage.File);
                 to.ProfileImageUrl = imageUrl;
             }
         }
@@ -35,13 +34,13 @@ namespace JobBoardPlatform.BLL.Commands.Profile
             {
                 to.CompanyName = from.CompanyName;
             }
-            if (!string.IsNullOrEmpty(from.ProfileImageUrl))
+            if (!string.IsNullOrEmpty(from.ProfileImage.ImageUrl))
             {
-                to.ProfileImageUrl = from.ProfileImageUrl;
+                to.ProfileImageUrl = from.ProfileImage.ImageUrl;
             }
 
-            to.City = from.City;
-            to.Country = from.Country;
+            to.City = from.OfficeCity;
+            to.Country = from.OfficeCountry;
             to.CompanyWebsiteUrl = from.CompanyWebsiteUrl;
         }
     }

@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.PL.Filters;
 using Microsoft.AspNetCore.Mvc;
 

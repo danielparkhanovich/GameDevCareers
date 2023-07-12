@@ -1,4 +1,4 @@
-﻿namespace JobBoardPlatform.BLL.Models.Contracts
+﻿namespace JobBoardPlatform.BLL.Boundaries
 {
     public interface IUserLoginData
     {

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 
-namespace JobBoardPlatform.PL.Aspects.DataValidators
+namespace JobBoardPlatform.PL.Aspects.DataValidators.Registration
 {
     public class UserRegisterValidator : AbstractValidator<UserRegisterViewModel>
     {

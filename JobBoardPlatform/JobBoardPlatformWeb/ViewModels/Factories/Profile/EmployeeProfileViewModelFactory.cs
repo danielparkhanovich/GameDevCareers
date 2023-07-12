@@ -1,5 +1,7 @@
-﻿using JobBoardPlatform.DAL.Models.Employee;
+﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Common;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
@@ -25,7 +27,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
                 City = profile.City,
                 Country = profile.Country,
                 Description = profile.Description,
-                ProfileImageUrl = profile.ProfileImageUrl,
+                ProfileImage = GetProfileImage(profile.ProfileImageUrl),
                 ResumeUrl = profile.ResumeUrl,
                 FileName = resumeName,
                 FileSize = resumeSize,
@@ -34,6 +36,14 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             };
 
             return viewModel;
+        }
+
+        private IProfileImage GetProfileImage(string? imageUrl)
+        {
+            return new ProfileImageViewModel()
+            {
+                ImageUrl = imageUrl
+            };
         }
     }
 }

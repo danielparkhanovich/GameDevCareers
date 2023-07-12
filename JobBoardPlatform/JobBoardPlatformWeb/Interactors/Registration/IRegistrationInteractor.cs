@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Models.Contracts;
+﻿using JobBoardPlatform.BLL.Boundaries;
 
 namespace JobBoardPlatform.PL.Interactors.Registration
 {

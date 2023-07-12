@@ -1,8 +1,13 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+﻿using FluentValidation;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Contracts;
+using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
@@ -15,14 +20,17 @@ namespace JobBoardPlatform.PL.Controllers.Register
 
         private readonly IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor;
         private readonly ILoginService<CompanyIdentity, CompanyProfile> loginService;
+        private readonly IValidator<CompanyPublishOfferAndRegisterViewModel> validator;
 
 
         public CompanyRegisterController(
             IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor,
-            ILoginService<CompanyIdentity, CompanyProfile> loginService)
+            ILoginService<CompanyIdentity, CompanyProfile> loginService,
+            IValidator<CompanyPublishOfferAndRegisterViewModel> validator)
         {
             this.registrationInteractor = registrationInteractor;
             this.loginService = loginService;
+            this.validator = validator;
         }
 
         [Route("pricing")]
@@ -34,22 +42,27 @@ namespace JobBoardPlatform.PL.Controllers.Register
         [Route("post-ad")]
         public IActionResult StartPostOfferAndRegister()
         {
-            var viewModel = new OfferDetailsViewModel();
+            var viewModel = new CompanyPublishOfferAndRegisterViewModel();
             return View(viewModel);
         }
 
         [Route("post-ad")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StartPostOfferAndRegister(CompanyRegisterViewModel userRegister)
+        public async Task<IActionResult> StartPostOfferAndRegister(CompanyPublishOfferAndRegisterViewModel registerData)
         {
-            if (ModelState.IsValid)
+            var result = await validator.ValidateAsync(registerData);
+            if (result.IsValid)
             {
-                var redirect = await registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
-                return RedirectToAction(redirect.ActionName, redirect.Data);
+                //var redirect = await registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
+                //return RedirectToAction(redirect.ActionName, redirect.Data);
+            }
+            else
+            {
+                result.AddToModelState(this.ModelState);
             }
 
-            return View(userRegister);
+            return View(registerData);
         }
 
         [Route("post-ad/confirm/{tokenId}")]

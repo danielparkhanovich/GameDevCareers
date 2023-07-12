@@ -41,6 +41,13 @@ using FluentValidation;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.BLL.Services.AccountManagement.Password;
 using JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens;
+using JobBoardPlatform.PL.Aspects.DataValidators.Registration;
+using JobBoardPlatform.PL.Aspects.DataValidators.Offers;
+using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.PL.Aspects.DataValidators.Profile;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Contracts;
+using JobBoardPlatform.PL.Aspects.DataValidators.Common;
+using JobBoardPlatform.PL.ViewModels.Models.Registration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -112,7 +119,10 @@ builder.Services.AddTransient<IAuthorizationHandler, OfferOwnerHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, OfferPublishedOrOwnerHandler>();
 
 builder.Services.AddScoped<IValidator<UserRegisterViewModel>, UserRegisterValidator>();
+builder.Services.AddScoped<IValidator<CompanyPublishOfferAndRegisterViewModel>, CompanyPublishOfferAndRegisterValidator>();
 builder.Services.AddScoped<IValidator<UserPasswordViewModel>, UserPasswordValidator>();
+builder.Services.AddScoped<IValidator<INewOfferData>, OfferFormDataValidator>();
+builder.Services.AddScoped<IValidator<IProfileImage>, ProfileImageValidator>();
 
 // BLL
 builder.Services.AddTransient<IEmailEmployeeRegistrationService, EmailEmployeeRegistrationService>();
