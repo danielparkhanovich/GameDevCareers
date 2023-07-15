@@ -114,7 +114,7 @@ namespace JobBoardPlatform.BLL.Utils
             return seniority;
         }
 
-        private (int, int, CurrencyTypeEnum, EmploymentTypeEnum)[]? GetEmploymentDetails(string? seniority, Random random)
+        private (int?, int?, CurrencyTypeEnum, EmploymentTypeEnum)[]? GetEmploymentDetails(string? seniority, Random random)
         {
             // TODO: change to 0.25
             if (random.NextDouble() < 0)
@@ -128,7 +128,7 @@ namespace JobBoardPlatform.BLL.Utils
 
             int employmentTypesCount = random.Next(1, 4);
 
-            var details = new List<(int, int, CurrencyTypeEnum, EmploymentTypeEnum)>(employmentTypesCount);
+            var details = new List<(int?, int?, CurrencyTypeEnum, EmploymentTypeEnum)>(employmentTypesCount);
 
             for (int i = 0; i < employmentTypes.Count; i++)
             {

@@ -1,8 +1,7 @@
 ﻿
 @model ITechKeywords
 @{
-    var test = Model;
-    var test1 = "";
+    string[] addedKeywords = Model.TechKeywords;
 }
 
 <div class="form-group">
@@ -28,8 +27,20 @@
 
 <script>
     var keywordsInput = document.getElementById('techInput')
+    const addedKeywords = @Html.Raw(Json.Serialize(addedKeywords));
+    if (addedKeywords != null)
+    {
+        addedKeywords.forEach(x => 
+        { 
+            if (x != null)
+            {
+                addTechKeyword(x);
+            }
+        });
+    }
 
     keywordsInput.addEventListener('keydown', function (event) {
+        // Enter
         if (event.keyCode === 13) {
             event.preventDefault();
             addTechKeyword(this.value);

@@ -16,11 +16,11 @@
 
         int[] EmploymentTypes { get; set; }
 
-        int[]? SalaryFromRange { get; set; }
+        int?[] SalaryFromRange { get; set; }
 
-        int[]? SalaryToRange { get; set; }
+        int?[] SalaryToRange { get; set; }
 
-        int[]? SalaryCurrencyType { get; set; } // change to enum
+        int[] SalaryCurrencyType { get; set; } // change to enum
 
         int MainTechnologyType { get; set; } // change to enum
 

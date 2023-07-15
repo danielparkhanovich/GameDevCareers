@@ -97,9 +97,9 @@
                         color: black;
                     }
                 </style>
-                <textarea asp-for="OfferDetails.JobDescription" class="content" name="example"></textarea>
-                <span asp-validation-for="OfferDetails.JobDescription" class="text-danger"></span>
+                <textarea asp-for="OfferDetails.JobDescription" class="content"></textarea>
             </div>
+            <span asp-validation-for="OfferDetails.JobDescription" class="text-danger"></span>
         </div>
     </div>
 
@@ -108,14 +108,14 @@
             <strong>Applications</strong>
         </div>
         <div class="card-body">
-            <div class="gx-3 mb-3" style="height:58px;">
+            <div class="gx-3 mb-4" style="height:58px;">
                 <select id="contactFormTypeSelect" asp-for="OfferDetails.ApplicationsContactType" class="form-select h-100" aria-label="Contact type">
                     <option value="0" selected>Select contact form <span class="text-danger">*</span></option>
                     <option value="1">Email</option>
                     <option value="2">External form</option>
                     <option value="3">GameDev.Hunt</option>
                 </select>
-                <span asp-validation-for="OfferDetails.ApplicationsContactType" class="text-danger"></span>
+                <span asp-validation-for="OfferDetails.ApplicationsContactType" class="text-danger mb-3"></span>
             </div>
             <div class="gx-3">
                 <div id="emailContactInputField" class="form-floating gx-3">
@@ -167,8 +167,8 @@
                     <div class="form-floating flex-grow-1 mb-2">
                         <input asp-for="OfferDetails.CustomConsentTitle" type="text" class="form-control" placeholder="Your consent title" disabled>
                         <label asp-for="OfferDetails.CustomConsentTitle">Your consent title</label>
+                        <span asp-validation-for="OfferDetails.CustomConsentTitle" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="OfferDetails.CustomConsentTitle" class="text-danger"></span>
 
                     <textarea asp-for="OfferDetails.CustomConsentContent" class="form-control" rows="4" disabled></textarea>
                     <span asp-validation-for="OfferDetails.CustomConsentContent" class="text-danger"></span>

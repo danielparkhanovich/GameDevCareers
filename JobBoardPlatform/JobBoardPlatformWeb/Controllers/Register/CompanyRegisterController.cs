@@ -4,9 +4,6 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
-using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
-using JobBoardPlatform.PL.ViewModels.Models.Profile.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using Microsoft.AspNetCore.Mvc;
 

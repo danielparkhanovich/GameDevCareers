@@ -6,6 +6,7 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Common
     {
         public UrlValidator()
         {
+            RuleFor(url => url).NotNull();
             RuleFor(url => url)
                 .Must(url => Uri.TryCreate(url, UriKind.Absolute, out _))
                 .When(url => !string.IsNullOrEmpty(url))

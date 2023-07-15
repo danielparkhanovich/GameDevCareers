@@ -35,31 +35,30 @@
                 </i>
                 <div class="small">@fieldLabels[i].ToString()</div>
             </label>
-            <input asp-for="MainTechnologyType" id="mainFieldInput_@i" class="mainFieldInput" type="radio" name="MainTechnologyType" value="@(i + indexOffset)" checked="checked"
-            style="position: absolute; opacity: 0; pointer-events: none;" />
+            <input asp-for="MainTechnologyType" id="mainFieldInput_@i" class="mainFieldInput" type="radio" value="@(i + indexOffset)"
+                style="position: absolute; opacity: 0; pointer-events: none;" />
         </div>
     }
 </div>
 
 <script>
-    var radioButtons = document.getElementsByClassName('mainFieldInput');
+    const radioButtons = document.getElementsByClassName('mainFieldInput');
 
     const selected = @Html.Raw(Json.Serialize(selectedIndex));
 
     checkTechnologyWidget(radioButtons[selected]);
 
     function selectField(value) {
-
-        var radioButtons = document.getElementsByClassName('mainFieldInput');
-
         for (var i = 0; i < radioButtons.length; i++) 
         {
             var element = radioButtons[i];
             uncheckTechnologyWidget(element);
+            console.log(element.id);
         }
 
         var selectedRadioButton = document.querySelector('#'+value);
         checkTechnologyWidget(selectedRadioButton);
+        console.log(selectedRadioButton.id);
     }
 
     function checkTechnologyWidget(element) {

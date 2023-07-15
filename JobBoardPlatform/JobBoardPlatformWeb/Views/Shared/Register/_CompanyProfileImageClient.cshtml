@@ -8,13 +8,12 @@
     }
 }
 
-<div class="text-center mb-4 me-4" style="width:30%;">
+<div class="text-center mb-4 me-4">
     <div>
         <label class="form-label small mb-1">Company logo <span class="text-danger">*</span></label>
     </div>
     <!-- Profile picture image-->
     <img class="img-account-profile rounded-circle mb-2" id="profileImage" width="192" height="192" src=@userImageUrl alt="User profile image" style="object-fit:contain;">
-    <span asp-validation-for="File" class="text-danger"></span>
     <!-- Profile picture help block-->
     <div class="small font-italic text-muted mb-2">JPG or PNG no larger than 1 MB</div>
     <!-- Profile picture upload button-->
@@ -37,6 +36,7 @@
 
     input.onchange = evt => {
         const [file] = input.files
+        console.log(file);
         if (file) {
             img.src = URL.createObjectURL(file)
         }

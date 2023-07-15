@@ -2,31 +2,34 @@
 
 <div class="d-flex flex-row gx-3">
 
-    <partial name="./Register/_CompanyProfileImageClient" for="@Model.ProfileImage" />
+    <div class="d-flex flex-column" style="width:45%;">
+        <partial name="./Register/_CompanyProfileImageClient" for="@Model.ProfileImage" />
+        <span asp-validation-for="@Model.ProfileImage.File" class="text-danger align-self-center"></span>
+    </div>
 
     <div class="d-flex flex-column justify-content-center flex-grow-1">
         <div class="form-floating mb-3">
             <input asp-for="CompanyName" type="text" class="form-control" placeholder="Company name">
             <label asp-for="CompanyName">Company name <span class="text-danger">*</span></label>
+            <span asp-validation-for="CompanyName" class="text-danger"></span>
         </div>
-        <span asp-validation-for="CompanyName" class="text-danger"></span>
 
         <div class="form-floating mb-3">
             <input asp-for="OfficeCity" type="text" class="form-control" placeholder="Company name">
             <label asp-for="OfficeCity">Office city <span class="text-danger">*</span></label>
+            <span asp-validation-for="OfficeCity" class="text-danger"></span>
         </div>
-        <span asp-validation-for="OfficeCity" class="text-danger"></span>
 
         <div class="form-floating mb-3">
             <input asp-for="OfficeStreet" type="text" class="form-control" placeholder="Company name">
             <label asp-for="OfficeStreet">Office street <span class="text-danger">*</span></label>
+            <span asp-validation-for="OfficeStreet" class="text-danger"></span>
         </div>
-        <span asp-validation-for="OfficeStreet" class="text-danger"></span>
 
         <div class="form-floating">
             <input asp-for="CompanyWebsiteUrl" type="text" class="form-control" placeholder="Company website link">
             <label asp-for="CompanyWebsiteUrl">Company website link</label>
+            <span asp-validation-for="CompanyWebsiteUrl" class="text-danger"></span>
         </div>
-        <span asp-validation-for="CompanyWebsiteUrl" class="text-danger"></span>
     </div>
 </div>

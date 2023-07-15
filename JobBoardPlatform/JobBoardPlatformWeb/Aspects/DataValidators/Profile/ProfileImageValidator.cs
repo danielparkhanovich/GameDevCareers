@@ -7,8 +7,11 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Profile
     {
         public ProfileImageValidator()
         {
-            RuleFor(profileImage => profileImage.File).NotNull().WithMessage("Please attach company profile image");
-			AddRulesForFile();
+            RuleFor(profileImage => profileImage.File).NotNull().WithMessage("Please attach profile image");
+            When(profileImage => profileImage != null && profileImage.File != null, () => 
+            {
+                AddRulesForFile();
+            });
 		}
 
         private void AddRulesForFile()

@@ -14,9 +14,9 @@ namespace JobBoardPlatform.BLL.Generators
         public string? ApplicationsContactEmail { get; set; }
         public int MainTechnologyType { get; set; }
         public int[] EmploymentTypes { get; set; }
-        public int[]? SalaryFromRange { get; set; }
-        public int[]? SalaryToRange { get; set; }
-        public int[]? SalaryCurrencyType { get; set; }
+        public int?[] SalaryFromRange { get; set; }
+        public int?[] SalaryToRange { get; set; }
+        public int[] SalaryCurrencyType { get; set; }
         public string[]? TechKeywords { get; set; }
         public string? Street { get; set; }
         public string? ApplicationsContactExternalFormUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

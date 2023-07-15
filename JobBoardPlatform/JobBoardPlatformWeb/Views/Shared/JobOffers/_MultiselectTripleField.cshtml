@@ -1,52 +1,54 @@
 ﻿
 @model IOfferSalary
-@{
-    if (Model.SalaryFromRange == null || Model.SalaryFromRange.Length == 0)
-    {
-        Model.SalaryFromRange = null;
-        Model.SalaryToRange = null;
-        Model.SalaryCurrencyType = null;
-    }
-}
 
 <div>
-    <div id="offer-employment-details-container">
-        <div id="offer-employment-details-template">
-            <div class="d-flex flex-row justify-content-between gx-3 mb-3 offer-employment-details">
-                <div class="flex-grow-1 pe-3">
-                    <select asp-for="EmploymentTypes[0]" class="form-select h-100" aria-label="Employment type">
-                        <option value="0" selected>Employment type <span class="text-danger">*</span></option>
-                        <option value="1">Permanent</option>
-                        <option value="2">Mandate contract</option>
-                        <option value="3">B2B</option>
-                    </select>
-                </div>
-                <div class="d-flex flex-row justify-content-center me-3 flex-grow-1">
-                    <div class="form-floating flex-grow-1 me-3">
-                        <input asp-for="SalaryFromRange[0]" type="text" class="form-control" placeholder="Monthly salary from (gross)" value="">
-                        <label asp-for="SalaryFromRange[0]">Monthly salary from (gross)</label>
+    <div id="offer-employment-details-container" class="mb-2">                
+        @for (int i = 0; i < Model.EmploymentTypes!.Length; i++)
+        {
+            <div class="mb-3">
+                <div id="offer-employment-details-template">
+                    <div class="d-flex flex-row justify-content-between gx-3 offer-employment-details">
+                        <div class="flex-grow-1 pe-3">
+                            <select asp-for="EmploymentTypes[i]" class="form-select h-100" aria-label="Employment type">
+                                <option value="0" selected>Employment type <span class="text-danger">*</span></option>
+                                <option value="1">Permanent</option>
+                                <option value="2">Mandate contract</option>
+                                <option value="3">B2B</option>
+                            </select>
+                        </div>
+                        <div class="d-flex flex-row justify-content-center me-3 flex-grow-1">
+                            <div class="form-floating flex-grow-1 me-3">
+                                <input asp-for="SalaryFromRange[i]" type="text" class="form-control" placeholder="Monthly salary from (gross)">
+                                <label asp-for="SalaryFromRange[i]">Monthly salary from (gross)</label>
+                            </div>
+                            <div class="form-floating flex-grow-1">
+                                <input asp-for="SalaryToRange[i]" type="text" class="form-control" placeholder="Monthly salary to (gross)">
+                                <label asp-for="SalaryToRange[i]">Monthly salary to (gross)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <select asp-for="SalaryCurrencyType[i]" class="form-select h-100" aria-label="Default select example">
+                                <option value="0" selected>Currency</option>
+                                <option value="1">PLN</option>
+                                <option value="2">EUR</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-floating flex-grow-1">
-                        <input asp-for="SalaryToRange[0]" type="text" class="form-control" placeholder="Monthly salary to (gross)" value="">
-                        <label asp-for="SalaryToRange[0]">Monthly salary to (gross)</label>
-                    </div>
                 </div>
-                <div>
-                    <select asp-for="SalaryCurrencyType[0]" class="form-select h-100" aria-label="Default select example">
-                        <option value="0" selected>Currency</option>
-                        <option value="1">PLN</option>
-                        <option value="2">EUR</option>
-                    </select>
+                <div class="d-flex flex-column">
+                    <span asp-validation-for="EmploymentTypes[i]" class="text-danger"></span>
+                    <span asp-validation-for="SalaryFromRange" class="text-danger"></span>
+                    <span asp-validation-for="SalaryToRange" class="text-danger"></span>
+                    <span asp-validation-for="SalaryCurrencyType" class="text-danger"></span>
                 </div>
             </div>
-        </div>
+        }
     </div>
-    <button type="button" id="addButton" class="btn btn-outline-primary btn-block mb-2">Add one more employment type</button>
-    <button type="button" id="deleteButton" class="d-none btn btn-outline-danger btn-block mb-2">Delete employment type</button>
+    <button type="button" id="addButton" class="btn btn-outline-primary btn-block mt-2">Add one more employment type</button>
+    <button type="button" id="deleteButton" class="d-none btn btn-outline-danger btn-block mt-2">Delete employment type</button>
 </div>
 
 <script>
-
     var employmentTypeContainer = document.getElementById('offer-employment-details-container');
     var deleteButton = document.getElementById('deleteButton');
     deleteButton.addEventListener('click', function () {
@@ -59,7 +61,14 @@
     var employmentTypeTemplate = document.getElementById('offer-employment-details-template');
     var addButton = document.getElementById('addButton');
     addButton.addEventListener('click', function () {
-        // Get the current index of employment items
+        addEmploymentField();
+    });
+
+    setAddDeleteButtonsVisibility();
+
+    function addEmploymentField()
+    {
+         // Get the current index of employment items
         var index = document.getElementsByClassName('offer-employment-details').length;
 
         if (index > 2)
@@ -69,20 +78,19 @@
 
         // Create new employment container
         var newEmploymentHTML = employmentTypeTemplate.innerHTML;
-
         newEmploymentHTML = newEmploymentHTML.replaceAll("[0]", "[" + index + "]");
 
         // Create a temporary element to hold the new HTML
         var tempElement = document.createElement('div');
+        tempElement.classList.add("mb-3");
         tempElement.innerHTML = newEmploymentHTML;
 
         // Append the new employment container to the form
         var newEmploymentContainer = tempElement;
-        //insertAfter(newEmploymentContainer, employmentTypeTemplate);
-        employmentTypeTemplate.parentNode.insertBefore(newEmploymentContainer, employmentTypeTemplate.nextSibling);
+        employmentTypeContainer.appendChild(newEmploymentContainer);
 
         setAddDeleteButtonsVisibility();
-    });
+    }
 
     function setAddDeleteButtonsVisibility()
     {
