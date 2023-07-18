@@ -1,0 +1,27 @@
+﻿@using JobBoardPlatform.PL.Controllers.Register;
+@using JobBoardPlatform.PL.ViewModels.Models.Registration;
+
+@model string
+@{
+    ViewData["Title"] = "Post a job";
+    string tokenId = (ViewData["FormDataTokenId"] as string) ?? string.Empty;
+}
+
+<div class="container-xl px-4 pt-4">
+
+    <partial name="./Register/_CompanyRegistrationStageIndicator" model="2" />
+
+    <div class="card border-0 shadow-lg p-2">
+        <div>
+            <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
+                <strong>Offer card</strong>
+            </div>
+            <div class="card-body">
+                Test
+            </div>
+            <a class="btn btn-primary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
+                Back
+            </a>
+        </div>
+    </div>
+</div>

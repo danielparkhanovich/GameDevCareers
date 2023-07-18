@@ -8,6 +8,7 @@ namespace JobBoardPlatform.BLL.Boundaries
         string? CompanyName { get; set; }
         string? OfficeCountry { get; set; }
         string? OfficeCity { get; set; }
+        string? OfficeStreet { get; set; }
         string? CompanyWebsiteUrl { get; set; }
     }
 }

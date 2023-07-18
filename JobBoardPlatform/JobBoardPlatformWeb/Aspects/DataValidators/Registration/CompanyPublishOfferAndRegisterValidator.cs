@@ -16,16 +16,16 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Registration
 
         private void AddRulesForCompanyRegistrationData()
         {
-            RuleFor(register => register.CompanyRegistrationData.ProfileImage).SetValidator(new ProfileImageValidator());
-            RuleFor(register => register.CompanyRegistrationData.CompanyName).NotEmpty()
+            RuleFor(register => register.CompanyProfileData.ProfileImage).SetValidator(new ProfileImageValidator());
+            RuleFor(register => register.CompanyProfileData.CompanyName).NotEmpty()
                 .WithMessage("Please enter company name");
-            RuleFor(register => register.CompanyRegistrationData.OfficeCity).NotEmpty()
+            RuleFor(register => register.CompanyProfileData.OfficeCity).NotEmpty()
                 .WithMessage("Please enter company office city");
-            RuleFor(register => register.CompanyRegistrationData.OfficeStreet).NotEmpty()
+            RuleFor(register => register.CompanyProfileData.OfficeStreet).NotEmpty()
                 .WithMessage("Please enter company office street");
-            When(register => !string.IsNullOrEmpty(register.CompanyRegistrationData.CompanyWebsiteUrl), () =>
+            When(register => !string.IsNullOrEmpty(register.CompanyProfileData.CompanyWebsiteUrl), () =>
             {
-                RuleFor(register => register.CompanyRegistrationData.CompanyWebsiteUrl!).SetValidator(new UrlValidator());
+                RuleFor(register => register.CompanyProfileData.CompanyWebsiteUrl!).SetValidator(new UrlValidator());
             });
         }
     }

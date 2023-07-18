@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens;
-using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Session.Tokens;
 using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;

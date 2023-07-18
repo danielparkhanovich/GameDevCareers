@@ -2,9 +2,9 @@
 
 namespace JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens
 {
-    public interface IRegistrationTokensService
+    public interface IRestorePasswordTokensService
     {
-        Task<RegistrationToken> RegisterNewTokenAsync(string userLogin, string password);
-        Task<RegistrationToken> TryGetTokenAsync(string tokenId);
+        Task<RestorePasswordToken> RegisterNewTokenAsync(string userLogin);
+        Task<RestorePasswordToken> TryGetTokenAsync(string tokenId);
     }
 }

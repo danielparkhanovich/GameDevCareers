@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 
 namespace JobBoardPlatform.DAL.Repositories.Cache
 {
@@ -16,7 +17,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
         protected override DistributedCacheEntryOptions GetOptions()
         {
             return new DistributedCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromMinutes(CacheExpirationTimeInMinutes));
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheExpirationTimeInMinutes));
         }
     }
 }

@@ -16,16 +16,19 @@ namespace JobBoardPlatform.PL.Controllers.Register
         public const string StartPostOfferAndRegisterAction = "StartPostOfferAndRegister";
 
         private readonly IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor;
+        private readonly CompanyPublishOfferAndRegistrationInteractor registrationWithPublishOfferInteractor;
         private readonly ILoginService<CompanyIdentity, CompanyProfile> loginService;
         private readonly IValidator<CompanyPublishOfferAndRegisterViewModel> validator;
 
 
         public CompanyRegisterController(
             IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor,
+            CompanyPublishOfferAndRegistrationInteractor registrationWithPublishOfferInteractor,
             ILoginService<CompanyIdentity, CompanyProfile> loginService,
             IValidator<CompanyPublishOfferAndRegisterViewModel> validator)
         {
             this.registrationInteractor = registrationInteractor;
+            this.registrationWithPublishOfferInteractor = registrationWithPublishOfferInteractor;
             this.loginService = loginService;
             this.validator = validator;
         }
@@ -43,6 +46,22 @@ namespace JobBoardPlatform.PL.Controllers.Register
             return View(viewModel);
         }
 
+        [Route("post-ad/{formDataTokenId}")]
+        public async Task<IActionResult> StartPostOfferAndRegister(string formDataTokenId)
+        {
+            var viewModel = await registrationWithPublishOfferInteractor.GetPostFormViewModel(formDataTokenId);
+            return View(viewModel);
+        }
+
+        [Route("post-ad/{formDataTokenId}")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public Task<IActionResult> StartPostOfferAndRegister(
+            CompanyPublishOfferAndRegisterViewModel registerData, string formDataTokenId)
+        {
+            return StartPostOfferAndRegister(registerData);
+        }
+
         [Route("post-ad")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -51,15 +70,26 @@ namespace JobBoardPlatform.PL.Controllers.Register
             var result = await validator.ValidateAsync(registerData);
             if (result.IsValid)
             {
-                //var redirect = await registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
-                //return RedirectToAction(redirect.ActionName, redirect.Data);
+                string tokenId = await registrationWithPublishOfferInteractor.SavePostFormViewModel(registerData);
+                return RedirectToAction("VerifyRegistration", new { formDataTokenId = tokenId });
             }
             else
             {
+                // TODO: remove after tests
+                string tokenId = await registrationWithPublishOfferInteractor.SavePostFormViewModel(registerData);
+                return RedirectToAction("VerifyRegistration", new { formDataTokenId = tokenId });
+                //
                 result.AddToModelState(this.ModelState);
             }
 
             return View(registerData);
+        }
+
+        [Route("verify/{formDataTokenId}")]
+        public IActionResult VerifyRegistration(string formDataTokenId)
+        {
+            ViewData["FormDataTokenId"] = formDataTokenId;
+            return View();
         }
 
         [Route("post-ad/confirm/{tokenId}")]

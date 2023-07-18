@@ -4,9 +4,12 @@ using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Registration
 {
-    public class CompanyPublishOfferAndRegisterViewModel
+    public class CompanyPublishOfferAndRegisterViewModel : ICompanyProfileAndNewOfferData
     {
-        public CompanyProfileViewModel CompanyRegistrationData { get; set; } = new CompanyProfileViewModel();
+        public ICompanyProfileData CompanyProfileData { get; set; } = new CompanyProfileViewModel();
+
+        public INewOfferData OfferData { get => EditOffer.OfferDetails; set => EditOffer.OfferDetails = value; }
+
         public EditOfferViewModel EditOffer { get; set; } = new EditOfferViewModel();
     }
 }

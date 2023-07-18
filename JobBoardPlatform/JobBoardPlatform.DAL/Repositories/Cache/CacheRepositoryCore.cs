@@ -29,11 +29,22 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
             var entry = TryDeserializeEntry(serialized);
             return entry!;
         }
+
+        public Task DeleteAsync(string entryKey)
+        {
+            return cache.RemoveAsync(entryKey);
+        }
+
+        protected virtual JsonSerializerSettings GetSerializerSettings()
+        {
+            return new JsonSerializerSettings();
+        }
+
         protected abstract DistributedCacheEntryOptions GetOptions();
 
         private string GetSerialized(T entry)
         {
-            return JsonConvert.SerializeObject(entry);
+            return JsonConvert.SerializeObject(entry, GetSerializerSettings());
         }
 
         private byte[] TryGetBytesFromSerialized(string serialized)
@@ -68,7 +79,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
 
         private T TryDeserializeEntry(string serialized)
         {
-            var entry = JsonConvert.DeserializeObject<T>(serialized);
+            var entry = JsonConvert.DeserializeObject<T>(serialized, GetSerializerSettings());
             if (entry == null)
             {
                 throw CacheEntryException.UnableToGetEntryDeserialization();

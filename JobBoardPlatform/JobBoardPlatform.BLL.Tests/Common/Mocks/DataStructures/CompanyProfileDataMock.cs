@@ -8,6 +8,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures
         public string? CompanyName { get; set; }
         public string? OfficeCountry { get; set; }
         public string? OfficeCity { get; set; }
+        public string? OfficeStreet { get; set; }
         public string? CompanyWebsiteUrl { get; set; }
     }
 }

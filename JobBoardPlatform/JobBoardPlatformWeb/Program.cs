@@ -45,9 +45,11 @@ using JobBoardPlatform.PL.Aspects.DataValidators.Registration;
 using JobBoardPlatform.PL.Aspects.DataValidators.Offers;
 using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.PL.Aspects.DataValidators.Profile;
-using JobBoardPlatform.PL.ViewModels.Models.Profile.Contracts;
-using JobBoardPlatform.PL.Aspects.DataValidators.Common;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
+using Newtonsoft.Json;
+using JobBoardPlatform.DAL.Repositories.Cache.Converters;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -166,6 +168,7 @@ builder.Services.AddTransient<MainPageOffersSearcherCacheDecorator>();
 // PL Interactors
 builder.Services.AddTransient<IRegistrationInteractor<UserRegisterViewModel>, EmailEmployeeRegistrationInteractor>();
 builder.Services.AddTransient<IRegistrationInteractor<CompanyRegisterViewModel>, EmailCompanyRegistrationInteractor>();
+builder.Services.AddTransient<CompanyPublishOfferAndRegistrationInteractor>();
 
 // DAL
 // Cache
@@ -178,6 +181,21 @@ builder.Services.AddTransient<ICacheRepository<List<JobOffer>>, MainPageOffersCa
 builder.Services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
 builder.Services.AddTransient<ICacheRepository<RegistrationToken>, RegistrationTokensCacheRepository>();
 builder.Services.AddTransient<ICacheRepository<RestorePasswordToken>, RestorePasswordTokensCacheRepository>();
+builder.Services.AddTransient<
+    ICacheRepository<DataToken<ICompanyProfileAndNewOfferData>>, 
+    CompanyRegistrationTokensCacheRepository<ICompanyProfileAndNewOfferData>>();
+var serializerSettings = new JsonSerializerSettings()
+{
+    Converters = new List<JsonConverter>
+    {
+        new InterfaceConverter<ICompanyProfileAndNewOfferData, CompanyPublishOfferAndRegisterViewModel>(),
+        new InterfaceConverter<ICompanyProfileData, CompanyProfileViewModel>(),
+        new InterfaceConverter<INewOfferData, OfferDetailsViewModel>(),
+    }
+};
+builder.Services.AddSingleton<JsonSerializerSettings>(serializerSettings);
+
+builder.Services.AddTransient(typeof(DataTokensService<>));
 // Repository
 builder.Services.AddDbContext<DataContext>(options =>
 {

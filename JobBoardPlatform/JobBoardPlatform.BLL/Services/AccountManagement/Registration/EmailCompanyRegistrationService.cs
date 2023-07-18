@@ -1,5 +1,4 @@
 ﻿using JobBoardPlatform.BLL.Commands.Identity;
-using JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;

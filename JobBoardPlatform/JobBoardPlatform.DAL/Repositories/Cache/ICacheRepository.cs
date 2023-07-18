@@ -4,5 +4,6 @@
     {
         Task UpdateAsync(string entryKey, T entry);
         Task<T> GetAsync(string entryKey);
+        Task DeleteAsync(string entryKey);
     }
 }
