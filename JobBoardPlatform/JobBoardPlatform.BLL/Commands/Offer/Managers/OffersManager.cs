@@ -9,7 +9,6 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     public class OffersManager : IOffersManager
     {
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<TechKeyword> keywordsRepository;
         private readonly IRepository<OfferApplication> applicationsRepository;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage applicationsResumeStorage;
@@ -19,7 +18,6 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public OffersManager(
             IRepository<JobOffer> offersRepository,
-            IRepository<TechKeyword> keywordsRepository,
             IRepository<OfferApplication> applicationsRepository,
             IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage applicationsResumeStorage,
@@ -30,14 +28,13 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             this.applicationsRepository = applicationsRepository;
             this.profileResumeStorage = profileResumeStorage;
             this.applicationsResumeStorage = applicationsResumeStorage;
-            this.keywordsRepository = keywordsRepository;
             this.cacheManager = cacheManager;
             this.offersSearcher = offersSearcher;
         }
 
         public async Task AddAsync(int profileId, INewOfferData offerData)
         {
-            var command = new AddNewOfferCommand(profileId, offerData, keywordsRepository, offersRepository);
+            var command = new AddNewOfferCommand(profileId, offerData, offersRepository);
             await ExecuteCommandAndUpdateCacheAsync(command);
         }
 

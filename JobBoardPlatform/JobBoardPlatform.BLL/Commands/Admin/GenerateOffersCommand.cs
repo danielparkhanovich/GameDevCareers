@@ -11,19 +11,16 @@ namespace JobBoardPlatform.BLL.Commands.Admin
         private readonly int companyId;
         private readonly IRepository<CompanyIdentity> repository;
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<TechKeyword> keywordsRepository;
 
 
         public GenerateOffersCommand(int offersCount,
             int companyId, 
             IRepository<CompanyIdentity> repository,
-            IRepository<TechKeyword> keywordsRepository,
             IRepository<JobOffer> offersRepository)
         {
             this.offersCount = offersCount;
             this.companyId = companyId;
             this.repository = repository;
-            this.keywordsRepository = keywordsRepository;
             this.offersRepository = offersRepository;
         }
 
@@ -50,7 +47,6 @@ namespace JobBoardPlatform.BLL.Commands.Admin
                     var data = offersGenerator.GenerateData(companyIdentity);
                     var addNewOfferCommand = new AddNewOfferCommand(companyIdentity.ProfileId,
                         data,
-                        keywordsRepository,
                         offersRepository);
                     await addNewOfferCommand.Execute();
                 }

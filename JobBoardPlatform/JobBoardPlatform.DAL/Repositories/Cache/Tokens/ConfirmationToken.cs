@@ -1,9 +1,9 @@
 ﻿
 namespace JobBoardPlatform.DAL.Repositories.Cache.Tokens
 {
-    public class RestorePasswordToken : IToken
+    public class ConfirmationToken : IToken
     {
         public string Id { get; set; }
-        public string RelatedLogin { get; set; }
+        public string TokenToConfirmId { get; set; }
     }
 }

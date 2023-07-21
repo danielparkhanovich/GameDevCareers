@@ -1,70 +1,32 @@
-﻿using JobBoardPlatform.BLL.Services.Session.Tokens;
+﻿using JobBoardPlatform.BLL.Services.AccountManagement.Common;
 using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
 
 namespace JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens
 {
-    public class DataTokensService<T>
+    public class DataTokensService<T> : TokensServiceBase<DataToken<T>, T>
     {
         private const string TokenEntryKeyPrefix = "DataToken";
-        private readonly ICacheRepository<DataToken<T>> cache;
 
 
-        public DataTokensService(ICacheRepository<DataToken<T>> cache)
+        public DataTokensService(ICacheRepository<DataToken<T>> cache) : base(cache)
         {
-            this.cache = cache;
+
         }
 
-        public async Task<DataToken<T>> RegisterNewTokenAsync(T data)
+        protected override DataToken<T> CreateNewToken(T data, string tokenId)
         {
-            var token = CreateNewToken(data);
-
-            string entryKey = GetTokenEntryKey(token.Id);
-            await cache.UpdateAsync(entryKey, token);
-
-            return token;
-        }
-
-        public async Task<DataToken<T>> TryGetTokenAsync(string tokenId)
-        {
-            string entryKey = GetTokenEntryKey(tokenId);
-            return await TryGetTokenFromCacheAsync(entryKey);
-        }
-
-        public async Task ExpireTokenAsync(string tokenId)
-        {
-            await cache.DeleteAsync(tokenId);
-        }
-
-        private async Task<DataToken<T>> TryGetTokenFromCacheAsync(string entryKey)
-        {
-            try
+            return new DataToken<T>()
             {
-                return await cache.GetAsync(entryKey);
-            }
-            catch (CacheEntryException e)
-            {
-                throw new TokenValidationException(e.Message);
-            }
-        }
-
-        private DataToken<T> CreateNewToken(T data)
-        {
-            return new DataToken<T>() 
-            { 
-                Id = GetTokenId(),
-                Value = data
+                Id = tokenId,
+                Value = data,
+                IsConfirmed = false,
             };
         }
 
-        private string GetTokenId()
+        protected override string GetTokenEntryKeyPrefix()
         {
-            return Guid.NewGuid().ToString();
-        }
-
-        private string GetTokenEntryKey(string tokenId)
-        {
-            return $"{TokenEntryKeyPrefix}_{tokenId}";
+            return TokenEntryKeyPrefix;
         }
     }
 }

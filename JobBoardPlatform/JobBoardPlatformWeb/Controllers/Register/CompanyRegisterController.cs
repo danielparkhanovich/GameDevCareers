@@ -3,6 +3,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Interactors.Registration;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using Microsoft.AspNetCore.Mvc;
@@ -86,10 +87,18 @@ namespace JobBoardPlatform.PL.Controllers.Register
         }
 
         [Route("verify/{formDataTokenId}")]
-        public IActionResult VerifyRegistration(string formDataTokenId)
+        public async Task<IActionResult> VerifyRegistration(string formDataTokenId)
         {
             ViewData["FormDataTokenId"] = formDataTokenId;
-            return View();
+
+            var formData = await registrationWithPublishOfferInteractor.GetPostFormViewModel(formDataTokenId);
+            var offerCardFactory = new OfferCardViewModelFromOfferFormFactory(
+                formData.OfferData, 
+                formData.CompanyProfileData);
+            var viewModel = new CompanyVerifyPublishOfferAndRegistrationViewModel();
+            viewModel.FormDataTokenId = formDataTokenId;
+            viewModel.OfferCard = offerCardFactory.Create();
+            return View(viewModel);
         }
 
         [Route("post-ad/confirm/{tokenId}")]

@@ -1,66 +1,36 @@
-﻿using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
-using JobBoardPlatform.BLL.Services.Session.Tokens;
+﻿using JobBoardPlatform.BLL.Services.AccountManagement.Common;
 using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
 
 namespace JobBoardPlatform.BLL.Services.AccountManagement.Password.Tokens
 {
-    public class RestorePasswordTokensService : IRestorePasswordTokensService
+    public class RestorePasswordTokensService : TokensServiceBase<RestorePasswordToken, string>, IRestorePasswordTokensService
     {
         private const string RestorePasswordTokenEntryKeyPrefix = "RestorePasswordToken";
-        private readonly ICacheRepository<RestorePasswordToken> cache;
 
 
-        public RestorePasswordTokensService(ICacheRepository<RestorePasswordToken> cache)
+        public RestorePasswordTokensService(ICacheRepository<RestorePasswordToken> cache) : base(cache)
         {
-            this.cache = cache;
+
         }
 
-        public async Task<RestorePasswordToken> RegisterNewTokenAsync(string userLogin)
+        public new Task<RestorePasswordToken> RegisterNewTokenAsync(string userLogin)
         {
-            var token = CreateNewToken(userLogin);
-
-            string entryKey = GetTokenEntryKey(token.Id);
-            await cache.UpdateAsync(entryKey, token);
-
-            return token;
+            return base.RegisterNewTokenAsync(userLogin);
         }
 
-        public async Task<RestorePasswordToken> TryGetTokenAsync(string tokenId)
-        {
-            string entryKey = GetTokenEntryKey(tokenId);
-            return await TryGetTokenFromCacheAsync(entryKey);
-        }
-
-        private async Task<RestorePasswordToken> TryGetTokenFromCacheAsync(string entryKey)
-        {
-            try
-            {
-                return await cache.GetAsync(entryKey);
-            }
-            catch (CacheEntryException e)
-            {
-                throw new TokenValidationException(e.Message);
-            }
-        }
-
-        private RestorePasswordToken CreateNewToken(string userLogin)
+        protected override RestorePasswordToken CreateNewToken(string relatedLogin, string tokenId)
         {
             return new RestorePasswordToken()
             {
-                Id = GetTokenId(),
-                RelatedLogin = userLogin
+                Id = tokenId,
+                RelatedLogin = relatedLogin,
             };
         }
 
-        private string GetTokenId()
+        protected override string GetTokenEntryKeyPrefix()
         {
-            return Guid.NewGuid().ToString();
-        }
-
-        private string GetTokenEntryKey(string tokenId)
-        {
-            return $"{RestorePasswordTokenEntryKeyPrefix}_{tokenId}";
+            return RestorePasswordTokenEntryKeyPrefix;
         }
     }
 }

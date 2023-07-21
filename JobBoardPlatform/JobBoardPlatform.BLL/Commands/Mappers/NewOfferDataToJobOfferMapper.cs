@@ -1,19 +1,10 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Mappers
 {
-    internal class NewOfferDataToJobOfferMapper : IMapper<INewOfferData, JobOffer>
+    public class NewOfferDataToJobOfferMapper : IMapper<INewOfferData, JobOffer>
     {
-        private readonly IRepository<TechKeyword> keyWordsRepository;
-
-
-        public NewOfferDataToJobOfferMapper(IRepository<TechKeyword> keyWordsRepository)
-        {
-            this.keyWordsRepository = keyWordsRepository;
-        }
-
         public void Map(INewOfferData from, JobOffer to)
         {
             to.JobTitle = from.JobTitle;
@@ -75,9 +66,9 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             to.JobOfferEmploymentDetails = employmentDetails;
         }
 
-        private async void MapTechKeywords(INewOfferData from, JobOffer to)
+        private void MapTechKeywords(INewOfferData from, JobOffer to)
         {
-            from.TechKeywords = from.TechKeywords.Distinct().ToArray();
+            from.TechKeywords = from.TechKeywords!.Distinct().ToArray();
 
             var techKeywords = new List<TechKeyword>(from.TechKeywords.Length);
 
@@ -86,12 +77,6 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
                 string keywordString = from.TechKeywords[i];
 
                 if (string.IsNullOrEmpty(keywordString))
-                {
-                    continue;
-                }
-
-                var keywordsSet = await keyWordsRepository.GetAllSet();
-                if (keywordsSet.Any(x => x.Name == keywordString))
                 {
                     continue;
                 }

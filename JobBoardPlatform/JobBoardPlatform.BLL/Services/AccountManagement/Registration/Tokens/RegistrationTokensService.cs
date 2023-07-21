@@ -1,71 +1,44 @@
-﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
-using JobBoardPlatform.BLL.Services.Session.Tokens;
+﻿using JobBoardPlatform.BLL.Services.AccountManagement.Common;
+using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Repositories.Cache;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
 
 namespace JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens
 {
-    public class RegistrationTokensService : IRegistrationTokensService
+    /// <summary>
+    /// Accepts (userLogin, password)
+    /// </summary>
+    public class RegistrationTokensService : TokensServiceBase<RegistrationToken, (string, string)>, IRegistrationTokensService
     {
         private const string RegistrationTokenEntryKeyPrefix = "RegistrationToken";
-        private readonly ICacheRepository<RegistrationToken> cache;
         private readonly IPasswordHasher passwordHasher;
 
 
         public RegistrationTokensService(
             ICacheRepository<RegistrationToken> cache,
-            IPasswordHasher passwordHasher)
+            IPasswordHasher passwordHasher) : base(cache)
         {
-            this.cache = cache;
             this.passwordHasher = passwordHasher;
         }
 
-        public async Task<RegistrationToken> RegisterNewTokenAsync(string userLogin, string password)
+        public Task<RegistrationToken> RegisterNewTokenAsync(string userLogin, string password)
         {
-            var token = CreateNewToken(userLogin, password);
-
-            string entryKey = GetTokenEntryKey(token.Id);
-            await cache.UpdateAsync(entryKey, token);
-
-            return token;
+            return base.RegisterNewTokenAsync((userLogin, password));
         }
 
-        public async Task<RegistrationToken> TryGetTokenAsync(string tokenId)
+        protected override RegistrationToken CreateNewToken((string, string) data, string tokenId)
         {
-            string entryKey = GetTokenEntryKey(tokenId);
-            return await TryGetTokenFromCacheAsync(entryKey);
-        }
-
-        private async Task<RegistrationToken> TryGetTokenFromCacheAsync(string entryKey)
-        {
-            try
+            return new RegistrationToken()
             {
-                return await cache.GetAsync(entryKey);
-            }
-            catch (CacheEntryException e)
-            {
-                throw new TokenValidationException(e.Message);
-            }
-        }
-
-        private RegistrationToken CreateNewToken(string userLogin, string password)
-        {
-            return new RegistrationToken() 
-            { 
-                Id = GetTokenId(),
-                RelatedLogin = userLogin,
-                PasswordHash = passwordHasher.GetHash(password),
+                Id = tokenId,
+                RelatedLogin = data.Item1,
+                PasswordHash = passwordHasher.GetHash(data.Item2)
             };
         }
 
-        private string GetTokenId()
+        protected override string GetTokenEntryKeyPrefix()
         {
-            return Guid.NewGuid().ToString();
-        }
-
-        private string GetTokenEntryKey(string tokenId)
-        {
-            return $"{RegistrationTokenEntryKeyPrefix}_{tokenId}";
+            return RegistrationTokenEntryKeyPrefix;
         }
     }
 }

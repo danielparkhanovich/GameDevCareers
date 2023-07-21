@@ -1,6 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 
 namespace JobBoardPlatform.PL.Interactors.Registration
@@ -8,15 +9,18 @@ namespace JobBoardPlatform.PL.Interactors.Registration
     public class CompanyPublishOfferAndRegistrationInteractor
     {
         private readonly DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService;
-        private readonly IEmailCompanyRegistrationService registrationService;
+        private readonly ConfirmationTokensService confirmationTokensService;
+        private readonly IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor;
 
 
         public CompanyPublishOfferAndRegistrationInteractor(
             DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService,
-            IEmailCompanyRegistrationService registrationService)
+            ConfirmationTokensService confirmationTokensService,
+            IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor)
         {
             this.dataTokensService = dataTokensService;
-            this.registrationService = registrationService;
+            this.confirmationTokensService = confirmationTokensService;
+            this.registrationInteractor = registrationInteractor;
         }
 
         /// <returns>Token Id to access data from cache</returns>

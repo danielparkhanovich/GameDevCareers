@@ -9,7 +9,6 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     {
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<CompanyIdentity> companyIdentityRepository;
-        private readonly IRepository<TechKeyword> keywordsRepository;
         private readonly IOffersCacheManager cacheManager;
         private readonly MainPageOffersSearcher offersSearcher;
         private readonly IOffersManager offersManager;
@@ -18,14 +17,12 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         public AdminCommandsExecutor(
             IRepository<JobOffer> offersRepository,
             IRepository<CompanyIdentity> companyIdentityRepository,
-            IRepository<TechKeyword> keywordsRepository,
             IOffersCacheManager cacheManager,
             MainPageOffersSearcher offersSearcher,
             IOffersManager offersManager)
         {
             this.offersRepository = offersRepository;
             this.companyIdentityRepository = companyIdentityRepository;
-            this.keywordsRepository = keywordsRepository;
             this.cacheManager = cacheManager;
             this.offersSearcher = offersSearcher;
             this.offersManager = offersManager;
@@ -34,7 +31,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         public async Task GenerateOffers(int companyId, int offersCountToGenerate)
         {
             var command = new GenerateOffersCommand(
-                offersCountToGenerate, companyId, companyIdentityRepository, keywordsRepository, offersRepository);
+                offersCountToGenerate, companyId, companyIdentityRepository, offersRepository);
             await ExecuteCommandAndUpdateCacheAsync(command);
         }
 

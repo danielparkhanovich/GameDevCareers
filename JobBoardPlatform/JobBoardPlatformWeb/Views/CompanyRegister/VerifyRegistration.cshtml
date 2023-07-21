@@ -1,7 +1,7 @@
 ﻿@using JobBoardPlatform.PL.Controllers.Register;
 @using JobBoardPlatform.PL.ViewModels.Models.Registration;
 
-@model string
+@model CompanyVerifyPublishOfferAndRegistrationViewModel
 @{
     ViewData["Title"] = "Post a job";
     string tokenId = (ViewData["FormDataTokenId"] as string) ?? string.Empty;
@@ -15,13 +15,36 @@
         <div>
             <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
                 <strong>Offer card</strong>
+                <a class="btn btn-outline-primary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
+                    <i class="bi bi-arrow-left"></i>
+                    Back
+                </a>
             </div>
             <div class="card-body">
-                Test
+                <div class="bg-info bg-opacity-10 py-1">
+                    <div class="mx-2 my-2 card border-0">
+                        <partial name="./JobOffers/_JobOffer" model="@Model.OfferCard" />
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <a class="btn btn-sm btn-outline-secondary me-2" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to edit
+                    </a>
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
+                        <i class="bi bi-file-text"></i>
+                        Check preview
+                    </a>
+                </div>
             </div>
-            <a class="btn btn-primary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
-                Back
-            </a>
+        </div>
+        <div>
+            <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
+                <strong>Sign up</strong>
+            </div>
+            <div class="card-body">
+                
+            </div>
         </div>
     </div>
 </div>

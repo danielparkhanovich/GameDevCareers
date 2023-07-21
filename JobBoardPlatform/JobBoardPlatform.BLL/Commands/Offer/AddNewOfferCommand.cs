@@ -15,13 +15,12 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public AddNewOfferCommand(int profileId,
             INewOfferData data,
-            IRepository<TechKeyword> keywordsRepository,
             IRepository<JobOffer> repository)
         {
             this.profileId = profileId;
             this.data = data;
             this.repository = repository;
-            this.dataToOffer = new NewOfferDataToJobOfferMapper(keywordsRepository);
+            this.dataToOffer = new NewOfferDataToJobOfferMapper();
         }
 
         public async Task Execute()
