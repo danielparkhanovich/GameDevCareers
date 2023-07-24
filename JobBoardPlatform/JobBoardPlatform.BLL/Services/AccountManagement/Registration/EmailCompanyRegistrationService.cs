@@ -13,7 +13,6 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
     public class EmailCompanyRegistrationService : IEmailCompanyRegistrationService
     {
         private readonly IEmailSender emailSender;
-        private readonly IPasswordGenerator passwordGenerator;
         private readonly IRegistrationTokensService tokensService;
         private readonly IConfirmationLinkFactory linkFactory;
         private readonly IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
@@ -22,30 +21,27 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public EmailCompanyRegistrationService(
             IEmailSender emailSender,
-            IPasswordGenerator passwordGenerator,
             IRegistrationTokensService tokensService,
             IConfirmationLinkFactory linkFactory,
             IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService,
             UserManager<CompanyIdentity> userManager)
         {
             this.emailSender = emailSender;
-            this.passwordGenerator = passwordGenerator;
             this.tokensService = tokensService;
             this.linkFactory = linkFactory;
             this.authorizationService = authorizationService;
             this.userManager = userManager;
         }
 
-        public async Task TrySendConfirmationTokenAndPasswordAsync(string email)
+        public async Task TrySendConfirmationTokenAndPasswordAsync(string email, string password)
         {
             if (userManager.GetUserByEmailAsync(email) != null)
             {
                 throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }
 
-            string password = passwordGenerator.GeneratePassword();
             var token = await tokensService.RegisterNewTokenAsync(email, password);
-            await emailSender.SendEmailAsync(email, "Registration-company", GetConfirmationUrl(token.Id) + " " + password);
+            await emailSender.SendEmailAsync(email, "Registration", GetConfirmationUrl(token.Id));
         }
 
         public async Task TryRegisterByTokenAsync(string tokenId, HttpContext httpContext)

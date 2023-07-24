@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -30,18 +31,8 @@ namespace JobBoardPlatform.BLL.Commands.Profile
 
         protected override void MapDataToModel(ICompanyProfileData from, CompanyProfile to)
         {
-            if (!string.IsNullOrEmpty(from.CompanyName))
-            {
-                to.CompanyName = from.CompanyName;
-            }
-            if (!string.IsNullOrEmpty(from.ProfileImage.ImageUrl))
-            {
-                to.ProfileImageUrl = from.ProfileImage.ImageUrl;
-            }
-
-            to.City = from.OfficeCity;
-            to.Country = from.OfficeCountry;
-            to.CompanyWebsiteUrl = from.CompanyWebsiteUrl;
+            var mapper = new CompanyDataToCompanyProfileMapper();
+            mapper.Map(from, to);
         }
     }
 }

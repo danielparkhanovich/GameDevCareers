@@ -1,7 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.BLL.Common.Contracts;
-using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 

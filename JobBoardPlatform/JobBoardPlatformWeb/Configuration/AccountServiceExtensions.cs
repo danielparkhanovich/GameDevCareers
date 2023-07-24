@@ -51,6 +51,7 @@ namespace JobBoardPlatform.PL.Configuration
         private static void AddValidatorServices(IServiceCollection services)
         {
             services.AddScoped<IValidator<UserRegisterViewModel>, UserRegisterValidator>();
+            services.AddScoped<IValidator<CompanyRegisterViewModel>, CompanyRegisterValidator>();
             services.AddScoped<IValidator<CompanyPublishOfferAndRegisterViewModel>, CompanyPublishOfferAndRegisterValidator>();
             services.AddScoped<IValidator<UserPasswordViewModel>, UserPasswordValidator>();
             services.AddScoped<IValidator<INewOfferData>, OfferFormDataValidator>();
@@ -63,15 +64,16 @@ namespace JobBoardPlatform.PL.Configuration
 
             services.AddTransient<IEmailEmployeeRegistrationService, EmailEmployeeRegistrationService>();
             services.AddTransient<IEmailCompanyRegistrationService, EmailCompanyRegistrationService>();
+            services.AddTransient<EmailCompanyPublishOfferAndRegistrationService>();
             services.AddTransient(typeof(IRegistrationService<>), typeof(RegistrationService<>));
             services.AddTransient<IRegistrationTokensService, RegistrationTokensService>();
 
             services.AddTransient<IRegistrationInteractor<UserRegisterViewModel>, EmailEmployeeRegistrationInteractor>();
             services.AddTransient<IRegistrationInteractor<CompanyRegisterViewModel>, EmailCompanyRegistrationInteractor>();
-            
+            services.AddTransient<EmailCompanyPublishOfferAndRegistrationInteractor>();
+
             services.AddTransient(typeof(DataTokensService<>));
             services.AddTransient<ConfirmationTokensService>();
-            services.AddTransient<CompanyPublishOfferAndRegistrationInteractor>();
         }
 
         private static void AddRestorePasswordServices(IServiceCollection services)

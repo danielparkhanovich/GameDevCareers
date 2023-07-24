@@ -4,7 +4,7 @@
 @model CompanyVerifyPublishOfferAndRegistrationViewModel
 @{
     ViewData["Title"] = "Post a job";
-    string tokenId = (ViewData["FormDataTokenId"] as string) ?? string.Empty;
+    string tokenId = Model.FormDataTokenId;
 }
 
 <div class="container-xl px-4 pt-4">
@@ -12,13 +12,17 @@
     <partial name="./Register/_CompanyRegistrationStageIndicator" model="2" />
 
     <div class="card border-0 shadow-lg p-2">
-        <div>
+        <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
+            <div></div>
+            <a class="btn btn-outline-primary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+        @if (Model.IsTokenConfirmed)
+        {
             <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
                 <strong>Offer card</strong>
-                <a class="btn btn-outline-primary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
-                    <i class="bi bi-arrow-left"></i>
-                    Back
-                </a>
             </div>
             <div class="card-body">
                 <div class="bg-info bg-opacity-10 py-1">
@@ -37,14 +41,19 @@
                     </a>
                 </div>
             </div>
-        </div>
-        <div>
-            <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
-                <strong>Sign up</strong>
+        }
+        else
+        {
+            <div>
+                <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
+                    <strong>Sign up</strong>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <partial name="./Register/_Register" for=@Model.UserRegister />
+                    </form>
+                </div>
             </div>
-            <div class="card-body">
-                
-            </div>
-        </div>
+        }
     </div>
 </div>

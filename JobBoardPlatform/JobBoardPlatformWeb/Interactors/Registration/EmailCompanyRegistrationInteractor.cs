@@ -1,5 +1,4 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Contracts;
-using JobBoardPlatform.PL.Controllers.Register;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 
 namespace JobBoardPlatform.PL.Interactors.Registration
@@ -16,11 +15,8 @@ namespace JobBoardPlatform.PL.Interactors.Registration
 
         public async Task<RedirectData> ProcessRegistrationAndRedirect(CompanyRegisterViewModel model)
         {
-            await registrationService.TrySendConfirmationTokenAndPasswordAsync(model.Email);
-            return new RedirectData()
-            {
-                ActionName = BaseRegisterController<UserRegisterViewModel>.CheckVerifyingTokenAction
-            };
+            await registrationService.TrySendConfirmationTokenAndPasswordAsync(model.Email, model.Password);
+            return RedirectData.NoRedirect;
         }
 
         public Task FinishRegistration(string tokenId, HttpContext httpContext)

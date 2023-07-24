@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
+﻿
 namespace JobBoardPlatform.BLL.Boundaries
 {
     public interface ICompanyProfileData

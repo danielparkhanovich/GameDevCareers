@@ -1,9 +1,9 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Commands.Identity;
-using JobBoardPlatform.BLL.Commands.Profile;
+using JobBoardPlatform.BLL.Commands.Mappers;
+using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
-using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
@@ -15,67 +15,65 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
     public class EmailCompanyPublishOfferAndRegistrationService
     {
         private readonly IEmailSender emailSender;
-        private readonly IPasswordGenerator passwordGenerator;
         private readonly IRegistrationTokensService registrationTokensService;
         private readonly ConfirmationTokensService confirmationTokensService;
         private readonly DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService;
         private readonly IConfirmationLinkFactory linkFactory;
         private readonly IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
         private readonly UserManager<CompanyIdentity> userManager;
+        private readonly IOffersManager offersManager;
 
 
         public EmailCompanyPublishOfferAndRegistrationService(
             IEmailSender emailSender,
-            IPasswordGenerator passwordGenerator,
             IRegistrationTokensService registrationTokensService,
             ConfirmationTokensService confirmationTokensService,
             DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService,
             IConfirmationLinkFactory linkFactory,
             IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService,
-            UserManager<CompanyIdentity> userManager)
+            UserManager<CompanyIdentity> userManager,
+            IOffersManager offersManager)
         {
             this.emailSender = emailSender;
-            this.passwordGenerator = passwordGenerator;
             this.registrationTokensService = registrationTokensService;
             this.confirmationTokensService = confirmationTokensService;
             this.dataTokensService = dataTokensService;
             this.linkFactory = linkFactory;
             this.authorizationService = authorizationService;
             this.userManager = userManager;
+            this.offersManager = offersManager;
         }
 
-        public async Task TrySendConfirmationTokenAndPasswordAsync(string email, string formDataTokenId)
+        public async Task TrySendConfirmationTokenAndPasswordAsync(string email, string password, string formDataTokenId)
         {
-            if (userManager.GetUserByEmailAsync(email) != null)
+            if (await userManager.GetUserByEmailAsync(email) != null)
             {
                 throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }
 
-            string password = passwordGenerator.GeneratePassword();
             var token = await registrationTokensService.RegisterNewTokenAsync(email, password);
 
             await confirmationTokensService.RegisterNewTokenAsync((token.Id, formDataTokenId));
-            await emailSender.SendEmailAsync(email, "Registration-company", GetConfirmationUrl(token.Id) + " " + password);
+            await emailSender.SendEmailAsync(email, "Registration", GetConfirmationUrl(token.Id));
         }
 
         public async Task TryRegisterByTokenAsync(string tokenId, HttpContext httpContext)
         {
-            var token = await TryGetRegistrationTokenAsync(tokenId);
+            var registrationToken = await TryGetRegistrationTokenAsync(tokenId);
+            if (await userManager.GetUserByEmailAsync(registrationToken.RelatedLogin) != null)
+            {
+                return;
+            }
+
             var dataToken = await GetDataToken(tokenId);
             dataToken.IsConfirmed = true;
 
-            var user = GetCompanyIdentity(token.RelatedLogin, token.PasswordHash);
-            await userManager.AddNewUser(user);
+            await RegisterUser(registrationToken, dataToken.Value.CompanyProfileData);
 
-            var addedUser = await userManager.GetUserByEmailAsync(token.RelatedLogin);
-            /*var updateProfileCommand = new UpdateCompanyProfileCommand(addedUser.ProfileId,
-                dataToken.Value.CompanyProfileData,
-                profileRepository,
-                imageStorage);
-            await updateProfileCommand.Execute();*/
-
-            // var addedUser = userManager.GetUserByEmailAsync(user.Email);
+            var addedUser = await userManager.GetUserByEmailAsync(registrationToken.RelatedLogin);
             await authorizationService.SignInHttpContextAsync(httpContext, addedUser.Id);
+
+            // await CreateOffer(addedUser, dataToken.Value.OfferData);
         }
 
         private string GetConfirmationUrl(string tokenId)
@@ -99,6 +97,26 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         {
             var confirmationToken = await confirmationTokensService.TryGetTokenAsync(tokenId);
             return await dataTokensService.TryGetTokenAsync(confirmationToken.TokenToConfirmId);
+        }
+
+        private Task RegisterUser(RegistrationToken token, ICompanyProfileData profileData)
+        {
+            var user = GetCompanyIdentity(token.RelatedLogin, token.PasswordHash);
+            user.Profile = GetCompanyProfile(profileData);
+            return userManager.AddNewUser(user);
+        }
+
+        private Task CreateOffer(CompanyIdentity company, INewOfferData offerData)
+        {
+            return offersManager.AddAsync(company.ProfileId, offerData);
+        }
+
+        private CompanyProfile GetCompanyProfile(ICompanyProfileData profileData)
+        {
+            var companyProfile = new CompanyProfile();
+            var mapper = new CompanyDataToCompanyProfileMapper();
+            mapper.Map(profileData, companyProfile);
+            return companyProfile;
         }
 
         private CompanyIdentity GetCompanyIdentity(string email, string passwordHash)

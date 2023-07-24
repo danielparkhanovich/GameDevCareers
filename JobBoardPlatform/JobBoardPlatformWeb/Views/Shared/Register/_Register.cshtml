@@ -14,19 +14,25 @@
 @await Html.PartialAsync("./Notifications/_ActionNotification", confirmationEmail)
 
 <div>
-    <div class="form-floating mb-3">
-        <input asp-for="Email" id="emailInput" type="email" class="form-control" id="floatingInput" placeholder="name@example.com" value="@email">
-        <label asp-for="Email" for="floatingInput">Email address</label>
+    <div class="mb-3">
+        <div class="form-floating">
+            <input asp-for="Email" id="emailInput" type="email" class="form-control" id="floatingInput" placeholder="name@example.com" value="@email">
+            <label asp-for="Email" for="floatingInput">Email address</label>
+            @if (Model is CompanyRegisterViewModel)
+            {
+                <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+            }
+        </div>
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="form-floating mb-3">
-        <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="Password" value="@password">
-        <label asp-for="Password" for="floatingPassword">Password</label>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password" value="@password">
+        <label asp-for="Password" >Password</label>
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <div class="form-floating mb-3">
-        <input asp-for="RepeatPassword" type="password" class="form-control" id="floatingPassword" placeholder="Password" value="@repeatPassword">
-        <label asp-for="RepeatPassword" for="floatingPassword">Repeat password</label>
+        <input asp-for="RepeatPassword" type="password" class="form-control" placeholder="Password" value="@repeatPassword">
+        <label asp-for="RepeatPassword">Repeat password</label>
         <span asp-validation-for="RepeatPassword" class="text-danger"></span>
     </div>
     <div class="form-check">
