@@ -10,7 +10,7 @@ using JobBoardPlatform.IntegrationTests.Common.Mocks.Services;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Fixtures
 {
-    public class CompanyAccountManagementFixture : DbFixture
+    public class CompanyAccountManagementFixture : OffersManagementFixture
     {
         public CompanyAccountManagementFixture()
         {

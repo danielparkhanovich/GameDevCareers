@@ -12,7 +12,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
 {
     public class PostApplicationFormCommand : ICommand
     {
-        private readonly IRepository<OfferApplication> applicationsRepository;
+        private readonly IRepository<JobOfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage resumeStorage;
@@ -22,7 +22,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
 
 
         public PostApplicationFormCommand(
-            IRepository<OfferApplication> applicationsRepository,
+            IRepository<JobOfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
             IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage resumeStorage,
@@ -49,16 +49,16 @@ namespace JobBoardPlatform.BLL.Commands.Application
             await offersRepository.Update(offer);
         }
 
-        private async Task<OfferApplication> GetApplication()
+        private async Task<JobOfferApplication> GetApplication()
         {
-            var application = new OfferApplication();
+            var application = new JobOfferApplication();
             MapPersonalInformation(application);
             await AddAttachedResume(application);
 
             return application;
         }
 
-        private void MapPersonalInformation(OfferApplication application)
+        private void MapPersonalInformation(JobOfferApplication application)
         {
             application.CreatedAt = DateTime.Now;
             application.ApplicationFlagTypeId = 1;
@@ -69,7 +69,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             application.EmployeeProfileId = userProfileId;
         }
 
-        private async Task AddAttachedResume(OfferApplication application)
+        private async Task AddAttachedResume(JobOfferApplication application)
         {
             if (form.AttachedResume.ResumeUrl != null)
             {

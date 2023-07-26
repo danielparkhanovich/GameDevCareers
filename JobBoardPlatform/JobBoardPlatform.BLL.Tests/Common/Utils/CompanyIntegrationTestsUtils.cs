@@ -6,7 +6,6 @@ using JobBoardPlatform.BLL.Commands.Profile;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
-using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures;
 using JobBoardPlatform.IntegrationTests.Common.TestFiles;
@@ -21,10 +20,12 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         private readonly IPasswordHasher passwordHasher;
         private readonly IRepository<CompanyIdentity> repository;
         private readonly IRepository<CompanyProfile> profileRepository;
-        private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<OfferApplication> applicationRepository;
+        private readonly IRepository<JobOfferApplication> applicationRepository;
         private readonly IUserProfileImagesStorage imageStorage;
-        private readonly IApplicationsResumeBlobStorage applicationsResumeStorage;
+        // TODO: move anything related with offers to separate IntegrationUtils
+        private readonly IRepository<JobOffer> offersRepository;
+        private readonly IRepository<JobOfferEmploymentDetails> offerDetailsRepository;
+        private readonly IRepository<JobOfferSalariesRange> offerSalaryRangeRepository;
 
 
         public CompanyIntegrationTestsUtils(IServiceProvider serviceProvider)
@@ -35,9 +36,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             repository = serviceProvider.GetService<IRepository<CompanyIdentity>>()!;
             profileRepository = serviceProvider.GetService<IRepository<CompanyProfile>>()!;
             offersRepository = serviceProvider.GetService<IRepository<JobOffer>>()!;
-            applicationRepository = serviceProvider.GetService<IRepository<OfferApplication>>()!;
+            applicationRepository = serviceProvider.GetService<IRepository<JobOfferApplication>>()!;
             imageStorage = serviceProvider.GetService<IUserProfileImagesStorage>()!;
-            applicationsResumeStorage = serviceProvider.GetService<IApplicationsResumeBlobStorage>()!;
         }
 
         public string GetExampleCompanyEmail(int id = 0)
@@ -81,9 +81,13 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             {
                 Email = email,
                 HashPassword = passwordHash,
-                Profile = new CompanyProfile() { CompanyName = "company" }
+                Profile = new CompanyProfile() 
+                { 
+                    CompanyName = "company",
+                }
             };
             await userManager.AddNewUser(employee);
+            await SetUserImageInProfile(email);
         }
 
         public async Task AddPublishedOfferAsync(string email, string offerName)
@@ -126,7 +130,12 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         public async Task DeleteCompany(string email)
         {
             var user = await userManager.GetUserByEmailAsync(email);
-            var deleteCommand = new DeleteCompanyCommand(repository, user.Id);
+            var deleteCommand = new DeleteCompanyCommand(
+                    repository,
+                    profileRepository,
+                    offersManager,
+                    imageStorage,
+                    user.Id);
             await deleteCommand.Execute();
         }
 
@@ -141,7 +150,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             return await profileRepository.Get(user.ProfileId);
         }
 
-        public async Task<CompanyProfile> GetCompanyProfileProfileById(int profileId)
+        public async Task<CompanyProfile> GetCompanyProfileById(int profileId)
         {
             return await profileRepository.Get(profileId);
         }
@@ -163,6 +172,11 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             return offersRepository.Get(offerId);
         }
 
+        public Task<JobOffer> GetOfferDetailsAsync(int offerId)
+        {
+            return offersRepository.Get(offerId);
+        }
+
         public async Task<JobOffer?> GetOfferAsync(string email, string offerTitle)
         {
             var user = await GetCompanyByEmail(email);
@@ -179,7 +193,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
                 .ToArray();
         }
 
-        public async Task<OfferApplication[]> GetOfferApplicationsAsync(int offerId)
+        public async Task<JobOfferApplication[]> GetOfferApplicationsAsync(int offerId)
         {
             return (await applicationRepository.GetAll()).Where(x => x.JobOfferId == offerId).ToArray();
         }
@@ -191,7 +205,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
 
         public Task SetUserImageInProfile(string email)
         {
-            var image = IntegrationTestFilesManager.GetEmployeeProfileImageFile();
+            var image = IntegrationTestFilesManager.GetCompanyProfileImageFile();
             var profileData = new CompanyProfileDataMock() 
             { 
                 ProfileImage = new ProfileImageMock()
@@ -218,7 +232,10 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             return new OfferDataMock()
             {
                 JobTitle = offerName,
+                ApplicationsContactType = 1,
+                ApplicationsContactEmail = GetExampleCompanyEmail(),
                 EmploymentTypes = new int[] { 1 },
+                TechKeywords = new string[] { "C#", "OOP" },
                 City = "test",
                 Country = "test",
                 JobDescription = "test"

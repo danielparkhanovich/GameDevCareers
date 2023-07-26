@@ -20,10 +20,10 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
                 ApplicationsContactType = offer.ContactDetails.Id,
                 MainTechnologyType = offer.MainTechnologyTypeId,
                 WorkLocationType = offer.WorkLocationId,
-                SalaryFromRange = offer.JobOfferEmploymentDetails.Select(x => (int?)x.SalaryRange?.From).ToArray(),
-                SalaryToRange = offer.JobOfferEmploymentDetails.Select(x => (int?)x.SalaryRange?.To).ToArray(),
-                SalaryCurrencyType = offer.JobOfferEmploymentDetails.Select(x => x.SalaryRange.SalaryCurrencyId).ToArray(),
-                EmploymentTypes = offer.JobOfferEmploymentDetails.Select(x => x.EmploymentTypeId).ToArray(),
+                SalaryFromRange = offer.EmploymentDetails.Select(x => (int?)x.SalaryRange?.From).ToArray(),
+                SalaryToRange = offer.EmploymentDetails.Select(x => (int?)x.SalaryRange?.To).ToArray(),
+                SalaryCurrencyType = offer.EmploymentDetails.Select(x => x.SalaryRange.SalaryCurrencyId).ToArray(),
+                EmploymentTypes = offer.EmploymentDetails.Select(x => x.EmploymentTypeId).ToArray(),
                 TechKeywords = offer.TechKeywords.Select(x => x.Name).ToArray(),
             };
 

@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.EnumTables;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobBoardPlatform.DAL.Models.Company
@@ -23,7 +24,7 @@ namespace JobBoardPlatform.DAL.Models.Company
 
         [ForeignKey("ContactDetails")]
         public int ContactDetailsId { get; set; }
-        public ContactDetails ContactDetails { get; set; }
+        public JobOfferContactDetails ContactDetails { get; set; }
 
         public string JobTitle { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
@@ -42,8 +43,8 @@ namespace JobBoardPlatform.DAL.Models.Company
         public int NumberOfApplications { get; set; }
         public int NumberOfViews { get; set; }
 
-        public virtual ICollection<JobOfferEmploymentDetails> JobOfferEmploymentDetails { get; set; }
-        public virtual ICollection<TechKeyword> TechKeywords { get; set; }
-        public virtual ICollection<OfferApplication> OfferApplications { get; set; }
+        public virtual ICollection<JobOfferEmploymentDetails> EmploymentDetails { get; set; }
+        public virtual ICollection<JobOfferTechKeyword> TechKeywords { get; set; }
+        public virtual ICollection<JobOfferApplication> OfferApplications { get; set; }
     }
 }

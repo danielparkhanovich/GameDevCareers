@@ -9,7 +9,11 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     public class OffersManager : IOffersManager
     {
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<OfferApplication> applicationsRepository;
+        private readonly IRepository<JobOfferContactDetails> contactDetailsRepository;
+        private readonly IRepository<JobOfferEmploymentDetails> employmentDetailsRepository;
+        private readonly IRepository<JobOfferSalariesRange> salariesRangeRepository;
+        private readonly IRepository<JobOfferTechKeyword> techKeywordsRepository;
+        private readonly IRepository<JobOfferApplication> applicationsRepository;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage applicationsResumeStorage;
         private readonly IOffersCacheManager cacheManager;
@@ -18,18 +22,32 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public OffersManager(
             IRepository<JobOffer> offersRepository,
-            IRepository<OfferApplication> applicationsRepository,
+            IRepository<JobOfferContactDetails> contactDetailsRepository,
+            IRepository<JobOfferEmploymentDetails> employmentDetailsRepository,
+            IRepository<JobOfferSalariesRange> salariesRangeRepository,
+            IRepository<JobOfferTechKeyword> techKeywordsRepository,
+            IRepository<JobOfferApplication> applicationsRepository,
             IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage applicationsResumeStorage,
             IOffersCacheManager cacheManager,
             MainPageOffersSearcher offersSearcher)
         {
             this.offersRepository = offersRepository;
+            this.contactDetailsRepository = contactDetailsRepository;
+            this.employmentDetailsRepository = employmentDetailsRepository;
+            this.salariesRangeRepository = salariesRangeRepository;
             this.applicationsRepository = applicationsRepository;
+            this.techKeywordsRepository = techKeywordsRepository;
             this.profileResumeStorage = profileResumeStorage;
             this.applicationsResumeStorage = applicationsResumeStorage;
             this.cacheManager = cacheManager;
             this.offersSearcher = offersSearcher;
+        }
+
+        public async Task<List<int>> GetAsync(int profileId)
+        {
+            var offers = (await offersRepository.GetAll()).Where(x => x.CompanyProfileId == profileId);
+            return offers.Select(x => x.Id).ToList();
         }
 
         public async Task AddAsync(int profileId, INewOfferData offerData)
@@ -41,11 +59,15 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         public async Task DeleteAsync(int offerId)
         {
             var command = new DeleteOfferCommand(
-                offersRepository,
-                applicationsRepository,
-                profileResumeStorage,
-                applicationsResumeStorage,
-                offerId);
+                    offersRepository,
+                    contactDetailsRepository,
+                    employmentDetailsRepository,
+                    salariesRangeRepository,
+                    techKeywordsRepository,
+                    applicationsRepository,
+                    profileResumeStorage,
+                    applicationsResumeStorage,
+                    offerId);
             await ExecuteCommandAndUpdateCacheAsync(command);
         }
 

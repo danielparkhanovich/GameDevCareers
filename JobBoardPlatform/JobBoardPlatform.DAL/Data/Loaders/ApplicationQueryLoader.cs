@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.DAL.Data.Loaders
 {
-    public class ApplicationQueryLoader : IEntityLoader<OfferApplication>
+    public class ApplicationQueryLoader : IEntityLoader<JobOfferApplication>
     {
-        public IQueryable<OfferApplication> Load(IQueryable<OfferApplication> queryable)
+        public IQueryable<JobOfferApplication> Load(IQueryable<JobOfferApplication> queryable)
         {
             var applications = queryable.Include(application => application.EmployeeProfile);
             return applications;

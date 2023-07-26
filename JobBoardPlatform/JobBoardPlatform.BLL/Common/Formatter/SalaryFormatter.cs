@@ -8,12 +8,12 @@ namespace JobBoardPlatform.BLL.Common.Formatter
         {
             string salaryDetails = "Undisclosed Salary";
 
-            if (offer.JobOfferEmploymentDetails == null || offer.JobOfferEmploymentDetails.Count == 0)
+            if (offer.EmploymentDetails == null || offer.EmploymentDetails.Count == 0)
             {
                 return salaryDetails;
             }
 
-            var details = offer.JobOfferEmploymentDetails.Where(x => x.SalaryRange != null);
+            var details = offer.EmploymentDetails.Where(x => x.SalaryRange != null);
             
             if (details == null || details.Count() == 0)
             {

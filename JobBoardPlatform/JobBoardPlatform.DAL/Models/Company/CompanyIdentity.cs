@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobBoardPlatform.DAL.Models.Company

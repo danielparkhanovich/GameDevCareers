@@ -14,6 +14,7 @@ using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Data;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace JobBoardPlatform.PL.Configuration
 {
@@ -49,11 +50,7 @@ namespace JobBoardPlatform.PL.Configuration
 
         private static void AddCacheServices(IServiceCollection services, ConfigurationManager configuration)
         {
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = configuration.GetValue<string>("Redis:ConnectionString");
-                options.InstanceName = configuration.GetValue<string>("Redis:InstanceName");
-            });
+            AddCacheMemory(services, configuration);
             AddJsonSerializerSettings(services);
             services.AddTransient<ICacheRepository<List<JobOffer>>, MainPageOffersCacheRepository>();
             services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
@@ -61,6 +58,25 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddTransient<ICacheRepository<RestorePasswordToken>, RestorePasswordTokensCacheRepository>();
             services.AddTransient<ICacheRepository<DataToken<ICompanyProfileAndNewOfferData>>, CompanyRegistrationTokensCacheRepository<ICompanyProfileAndNewOfferData>>();
             services.AddTransient<ICacheRepository<ConfirmationToken>, CompanyRegistrationConfirmationTokensCacheRepository>();
+        }
+
+        private static void AddCacheMemory(IServiceCollection services, ConfigurationManager configuration)
+        {
+            string redisConnectionString = configuration.GetValue<string>("Redis:ConnectionString");
+            string instanceName = configuration.GetValue<string>("Redis:InstanceName");
+            try
+            {
+                var connection = ConnectionMultiplexer.Connect(redisConnectionString);
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = redisConnectionString;
+                    options.InstanceName = instanceName;
+                });
+            }
+            catch (RedisConnectionException e)
+            {
+                services.AddMemoryCache();
+            }
         }
 
         private static void AddJsonSerializerSettings(IServiceCollection services)

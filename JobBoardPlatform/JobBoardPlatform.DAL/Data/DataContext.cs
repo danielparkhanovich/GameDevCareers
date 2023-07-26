@@ -4,6 +4,7 @@ using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.DAL.Models.EnumTables;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace JobBoardPlatform.DAL.Data
 {
@@ -16,16 +17,18 @@ namespace JobBoardPlatform.DAL.Data
         // Company
         public DbSet<CompanyIdentity> CompanyCredentials { get; set; }
         public DbSet<CompanyProfile> CompanyProfiles { get; set; }
+
         public DbSet<JobOffer> JobOffers { get; set; }
         public DbSet<JobOfferEmploymentDetails> JobOfferEmploymentDetails { get; set; }
         public DbSet<JobOfferSalariesRange> JobOfferSalariesRange { get; set; }
-        public DbSet<EmploymentType> EmploymentTypes { get; set; }
-        public DbSet<ContactDetails> ContactDetails { get; set; }
-        public DbSet<OfferApplication> OfferApplications { get; set; }
+        public DbSet<JobOfferEmploymentType> EmploymentTypes { get; set; }
+        public DbSet<JobOfferContactDetails> ContactDetails { get; set; }
+        public DbSet<JobOfferApplication> OfferApplications { get; set; }
+        public DbSet<JobOfferTechKeyword> JobOfferTechKeywords { get; set; }
 
         // Common
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
-        public DbSet<TechKeyword> TechKeyWords { get; set; }
+        public DbSet<TechKeyword> TechKeywords { get; set; }
         public DbSet<WorkLocationType> WorkLocationTypes { get; set; }
         public DbSet<MainTechnologyType> MainFieldTypes { get; set; }
         public DbSet<ContactType> ContactTypes { get; set; }
@@ -41,7 +44,7 @@ namespace JobBoardPlatform.DAL.Data
         {
             var enumCreator = new EnumModelCreator(modelBuilder);
 
-            enumCreator.SetDataForEntity<EmploymentType, EmploymentTypeEnum>();
+            enumCreator.SetDataForEntity<JobOfferEmploymentType, EmploymentTypeEnum>();
 
             enumCreator.SetDataForEntity<CurrencyType, CurrencyTypeEnum>();
 

@@ -26,7 +26,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 
             // TODO: fix
             offer.WorkLocation = new DAL.Models.EnumTables.WorkLocationType();
-            offer.TechKeywords = new List<TechKeyword>();
+            offer.TechKeywords = new List<JobOfferTechKeyword>();
 
             var offerCardViewModelFactory = new OfferCardViewModelFactory();
             return offerCardViewModelFactory.CreateCard(offer);

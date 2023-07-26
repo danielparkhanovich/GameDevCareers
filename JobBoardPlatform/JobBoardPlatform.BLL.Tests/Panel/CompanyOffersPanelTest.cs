@@ -19,7 +19,10 @@ namespace JobBoardPlatform.IntegrationTests.Panel
             testsUtils = new CompanyIntegrationTestsUtils(fixture.ServiceProvider);
             employeeUtils = new EmployeeIntegrationTestsUtils(fixture.ServiceProvider);
             applicationsUtils = new ApplicationsIntegrationTestsUtils(fixture.ServiceProvider);
-            assert = new CompanyProfileAssert(testsUtils, applicationsUtils);
+            assert = new CompanyProfileAssert(
+                testsUtils, 
+                applicationsUtils, 
+                new OfferIntegrationTestsUtils(fixture.ServiceProvider));
         }
 
         [Fact]
@@ -54,11 +57,11 @@ namespace JobBoardPlatform.IntegrationTests.Panel
             string offerTitle = testsUtils.GetExampleOfferTitle();
             await testsUtils.AddExampleCompanyAsync(email);
             await testsUtils.AddPublishedOfferAsync(email, offerTitle);
+            var offer = await testsUtils.GetOfferAsync(email, offerTitle);
 
-            var offer = testsUtils.GetOfferAsync(email, offerTitle);
             await testsUtils.CloseOffer(email, offerTitle);
 
-            await assert.OfferIsClosed(offer.Id);
+            await assert.OfferIsClosed(offer!);
         }
 
         [Fact]
@@ -80,7 +83,7 @@ namespace JobBoardPlatform.IntegrationTests.Panel
             await assert.ApplicationsAreAdded(offer!.Id, totalApplied, resumeUrls);
             await testsUtils.CloseOffer(companyEmail, offerTitle);
 
-            await assert.OfferIsClosedAndResumesAreDeleted(offer.Id, resumeUrls);
+            await assert.OfferIsClosedAndResumesAreDeleted(offer, resumeUrls);
         }
 
         public void Dispose()

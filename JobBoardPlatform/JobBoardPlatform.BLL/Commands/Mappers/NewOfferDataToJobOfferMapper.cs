@@ -28,7 +28,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
 
         private void MapContactDetails(INewOfferData from, JobOffer to)
         {
-            var contactDetails = new ContactDetails();
+            var contactDetails = new JobOfferContactDetails();
             contactDetails.ContactTypeId = from.ApplicationsContactType;
 
             // ApplicationsContactEmailAddress is null in case of private messages on the website
@@ -63,14 +63,14 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
                 }
             }
 
-            to.JobOfferEmploymentDetails = employmentDetails;
+            to.EmploymentDetails = employmentDetails;
         }
 
         private void MapTechKeywords(INewOfferData from, JobOffer to)
         {
             from.TechKeywords = from.TechKeywords!.Distinct().ToArray();
 
-            var techKeywords = new List<TechKeyword>(from.TechKeywords.Length);
+            var techKeywords = new List<JobOfferTechKeyword>(from.TechKeywords.Length);
 
             for (int i = 0; i < from.TechKeywords.Length; i++)
             {
@@ -81,7 +81,10 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
                     continue;
                 }
 
-                var keyword = new TechKeyword() { Name = keywordString };
+                var keyword = new JobOfferTechKeyword() 
+                { 
+                    Name = keywordString 
+                };
 
                 techKeywords.Add(keyword);
             }

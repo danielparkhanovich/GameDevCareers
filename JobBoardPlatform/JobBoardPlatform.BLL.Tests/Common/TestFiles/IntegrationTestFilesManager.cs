@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http.Internal;
+﻿using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.IntegrationTests.Common.TestFiles
@@ -18,9 +17,15 @@ namespace JobBoardPlatform.IntegrationTests.Common.TestFiles
             return GetFileAsFormFile(Path.Combine(directoryPath, "../../../Common/TestFiles/Images/userProfileImage0.png"), "image/bitmap");
         }
 
+        public static IFormFile GetCompanyProfileImageFile()
+        {
+            string directoryPath = Directory.GetCurrentDirectory();
+            return GetFileAsFormFile(Path.Combine(directoryPath, "../../../Common/TestFiles/Images/companyLogo0.jpg"), "image/bitmap");
+        }
+
         private static IFormFile GetFileAsFormFile(string filePath, string contentType)
         {
-            using (var stream = new FileStream(filePath, FileMode.Open))
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var memoryStream = new MemoryStream();
                 stream.CopyTo(memoryStream);

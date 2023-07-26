@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.IntegrationTests.Common.Utils;
+﻿using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.IntegrationTests.Common.Utils;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Assertions
 {
@@ -6,14 +7,17 @@ namespace JobBoardPlatform.IntegrationTests.Common.Assertions
     {
         private readonly CompanyIntegrationTestsUtils testsUtils;
         private readonly ApplicationsIntegrationTestsUtils applicationsUtils;
+        private readonly OfferIntegrationTestsUtils offerUtils;
 
 
         public CompanyProfileAssert(
             CompanyIntegrationTestsUtils testsUtils, 
-            ApplicationsIntegrationTestsUtils applicationsUtils)
+            ApplicationsIntegrationTestsUtils applicationsUtils,
+            OfferIntegrationTestsUtils offerUtils)
         {
             this.testsUtils = testsUtils;
             this.applicationsUtils = applicationsUtils;
+            this.offerUtils = offerUtils;
         }
 
         public async Task ProfileImageExists(string imageUrl)
@@ -40,17 +44,38 @@ namespace JobBoardPlatform.IntegrationTests.Common.Assertions
             Assert.True(offer.IsPublished);
         }
 
-        public async Task OfferIsClosedAndResumesAreDeleted(int offerId, string[] resumeUrls)
+        public async Task OfferIsClosedAndResumesAreDeleted(JobOffer offer, string[] resumeUrls)
         {
-            await OfferIsClosed(offerId);
+            await OfferIsClosed(offer);
             Assert.False(await applicationsUtils.IsResumesInStorage(resumeUrls));
         }
 
-        public async Task OfferIsClosed(int offerId)
+        public async Task OffersAreClosed(ICollection<JobOffer> offers)
         {
-            var offer = await testsUtils.GetOfferAsync(offerId);
-            Assert.Null(offer);
-            await ApplicationsAreDeleted(offerId);
+            foreach (var offer in offers)
+            {
+                await OfferIsClosed(offer);
+            }
+        }
+
+        public async Task OfferIsClosed(JobOffer offer)
+        {
+            var savedOffer = await testsUtils.GetOfferAsync(offer.Id);
+            Assert.Null(savedOffer);
+            await OfferContentIsDeleted(offer);
+            await ApplicationsAreDeleted(offer.Id);
+        }
+
+        public async Task OfferContentIsDeleted(JobOffer offer)
+        {
+            var savedContactType = await offerUtils.GetOfferContactDetailsAsync(offer);
+            Assert.Null(savedContactType);
+            var savedOfferDetails = await offerUtils.GetOfferEmploymentDetailsAsync(offer);
+            Assert.Empty(savedOfferDetails);
+            var savedTechKeywords = await offerUtils.GetOfferTechKeywordsAsync(offer);
+            Assert.Empty(savedTechKeywords);
+            var savedApplications = await offerUtils.GetOfferApplicationsAsync(offer);
+            Assert.Empty(savedApplications);
         }
 
         public async Task ApplicationsAreDeleted(int offerId)
@@ -73,8 +98,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Assertions
 
         public async Task UserNotExists(string userEmail, int userProfileId)
         {
-            var user = await testsUtils.GetCompanyProfileByEmail(userEmail);
-            var userProfile = await testsUtils.GetCompanyProfileProfileById(userProfileId);
+            var user = await testsUtils.GetCompanyByEmail(userEmail);
+            var userProfile = await testsUtils.GetCompanyProfileById(userProfileId);
 
             Assert.Null(user);
             Assert.Null(userProfile);

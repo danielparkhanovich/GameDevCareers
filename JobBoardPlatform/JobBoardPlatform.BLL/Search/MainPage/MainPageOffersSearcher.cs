@@ -42,9 +42,9 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             {
                 string fullyRemoteString = WorkLocationTypeEnum.FullyRemote.ToString();
 
-                available = available.Include(offer => offer.JobOfferEmploymentDetails)
+                available = available.Include(offer => offer.EmploymentDetails)
                     .ThenInclude(details => details.SalaryRange)
-                    .Where(offer => offer.JobOfferEmploymentDetails.Any(x => x.SalaryRange != null));
+                    .Where(offer => offer.EmploymentDetails.Any(x => x.SalaryRange != null));
             }
             if (searchParams.MainTechnology != MainPageOfferSearchParams.AllTechnologiesIndex)
             {

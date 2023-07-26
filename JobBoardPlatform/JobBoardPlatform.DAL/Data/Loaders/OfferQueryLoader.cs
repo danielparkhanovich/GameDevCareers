@@ -12,9 +12,9 @@ namespace JobBoardPlatform.DAL.Data.Loaders
                 .Include(x => x.WorkLocation)
                 .Include(x => x.MainTechnologyType)
                 .Include(x => x.TechKeywords)
-                .Include(x => x.JobOfferEmploymentDetails)
+                .Include(x => x.EmploymentDetails)
                     .ThenInclude(y => y.SalaryRange != null ? y.SalaryRange.SalaryCurrency : null)
-                .Include(x => x.JobOfferEmploymentDetails)
+                .Include(x => x.EmploymentDetails)
                     .ThenInclude(y => y.EmploymentType)
                 .Include(x => x.ContactDetails)
                     .ThenInclude(y => y.ContactType);

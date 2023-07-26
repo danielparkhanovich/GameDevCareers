@@ -6,22 +6,22 @@ using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
 {
-    public class OfferApplicationsSearcher : FilteringPageSearcherBase<OfferApplication, CompanyPanelApplicationSearchParams>
+    public class OfferApplicationsSearcher : FilteringPageSearcherBase<JobOfferApplication, CompanyPanelApplicationSearchParams>
     {
-        private readonly IRepository<OfferApplication> repository;
+        private readonly IRepository<JobOfferApplication> repository;
 
 
-        public OfferApplicationsSearcher(IRepository<OfferApplication> repository)
+        public OfferApplicationsSearcher(IRepository<JobOfferApplication> repository)
         {
             this.repository = repository;
         }
 
-        protected override IRepository<OfferApplication> GetRepository()
+        protected override IRepository<JobOfferApplication> GetRepository()
         {
             return repository;
         }
 
-        protected override IQueryable<OfferApplication> GetFiltered(IQueryable<OfferApplication> available)
+        protected override IQueryable<JobOfferApplication> GetFiltered(IQueryable<JobOfferApplication> available)
         {
             available = available.Where(application => application.JobOfferId == searchParams.OfferId);
 
@@ -34,7 +34,7 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
             return available;
         }
 
-        protected override IQueryable<OfferApplication> GetSorted(IQueryable<OfferApplication> available)
+        protected override IQueryable<JobOfferApplication> GetSorted(IQueryable<JobOfferApplication> available)
         {
             var category = searchParams.SortCategory;
 
@@ -63,7 +63,7 @@ namespace JobBoardPlatform.BLL.Search.CompanyPanel.Applications
             return available;
         }
 
-        protected override IEntityLoader<OfferApplication> GetLoader()
+        protected override IEntityLoader<JobOfferApplication> GetLoader()
         {
             return new ApplicationQueryLoader();
         }

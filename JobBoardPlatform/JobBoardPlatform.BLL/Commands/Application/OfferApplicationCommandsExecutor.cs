@@ -12,7 +12,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
 {
     public class OfferApplicationCommandsExecutor
     {
-        private readonly IRepository<OfferApplication> applicationsRepository;
+        private readonly IRepository<JobOfferApplication> applicationsRepository;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage resumeStorage;
@@ -20,7 +20,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
 
 
         public OfferApplicationCommandsExecutor(
-            IRepository<OfferApplication> applicationsRepository,
+            IRepository<JobOfferApplication> applicationsRepository,
             IRepository<JobOffer> offersRepository,
             IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage resumeStorage,

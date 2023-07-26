@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobBoardPlatform.DAL.Models.Company
 {
-    public class ContactDetails : IEntity
+    public class JobOfferContactDetails : IEntity
     {
         public int Id { get; set; }
 

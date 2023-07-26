@@ -23,7 +23,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         private readonly IRepository<EmployeeIdentity> repository;
         private readonly IRepository<EmployeeProfile> profileRepository;
         private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<OfferApplication> applicationRepositry;
+        private readonly IRepository<JobOfferApplication> applicationRepositry;
         private readonly IUserProfileImagesStorage imageStorage;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage applicationsResumeStorage;
@@ -36,7 +36,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             repository = serviceProvider.GetService<IRepository<EmployeeIdentity>>()!;
             profileRepository = serviceProvider.GetService<IRepository<EmployeeProfile>>()!;
             offersRepository = serviceProvider.GetService<IRepository<JobOffer>>()!;
-            applicationRepositry = serviceProvider.GetService<IRepository<OfferApplication>>()!;
+            applicationRepositry = serviceProvider.GetService<IRepository<JobOfferApplication>>()!;
             imageStorage = serviceProvider.GetService<IUserProfileImagesStorage>()!;
             profileResumeStorage = serviceProvider.GetService<IProfileResumeBlobStorage>()!;
             applicationsResumeStorage = serviceProvider.GetService<IApplicationsResumeBlobStorage>()!;

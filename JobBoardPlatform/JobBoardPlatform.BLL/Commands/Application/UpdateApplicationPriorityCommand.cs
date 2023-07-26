@@ -5,7 +5,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
 {
     public class UpdateApplicationPriorityCommand : ICommand
     {
-        private readonly IRepository<OfferApplication> applicationsRepository;
+        private readonly IRepository<JobOfferApplication> applicationsRepository;
         private readonly int applicationId;
         private readonly int newPriorityIndex;
 
@@ -13,7 +13,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         public int ResultPriorityIndex { get; private set; }
 
 
-        public UpdateApplicationPriorityCommand(IRepository<OfferApplication> applicationsRepository, 
+        public UpdateApplicationPriorityCommand(IRepository<JobOfferApplication> applicationsRepository, 
             int applicationId, 
             int newPriorityIndex)
         {

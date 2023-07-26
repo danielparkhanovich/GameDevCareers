@@ -34,10 +34,10 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 
         private void MapSalaryDetails(JobOffer from, OfferContentDisplayViewModel to)
         {
-            var salaryDisplayText = new List<string>(from.JobOfferEmploymentDetails.Count);
-            var employmentTypeDisplayText = new List<string>(from.JobOfferEmploymentDetails.Count);
+            var salaryDisplayText = new List<string>(from.EmploymentDetails.Count);
+            var employmentTypeDisplayText = new List<string>(from.EmploymentDetails.Count);
 
-            foreach (var employmentDetails in from.JobOfferEmploymentDetails)
+            foreach (var employmentDetails in from.EmploymentDetails)
             {
                 string singleSalaryText = "Undisclosed Salary";
 

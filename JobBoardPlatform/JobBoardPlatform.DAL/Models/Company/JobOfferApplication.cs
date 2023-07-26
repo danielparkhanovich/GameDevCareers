@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace JobBoardPlatform.DAL.Models.Company
 {
     [Table("OfferApplications")]
-    public class OfferApplication : IEntity
+    public class JobOfferApplication : IEntity
     {
         public int Id { get; set; }
 

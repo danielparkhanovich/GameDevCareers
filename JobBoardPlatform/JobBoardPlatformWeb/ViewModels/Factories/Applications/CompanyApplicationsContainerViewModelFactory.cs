@@ -10,7 +10,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Templates;
 
 namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 {
-    public class CompanyApplicationsContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<OfferApplication>
+    public class CompanyApplicationsContainerViewModelFactory : CardsContainerViewModelFactoryTemplate<JobOfferApplication>
     {
         private readonly OfferApplicationsSearcher searcher;
         private readonly CompanyPanelApplicationSearchParams searchParams;

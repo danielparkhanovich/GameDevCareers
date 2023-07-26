@@ -63,10 +63,10 @@
     </div>
     @if (Model.RecordsCount > searchParams.PageSize)
     {
-        <div>
+        <div class="d-flex justify-content-center px-2 pt-3 pb-4 bg-info bg-opacity-10">
             <ul class="pagination m-0">
                 <li class="page-item rounded-0 @(searchParams.Page == 1 ? "disabled" : string.Empty)">
-                    <button class="page-link rounded-0" onclick="switchPage(@searchParams.Page - 1);">&laquo;</button>
+                    <button class="page-link rounded-0" onclick="switchPage(@searchParams.Page - 1);">&lt;</button>
                 </li>
                 @{
                     int pagesCount = (int)Math.Ceiling((float)Model.RecordsCount / Model.SearchParams.PageSize);
@@ -78,7 +78,7 @@
                     </li>
                 }
                 <li class="page-item rounded-0 @(searchParams.Page == pagesCount ? "disabled" : string.Empty)">
-                    <button class="page-link rounded-0" onclick="switchPage(@searchParams.Page + 1);">&raquo;</button>
+                    <button class="page-link rounded-0" onclick="switchPage(@searchParams.Page + 1);">&gt;</button>
                 </li>
             </ul>
         </div>
