@@ -5,6 +5,7 @@ using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Interactors.Notifications;
 using JobBoardPlatform.PL.Interactors.Payment;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
@@ -12,6 +13,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -20,14 +22,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     public class CompanyOfferPaymentController : Controller
     {
         private readonly IOffersManager commandsExecutor;
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
         private readonly IValidator<INewOfferData> validator;
         private readonly IPaymentInteractor paymentInteractor;
 
 
         public CompanyOfferPaymentController(
             IOffersManager commandsExecutor, 
-            OfferQueryExecutor queryExecutor,
+            IOfferQueryExecutor queryExecutor,
             IValidator<INewOfferData> validator,
             IPaymentInteractor paymentInteractor)
         {
@@ -51,7 +53,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         }
 
         [Route("check-out-{offerId}")]
-        public async Task<IActionResult> CheckOut(int offerId)
+        public async Task<IActionResult> Checkout(int offerId)
         {
             await paymentInteractor.ProcessCheckout(offerId);
             return new StatusCodeResult(303);
@@ -60,9 +62,26 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("check-out-{offerId}/{checkoutSessionId}")]
         public async Task<IActionResult> Confirmation(int offerId, string checkoutSessionId)
         {
+            try
+            {
+                await paymentInteractor.ConfirmCheckout(offerId, checkoutSessionId);
+            }
+            catch (StripeException)
+            {
+                RedirectToAction("Rejected", new { offerId = offerId });
+            }
+
             var offer = await queryExecutor.GetOfferById(offerId);
             var viewModel = GetOfferCard(offer);
             return View(viewModel);
+        }
+
+        [Route("check-out-{offerId}/rejected")]
+        public IActionResult Rejected(int offerId)
+        {
+            NotificationsManager.Instance.SetErrorNotification(
+                NotificationsManager.PaymentSection, "Something went wrong, please try again", TempData);
+            return RedirectToAction("Payment", new { offerId = offerId });
         }
 
         private IActionResult RedirectToOffersPanel()

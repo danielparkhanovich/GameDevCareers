@@ -18,13 +18,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public const string SetPriorityAction = "SetPriority";
 
         private readonly OfferApplicationsSearcher searcher;
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
         private readonly OfferApplicationCommandsExecutor commandsExecutor;
 
 
         public CompanyApplicationsPanelController(
             OfferApplicationsSearcher searcher, 
-            OfferQueryExecutor queryExecutor,
+            IOfferQueryExecutor queryExecutor,
             OfferApplicationCommandsExecutor commandsExecutor)
         {
             this.searcher = searcher;

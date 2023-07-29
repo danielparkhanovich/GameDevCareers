@@ -18,7 +18,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         public async Task Execute()
         {
             var offer = await offersRepository.Get(offerId);
-            offer!.IsPaid = true;
+            offer.IsPaid = true;
             offer.IsPublished = true;
             offer.PublishedAt = DateTime.Now;
             await offersRepository.Update(offer);

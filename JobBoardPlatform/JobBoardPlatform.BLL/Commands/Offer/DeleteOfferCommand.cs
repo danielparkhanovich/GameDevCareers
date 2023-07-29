@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.BLL.Query.Identity;
+using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 
@@ -9,6 +10,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     /// </summary>
     public class DeleteOfferCommand : ICommand
     {
+        private readonly IOfferQueryExecutor queryExecutor;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<JobOfferContactDetails> contactDetailsRepository;
         private readonly IRepository<JobOfferEmploymentDetails> employmentDetailsRepository;
@@ -21,6 +23,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
 
         public DeleteOfferCommand(
+            IOfferQueryExecutor queryExecutor,
             IRepository<JobOffer> offersRepository,
             IRepository<JobOfferContactDetails> contactDetailsRepository,
             IRepository<JobOfferEmploymentDetails> employmentDetailsRepository,
@@ -31,6 +34,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             IApplicationsResumeBlobStorage applicationsResumeStorage,
             int offerIdToDelete)
         {
+            this.queryExecutor = queryExecutor;
             this.offersRepository = offersRepository;
             this.contactDetailsRepository = contactDetailsRepository;
             this.employmentDetailsRepository = employmentDetailsRepository;
@@ -44,7 +48,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public async Task Execute()
         {
-            var offer = await offersRepository.Get(offerIdToDelete);
+            var offer = await queryExecutor.GetOfferById(offerIdToDelete);
 
             await UnassignResumesFromOffer(offer);
             await offersRepository.Delete(offerIdToDelete);
@@ -53,9 +57,10 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         private async Task DeleteOfferContent(JobOffer offer)
         {
-            await contactDetailsRepository.Delete(offer.ContactDetailsId);
             await DeleteEmploymentDetails(offer);
             await DeleteTechKeywords(offer);
+            var test = await contactDetailsRepository.Get(offer.ContactDetailsId);
+            await contactDetailsRepository.Delete(offer.ContactDetailsId);
         }
 
         private async Task DeleteEmploymentDetails(JobOffer offer)

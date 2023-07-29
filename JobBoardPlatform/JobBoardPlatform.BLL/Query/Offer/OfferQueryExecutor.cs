@@ -4,7 +4,7 @@ using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Query.Identity
 {
-    public class OfferQueryExecutor
+    public class OfferQueryExecutor : IOfferQueryExecutor
     {
         private readonly IRepository<JobOffer> repository;
 

@@ -21,7 +21,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         private readonly IRepository<CompanyProfile> companyRepository;
         private readonly CompanyOffersSearcher offersSearcher;
         private readonly AdminCommandsExecutor adminCommandsExecutor;
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
 
 
         public AdminPanelOffersController(
@@ -29,7 +29,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             IOffersManager commandsExecutor,
             AdminCommandsExecutor adminCommandsExecutor,
             CompanyOffersSearcher offersSearcher,
-            OfferQueryExecutor queryExecutor) 
+            IOfferQueryExecutor queryExecutor) 
             : base(commandsExecutor)
         {
             this.companyRepository = companyRepository;
@@ -47,16 +47,18 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return View(viewModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GenerateOffers(int companyId, int offersCountToGenerate)
+        [HttpPost("generate")]
+        public async Task<IActionResult> GenerateOffers(AdminPanelOffersViewModel form)
         {
-            bool isOverLimit = await IsGenerateCountOverLimit(offersCountToGenerate);
+            int count = form.CountToGenerate;
+
+            bool isOverLimit = await IsGenerateCountOverLimit(count);
             if (isOverLimit)
             {
                 return RedirectToAction("Panel");
             }
 
-            await adminCommandsExecutor.GenerateOffers(companyId, offersCountToGenerate);
+            await adminCommandsExecutor.GenerateOffers(form.CompanyIdToGenerate, count);
             return RedirectToAction("Panel");
         }
 
@@ -64,7 +66,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         public async Task<IActionResult> DeleteAllOffers()
         {
             await adminCommandsExecutor.DeleteAllOffers();
-            return RedirectToAction("OffersPanel");
+            return RedirectToAction("Panel");
         }
 
         protected override Task<CardsContainerViewModel> GetContainer()

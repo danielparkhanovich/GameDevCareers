@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
@@ -8,6 +9,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 {
     public class OffersManager : IOffersManager
     {
+        private readonly IOfferQueryExecutor queryExecutor;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<JobOfferContactDetails> contactDetailsRepository;
         private readonly IRepository<JobOfferEmploymentDetails> employmentDetailsRepository;
@@ -21,6 +23,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
 
         public OffersManager(
+            IOfferQueryExecutor queryExecutor,
             IRepository<JobOffer> offersRepository,
             IRepository<JobOfferContactDetails> contactDetailsRepository,
             IRepository<JobOfferEmploymentDetails> employmentDetailsRepository,
@@ -32,6 +35,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             IOffersCacheManager cacheManager,
             MainPageOffersSearcher offersSearcher)
         {
+            this.queryExecutor = queryExecutor;
             this.offersRepository = offersRepository;
             this.contactDetailsRepository = contactDetailsRepository;
             this.employmentDetailsRepository = employmentDetailsRepository;
@@ -59,6 +63,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         public async Task DeleteAsync(int offerId)
         {
             var command = new DeleteOfferCommand(
+                    queryExecutor,
                     offersRepository,
                     contactDetailsRepository,
                     employmentDetailsRepository,

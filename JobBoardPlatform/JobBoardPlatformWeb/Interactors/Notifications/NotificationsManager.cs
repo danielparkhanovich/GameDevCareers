@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 
 namespace JobBoardPlatform.PL.Interactors.Notifications
 {
@@ -7,6 +9,7 @@ namespace JobBoardPlatform.PL.Interactors.Notifications
         public const string RegisterSection = "registerSection";
         public const string ResetPasswordSection = "restorePassword";
         public const string LoginSection = "loginSection";
+        public const string PaymentSection = "paymentSection";
 
         public static INotificationsManager Instance
         {
@@ -22,27 +25,26 @@ namespace JobBoardPlatform.PL.Interactors.Notifications
 
         private static INotificationsManager instance;
 
+
         private NotificationsManager()
         {
         }
 
         public void SetActionDoneNotification(string key, string value, ITempDataDictionary tempData)
         {
-            tempData[key] = GetNotification(value, NotificationType.ActionDone);
+            var notification = GetNotification(value, NotificationType.ActionDone);
+            PutData(key, notification, tempData);
         }
 
         public void SetErrorNotification(string key, string value, ITempDataDictionary tempData)
         {
-            tempData[key] = GetNotification(value, NotificationType.Error);
+            var notification = GetNotification(value, NotificationType.Error);
+            PutData(key, notification, tempData);
         }
 
         public NotificationData? TryGetNotification(string key, ITempDataDictionary tempData)
         {
-            if (!tempData.ContainsKey(key))
-            {
-                return null;
-            }
-            return tempData[key] as NotificationData;
+            return GetData<NotificationData>(key, tempData);
         }
 
         private NotificationData GetNotification(string value, NotificationType type)
@@ -52,6 +54,18 @@ namespace JobBoardPlatform.PL.Interactors.Notifications
                 Text = value,
                 Type = type
             };
+        }
+
+        private void PutData<T>(string key, T data, ITempDataDictionary tempData) where T : class
+        {
+            tempData[key] = JsonConvert.SerializeObject(data);
+        }
+
+        private T? GetData<T>(string key, ITempDataDictionary tempData) where T : class
+        {
+            object? data;
+            tempData.TryGetValue(key, out data);
+            return data == null ? null : JsonConvert.DeserializeObject<T>((string)data);
         }
     }
 }

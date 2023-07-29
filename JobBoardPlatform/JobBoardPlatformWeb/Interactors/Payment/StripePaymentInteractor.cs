@@ -1,31 +1,44 @@
-﻿using JobBoardPlatform.BLL.Query.Identity;
+﻿using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.BLL.Query.Identity;
 using Stripe.Checkout;
 
 namespace JobBoardPlatform.PL.Interactors.Payment
 {
     public class StripePaymentInteractor : IPaymentInteractor
     {
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
+        private readonly IOffersManager offersManager;
         private readonly IHttpContextAccessor contextAccessor;
 
 
         public StripePaymentInteractor(
-            OfferQueryExecutor queryExecutor,
+            IOfferQueryExecutor queryExecutor,
+            IOffersManager offersManager,
             IHttpContextAccessor contextAccessor)
         {
             this.queryExecutor = queryExecutor;
+            this.offersManager = offersManager;
             this.contextAccessor = contextAccessor;
         }
 
         public async Task ProcessCheckout(int offerId)
         {
-            var offer = queryExecutor.GetOfferById(offerId);
-
             var options = GetSessionOptions();
             var session = CreateSessionService(options);
 
             var context = contextAccessor.HttpContext;
             context.Response.Headers.Add("Location", session.Url);
+        }
+
+        public async Task ConfirmCheckout(int offerId, string checkoutSessionId)
+        {
+            var service = new SessionService();
+            var session = service.Get(checkoutSessionId);
+
+            if (session.PaymentStatus == "paid")
+            {
+                await offersManager.PassPaymentAsync(offerId);
+            }
         }
 
         private SessionCreateOptions GetSessionOptions()
@@ -48,7 +61,7 @@ namespace JobBoardPlatform.PL.Interactors.Payment
         private string GetCancelUrl()
         {
             var context = contextAccessor.HttpContext;
-            return $"{context.Request.Scheme}://{context.Request.Host}";
+            return $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}/rejected";
         }
 
         private List<SessionLineItemOptions> GetSessionLineItemOptions()

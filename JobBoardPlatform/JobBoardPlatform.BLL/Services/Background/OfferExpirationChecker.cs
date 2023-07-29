@@ -44,7 +44,7 @@ namespace JobBoardPlatform.BLL.Services.Background
                 if (IsOfferExpired(offer))
                 {
                     // possible archieve here...
-                    // await DeleteOffer(offersRepository, offer.Id);
+                    await DeleteOffer(scope.ServiceProvider, offer.Id);
                 }
             }
         }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobBoardPlatform.DAL.Models.Company
 {
+    [Table("JobOfferContactDetails")]
     public class JobOfferContactDetails : IEntity
     {
         public int Id { get; set; }

@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
-using static System.Net.Mime.MediaTypeNames;
 using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
@@ -21,7 +20,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     public class OfferContentController : Controller
     {
         private readonly OfferApplicationCommandsExecutor commandsExecutor;
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<EmployeeProfile> profileRepository;
         private readonly IRepository<EmployeeIdentity> identityRepository;
@@ -31,7 +30,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         public OfferContentController(
             OfferApplicationCommandsExecutor commandsExecutor,
-            OfferQueryExecutor queryExecutor,
+            IOfferQueryExecutor queryExecutor,
             IRepository<JobOffer> offersRepository,
             IRepository<EmployeeProfile> profileRepository,
             IRepository<EmployeeIdentity> identityRepository,

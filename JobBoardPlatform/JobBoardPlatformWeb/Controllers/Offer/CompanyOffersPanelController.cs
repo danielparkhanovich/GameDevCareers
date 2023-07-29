@@ -16,12 +16,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     public class CompanyOffersPanelController : OfferCardsControllerBase
     {
         private readonly CompanyOffersSearcher offersSearcher;
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
 
 
         public CompanyOffersPanelController(CompanyOffersSearcher offersSearcher,
             IOffersManager commandsExecutor,
-            OfferQueryExecutor queryExecutor)
+            IOfferQueryExecutor queryExecutor)
             : base(commandsExecutor)
         {
             this.offersSearcher = offersSearcher;

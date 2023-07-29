@@ -15,13 +15,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     public class CompanyOfferEditorController : Controller
     {
         private readonly IOffersManager commandsExecutor;
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
         private readonly IValidator<INewOfferData> validator;
 
 
         public CompanyOfferEditorController(
             IOffersManager commandsExecutor, 
-            OfferQueryExecutor queryExecutor,
+            IOfferQueryExecutor queryExecutor,
             IValidator<INewOfferData> validator)
         {
             this.commandsExecutor = commandsExecutor;

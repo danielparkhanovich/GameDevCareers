@@ -13,13 +13,13 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
     {
         private readonly OfferApplicationsSearcher searcher;
         private readonly CompanyPanelApplicationSearchParams searchParams;
-        private readonly OfferQueryExecutor queryExecutor;
+        private readonly IOfferQueryExecutor queryExecutor;
 
 
         public CompanyApplicationsViewModelFactory(
             OfferApplicationsSearcher searcher, 
             CompanyPanelApplicationSearchParams searchParams,
-            OfferQueryExecutor queryExecutor)
+            IOfferQueryExecutor queryExecutor)
         {
             this.searcher = searcher;
             this.searchParams = searchParams;

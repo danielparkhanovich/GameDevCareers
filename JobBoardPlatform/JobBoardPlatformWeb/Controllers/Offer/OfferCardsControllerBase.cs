@@ -26,7 +26,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             this.commandsExecutor = commandsExecutor;
         }
 
-        [HttpPost]
+        [HttpPost("shelve")]
         public async Task<IActionResult> ToggleOfferVisibilityState(int offerId, bool flag)
         {
             await commandsExecutor.ShelveAsync(offerId, flag);
@@ -34,14 +34,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return offerCard;
         }
 
-        [HttpPost]
+        [HttpPost("close")]
         public async Task<IActionResult> CloseOffer(int offerId)
         {
             await commandsExecutor.DeleteAsync(offerId);
             return new EmptyResult();
         }
 
-        [HttpPost]
+        [HttpPost("suspend")]
         [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
         public async Task<IActionResult> ToggleOfferSuspendState(int offerId, bool flag)
         {
@@ -50,7 +50,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return offerCard;
         }
 
-        [HttpPost]
+        [HttpPost("pass-payment")]
         [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
         public async Task<IActionResult> PassPaymentOffer(int offerId)
         {
