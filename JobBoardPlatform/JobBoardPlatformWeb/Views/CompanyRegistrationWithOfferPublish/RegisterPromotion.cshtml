@@ -1,0 +1,25 @@
+﻿@using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
+@model OfferPricingTableViewModel
+@{
+    ViewData["Title"] = "Company";
+}
+
+<div class="d-flex flex-column aligns-items-center justify-content-center min-vh-100 mx-auto" style="margin-top: -56px;">
+    <h2 class="text-center mb-5">Get to know job ads</h2>
+    <!-- Render shared login form and pass controller name -->
+    @{
+        ViewData["LoginControllerName"] = "CompanyLogin";
+    }
+    <div class="container px-5">
+        <hr class="my-1" />
+        <div class="mt-5">
+            <partial name="./JobOffers/_JobOfferPricingTable" for="@Model" />
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

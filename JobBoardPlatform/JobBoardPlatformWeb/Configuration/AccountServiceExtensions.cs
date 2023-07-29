@@ -38,7 +38,7 @@ namespace JobBoardPlatform.PL.Configuration
 
         private static void AddEmailServices(IServiceCollection services, ConfigurationManager configuration)
         {
-            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IEmailSender, SmtpEmailSender>();
             services.Configure<EmailConfiguration>(configuration.GetSection("EmailGateway"));
         }
 

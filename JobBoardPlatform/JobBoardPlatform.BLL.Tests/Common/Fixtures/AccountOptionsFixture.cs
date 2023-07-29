@@ -24,7 +24,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Fixtures
 
         private void AddResetPasswordServices(ServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IEmailSender, EmailSender>();
+            serviceCollection.AddTransient<IEmailSender, SmtpEmailSender>();
             serviceCollection.AddTransient<IRestorePasswordTokensService, RestorePasswordTokensService>();
             //serviceCollection.AddScoped<IConfirmationLinkFactory, ConfirmationLinkFactory>();
             serviceCollection.AddTransient<UserManager<EmployeeIdentity>>();

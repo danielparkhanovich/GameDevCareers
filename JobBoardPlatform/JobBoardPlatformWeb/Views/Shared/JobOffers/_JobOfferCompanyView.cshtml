@@ -21,10 +21,11 @@
     }
 
     string editOfferUrl = $"{@Url.Action("NewOffer", "CompanyOfferEditor", new { offerId = offerId })}";
+    string paymentOfferUrl = $"{@Url.Action("Payment", "CompanyOfferPayment", new { offerId = offerId })}";
+
     string hideOfferUrl = $"{@Url.Action(OfferCardsControllerBase.ToggleVisibilityAction)}";
     string closeOfferUrl = $"{@Url.Action(OfferCardsControllerBase.DeleteAction)}";
     string suspendOfferUrl = $"{@Url.Action(OfferCardsControllerBase.ToggleSuspendAction)}";
-    string passPaymentOfferUrl = $"{@Url.Action(OfferCardsControllerBase.PassPaymentAction)}";
 
     bool isAvailableToShelve = offer.IsAvailableForEdit && offer.IsPaid;
     bool isAvailableToEdit = offer.IsAvailableForEdit && !offer.IsDeleted;
@@ -125,11 +126,10 @@
                     <div class="dropdown-menu py-0">
                         @if (offer.StateType == OfferStateType.NotPaid)
                         {
-                            <button class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm mb-1"
-                                onclick="passPaymentOffer(@offerId);">
+                            <a  href="@paymentOfferUrl" class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm mb-1" onclick="passPaymentOffer(@offerId);">
                                 <div>@("Pay for ad")</div>
                                 <i class="bi bi-credit-card-2-front-fill ms-1"></i>
-                            </button>
+                            </a>
                         }
                         @if (offer.StateType != OfferStateType.NotPaid && offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
                         {
@@ -140,7 +140,7 @@
                         }
                         @if (isAvailableToEdit)
                         {
-                            <a class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm" href="@editOfferUrl">
+                            <a href="@editOfferUrl" class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm">
                                 <div>Edit</div>
                                 <i class="bi bi-pencil-square ms-1"></i>
                             </a>
@@ -189,12 +189,6 @@
         const action = @Html.Raw(Json.Serialize(suspendOfferUrl));
         const data = { offerId: cardId, flag: flag };
         refreshCard(action, cardId, data);
-    }
-
-    function passPaymentOffer(cardId) {
-        const action = @Html.Raw(Json.Serialize(passPaymentOfferUrl));
-        const data = { offerId: cardId };
-        refreshCard(action, cardId, data, refreshCards);
     }
 
     function closeOffer(cardId) {

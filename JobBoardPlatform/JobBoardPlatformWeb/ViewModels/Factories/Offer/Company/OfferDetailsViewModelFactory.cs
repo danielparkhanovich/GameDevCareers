@@ -17,7 +17,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
                 Street = offer.Address,
                 JobDescription = offer.Description,
                 ApplicationsContactEmail = offer.ContactDetails.ContactAddress,
-                ApplicationsContactType = offer.ContactDetails.Id,
+                ApplicationsContactType = offer.ContactDetails.ContactTypeId,
                 MainTechnologyType = offer.MainTechnologyTypeId,
                 WorkLocationType = offer.WorkLocationId,
                 SalaryFromRange = offer.EmploymentDetails.Select(x => (int?)x.SalaryRange?.From).ToArray(),

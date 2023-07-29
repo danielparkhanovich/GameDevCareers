@@ -1,0 +1,54 @@
+﻿@using JobBoardPlatform.PL.Controllers.Register;
+@using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
+@model OfferPricingTableViewModel
+
+<div class="table-responsive w-100">
+    <table class="table shadow-none table-striped text-successtable-border border-light">
+        <thead class="border-light">
+            <tr>
+                <th scope="col">Features</th>
+                @foreach (var plan in Model.Plans)
+                {
+                    <th class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-bottom-0 border-success" : "")" scope="col">
+                        <strong>@plan.OfferType</strong>
+                        @if (plan.AvailableFreeSlots > 0)
+                        {
+                            <h4 class="text-decoration-line-through">@plan.Price @plan.Currency</h4>
+                            <h5 class="text-success">FREE @plan.AvailableFreeSlots slots</h5>
+                        }
+                        else
+                        {
+                            <h4>@plan.Price @plan.Currency</h4>
+                        }
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Features.Count; i++)
+            {
+                var feature = Model.Features[i];
+
+                <tr class="align-middle">
+                    <th scope="row">@feature</th>
+                    @foreach (var plan in Model.Plans)
+                    {
+                        <td class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-top-0 border-bottom-0 border-success" : "")" width="@(100/(Model.Plans.Count + 1))%">@Html.Raw(plan.FeatureValues[i])</td>
+                    }
+                </tr>
+            }
+            <tr>
+                <th scope="row"></th>
+                @foreach (var plan in Model.Plans)
+                {
+                    <td class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-top-0 border-success" : "")">
+                        <a href="@Url.Action($"{CompanyRegistrationWithOfferPublishController.StartPostOfferAndRegisterAction}")"
+                       class="text-small btn btn-primary rounded-pill px-5">
+                            Post a job
+                        </a>
+                    </td>
+                }
+            </tr>
+        </tbody>
+    </table>
+</div>

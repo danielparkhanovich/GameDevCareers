@@ -4,46 +4,48 @@ using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Aspects.DataValidators;
+using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
-    [Route("register-employer")]
-    public class CompanyRegisterController : BaseRegisterController<CompanyRegisterViewModel>
+    [Route("register-employer-offer")]
+    [TypeFilter(typeof(RedirectRegisteredCompanyFilter))]
+    public class CompanyRegistrationWithOfferPublishController : Controller
     {
         public const string AdsPricingAction = "RegisterPromotion";
         public const string StartPostOfferAndRegisterAction = "StartPostOfferAndRegister";
 
         private readonly IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor;
         private readonly EmailCompanyPublishOfferAndRegistrationInteractor registrationWithPublishOfferInteractor;
-        private readonly ILoginService<CompanyIdentity, CompanyProfile> loginService;
         private readonly IValidator<CompanyPublishOfferAndRegisterViewModel> validator;
         private readonly IValidator<CompanyRegisterViewModel> companyRegisterValidator;
 
 
-        public CompanyRegisterController(
+        public CompanyRegistrationWithOfferPublishController(
             IRegistrationInteractor<CompanyRegisterViewModel> registrationInteractor,
             EmailCompanyPublishOfferAndRegistrationInteractor registrationWithPublishOfferInteractor,
-            ILoginService<CompanyIdentity, CompanyProfile> loginService,
             IValidator<CompanyPublishOfferAndRegisterViewModel> validator,
             IValidator<CompanyRegisterViewModel> companyRegisterValidator)
         {
             this.registrationInteractor = registrationInteractor;
             this.registrationWithPublishOfferInteractor = registrationWithPublishOfferInteractor;
-            this.loginService = loginService;
             this.validator = validator;
             this.companyRegisterValidator = companyRegisterValidator;
         }
 
         [Route("pricing")]
-        public IActionResult RegisterPromotion()
+        public async Task<IActionResult> RegisterPromotion()
         {
-            return View();
+            var factory = new OfferPricingTableViewModelFactory();
+            var viewModel = await factory.CreateAsync();
+            return View(viewModel);
         }
 
         [Route("post-ad")]
@@ -148,38 +150,6 @@ namespace JobBoardPlatform.PL.Controllers.Register
         public async Task<IActionResult> TryConfirmOfferPaymentAndRegister(string tokenId)
         {
             await registrationInteractor.FinishRegistration(tokenId, HttpContext);
-            return View();
-        }
-
-        public override async Task<IActionResult> Register(CompanyRegisterViewModel userRegister)
-        {
-            var result = await companyRegisterValidator.ValidateAsync(userRegister);
-            if (ModelState.IsValid)
-            {
-                var redirect = await registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
-                return RedirectToAction(redirect.ActionName, redirect.Data);
-            }
-            else
-            {
-                result.AddToModelState(this.ModelState);
-            }
-
-            if (ModelState.ErrorCount == 0)
-            {
-                userRegister = new CompanyRegisterViewModel();
-            }
-            return View(userRegister);
-        }
-
-        public override async Task<IActionResult> TryConfirmRegistration(string tokenId)
-        {
-            await registrationInteractor.FinishRegistration(tokenId, HttpContext);
-            return View();
-        }
-
-        public override async Task<IActionResult> TryConfirmRegistration(string email, string passwordHash)
-        {
-            await loginService.TryLoginAsync(email, passwordHash, HttpContext);
             return View();
         }
 

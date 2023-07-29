@@ -1,0 +1,49 @@
+﻿@using JobBoardPlatform.PL.Controllers.Offer;
+@using JobBoardPlatform.PL.Controllers.Utils;
+@using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
+@using System.Text.RegularExpressions;
+@model OfferPaymentFormViewModel
+@{
+    string editOfferController = ControllerUtils.GetControllerName(typeof(CompanyOfferEditorController));
+
+    string formattedCompanyName = Regex.Replace(Model.OfferCard.Company, @"\s+", "-").ToLower();
+    string formattedOfferTitle = Regex.Replace(Model.OfferCard.JobTitle, @"\s+", "-").ToLower();
+    string offerPageUrl = $"{formattedCompanyName}-{formattedOfferTitle}";
+
+    var contentData = new { id = Model.OfferId, companyname = formattedCompanyName, offertitle = formattedOfferTitle };
+    string contentUrl = @Url.Action("Offer", "OfferContent", contentData);
+}
+
+<div>    
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
+            <strong>Offer card</strong>
+        </div>
+        <div class="card-body">
+            <div class="bg-info bg-opacity-10 py-1">
+                <div class="mx-2 my-2 card border-0">
+                    <partial name="./JobOffers/_JobOffer" model="@Model.OfferCard" />
+                </div>
+            </div>
+            <div class="mt-2">
+                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="NewOffer" asp-controller="@editOfferController" asp-route-offerId="@Model.OfferId">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to edit
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" href="@contentUrl">
+                    <i class="bi bi-file-text"></i>
+                    Check preview
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
+            <strong>Selected plan</strong>
+        </div>
+        <div class="card-body">
+            <partial name="./JobOffers/_JobOfferPricingTable" model="@Model.SelectedPlan" />
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
-﻿@model IAttachedResume
+﻿@using JobBoardPlatform.PL.Aspects.DataValidators;
+@model IAttachedResume
 @{
     // in case of server side handling, form will be immediately submitted
     bool isPostFormOnChange = false;
@@ -16,9 +17,10 @@
     <label asp-for="File" class="small mb-1">Upload CV</label>
     <input asp-for="File" id="attachedResume-input" type="file" accept="application/pdf" style="display:none">
 
-    <div class="card mb-4 mb-xl-0" id="uploadResumeCard">
+    <div id="uploadResumeCard" class="card mb-4 mb-xl-0 border-0 shadow-none"
+         style="outline: 2px dashed rgba(232, 232, 232, 1); background-color: rgba(236, 236, 236, 0.1)">
 
-        <div class="card-body d-flex flex-column align-items-center">
+        <div class="card-body d-flex flex-column align-items-center border-0">
             <div class="flex-column align-items-center m-0 p-0" id="client-side-attachedResume-file" style=@(isFilePreUploaded ? "display:flex;" : "display:none;")>
                 <a role="button" id="client-side-open-resume-button" target=”_blank” href="">
                     <i class="bi bi-file-earmark-check-fill text-info" style="font-size: 5rem;"></i>
@@ -55,7 +57,7 @@
                         Drag and Drop or <button class="btn btn-primary btn-sm" type="button" id="attachedResume-button">Browse</button>
                     </label>
                 </div>
-                <div class="small font-italic text-muted mb-2">PDF no larger than 5 MB</div>
+                <div class="small font-italic text-muted mb-2">PDF no larger than @GlobalLimits.MaximumResumeSizeInMb MB</div>
             </div>
         </div>
     </div>
@@ -64,6 +66,7 @@
 <script>
     const fileContainer = document.getElementById("attachedResume-input");
     const attachResumeButton = document.getElementById("attachedResume-button");
+    const card = document.getElementById("uploadResumeCard");
 
     addInputFieldListeners();
     
@@ -87,7 +90,7 @@
         });
 
         fileContainer.addEventListener("change", function () {
-
+            card.style.backgroundColor = "rgba(236, 236, 236, 0.1)";
             if (isPostFormOnChange) 
             {
                 this.form.submit();
@@ -98,20 +101,39 @@
             }
         });
 
-        const card = document.getElementById("uploadResumeCard");
+        card.addEventListener("click", () => {
+            if (displayInput.style.display == "flex"){
+                fileContainer.click();
+            }
+        });
+
+        card.addEventListener("mouseover", () => {
+            if (displayInput.style.display == "flex") {
+                card.style.backgroundColor = "rgba(236, 236, 236, 0.6)";
+            }
+        });
+
+        card.addEventListener("mouseout", () => {
+            if (displayInput.style.display == "flex") {
+                card.style.backgroundColor = "rgba(236, 236, 236, 0.1)";
+            }
+        });
 
         card.addEventListener("dragover", function (event) {
             event.preventDefault();
+            card.style.backgroundColor = "rgba(236, 236, 236, 0.6)";
             card.classList.add("dragover");
         });
 
         card.addEventListener("dragleave", function (event) {
             event.preventDefault();
+            card.style.backgroundColor = "rgba(236, 236, 236, 0.1)";
             card.classList.remove("dragover");
         });
 
         card.addEventListener("drop", function (event) {
             event.preventDefault();
+            card.style.backgroundColor = "rgba(236, 236, 236, 0.1)";
             card.classList.remove("dragover");
             fileContainer.files = event.dataTransfer.files;
 

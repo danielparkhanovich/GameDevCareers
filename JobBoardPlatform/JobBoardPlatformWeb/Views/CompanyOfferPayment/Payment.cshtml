@@ -1,16 +1,11 @@
-﻿@model EditOfferViewModel
+﻿@using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
+@model OfferPaymentFormViewModel
 @{
-    if (Model == null)
-    {
-        ViewData["Title"] = $"New Ad";
-    }
-    else
-    {
-        ViewData["Title"] = $"Edit Ad";
-    }
+    ViewData["Title"] = $"Payment";
 }
 
 <div class="container-xl px-4 pt-4">
+
     <!-- Account page navigation-->
     @await Html.PartialAsync("./ProfileTabs/_ProfileTabs")
 
@@ -18,12 +13,12 @@
         <div class="card border-0 shadow-lg p-2">
             
             <div class="mb-2">
-                <partial name="./JobOffers/_JobOfferForm" for="@Model" />
+                <partial name="./JobOffers/_JobOfferPaymentForm" for="@Model" />
             </div>
 
             <!-- Submit button -->
             <div class="card-body">
-                <button type="submit" class="btn btn-primary btn-block">Go Next</button>
+                <a asp-action="CheckOut" asp-route-offerId="@Model.OfferId" class="btn btn-primary btn-block">Check Out</a>
             </div>
         </div>
     </form>

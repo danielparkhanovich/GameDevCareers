@@ -5,29 +5,36 @@ using System.Net.Mail;
 
 namespace JobBoardPlatform.BLL.Services.Email
 {
-    public class EmailSender : IEmailSender
+    public class SmtpEmailSender : IEmailSender
     {
         private readonly EmailConfiguration options;
+        private readonly SmtpClient client;
 
 
-        public EmailSender(IOptions<EmailConfiguration> options)
+        public SmtpEmailSender(IOptions<EmailConfiguration> options)
         {
             this.options = options.Value;
+            this.client = GetSmtpClient(options.Value);
         }
 
         public Task SendEmailAsync(string targetEmail, string subject, string message)
         {
-            var client = GetSmtpClient();
-            return client.SendMailAsync(new MailMessage(options.SourceEmail, targetEmail, subject, message));
+            var mail = GetMailMessage(targetEmail, subject, message);
+            return client.SendMailAsync(mail);
         }
 
-        private SmtpClient GetSmtpClient()
+        private SmtpClient GetSmtpClient(EmailConfiguration options)
         {
             return new SmtpClient(options.Server, options.Port)
             {
                 EnableSsl = true,
                 Credentials = new NetworkCredential(options.SourceEmail, options.Password)
             };
+        }
+
+        private MailMessage GetMailMessage(string targetEmail, string subject, string message)
+        {
+            return new MailMessage(options.SourceEmail, targetEmail, subject, message);
         }
     }
 }

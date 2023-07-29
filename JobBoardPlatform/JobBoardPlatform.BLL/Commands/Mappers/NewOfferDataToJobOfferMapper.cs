@@ -62,7 +62,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
                     };
                 }
             }
-
+            to.EmploymentDetails.Clear();
             to.EmploymentDetails = employmentDetails;
         }
 
