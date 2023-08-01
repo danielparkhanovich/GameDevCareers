@@ -3,7 +3,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Offer.Company.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
 {
-    public class OfferDetailsViewModel : IOfferSalary, IMainTechnology, ITechKeywords, INewOfferData
+    public class OfferDetailsViewModel : IOfferSalary, IMainTechnology, ITechKeywords, IOfferData
     {
         public int OfferId { get; set; }
         public string JobTitle { get; set; } = string.Empty;

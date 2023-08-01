@@ -28,7 +28,7 @@ namespace JobBoardPlatform.BLL.Utils
         private readonly string ExternalLink = "http://localhost:3000/";
 
 
-        public INewOfferData GenerateData(CompanyIdentity companyIdentity)
+        public IOfferData GenerateData(CompanyIdentity companyIdentity)
         {
             var random = new Random();
 

@@ -11,12 +11,12 @@ namespace JobBoardPlatform.BLL.Commands.Admin
     public class DeleteAllOffersCommand : ICommand
     {
         private readonly IRepository<JobOffer> repository;
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
 
 
         public DeleteAllOffersCommand(
             IRepository<JobOffer> offersRepository,
-            IOffersManager offersManager)
+            IOfferManager offersManager)
         {
             this.repository = offersRepository;
             this.offersManager = offersManager;

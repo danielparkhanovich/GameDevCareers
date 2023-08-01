@@ -15,6 +15,7 @@ using JobBoardPlatform.DAL.Data;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using JobBoardPlatform.DAL.Managers;
 
 namespace JobBoardPlatform.PL.Configuration
 {
@@ -36,6 +37,7 @@ namespace JobBoardPlatform.PL.Configuration
                     x => x.MigrationsAssembly("JobBoardPlatform.DAL"));
             });
             services.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
+            services.AddTransient<OfferModelData>();
         }
 
         private static void AddBlobStorageServices(IServiceCollection services, ConfigurationManager configuration)
@@ -87,7 +89,7 @@ namespace JobBoardPlatform.PL.Configuration
                 {
                     new InterfaceConverter<ICompanyProfileAndNewOfferData, CompanyPublishOfferAndRegisterViewModel>(),
                     new InterfaceConverter<ICompanyProfileData, CompanyProfileViewModel>(),
-                    new InterfaceConverter<INewOfferData, OfferDetailsViewModel>(),
+                    new InterfaceConverter<IOfferData, OfferDetailsViewModel>(),
                 }
             };
             services.AddSingleton<JsonSerializerSettings>(serializerSettings);

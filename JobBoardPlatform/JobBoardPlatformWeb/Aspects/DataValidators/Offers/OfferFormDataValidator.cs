@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
 {
-    public class OfferFormDataValidator : AbstractValidator<INewOfferData>
+    public class OfferFormDataValidator : AbstractValidator<IOfferData>
     {
         public OfferFormDataValidator()
         {
@@ -43,7 +43,7 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
             When(offerData => offerData.SalaryFromRange != null && offerData.SalaryToRange != null, () => {
                 RuleForEach(offerData => offerData.SalaryFromRange).NotEqual(0).WithMessage("Enter from range");
                 RuleForEach(offerData => offerData.SalaryToRange).NotEqual(0).WithMessage("Enter to range");
-                RuleFor(offerData => offerData.SalaryFromRange).Must((offerData, salaryFromRange) =>
+                RuleForEach(offerData => offerData.SalaryFromRange).Must(fromRange =>
                 {
                     for (int i = 0; i < salaryFromRange.Length; i++)
                     {
@@ -54,7 +54,7 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
                     }
                     return true;
                 }).WithMessage("'Salary to' should be greater than 'salary from'");
-                RuleFor(offerData => offerData.SalaryCurrencyType).Must((offerData, currencyType) =>
+                RuleForEach(offerData => offerData.SalaryCurrencyType).Must((offerData, currencyType) =>
                 {
                     for (int i = 0; i < currencyType.Length; i++)
                     {

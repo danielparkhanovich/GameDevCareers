@@ -1,3 +1,4 @@
+using JobBoardPlatform.IntegrationTests.Common.Assertions;
 using JobBoardPlatform.IntegrationTests.Common.Fixtures;
 using JobBoardPlatform.IntegrationTests.Common.Utils;
 
@@ -21,7 +22,8 @@ namespace JobBoardPlatform.IntegrationTests.Offers
             string userEmail = testsUtils.GetExampleCompanyEmail();
             await testsUtils.AddExampleCompanyAsync(userEmail);
 
-
+            string offerName = testsUtils.GetExampleOfferTitle();
+            await testsUtils.AddNewOfferAsync(userEmail, offerName);
         }
 
         [Fact]

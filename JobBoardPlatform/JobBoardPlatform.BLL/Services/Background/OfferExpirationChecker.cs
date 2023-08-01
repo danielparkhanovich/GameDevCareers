@@ -64,7 +64,7 @@ namespace JobBoardPlatform.BLL.Services.Background
 
         private Task DeleteOffer(IServiceProvider serviceProvider, int offerIdToDelete)
         {
-            var offersManager = serviceProvider.GetRequiredService<IOffersManager>();
+            var offersManager = serviceProvider.GetRequiredService<IOfferManager>();
             return offersManager.DeleteAsync(offerIdToDelete);
         }
     }

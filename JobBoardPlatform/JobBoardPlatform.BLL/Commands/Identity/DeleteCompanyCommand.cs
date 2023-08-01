@@ -12,7 +12,7 @@ namespace JobBoardPlatform.BLL.Commands.Identities
     {
         private readonly IRepository<CompanyIdentity> repository;
         private readonly IRepository<CompanyProfile> profileRepository;
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
         private readonly IUserProfileImagesStorage imagesStorage;
         private readonly int idToDelete;
 
@@ -20,7 +20,7 @@ namespace JobBoardPlatform.BLL.Commands.Identities
         public DeleteCompanyCommand(
             IRepository<CompanyIdentity> repository,
             IRepository<CompanyProfile> profileRepository,
-            IOffersManager offersManager,
+            IOfferManager offersManager,
             IUserProfileImagesStorage imagesStorage,
             int idToDelete)
         {
@@ -49,7 +49,7 @@ namespace JobBoardPlatform.BLL.Commands.Identities
 
         private async Task DeleteCompanyOffers(CompanyProfile profile)
         {
-            var offersIds = await offersManager.GetAsync(profile.Id);
+            var offersIds = await offersManager.GetAllIdsAsync(profile.Id);
             foreach (var id in offersIds)
             {
                 await offersManager.DeleteAsync(id);

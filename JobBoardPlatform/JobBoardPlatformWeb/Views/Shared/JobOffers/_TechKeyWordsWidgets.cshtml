@@ -1,7 +1,7 @@
 ﻿
 @model ITechKeywords
 @{
-    string[] addedKeywords = Model.TechKeywords;
+    string[] addedKeywords = Model.TechKeywords.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 }
 
 <div class="form-group">
@@ -19,7 +19,7 @@
                 <button type="button" class="removeElementButton bg-transparent border-0 align-self-center">
                     <i class="bi bi-x-lg text-secondary" style="font-size: 0.8rem;"></i>
                 </button>
-                <input asp-for="TechKeywords" class="techKeywordValue" style="display:none;" />
+                <input asp-for="TechKeywords" class="techKeywordValue" style="display:none;" value="@string.Empty" />
             </div>
         </div>
     </div>

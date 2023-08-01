@@ -2,7 +2,7 @@
 
 namespace JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures
 {
-    internal class OfferDataMock : INewOfferData
+    internal class OfferDataMock : IOfferData
     {
         public int OfferId { get; set; }
         public string JobTitle { get; set; }

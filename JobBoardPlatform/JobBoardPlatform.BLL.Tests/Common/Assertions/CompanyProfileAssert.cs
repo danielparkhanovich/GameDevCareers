@@ -34,6 +34,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Assertions
         {
             var offer = await testsUtils.GetOfferAsync(companyEmail, offerTitle);
             Assert.NotNull(offer);
+            var offerDetails = await testsUtils.GetOfferDetailsAsync(offer.Id);
+            Assert.NotNull(offerDetails);
         }
 
         public async Task OfferIsPublished(string companyEmail, string offerTitle)

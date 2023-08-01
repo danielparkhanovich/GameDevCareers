@@ -4,7 +4,7 @@ using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Mocks.Services
 {
-    internal class OffersCacheManagerMock : IOffersCacheManager
+    internal class OffersCacheManagerMock : IOfferCacheManager
     {
         public Task<EntitiesFilteringSearchResponse<JobOffer>> GetOffersFromCache()
         {

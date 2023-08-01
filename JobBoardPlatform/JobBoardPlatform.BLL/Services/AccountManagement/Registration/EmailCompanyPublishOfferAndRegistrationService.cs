@@ -21,7 +21,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         private readonly IConfirmationLinkFactory linkFactory;
         private readonly IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
         private readonly UserManager<CompanyIdentity> userManager;
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
 
 
         public EmailCompanyPublishOfferAndRegistrationService(
@@ -32,7 +32,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             IConfirmationLinkFactory linkFactory,
             IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService,
             UserManager<CompanyIdentity> userManager,
-            IOffersManager offersManager)
+            IOfferManager offersManager)
         {
             this.emailSender = emailSender;
             this.registrationTokensService = registrationTokensService;
@@ -106,7 +106,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             return userManager.AddNewUser(user);
         }
 
-        private Task CreateOffer(CompanyIdentity company, INewOfferData offerData)
+        private Task CreateOffer(CompanyIdentity company, IOfferData offerData)
         {
             return offersManager.AddAsync(company.ProfileId, offerData);
         }

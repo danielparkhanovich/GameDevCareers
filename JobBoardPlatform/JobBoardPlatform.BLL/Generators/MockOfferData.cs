@@ -2,7 +2,7 @@
 
 namespace JobBoardPlatform.BLL.Generators
 {
-    internal class MockOfferData : INewOfferData
+    internal class MockOfferData : IOfferData
     {
         public int OfferId { get; set; }
         public string JobTitle { get; set; }

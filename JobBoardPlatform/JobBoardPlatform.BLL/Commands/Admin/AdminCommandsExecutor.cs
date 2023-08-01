@@ -9,17 +9,17 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     {
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<CompanyIdentity> companyIdentityRepository;
-        private readonly IOffersCacheManager cacheManager;
+        private readonly IOfferCacheManager cacheManager;
         private readonly MainPageOffersSearcher offersSearcher;
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
 
 
         public AdminCommandsExecutor(
             IRepository<JobOffer> offersRepository,
             IRepository<CompanyIdentity> companyIdentityRepository,
-            IOffersCacheManager cacheManager,
+            IOfferCacheManager cacheManager,
             MainPageOffersSearcher offersSearcher,
-            IOffersManager offersManager)
+            IOfferManager offersManager)
         {
             this.offersRepository = offersRepository;
             this.companyIdentityRepository = companyIdentityRepository;

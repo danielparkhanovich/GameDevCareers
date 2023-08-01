@@ -54,7 +54,7 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddScoped<IValidator<CompanyRegisterViewModel>, CompanyRegisterValidator>();
             services.AddScoped<IValidator<CompanyPublishOfferAndRegisterViewModel>, CompanyPublishOfferAndRegisterValidator>();
             services.AddScoped<IValidator<UserPasswordViewModel>, UserPasswordValidator>();
-            services.AddScoped<IValidator<INewOfferData>, OfferFormDataValidator>();
+            services.AddScoped<IValidator<IOfferData>, OfferFormDataValidator>();
             services.AddScoped<IValidator<IProfileImage>, ProfileImageValidator>();
         }
 

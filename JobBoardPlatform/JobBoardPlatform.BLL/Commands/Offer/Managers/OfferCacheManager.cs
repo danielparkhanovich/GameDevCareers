@@ -4,7 +4,7 @@ using JobBoardPlatform.DAL.Repositories.Cache;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
 {
-    public class OffersCacheManager : IOffersCacheManager
+    public class OfferCacheManager : IOfferCacheManager
     {
         private const string MainPageOffersEntryKey = "MainPageOffers";
         private const string MainPageOffersCountEntryKey = "MainPageOffersCount";
@@ -13,7 +13,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         private readonly ICacheRepository<int> offersCountCache;
 
 
-        public OffersCacheManager(
+        public OfferCacheManager(
             ICacheRepository<List<JobOffer>> offersCache, 
             ICacheRepository<int> offersCountCache)
         {

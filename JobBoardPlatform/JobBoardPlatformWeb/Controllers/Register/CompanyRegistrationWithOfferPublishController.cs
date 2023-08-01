@@ -165,7 +165,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
             return viewModel;
         }
 
-        private IContainerCard CreateOfferCard(INewOfferData offerData, ICompanyProfileData companyProfile)
+        private IContainerCard CreateOfferCard(IOfferData offerData, ICompanyProfileData companyProfile)
         {
             var offerCardFactory = new OfferCardViewModelFromOfferFormFactory(offerData, companyProfile);
             return offerCardFactory.Create();

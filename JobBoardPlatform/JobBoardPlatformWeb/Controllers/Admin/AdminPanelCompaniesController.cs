@@ -22,14 +22,14 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         private readonly IRepository<CompanyIdentity> identityRepository;
         private readonly IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
         private readonly IRepository<CompanyProfile> profileRepository;
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
         private readonly IUserProfileImagesStorage imagesStorage;
 
 
         public AdminPanelCompaniesController(
             IRepository<CompanyIdentity> identityRepository,
             IRepository<CompanyProfile> profileRepository,
-            IOffersManager offersManager,
+            IOfferManager offersManager,
             IUserProfileImagesStorage imagesStorage,
             IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService) 
             : base(identityRepository)

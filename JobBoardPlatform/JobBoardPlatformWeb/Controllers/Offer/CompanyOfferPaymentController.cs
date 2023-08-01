@@ -21,16 +21,16 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Route("payment")]
     public class CompanyOfferPaymentController : Controller
     {
-        private readonly IOffersManager commandsExecutor;
+        private readonly IOfferManager commandsExecutor;
         private readonly IOfferQueryExecutor queryExecutor;
-        private readonly IValidator<INewOfferData> validator;
+        private readonly IValidator<IOfferData> validator;
         private readonly IPaymentInteractor paymentInteractor;
 
 
         public CompanyOfferPaymentController(
-            IOffersManager commandsExecutor, 
+            IOfferManager commandsExecutor, 
             IOfferQueryExecutor queryExecutor,
-            IValidator<INewOfferData> validator,
+            IValidator<IOfferData> validator,
             IPaymentInteractor paymentInteractor)
         {
             this.commandsExecutor = commandsExecutor;

@@ -3,9 +3,9 @@ using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Mappers
 {
-    public class NewOfferDataToJobOfferMapper : IMapper<INewOfferData, JobOffer>
+    public class JobOfferDataToEntityMapper : IMapper<IOfferData, JobOffer>
     {
-        public void Map(INewOfferData from, JobOffer to)
+        public void Map(IOfferData from, JobOffer to)
         {
             to.JobTitle = from.JobTitle;
             to.Description = from.JobDescription;
@@ -18,7 +18,10 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
 
             MapContactDetails(from, to);
 
-            MapOfferDetails(from, to);
+            if (from.EmploymentTypes != null)
+            {
+                MapOfferDetails(from, to);
+            }
 
             if (from.TechKeywords != null)
             {
@@ -26,7 +29,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             }
         }
 
-        private void MapContactDetails(INewOfferData from, JobOffer to)
+        private void MapContactDetails(IOfferData from, JobOffer to)
         {
             var contactDetails = new JobOfferContactDetails();
             contactDetails.ContactTypeId = from.ApplicationsContactType;
@@ -37,7 +40,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             to.ContactDetails = contactDetails;
         }
 
-        private void MapOfferDetails(INewOfferData from, JobOffer to)
+        private void MapOfferDetails(IOfferData from, JobOffer to)
         {
             var employmentDetails = new JobOfferEmploymentDetails[from.EmploymentTypes.Length];
 
@@ -62,11 +65,10 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
                     };
                 }
             }
-            //to.EmploymentDetails.Clear();
             to.EmploymentDetails = employmentDetails;
         }
 
-        private void MapTechKeywords(INewOfferData from, JobOffer to)
+        private void MapTechKeywords(IOfferData from, JobOffer to)
         {
             from.TechKeywords = from.TechKeywords!.Distinct().ToArray();
 

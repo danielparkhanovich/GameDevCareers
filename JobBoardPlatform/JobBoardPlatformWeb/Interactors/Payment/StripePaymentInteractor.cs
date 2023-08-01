@@ -7,13 +7,13 @@ namespace JobBoardPlatform.PL.Interactors.Payment
     public class StripePaymentInteractor : IPaymentInteractor
     {
         private readonly IOfferQueryExecutor queryExecutor;
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
         private readonly IHttpContextAccessor contextAccessor;
 
 
         public StripePaymentInteractor(
             IOfferQueryExecutor queryExecutor,
-            IOffersManager offersManager,
+            IOfferManager offersManager,
             IHttpContextAccessor contextAccessor)
         {
             this.queryExecutor = queryExecutor;

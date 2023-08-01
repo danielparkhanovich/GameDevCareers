@@ -42,8 +42,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Fixtures
         private void AddOffersManagementServices(ServiceCollection serviceCollection) 
         {
             serviceCollection.AddTransient<IOfferQueryExecutor, OfferQueryExecutorMock>();
-            serviceCollection.AddTransient<IOffersManager, OffersManager>();
-            serviceCollection.AddTransient<IOffersCacheManager, OffersCacheManagerMock>();
+            serviceCollection.AddTransient<IOfferManager, OfferManager>();
+            serviceCollection.AddTransient<IOfferCacheManager, OffersCacheManagerMock>();
             serviceCollection.AddTransient<MainPageOffersSearcher>();
         }
     }

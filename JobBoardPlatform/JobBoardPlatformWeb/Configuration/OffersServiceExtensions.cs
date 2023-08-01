@@ -21,8 +21,8 @@ namespace JobBoardPlatform.PL.Configuration
 
         private static void AddManagerServices(IServiceCollection services)
         {
-            services.AddTransient<IOffersManager, OffersManager>();
-            services.AddTransient<IOffersCacheManager, OffersCacheManager>();
+            services.AddTransient<IOfferManager, OfferManager>();
+            services.AddTransient<IOfferCacheManager, OfferCacheManager>();
             services.AddTransient<IOfferQueryExecutor, OfferQueryExecutor>();
         }
 

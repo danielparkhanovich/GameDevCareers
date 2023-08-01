@@ -16,7 +16,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
     internal class CompanyIntegrationTestsUtils
     {
         private readonly UserManager<CompanyIdentity> userManager;
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
         private readonly IPasswordHasher passwordHasher;
         private readonly IRepository<CompanyIdentity> repository;
         private readonly IRepository<CompanyProfile> profileRepository;
@@ -31,7 +31,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         public CompanyIntegrationTestsUtils(IServiceProvider serviceProvider)
         {
             userManager = serviceProvider.GetService<UserManager<CompanyIdentity>>()!;
-            offersManager = serviceProvider.GetService<IOffersManager>()!;
+            offersManager = serviceProvider.GetService<IOfferManager>()!;
             passwordHasher = serviceProvider.GetService<IPasswordHasher>()!;
             repository = serviceProvider.GetService<IRepository<CompanyIdentity>>()!;
             profileRepository = serviceProvider.GetService<IRepository<CompanyProfile>>()!;
@@ -234,7 +234,10 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
                 JobTitle = offerName,
                 ApplicationsContactType = 1,
                 ApplicationsContactEmail = GetExampleCompanyEmail(),
-                EmploymentTypes = new int[] { 1 },
+                EmploymentTypes = new int[] { 1, 3 },
+                SalaryFromRange = new int?[] { 7_000, 9_000 },
+                SalaryToRange = new int?[] { 15_000, 16_000 },
+                SalaryCurrencyType = new int[] { 1, 1 },
                 TechKeywords = new string[] { "C#", "OOP" },
                 City = "test",
                 Country = "test",

@@ -8,11 +8,11 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 {
     internal class OfferCardViewModelFromOfferFormFactory : IFactory<IContainerCard>
     {
-        private readonly INewOfferData offerData;
+        private readonly IOfferData offerData;
         private readonly ICompanyProfileData profileData;
 
 
-        public OfferCardViewModelFromOfferFormFactory(INewOfferData offerData, ICompanyProfileData profileData)
+        public OfferCardViewModelFromOfferFormFactory(IOfferData offerData, ICompanyProfileData profileData)
         {
             this.offerData = offerData;
             this.profileData = profileData;
@@ -32,9 +32,9 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             return offerCardViewModelFactory.CreateCard(offer);
         }
 
-        private void MapOfferData(INewOfferData from, JobOffer to)
+        private void MapOfferData(IOfferData from, JobOffer to)
         {
-            var mapper = new NewOfferDataToJobOfferMapper();
+            var mapper = new JobOfferDataToEntityMapper();
             mapper.Map(from, to);
         }
 

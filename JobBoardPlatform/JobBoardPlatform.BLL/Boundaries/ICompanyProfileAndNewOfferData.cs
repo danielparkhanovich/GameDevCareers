@@ -3,6 +3,6 @@
     public interface ICompanyProfileAndNewOfferData
     {
         ICompanyProfileData CompanyProfileData { get; set; }
-        INewOfferData OfferData { get; set; }
+        IOfferData OfferData { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
 {
-    public interface IOffersCacheManager
+    public interface IOfferCacheManager
     {
         Task<EntitiesFilteringSearchResponse<JobOffer>> GetOffersFromCache();
         Task UpdateCache(EntitiesFilteringSearchResponse<JobOffer> searchResponse);

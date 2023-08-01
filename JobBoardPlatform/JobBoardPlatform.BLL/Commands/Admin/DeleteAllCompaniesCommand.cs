@@ -11,14 +11,14 @@ namespace JobBoardPlatform.BLL.Commands.Admin
     /// </summary>
     public class DeleteAllCompaniesCommand : ICommand
     {
-        private readonly IOffersManager offersManager;
+        private readonly IOfferManager offersManager;
         private readonly IRepository<CompanyIdentity> repository;
         private readonly IRepository<CompanyProfile> profileRepository;
         private readonly IUserProfileImagesStorage imagesStorage;
 
 
         public DeleteAllCompaniesCommand(
-            IOffersManager offersManager,
+            IOfferManager offersManager,
             IRepository<CompanyIdentity> repository,
             IRepository<CompanyProfile> profileRepository,
             IUserProfileImagesStorage imagesStorage)

@@ -1,6 +1,6 @@
 ﻿namespace JobBoardPlatform.BLL.Boundaries
 {
-    public interface INewOfferData
+    public interface IOfferData
     {
         int OfferId { get; set; }
 

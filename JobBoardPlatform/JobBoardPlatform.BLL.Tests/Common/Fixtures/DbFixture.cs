@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Azure.Storage.Blobs;
 using JobBoardPlatform.DAL.Repositories.Blob.Settings;
 using JobBoardPlatform.IntegrationTests.Common.Mocks.Services;
+using JobBoardPlatform.DAL.Managers;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Fixtures
 {
@@ -51,6 +52,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Fixtures
                 options.UseInMemoryDatabase(GetUniqueName("IntegrationTestSqlDatabase"));
             });
             serviceCollection.AddTransient(typeof(IRepository<>), typeof(CoreRepository<>));
+            serviceCollection.AddTransient<OfferModelData>();
         }
 
         private void AddAzureStorages(ServiceCollection serviceCollection)

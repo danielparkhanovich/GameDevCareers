@@ -45,7 +45,7 @@ namespace JobBoardPlatform.BLL.Commands.Admin
                 for (int i = 0; i < offersCount; i++)
                 {
                     var data = offersGenerator.GenerateData(companyIdentity);
-                    var addNewOfferCommand = new AddNewOfferCommand(companyIdentity.ProfileId,
+                    var addNewOfferCommand = new AddOfferCommand(companyIdentity.ProfileId,
                         data,
                         offersRepository);
                     await addNewOfferCommand.Execute();
