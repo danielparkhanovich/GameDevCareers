@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.Internal;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.IntegrationTests.Common.TestFiles
 {
@@ -8,19 +7,24 @@ namespace JobBoardPlatform.IntegrationTests.Common.TestFiles
         public static IFormFile GetExampleResumeFile()
         {
             string directoryPath = Directory.GetCurrentDirectory();
-            return GetFileAsFormFile(Path.Combine(directoryPath, "../../../Common/TestFiles/Resumes/resume0.pdf"), "application/pdf");
+            return GetFileAsFormFile(Path.Combine(directoryPath, $"{GetFilesPathPrefix()}/Resumes/resume0.pdf"), "application/pdf");
         }
 
         public static IFormFile GetEmployeeProfileImageFile()
         {
             string directoryPath = Directory.GetCurrentDirectory();
-            return GetFileAsFormFile(Path.Combine(directoryPath, "../../../Common/TestFiles/Images/userProfileImage0.png"), "image/bitmap");
+            return GetFileAsFormFile(Path.Combine(directoryPath, $"{GetFilesPathPrefix()}/Images/userProfileImage0.png"), "image/bitmap");
         }
 
         public static IFormFile GetCompanyProfileImageFile()
         {
             string directoryPath = Directory.GetCurrentDirectory();
-            return GetFileAsFormFile(Path.Combine(directoryPath, "../../../Common/TestFiles/Images/companyLogo0.jpg"), "image/bitmap");
+            return GetFileAsFormFile(Path.Combine(directoryPath, $"{GetFilesPathPrefix()}/Images/companyLogo0.jpg"), "image/bitmap");
+        }
+
+        private static string GetFilesPathPrefix()
+        {
+            return "../../../Common/TestFiles";
         }
 
         private static IFormFile GetFileAsFormFile(string filePath, string contentType)

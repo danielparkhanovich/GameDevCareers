@@ -12,6 +12,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Session;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

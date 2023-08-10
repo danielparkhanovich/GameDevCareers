@@ -7,7 +7,7 @@ namespace JobBoardPlatform.PL.Configuration
     {
         public static void AddBackgroundServices(this IServiceCollection services)
         {
-            services.AddHostedService<OfferExpirationChecker>();
+            services.AddHostedService<ExpiredOffersBackgroundCleaner>();
         }
     }
 }

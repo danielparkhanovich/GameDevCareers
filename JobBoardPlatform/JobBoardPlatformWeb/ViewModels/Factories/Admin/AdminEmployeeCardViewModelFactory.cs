@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models.Employee;
+using JobBoardPlatform.PL.Controllers.Utils;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
@@ -17,12 +18,17 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Admin
             card.Surname = employee.Profile.Surname;
             card.Country = employee.Profile.Country;
             card.City = employee.Profile.City;
-            card.ProfileImageUrl = employee.Profile.ProfileImageUrl;
+            card.ProfileImageUrl = GetProfileImageUri(employee);
             card.AttachedResumeUrl = employee.Profile.ResumeUrl;
             card.YearsOfExperience = employee.Profile.YearsOfExperience;
             card.LinkedInUrl = employee.Profile.LinkedInUrl;
 
             return card;
+        }
+
+        private string GetProfileImageUri(EmployeeIdentity employee)
+        {
+            return StaticFilesUtils.GetEmployeeDefaultAvatarUriIfEmpty(employee.Profile.ProfileImageUrl);
         }
     }
 }

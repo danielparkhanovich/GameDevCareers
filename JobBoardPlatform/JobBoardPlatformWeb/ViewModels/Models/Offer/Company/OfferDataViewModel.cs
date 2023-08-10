@@ -3,7 +3,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Offer.Company.Contracts;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
 {
-    public class OfferDetailsViewModel : IOfferSalary, IMainTechnology, ITechKeywords, IOfferData
+    public class OfferDataViewModel : IMainTechnology, ITechKeywords, IOfferData, IOfferSalary
     {
         public int OfferId { get; set; }
         public string JobTitle { get; set; } = string.Empty;
@@ -14,10 +14,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
         public int ApplicationsContactType { get; set; }
         public string? ApplicationsContactEmail { get; set; }
         public int MainTechnologyType { get; set; } = 1;
-        public int[] EmploymentTypes { get; set; } = new int[1] { 0 };
-        public int?[] SalaryFromRange { get; set; } = new int?[1] { null };
-        public int?[] SalaryToRange { get; set; } = new int?[1] { null };
-        public int[] SalaryCurrencyType { get; set; } = new int[1] { 0 };
+        public EmploymentType[] EmploymentTypes { get; set; } = new EmploymentType[1] { new EmploymentType() };
         public string[]? TechKeywords { get; set; }
         public string? Street { get; set; }
         public string? ApplicationsContactExternalFormUrl { get; set; }

@@ -47,7 +47,11 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             {
                 return RedirectToOffersPanel();
             }
-            
+
+            TempData[CompanyOfferEditorController.NextActionTempData] = RouteData.Values["action"].ToString();
+            TempData[CompanyOfferEditorController.NextControllerTempData] = RouteData.Values["controller"].ToString();
+            TempData[CompanyOfferEditorController.OfferIdTempData] = RouteData.Values["offerId"].ToString();
+
             var viewModel = await GetViewModel(offer);
             return View(viewModel);
         }
@@ -72,8 +76,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             }
 
             var offer = await queryExecutor.GetOfferById(offerId);
-            var viewModel = GetOfferCard(offer);
-            return View(viewModel);
+            var viewModel = await GetViewModel(offer);
+            return View(viewModel.OfferCard);
         }
 
         [Route("check-out-{offerId}/rejected")]
@@ -90,26 +94,10 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return RedirectToAction("Offers", controller);
         }
 
-        private async Task<OfferPaymentFormViewModel> GetViewModel(JobOffer offer)
+        private Task<OfferPaymentFormViewModel> GetViewModel(JobOffer offer)
         {
-            var viewModel = new OfferPaymentFormViewModel();
-            viewModel.OfferCard = GetOfferCard(offer);
-            viewModel.SelectedPlan = await GetSelectedPlan();
-            viewModel.OfferId = offer.Id;
-            return viewModel;
-        }
-
-        private OfferCardViewModel GetOfferCard(JobOffer offer)
-        {
-            var cardFactory = new OfferCardViewModelFactory();
-            var card = cardFactory.CreateCard(offer);
-            return card as OfferCardViewModel;
-        }
-
-        private async Task<OfferPricingTableViewModel> GetSelectedPlan()
-        {
-            var factory = new OfferPricingTableViewModelFactory(3);
-            return await factory.CreateAsync();
+            var factory = new OfferPaymentFormViewModelFactory(offer);
+            return factory.CreateAsync();
         }
     }
 }

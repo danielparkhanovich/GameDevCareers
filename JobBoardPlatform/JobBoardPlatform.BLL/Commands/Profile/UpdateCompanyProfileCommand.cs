@@ -2,6 +2,7 @@
 using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Profile

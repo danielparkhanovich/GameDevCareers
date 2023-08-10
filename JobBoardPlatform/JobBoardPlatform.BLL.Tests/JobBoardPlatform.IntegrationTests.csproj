@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\JobBoardPlatform.BLL\JobBoardPlatform.BLL.csproj" />
     <ProjectReference Include="..\JobBoardPlatform.DAL\JobBoardPlatform.DAL.csproj" />
+    <ProjectReference Include="..\JobBoardPlatformWeb\JobBoardPlatform.PL.csproj" />
   </ItemGroup>
 
 </Project>

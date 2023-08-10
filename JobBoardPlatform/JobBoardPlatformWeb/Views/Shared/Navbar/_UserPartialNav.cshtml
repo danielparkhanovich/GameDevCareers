@@ -1,6 +1,7 @@
 ﻿@using System.Security.Claims;
 @using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 @using JobBoardPlatform.PL.Controllers.Profile;
+@using JobBoardPlatform.PL.Controllers.Utils;
 @using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile;
 
 @{
@@ -10,11 +11,8 @@
         userName = "User";
     }
 
-    string? userImageUrl = User.FindFirstValue(UserSessionProperties.DisplayImageUrl);
-    if (string.IsNullOrEmpty(userImageUrl))
-    {
-        userImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
-    }
+    string? savedImageUrl = User.FindFirstValue(UserSessionProperties.DisplayImageUrl);
+    string userImageUrl = StaticFilesUtils.GetDefaultAvatarUriIfEmpty(savedImageUrl, User);
 
     string role = UserSessionUtils.GetRole(User);
     var factory = new ProfileTabsViewModelFactory(role);

@@ -11,6 +11,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

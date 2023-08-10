@@ -27,6 +27,11 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Login
 
         public async Task SignInHttpContextAsync(HttpContext httpContext, int userId)
         {
+            if (UserSessionUtils.IsLoggedIn(httpContext.User))
+            {
+                await SignOutHttpContextAsync(httpContext);
+            }
+
             var data = await GetAuthorizationDataAsync(userId);
 
             List<Claim> claims = new List<Claim>();

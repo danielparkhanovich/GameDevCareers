@@ -4,11 +4,11 @@ using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
 {
-    public class OfferDetailsViewModelFactory : IViewModelFactory<JobOffer, OfferDetailsViewModel>
+    public class OfferDetailsViewModelFactory : IViewModelFactory<JobOffer, OfferDataViewModel>
     {
-        public OfferDetailsViewModel Create(JobOffer offer)
+        public OfferDataViewModel Create(JobOffer offer)
         {
-            var viewModel = new OfferDetailsViewModel()
+            var viewModel = new OfferDataViewModel()
             {
                 OfferId = offer.Id,
                 JobTitle = offer.JobTitle,
@@ -16,18 +16,40 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
                 Country = offer.Country,
                 Street = offer.Address,
                 JobDescription = offer.Description,
-                ApplicationsContactEmail = offer.ContactDetails.ContactAddress,
-                ApplicationsContactType = offer.ContactDetails.ContactTypeId,
                 MainTechnologyType = offer.MainTechnologyTypeId,
                 WorkLocationType = offer.WorkLocationId,
-                SalaryFromRange = offer.EmploymentDetails.Select(x => (int?)x.SalaryRange?.From).ToArray(),
-                SalaryToRange = offer.EmploymentDetails.Select(x => (int?)x.SalaryRange?.To).ToArray(),
-                SalaryCurrencyType = offer.EmploymentDetails.Select(x => x.SalaryRange.SalaryCurrencyId).ToArray(),
-                EmploymentTypes = offer.EmploymentDetails.Select(x => x.EmploymentTypeId).ToArray(),
+                EmploymentTypes = offer.EmploymentDetails.Select(x => GetEmploymentType(x)).ToArray(),
                 TechKeywords = offer.TechKeywords.Select(x => x.Name).ToArray(),
             };
 
+            MapContactType(offer, viewModel);
+
             return viewModel;
+        }
+
+        private EmploymentTypeViewModel GetEmploymentType(JobOfferEmploymentDetails employment)
+        {
+            return new EmploymentTypeViewModel()
+            {
+                SalaryFromRange = (int?)employment.SalaryRange?.From,
+                SalaryToRange = (int?)employment.SalaryRange?.To,
+                SalaryCurrencyType = employment.SalaryRange?.SalaryCurrencyId,
+                TypeId = employment.EmploymentTypeId
+            };
+        }
+
+        private void MapContactType(JobOffer from, OfferDataViewModel to)
+        {
+            to.ApplicationsContactType = from.ContactDetails.ContactTypeId;
+
+            if (from.ContactDetails.ContactTypeId == 1)
+            {
+                to.ApplicationsContactEmail = from.ContactDetails.ContactAddress;
+            }
+            else if (from.ContactDetails.ContactTypeId == 2)
+            {
+                to.ApplicationsContactExternalFormUrl = from.ContactDetails.ContactAddress;
+            }
         }
     }
 }

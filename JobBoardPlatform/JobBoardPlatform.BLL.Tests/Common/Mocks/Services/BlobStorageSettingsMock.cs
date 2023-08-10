@@ -2,6 +2,7 @@
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.Settings;
 using JobBoardPlatform.IntegrationTests.Common.Fixtures;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Mocks.Services
 {

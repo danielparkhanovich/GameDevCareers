@@ -11,6 +11,7 @@ using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Session;
 using Microsoft.AspNetCore.Http;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {

@@ -4,7 +4,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache.Tokens
 {
     public class CompanyRegistrationConfirmationTokensCacheRepository : CacheRepositoryCore<ConfirmationToken>
     {
-        private const int CacheExpirationTimeInMinutes = 120;
+        public const int CacheExpirationTimeInMinutes = 120;
 
 
         public CompanyRegistrationConfirmationTokensCacheRepository(IDistributedCache cache) : base(cache)

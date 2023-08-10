@@ -33,9 +33,15 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
         {
             var contactDetails = new JobOfferContactDetails();
             contactDetails.ContactTypeId = from.ApplicationsContactType;
-
-            // ApplicationsContactEmailAddress is null in case of private messages on the website
-            contactDetails.ContactAddress = from.ApplicationsContactEmail;
+            if (contactDetails.ContactTypeId == 1)
+            {
+                contactDetails.ContactAddress = from.ApplicationsContactEmail;
+            }
+            else if (contactDetails.ContactTypeId == 2)
+            {
+                contactDetails.ContactAddress = from.ApplicationsContactExternalFormUrl;
+            }
+            // ContactTypeId == 3 / ApplicationsContactEmailAddress is null in case of private messages on the website
 
             to.ContactDetails = contactDetails;
         }
@@ -46,26 +52,30 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
 
             for (int i = 0; i < from.EmploymentTypes.Length; i++)
             {
-                int employmentTypeId = from.EmploymentTypes[i];
+                var employment = from.EmploymentTypes[i];
 
                 employmentDetails[i] = new JobOfferEmploymentDetails();
-                employmentDetails[i].EmploymentTypeId = employmentTypeId;
-
-                int? currencyTypeId = from.SalaryCurrencyType?[i] ?? null;
-                int? salaryFrom = from.SalaryFromRange?[i] ?? null;
-                int? salaryTo = from.SalaryToRange?[i] ?? null;
-
-                if (currencyTypeId.HasValue && salaryFrom.HasValue && salaryTo.HasValue)
-                {
-                    employmentDetails[i].SalaryRange = new JobOfferSalariesRange()
-                    {
-                        From = salaryFrom.Value,
-                        To = salaryTo.Value,
-                        SalaryCurrencyId = currencyTypeId.Value
-                    };
-                }
+                employmentDetails[i].EmploymentTypeId = employment.TypeId;
+                MapSalaryRange(employment, employmentDetails[i]);
             }
             to.EmploymentDetails = employmentDetails;
+        }
+
+        private void MapSalaryRange(EmploymentType employment, JobOfferEmploymentDetails model)
+        {
+            int? currencyTypeId = employment.SalaryCurrencyType ?? null;
+            int? salaryFrom = employment.SalaryFromRange ?? null;
+            int? salaryTo = employment.SalaryToRange ?? null;
+
+            if (currencyTypeId.HasValue && salaryFrom.HasValue && salaryTo.HasValue)
+            {
+                model.SalaryRange = new JobOfferSalariesRange()
+                {
+                    From = salaryFrom.Value,
+                    To = salaryTo.Value,
+                    SalaryCurrencyId = currencyTypeId.Value
+                };
+            }
         }
 
         private void MapTechKeywords(IOfferData from, JobOffer to)

@@ -1,10 +1,9 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
+﻿using JobBoardPlatform.BLL.Boundaries;
+
+namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
 {
-    public class EmploymentTypeViewModel
+    public class EmploymentTypeViewModel : EmploymentType
     {
-        public int EmploymentType { get; set; }
-        public int? SalaryFromRange { get; set; }
-        public int? SalaryToRange { get; set; }
-        public int? SalaryCurrencyType { get; set; }
+
     }
 }

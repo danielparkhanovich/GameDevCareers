@@ -44,7 +44,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             this.offersManager = offersManager;
         }
 
-        public async Task TrySendConfirmationTokenAndPasswordAsync(string email, string password, string formDataTokenId)
+        public async Task TrySendConfirmationTokenAsync(string email, string password, string formDataTokenId)
         {
             if (await userManager.GetUserByEmailAsync(email) != null)
             {
@@ -66,14 +66,13 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             }
 
             var dataToken = await GetDataToken(tokenId);
-            dataToken.IsConfirmed = true;
 
             await RegisterUser(registrationToken, dataToken.Value.CompanyProfileData);
 
             var addedUser = await userManager.GetUserByEmailAsync(registrationToken.RelatedLogin);
             await authorizationService.SignInHttpContextAsync(httpContext, addedUser.Id);
 
-            // await CreateOffer(addedUser, dataToken.Value.OfferData);
+            await CreateOffer(addedUser, dataToken.Value.OfferData);
         }
 
         private string GetConfirmationUrl(string tokenId)
@@ -96,7 +95,8 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         private async Task<DataToken<ICompanyProfileAndNewOfferData>> GetDataToken(string tokenId)
         {
             var confirmationToken = await confirmationTokensService.TryGetTokenAsync(tokenId);
-            return await dataTokensService.TryGetTokenAsync(confirmationToken.TokenToConfirmId);
+            var dataToken = await dataTokensService.TryGetTokenAsync(confirmationToken.TokenToConfirmId);
+            return dataToken;
         }
 
         private Task RegisterUser(RegistrationToken token, ICompanyProfileData profileData)

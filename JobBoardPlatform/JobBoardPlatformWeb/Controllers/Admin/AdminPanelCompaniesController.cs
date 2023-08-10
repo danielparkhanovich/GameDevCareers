@@ -6,6 +6,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;

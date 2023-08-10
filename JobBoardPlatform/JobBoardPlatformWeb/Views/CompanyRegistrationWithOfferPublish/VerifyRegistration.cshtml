@@ -1,15 +1,26 @@
 ﻿@using JobBoardPlatform.PL.Controllers.Register;
+@using JobBoardPlatform.PL.Interactors.Notifications;
 @using JobBoardPlatform.PL.ViewModels.Models.Registration;
 
 @model CompanyVerifyPublishOfferAndRegistrationViewModel
 @{
     ViewData["Title"] = "Post a job";
+    ViewData["IsHideSignIn"] = true;
     string tokenId = Model.FormDataTokenId;
+
+    var paymentNotification = NotificationsManager.Instance.TryGetNotification(
+        NotificationsManager.PaymentSection, TempData);
+
+    int stage = 2;
+    if (Model.PaymentForm.OfferCard.Id != 0)
+    {
+        stage = 3;
+    }
 }
 
 <div class="container-xl px-4 pt-4">
 
-    <partial name="./Register/_CompanyRegistrationStageIndicator" model="2" />
+    <partial name="./Register/_CompanyRegistrationStageIndicator" model="@stage" />
 
     <div class="card border-0 shadow-lg p-2">
         <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
@@ -21,25 +32,17 @@
         </div>
         @if (Model.IsTokenConfirmed)
         {
-            <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
-                <strong>Offer card</strong>
+            <div class="card-body mb-2">
+                <!-- Notification -->
+                <partial name="./Notifications/_ActionNotification" model="paymentNotification" />
+
+                <!-- Payment form -->
+                <partial name="./JobOffers/_JobOfferPaymentForm" for="@Model.PaymentForm" />
             </div>
+
+            <!-- Submit button -->
             <div class="card-body">
-                <div class="bg-info bg-opacity-10 py-1">
-                    <div class="mx-2 my-2 card border-0">
-                        <partial name="./JobOffers/_JobOffer" model="@Model.OfferCard" />
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <a class="btn btn-sm btn-outline-secondary me-2" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
-                        <i class="bi bi-arrow-left"></i>
-                        Back to edit
-                    </a>
-                    <a class="btn btn-sm btn-outline-secondary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
-                        <i class="bi bi-file-text"></i>
-                        Check preview
-                    </a>
-                </div>
+                <a asp-action="CheckOut" asp-controller="CompanyOfferPayment" asp-route-offerId="@Model.PaymentForm.OfferCard.Id" class="btn btn-primary btn-block">Check Out</a>
             </div>
         }
         else

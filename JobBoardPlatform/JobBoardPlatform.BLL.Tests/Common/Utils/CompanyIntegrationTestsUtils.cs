@@ -6,9 +6,11 @@ using JobBoardPlatform.BLL.Commands.Profile;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures;
 using JobBoardPlatform.IntegrationTests.Common.TestFiles;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Utils
@@ -227,21 +229,39 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             await updateCommand.Execute();
         }
 
-        private OfferDataMock GetExampleOfferData(string offerName)
+        private OfferDataViewModel GetExampleOfferData(string offerName)
         {
-            return new OfferDataMock()
+            return new OfferDataViewModel()
             {
                 JobTitle = offerName,
                 ApplicationsContactType = 1,
                 ApplicationsContactEmail = GetExampleCompanyEmail(),
-                EmploymentTypes = new int[] { 1, 3 },
-                SalaryFromRange = new int?[] { 7_000, 9_000 },
-                SalaryToRange = new int?[] { 15_000, 16_000 },
-                SalaryCurrencyType = new int[] { 1, 1 },
+                EmploymentTypes = GetExampleEmploymentTypes(),
                 TechKeywords = new string[] { "C#", "OOP" },
                 City = "test",
                 Country = "test",
                 JobDescription = "test"
+            };
+        }
+
+        private EmploymentTypeViewModel[] GetExampleEmploymentTypes()
+        {
+            return new EmploymentTypeViewModel[2]
+            {
+                new EmploymentTypeViewModel()
+                {
+                    TypeId = 1,
+                    SalaryFromRange = 7_000,
+                    SalaryToRange = 9_000,
+                    SalaryCurrencyType = 1,
+                },
+                new EmploymentTypeViewModel()
+                {
+                    TypeId = 3,
+                    SalaryFromRange = 9_000,
+                    SalaryToRange = 11_000,
+                    SalaryCurrencyType = 1,
+                }
             };
         }
     }

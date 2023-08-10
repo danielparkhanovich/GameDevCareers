@@ -19,8 +19,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens
             return new DataToken<T>()
             {
                 Id = tokenId,
-                Value = data,
-                IsConfirmed = false,
+                Value = data
             };
         }
 

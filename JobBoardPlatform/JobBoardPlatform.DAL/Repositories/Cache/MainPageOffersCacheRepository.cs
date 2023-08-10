@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
 using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 
 namespace JobBoardPlatform.DAL.Repositories.Cache
 {

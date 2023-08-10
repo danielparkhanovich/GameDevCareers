@@ -1,5 +1,10 @@
-﻿
-@model IOfferSalary
+﻿@model IOfferSalary
+@{
+    if (Model.EmploymentTypes == null || Model.EmploymentTypes.Length == 0)
+    {
+        Model.EmploymentTypes = new EmploymentType[] { new EmploymentType() };
+    }
+}
 
 <div>
     <div id="offer-employment-details-container" class="mb-2">                
@@ -9,25 +14,25 @@
                 <div id="offer-employment-details-template">
                     <div class="d-flex flex-row justify-content-between gx-3 offer-employment-details">
                         <div class="flex-grow-1 pe-3">
-                            <select asp-for="EmploymentTypes[i]" class="form-select h-100" aria-label="Employment type">
+                            <select asp-for="@Model.EmploymentTypes[i].TypeId" class="form-select h-100" aria-label="Employment type">
                                 <option value="0" selected>Employment type <span class="text-danger">*</span></option>
                                 <option value="1">Permanent</option>
-                                <option value="2">Mandate contract</option>
-                                <option value="3">B2B</option>
+                                <option value="2">B2B</option>
+                                <option value="3">Mandate contract</option>
                             </select>
                         </div>
                         <div class="d-flex flex-row justify-content-center me-3 flex-grow-1">
                             <div class="form-floating flex-grow-1 me-3">
-                                <input asp-for="SalaryFromRange[i]" type="text" class="form-control" placeholder="Monthly salary from (gross)">
-                                <label asp-for="SalaryFromRange[i]">Monthly salary from (gross)</label>
+                                <input asp-for="@Model.EmploymentTypes[i].SalaryFromRange" type="text" class="form-control" placeholder="Monthly salary from (gross)">
+                                <label asp-for="@Model.EmploymentTypes[i].SalaryFromRange">Monthly salary from (gross)</label>
                             </div>
                             <div class="form-floating flex-grow-1">
-                                <input asp-for="SalaryToRange[i]" type="text" class="form-control" placeholder="Monthly salary to (gross)">
-                                <label asp-for="SalaryToRange[i]">Monthly salary to (gross)</label>
+                                <input asp-for="@Model.EmploymentTypes[i].SalaryToRange" type="text" class="form-control" placeholder="Monthly salary to (gross)">
+                                <label asp-for="@Model.EmploymentTypes[i].SalaryToRange">Monthly salary to (gross)</label>
                             </div>
                         </div>
                         <div>
-                            <select asp-for="SalaryCurrencyType[i]" class="form-select h-100" aria-label="Default select example">
+                            <select asp-for="@Model.EmploymentTypes[i].SalaryCurrencyType" class="form-select h-100" aria-label="Default select example">
                                 <option value="0" selected>Currency</option>
                                 <option value="1">PLN</option>
                                 <option value="2">EUR</option>
@@ -36,13 +41,13 @@
                     </div>
                 </div>
                 <div class="d-flex flex-column">
-                    <span asp-validation-for="EmploymentTypes[i]" class="text-danger"></span>
-                    <span asp-validation-for="SalaryFromRange[i]" class="text-danger"></span>
-                    <span asp-validation-for="SalaryToRange[i]" class="text-danger"></span>
-                    <span asp-validation-for="SalaryCurrencyType[i]" class="text-danger"></span>
+                    <span asp-validation-for="@Model.EmploymentTypes[i]" class="text-danger"></span>
                 </div>
             </div>
         }
+    </div>
+    <div class="d-flex flex-column">
+        <span asp-validation-for="@Model.EmploymentTypes" class="text-danger"></span>
     </div>
     <button type="button" id="addButton" class="btn btn-outline-primary btn-block mt-2">Add one more employment type</button>
     <button type="button" id="deleteButton" class="d-none btn btn-outline-danger btn-block mt-2">Delete employment type</button>

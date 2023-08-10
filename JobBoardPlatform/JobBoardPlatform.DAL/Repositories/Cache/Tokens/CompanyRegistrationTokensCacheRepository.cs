@@ -5,7 +5,7 @@ namespace JobBoardPlatform.DAL.Repositories.Cache.Tokens
 {
     public class CompanyRegistrationTokensCacheRepository<T> : CacheRepositoryCore<DataToken<T>>
     {
-        private const int CacheExpirationTimeInMinutes = 120;
+        public const int CacheExpirationTimeInMinutes = 120;
 
         private readonly JsonSerializerSettings serializerSettings;
 

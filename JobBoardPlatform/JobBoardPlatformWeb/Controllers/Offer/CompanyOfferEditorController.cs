@@ -14,8 +14,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Route("offer")]
     public class CompanyOfferEditorController : Controller
     {
-        public const string AddNewOfferAction = "AddNewOffer";
+        public const string AddNewOfferAction = "Editor";
         public const string EditOfferAction = "Editor";
+
+        public const string NextActionTempData = "NextAction";
+        public const string NextControllerTempData = "NextController";
+        public const string OfferIdTempData = "OfferId";
 
         private readonly IOfferManager offersManager;
         private readonly IValidator<IOfferData> validator;
@@ -36,9 +40,9 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return View(viewModel);
         }
 
-        [HttpPost("new")]
+        [HttpPost("new", Order = 1)]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddNewOffer(EditOfferViewModel viewModel)
+        public async Task<IActionResult> Editor(EditOfferViewModel viewModel)
         {
             return await TryAddNewOfferAsync(viewModel);
         }
@@ -52,7 +56,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return View(viewModel);
         }
 
-        [HttpPost("edit-{offerId}")]
+        [HttpPost("edit-{offerId}", Order = 0)]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
         public async Task<IActionResult> Editor(int offerId, EditOfferViewModel viewModel)
@@ -61,7 +65,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return await TryUpdateOfferAsync(viewModel);
         }
 
-        private async Task<OfferDetailsViewModel> GetOfferDetailsViewModelAsync(int offerId)
+        private async Task<OfferDataViewModel> GetOfferDetailsViewModelAsync(int offerId)
         {
             var offer = await offersManager.GetAsync(offerId);
             var viewModelFactory = new OfferDetailsViewModelFactory();
@@ -75,7 +79,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             {
                 int profileId = UserSessionUtils.GetProfileId(User);
                 await offersManager.AddAsync(profileId, viewModel.OfferDetails);
-                return RedirectToAction("Offers", "CompanyOffersPanel");
+                return RedirectOnSuccess();
             }
             else
             {
@@ -91,7 +95,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             if (result.IsValid)
             {
                 await offersManager.UpdateAsync(viewModel.OfferDetails);
-                return RedirectToAction("Offers", "CompanyOffersPanel");
+                return RedirectOnSuccess();
             }
             else
             {
@@ -99,6 +103,21 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             }
 
             return View(viewModel);
+        }
+
+        private IActionResult RedirectOnSuccess()
+        {
+            if (TempData[NextActionTempData] != null && TempData[NextControllerTempData] != null)
+            {
+                string nextAction = (string)TempData[NextActionTempData];
+                string nextController = (string)TempData[NextControllerTempData];
+                string offerId = (string)TempData[OfferIdTempData];
+                return RedirectToAction(nextAction, nextController, new { offerId = offerId });
+            }
+            else
+            {
+                return RedirectToAction("Offers", "CompanyOffersPanel");
+            }
         }
     }
 }

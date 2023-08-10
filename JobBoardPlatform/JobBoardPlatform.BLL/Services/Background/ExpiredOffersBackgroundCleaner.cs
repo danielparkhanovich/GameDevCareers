@@ -1,21 +1,20 @@
 ﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.DAL.Data;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace JobBoardPlatform.BLL.Services.Background
 {
-    public class OfferExpirationChecker : BackgroundService
+    public class ExpiredOffersBackgroundCleaner : BackgroundService
     {
         private const int CheckDelayTimeInDays = 1;
 
         private readonly IServiceScopeFactory serviceScopeFactory;
 
 
-        public OfferExpirationChecker(IServiceScopeFactory serviceScopeFactory)
+        public ExpiredOffersBackgroundCleaner(IServiceScopeFactory serviceScopeFactory)
         {
             this.serviceScopeFactory = serviceScopeFactory;
         }

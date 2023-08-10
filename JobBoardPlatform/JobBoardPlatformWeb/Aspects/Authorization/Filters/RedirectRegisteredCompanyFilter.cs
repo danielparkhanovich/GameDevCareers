@@ -20,8 +20,8 @@ namespace JobBoardPlatform.PL.Filters
 
         private void RedirectCompany(AuthorizationFilterContext context)
         {
-            string controller = ControllerUtils.GetControllerName(typeof(CompanyOffersPanelController));
-            context.Result = new RedirectToActionResult("Offers", controller, null);
+            string controller = ControllerUtils.GetControllerName(typeof(CompanyOfferEditorController));
+            context.Result = new RedirectToActionResult("Editor", controller, null);
         }
     }
 }

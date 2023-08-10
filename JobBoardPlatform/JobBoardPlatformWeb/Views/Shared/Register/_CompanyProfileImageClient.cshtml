@@ -1,11 +1,8 @@
 ﻿@using JobBoardPlatform.PL.Aspects.DataValidators;
+@using JobBoardPlatform.PL.Controllers.Utils;
 @model IProfileImage
 @{
-    string? userImageUrl = Model.ImageUrl;
-    if (string.IsNullOrEmpty(userImageUrl))
-    {
-        userImageUrl = "/Resources/defaultCompany.png";
-    }
+    string userImageUrl = StaticFilesUtils.GetCompanyDefaultAvatarUriIfEmpty(Model.ImageUrl);
 }
 
 <div class="text-center mb-4 me-4">
@@ -18,6 +15,7 @@
     <div class="small font-italic text-muted mb-2">JPG or PNG no larger than 1 MB</div>
     <!-- Profile picture upload button-->
     <input asp-for="File" class="form-control" id="profileImage-input" type="file" accept="image/png, image/jpeg" style="display:none" />
+    <input asp-for="ImageUrl" style="display: none;" />
     <button class="btn btn-outline-primary" id="profileImage-button" type="button">Upload logo</button>
 </div>
 

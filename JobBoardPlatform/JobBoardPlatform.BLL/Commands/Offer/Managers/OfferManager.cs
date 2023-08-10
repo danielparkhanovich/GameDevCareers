@@ -45,7 +45,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 
         public async Task UpdateAsync(IOfferData offerData)
         {
-            var command = new UpdateOfferCommand(offerData, offerModel);
+            var command = new UpdateOfferCommand(offerData, this, offerModel);
             await ExecuteCommandAndUpdateCacheAsync(command);
         }
 

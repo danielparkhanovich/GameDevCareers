@@ -35,7 +35,7 @@ namespace JobBoardPlatform.BLL.Utils
             var mainTechnology = GetRandomTechnology(random);
             var address = GetAddress(random);
             string? seniority = GetSeniority(random);
-            var details = GetEmploymentDetails(seniority, random);
+            var details = GetEmploymentDetails(seniority, random)!;
             var contact = GetContactType(companyIdentity, random);
             string title = GetTitle(mainTechnology, random, seniority);
             string[] techKeywords = title.Split();
@@ -47,10 +47,7 @@ namespace JobBoardPlatform.BLL.Utils
                 Country = address.Item1,
                 City = address.Item2,
                 Street = address.Item3,
-                SalaryFromRange = details?.Select(x => x.Item1).ToArray() ?? null,
-                SalaryToRange = details?.Select(x => x.Item2).ToArray() ?? null,
-                SalaryCurrencyType = details?.Select(x => (int)x.Item3 + 1).ToArray() ?? null,
-                EmploymentTypes = details?.Select(x => (int)x.Item4 + 1).ToArray() ?? new int[1] { 1 },
+                EmploymentTypes = details,
                 ApplicationsContactType = (int)contact.Item1 + 1,
                 ApplicationsContactEmail = contact.Item2,
                 JobDescription = Description,
@@ -114,7 +111,7 @@ namespace JobBoardPlatform.BLL.Utils
             return seniority;
         }
 
-        private (int?, int?, CurrencyTypeEnum, EmploymentTypeEnum)[]? GetEmploymentDetails(string? seniority, Random random)
+        private EmploymentType[] GetEmploymentDetails(string? seniority, Random random)
         {
             // TODO: change to 0.25
             if (random.NextDouble() < 0)
@@ -127,8 +124,7 @@ namespace JobBoardPlatform.BLL.Utils
                 .ToList();
 
             int employmentTypesCount = random.Next(1, 4);
-
-            var details = new List<(int?, int?, CurrencyTypeEnum, EmploymentTypeEnum)>(employmentTypesCount);
+            var details = new List<EmploymentType>(employmentTypesCount);
 
             for (int i = 0; i < employmentTypes.Count; i++)
             {
@@ -148,11 +144,6 @@ namespace JobBoardPlatform.BLL.Utils
 
                 if (fromIndex + 1 < SalaryRanges.Length)
                 {
-                    toSalary = SalaryRanges[fromIndex + 1];
-                    toSalary = random.Next(fromSalary / 1000 + 2, toSalary / 1000) * 1000;
-                }
-                else
-                {
                     toSalary = fromSalary + random.Next(10, 20) * 1_000;
                 }
 
@@ -170,10 +161,10 @@ namespace JobBoardPlatform.BLL.Utils
                     employmentType = EmploymentTypeEnum.MandateContract;
                 }
 
-                if (details.Any(x => x.Item4 == employmentType))
+                if (details.Any(x => x.TypeId == (int)employmentType + 1))
                 {
-                    var exclude = details.First(x => x.Item4 == employmentType);
-                    var cleared = employmentTypes.Where(x => x != exclude.Item4).ToArray();
+                    var exclude = details.First(x => x.TypeId == (int)employmentType + 1);
+                    var cleared = employmentTypes.Where(x => exclude.TypeId != (int)x + 1).ToArray();
                     int randomIndex = random.Next(cleared.Length);
                     employmentType = cleared[randomIndex];
                 }
@@ -188,7 +179,13 @@ namespace JobBoardPlatform.BLL.Utils
                     toSalary = (int)(toSalary * 0.22f * 0.35f);
                 }
 
-                details.Add((fromSalary, toSalary, currency, employmentType));
+                details.Add(new MockEmploymentType()
+                {
+                    SalaryFromRange = fromSalary,
+                    SalaryToRange = toSalary,
+                    EmploymentType = (int)employmentType + 1,
+                    SalaryCurrencyType = (int)currency + 1
+                });
             }
 
             return details.ToArray();

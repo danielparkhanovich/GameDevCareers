@@ -26,47 +26,75 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
         private void AddEmploymentDetailsValidationRules()
         {
             When(offerData => offerData.EmploymentTypes.Length > 0, () => {
-                RuleForEach(offerData => offerData.EmploymentTypes).NotEqual(0).WithMessage("Select employment type");
+                AddEmploymentTypeValidationRules();
+                AddSalaryValidationRules();
             });
-            AddSalaryValidationRules();
         }
 
-        private string GetInnerTextFromHtml(string htmlText)
+        private void AddEmploymentTypeValidationRules()
         {
-            Regex regex = new Regex("(<.*?>\\s*)+", RegexOptions.Singleline);
-            string resultText = regex.Replace(htmlText, " ").Trim();
-            return resultText;
+            RuleFor(offerData => offerData.EmploymentTypes).Must(employmentTypes =>
+            {
+                foreach (var employment in employmentTypes)
+                {
+                    foreach (var another in employmentTypes)
+                    {
+                        if (employment == another)
+                        {
+                            continue;
+                        }
+                        else if (employment.TypeId == another.TypeId)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }).WithMessage("Employment types cannot be same");
+
+            RuleForEach(offerData => offerData.EmploymentTypes).Must(employment =>
+            {
+                return employment.TypeId != 0;
+            }).WithMessage("Select employment type");
         }
 
         private void AddSalaryValidationRules()
         {
-            When(offerData => offerData.SalaryFromRange != null && offerData.SalaryToRange != null, () => {
-                RuleForEach(offerData => offerData.SalaryFromRange).NotEqual(0).WithMessage("Enter from range");
-                RuleForEach(offerData => offerData.SalaryToRange).NotEqual(0).WithMessage("Enter to range");
-                RuleForEach(offerData => offerData.SalaryFromRange).Must(fromRange =>
+            RuleForEach(offerData => offerData.EmploymentTypes).Must(employment =>
+            {
+                if (!employment.SalaryFromRange.HasValue || !employment.SalaryToRange.HasValue)
                 {
-                    for (int i = 0; i < salaryFromRange.Length; i++)
-                    {
-                        if (salaryFromRange[i] > offerData.SalaryToRange[i])
-                        {
-                            return false;
-                        }
-                    }
                     return true;
-                }).WithMessage("'Salary to' should be greater than 'salary from'");
-                RuleForEach(offerData => offerData.SalaryCurrencyType).Must((offerData, currencyType) =>
+                }
+                return employment.SalaryFromRange < employment.SalaryToRange;
+            }).WithMessage("'Salary to' should be greater than 'salary from'");
+
+            RuleForEach(offerData => offerData.EmploymentTypes).Must(employment =>
+            {
+                if (!employment.SalaryToRange.HasValue)
                 {
-                    for (int i = 0; i < currencyType.Length; i++)
-                    {
-                        if (currencyType[i] == 0 &&
-                           (offerData.SalaryFromRange[i] != null || offerData.SalaryToRange[i] != null))
-                        {
-                            return false;
-                        }
-                    }
                     return true;
-                }).WithMessage("Select currency type");
-            });
+                }
+                return employment.SalaryFromRange.HasValue;
+            }).WithMessage("Enter from range");
+
+            RuleForEach(offerData => offerData.EmploymentTypes).Must(employment =>
+            {
+                if (!employment.SalaryFromRange.HasValue)
+                {
+                    return true;
+                }
+                return employment.SalaryToRange.HasValue;
+            }).WithMessage("Enter to range");
+
+            RuleForEach(offerData => offerData.EmploymentTypes).Must(employment =>
+            {
+                if (!employment.SalaryFromRange.HasValue || !employment.SalaryToRange.HasValue)
+                {
+                    return true;
+                }
+                return employment.SalaryCurrencyType.HasValue && employment.SalaryCurrencyType != 0;
+            }).WithMessage("Select currency type");
         }
 
         private void AddApplicationsContactTypeValidationRules()
@@ -100,6 +128,13 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
                 RuleFor(offerData => offerData.CustomConsentContent).NotEmpty()
                     .WithMessage("Enter custom consent");
             });
+        }
+
+        private string GetInnerTextFromHtml(string htmlText)
+        {
+            Regex regex = new Regex("(<.*?>\\s*)+", RegexOptions.Singleline);
+            string resultText = regex.Replace(htmlText, " ").Trim();
+            return resultText;
         }
     }
 }

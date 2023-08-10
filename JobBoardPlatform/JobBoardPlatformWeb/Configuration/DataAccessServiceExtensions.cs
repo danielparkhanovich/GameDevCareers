@@ -16,6 +16,8 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using JobBoardPlatform.DAL.Managers;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Common;
 
 namespace JobBoardPlatform.PL.Configuration
 {
@@ -48,6 +50,7 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddTransient<IUserProfileImagesStorage, UserProfileImagesStorage>();
             services.AddTransient<IApplicationsResumeBlobStorage, UserApplicationsResumeStorage>();
             services.AddTransient<IProfileResumeBlobStorage, UserProfileAttachedResumeStorage>();
+            services.AddTransient<IUserProfileImagesTemporaryStorage, UserProfileImagesTemporaryStorage>();
         }
 
         private static void AddCacheServices(IServiceCollection services, ConfigurationManager configuration)
@@ -89,7 +92,8 @@ namespace JobBoardPlatform.PL.Configuration
                 {
                     new InterfaceConverter<ICompanyProfileAndNewOfferData, CompanyPublishOfferAndRegisterViewModel>(),
                     new InterfaceConverter<ICompanyProfileData, CompanyProfileViewModel>(),
-                    new InterfaceConverter<IOfferData, OfferDetailsViewModel>(),
+                    new InterfaceConverter<IOfferData, OfferDataViewModel>(),
+                    new InterfaceConverter<IProfileImage, ProfileImageViewModel>()
                 }
             };
             services.AddSingleton<JsonSerializerSettings>(serializerSettings);

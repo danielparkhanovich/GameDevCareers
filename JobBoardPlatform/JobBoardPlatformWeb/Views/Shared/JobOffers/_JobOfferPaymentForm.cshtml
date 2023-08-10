@@ -14,7 +14,7 @@
     string contentUrl = @Url.Action("Offer", "OfferContent", contentData);
 }
 
-<div>    
+<div>
     <div class="mb-2">
         <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
             <strong>Offer card</strong>
@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="mt-2">
-                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="NewOffer" asp-controller="@editOfferController" asp-route-offerId="@Model.OfferId">
+                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="Editor" asp-controller="@editOfferController" asp-route-offerId="@Model.OfferId">
                     <i class="bi bi-arrow-left"></i>
                     Back to edit
                 </a>

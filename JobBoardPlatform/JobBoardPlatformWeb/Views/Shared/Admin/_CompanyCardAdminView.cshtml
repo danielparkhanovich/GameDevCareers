@@ -1,4 +1,5 @@
 ﻿@using JobBoardPlatform.PL.Controllers.Profile;
+@using JobBoardPlatform.PL.Controllers.Utils;
 @using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 @using JobBoardPlatform.PL.ViewModels.Models.Admin;
 @using JobBoardPlatform.PL.ViewModels.Models.Offer.Widgets;
@@ -13,6 +14,9 @@
 
     string deleteUrl = $"{@Url.Action(AdminPanelCompaniesController.DeleteAction)}";
     string logIntoUrl = $"{@Url.Action(AdminPanelCompaniesController.LogIntoAction)}";
+
+    bool isWebsite = !string.IsNullOrEmpty(card.CompanyWebsiteUrl);
+    bool isOfficeLocation = !string.IsNullOrEmpty(card.City) && !string.IsNullOrEmpty(card.Country);
 }
 
 <div class="my-0" id=@($"card-container-{identityId}")>
@@ -28,21 +32,41 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <div class="d-flex flex-column justify-content-center me-1" style="font-size: 0.75rem;">
-                        website
+                    <div class="d-flex flex-column justify-content-center me-2 small">
+                        contact email: @card.Email
                     </div>
-                    <a class="p-1 me-1" style="font-size: 0.75rem;" href="@card.CompanyWebsiteUrl">
-                        @card.CompanyWebsiteUrl
-                    </a>
                 </div>
             </div>
             <div class="d-flex flex-row">
-                <div class="d-flex flex-row small mx-1" style="font-size: 0.75rem;">
+                <div class="d-flex flex-row align-items-center small">
+                    <div class="d-flex flex-column me-1">
+                        website:
+                    </div>
+                    @if (isWebsite)
+                    {
+                        <a class="p-1 me-1 small" href="@card.CompanyWebsiteUrl">
+                            @card.CompanyWebsiteUrl
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="text-muted mx-1"><i class="bi bi-question-square"></i></div>
+                    }
+                </div>
+                <div class="d-flex flex-row small mx-2 small">
                     <div class="d-flex flex-row align-self-center pe-3">
                         <i class="bi bi-geo-alt text-muted"></i>
-                        <div class="text-muted mx-1">@card.City, @card.Country</div>
+                        @if (isOfficeLocation)
+                        {
+                            <div class="text-muted mx-1">@card.City, @card.Country</div>
+                        }
+                        else
+                        {
+                            <div class="text-muted mx-1"><i class="bi bi-question-square"></i></div>
+                        }
                     </div>
                 </div>
+                
                 <div class="rounded-pill border border-border px-2 mb-0 justify-content-center align-self-center small">
                     <div class="align-middle mb-0 h-100 text-truncate" style="font-size:12px;">Published offers: @card.PublishedOffersCount</div>
                 </div>

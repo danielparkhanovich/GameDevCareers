@@ -2,6 +2,7 @@
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Profile

@@ -9,6 +9,7 @@ using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
+using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures;
 using JobBoardPlatform.IntegrationTests.Common.TestFiles;

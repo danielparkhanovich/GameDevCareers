@@ -1,22 +1,23 @@
 ﻿using FluentValidation;
 using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
-using JobBoardPlatform.BLL.Services.Authentification.Contracts;
+using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Filters;
+using JobBoardPlatform.PL.Interactors.Notifications;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
     [Route("register-employer-offer")]
-    [TypeFilter(typeof(RedirectRegisteredCompanyFilter))]
     public class CompanyRegistrationWithOfferPublishController : Controller
     {
         public const string AdsPricingAction = "RegisterPromotion";
@@ -49,6 +50,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
         }
 
         [Route("post-ad")]
+        [TypeFilter(typeof(RedirectRegisteredCompanyFilter))]
         public IActionResult StartPostOfferAndRegister()
         {
             var viewModel = new CompanyPublishOfferAndRegisterViewModel();
@@ -58,17 +60,18 @@ namespace JobBoardPlatform.PL.Controllers.Register
         [Route("post-ad/{formDataTokenId}")]
         public async Task<IActionResult> StartPostOfferAndRegister(string formDataTokenId)
         {
-            var viewModel = await registrationWithPublishOfferInteractor.GetPostFormViewModel(formDataTokenId);
+            var viewModel = await registrationWithPublishOfferInteractor.GetPostFormViewModelAsync(formDataTokenId);
             return View(viewModel);
         }
 
         [Route("post-ad/{formDataTokenId}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public Task<IActionResult> StartPostOfferAndRegister(
+        public async Task<IActionResult> StartPostOfferAndRegister(
             CompanyPublishOfferAndRegisterViewModel registerData, string formDataTokenId)
         {
-            return StartPostOfferAndRegister(registerData);
+            await registrationWithPublishOfferInteractor.DeletePreviousSavedDataAsync(registerData, formDataTokenId);
+            return await StartPostOfferAndRegister(registerData);
         }
 
         [Route("post-ad")]
@@ -79,19 +82,27 @@ namespace JobBoardPlatform.PL.Controllers.Register
             var result = await validator.ValidateAsync(registerData);
             if (result.IsValid)
             {
-                string tokenId = await registrationWithPublishOfferInteractor.SavePostFormViewModel(registerData);
+                string tokenId = await registrationWithPublishOfferInteractor.SavePostFormViewModelAsync(registerData);
                 return RedirectToAction("VerifyRegistration", new { formDataTokenId = tokenId });
             }
             else
             {
                 // TODO: remove after tests
-                string tokenId = await registrationWithPublishOfferInteractor.SavePostFormViewModel(registerData);
+                string tokenId = await registrationWithPublishOfferInteractor.SavePostFormViewModelAsync(registerData);
                 return RedirectToAction("VerifyRegistration", new { formDataTokenId = tokenId });
                 //
                 result.AddToModelState(this.ModelState);
             }
 
             return View(registerData);
+        }
+
+        [Route("verify/confirm/{confirmationTokenId}")]
+        public async Task<IActionResult> TryConfirmRegistrationWithOfferPublish(string confirmationTokenId)
+        {
+            string formDataTokenId = await registrationWithPublishOfferInteractor.FinishRegistrationAsync(
+                confirmationTokenId, HttpContext);
+            return RedirectToAction("VerifyRegistration", new { formDataTokenId = formDataTokenId });
         }
 
         [Route("verify/{formDataTokenId}")]
@@ -115,15 +126,19 @@ namespace JobBoardPlatform.PL.Controllers.Register
         {
             var userRegister = viewModel.UserRegister;
 
-            var formData = await registrationWithPublishOfferInteractor.GetPostFormViewModel(formDataTokenId);
+            var formData = await registrationWithPublishOfferInteractor.GetPostFormViewModelAsync(formDataTokenId);
             var companyData = formData.CompanyProfileData;
             userRegister.CompanyName = companyData.CompanyName!;
 
             var result = await companyRegisterValidator.ValidateAsync(userRegister);
             if (result.IsValid)
             {
-                var redirect = await registrationWithPublishOfferInteractor.ProcessRegistrationAndRedirect(
+                var redirect = await registrationWithPublishOfferInteractor.ProcessRegistrationAndRedirectAsync(
                     userRegister, formDataTokenId);
+                NotificationsManager.Instance.SetActionDoneNotification(
+                    NotificationsManager.RegisterSection,
+                    $"Check your email inbox {userRegister.Email} for a confirmation link to complete your registration.",
+                    TempData);
                 return RedirectToAction(redirect.ActionName, redirect.Data);
             }
             else
@@ -138,14 +153,6 @@ namespace JobBoardPlatform.PL.Controllers.Register
             return View(viewModel);
         }
 
-        [Route("verify/confirm/{confirmationTokenId}")]
-        public async Task<IActionResult> TryConfirmRegistrationWithOfferPublish(string confirmationTokenId)
-        {
-            string formDataTokenId = await registrationWithPublishOfferInteractor.FinishRegistration(
-                confirmationTokenId, HttpContext);
-            return RedirectToAction("VerifyRegistration", new { formDataTokenId = formDataTokenId });
-        }
-
         [Route("post-ad/confirm/{tokenId}")]
         public async Task<IActionResult> TryConfirmOfferPaymentAndRegister(string tokenId)
         {
@@ -155,20 +162,24 @@ namespace JobBoardPlatform.PL.Controllers.Register
 
         private async Task<CompanyVerifyPublishOfferAndRegistrationViewModel> CreateCompanyVerifyViewModel(string formDataTokenId)
         {
-            var formData = await registrationWithPublishOfferInteractor.GetPostFormViewModel(formDataTokenId);
             var viewModel = new CompanyVerifyPublishOfferAndRegistrationViewModel();
             viewModel.FormDataTokenId = formDataTokenId;
-            if (await registrationWithPublishOfferInteractor.IsFormDataConfirmed(formDataTokenId))
+
+            if (UserSessionUtils.IsLoggedIn(User))
             {
-                viewModel.OfferCard = CreateOfferCard(formData.OfferData, formData.CompanyProfileData);
+                int profileId = UserSessionUtils.GetProfileId(User);
+                var offer = await registrationWithPublishOfferInteractor.GetAddedOfferAsync(profileId);
+                viewModel.PaymentForm = await GetPaymentFormViewModel(offer);
+                viewModel.IsTokenConfirmed = true;
             }
+
             return viewModel;
         }
 
-        private IContainerCard CreateOfferCard(IOfferData offerData, ICompanyProfileData companyProfile)
+        private Task<OfferPaymentFormViewModel> GetPaymentFormViewModel(JobOffer offer)
         {
-            var offerCardFactory = new OfferCardViewModelFromOfferFormFactory(offerData, companyProfile);
-            return offerCardFactory.Create();
+            var factory = new OfferPaymentFormViewModelFactory(offer);
+            return factory.CreateAsync();
         }
     }
 }

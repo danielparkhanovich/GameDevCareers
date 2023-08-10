@@ -26,23 +26,12 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
         public async Task<string> AddAsync(BlobExportData exportData, string containerName)
         {
             var file = exportData.File;
+            exportData.Metadata[NameProperty] = file.FileName;
 
             string fileName = GetFileName(file);
             BlobClient blobClient = await GetBlobClientAsync(fileName, containerName);
 
-            var metadata = exportData.Metadata;
-            metadata[NameProperty] = file.FileName;
-
-            using (var fileUploadStream = new MemoryStream())
-            {
-                file.CopyTo(fileUploadStream);
-                fileUploadStream.Position = 0;
-                await blobClient.UploadAsync(fileUploadStream, new BlobUploadOptions()
-                {
-                    HttpHeaders = exportData.BlobHttpHeaders,
-                    Metadata = metadata
-                }, cancellationToken: default);
-            }
+            await UploadFile(file, exportData, blobClient);
 
             return WebUtility.UrlDecode(blobClient.Uri.ToString());
         }
@@ -97,6 +86,20 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
         private string GetFileName(IFormFile formFile)
         {
             return $"{Guid.NewGuid()}{PropertiesSeparator}{formFile.FileName}";
+        }
+
+        private async Task UploadFile(IFormFile file, BlobExportData exportData, BlobClient blobClient)
+        {
+            using (var fileUploadStream = new MemoryStream())
+            {
+                file.CopyTo(fileUploadStream);
+                fileUploadStream.Position = 0;
+                await blobClient.UploadAsync(fileUploadStream, new BlobUploadOptions()
+                {
+                    HttpHeaders = exportData.BlobHttpHeaders,
+                    Metadata = exportData.Metadata
+                }, cancellationToken: default);
+            }
         }
 
         private async Task<BlobDescription> GetBlobMetadataAsync(string filePath, string containerName)

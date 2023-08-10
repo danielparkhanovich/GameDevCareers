@@ -2,6 +2,8 @@
 @model UserRegisterViewModel
 @{
     string loginControllerName = ViewData["LoginControllerName"] as string;
+    bool isHideSignInLink = ViewData.ContainsKey("IsHideSignIn");
+
     string email = Model?.Email ?? string.Empty;
     string password = Model?.Password ?? string.Empty;
     string repeatPassword = Model?.RepeatPassword ?? string.Empty;
@@ -46,10 +48,13 @@
     <div class="col-md-12 text-center mt-4 mb-4">
         <button type="submit" class="btn btn-primary px-5 py-1 btn-lg rounded-pill">Register</button>
     </div>
-    <div class="col-md-12 text-center mt-2">
-        <b>
-            <label class="text-dark">Already have account?</label>
-            <a asp-controller=@loginControllerName asp-action="Login" class="text-primary" style="text-decoration: none;">Sign in</a>
-        </b>
-    </div>
+    @if (!isHideSignInLink)
+    {
+        <div class="col-md-12 text-center mt-2">
+            <b>
+                <label class="text-dark">Already have account?</label>
+                <a asp-controller=@loginControllerName asp-action="Login" class="text-primary" style="text-decoration: none;">Sign in</a>
+            </b>
+        </div>
+    }
 </div>

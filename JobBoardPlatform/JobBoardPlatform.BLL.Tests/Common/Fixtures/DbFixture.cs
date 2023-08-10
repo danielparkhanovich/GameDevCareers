@@ -89,8 +89,9 @@ namespace JobBoardPlatform.IntegrationTests.Common.Fixtures
         private void DisposeSqlRepository()
         {
             var dataContext = ServiceProvider.GetService<DataContext>()!;
-            var dbSetProperties = dataContext.GetType().GetProperties()
-            .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>));
+            var dbSetProperties = dataContext.GetType()
+                .GetProperties()
+                .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>));
 
             foreach (var property in dbSetProperties)
             {

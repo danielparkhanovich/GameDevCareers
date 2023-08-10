@@ -1,13 +1,9 @@
-﻿namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company.Contracts
+﻿using JobBoardPlatform.BLL.Boundaries;
+
+namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company.Contracts
 {
     public interface IOfferSalary
     {
-        public int[] EmploymentTypes { get; set; }
-
-        public int?[] SalaryFromRange { get; set; }
-
-        public int?[] SalaryToRange { get; set; }
-
-        public int[] SalaryCurrencyType { get; set; }
+        public EmploymentType[] EmploymentTypes { get; set; }
     }
 }

@@ -1,7 +1,11 @@
 ﻿
 @model ITechKeywords
 @{
-    string[] addedKeywords = Model.TechKeywords.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+    string[] addedKeywords = new string[0];
+    if (Model.TechKeywords != null)
+    {
+        addedKeywords = Model.TechKeywords.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+    }
 }
 
 <div class="form-group">
