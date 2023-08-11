@@ -16,12 +16,12 @@ namespace JobBoardPlatform.BLL.Generators
         public EmploymentType[] EmploymentTypes { get; set; }
         public string[]? TechKeywords { get; set; }
         public string? Street { get; set; }
-        public string? ApplicationsContactExternalFormUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string InformationClause { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsDisplayConsentForFutureRecruitment { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string? ConsentForFutureRecruitmentContent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsDisplayCustomConsent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string? CustomConsentTitle { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string? CustomConsentContent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string? ApplicationsContactExternalFormUrl { get; set; }
+        public string InformationClause { get; set; }
+        public bool IsDisplayConsentForFutureRecruitment { get; set; }
+        public string? ConsentForFutureRecruitmentContent { get; set; }
+        public bool IsDisplayCustomConsent { get; set; }
+        public string? CustomConsentTitle { get; set; }
+        public string? CustomConsentContent { get; set; }
     }
 }

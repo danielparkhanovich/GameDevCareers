@@ -18,6 +18,8 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
 
             MapContactDetails(from, to);
 
+            MapConsentClauses(from, to);
+
             if (from.EmploymentTypes != null)
             {
                 MapOfferDetails(from, to);
@@ -104,6 +106,21 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             if (techKeywords.Count > 0)
             {
                 to.TechKeywords = techKeywords;
+            }
+        }
+
+        private void MapConsentClauses(IOfferData from, JobOffer to)
+        {
+            to.InformationClause = from.InformationClause;
+
+            if (from.IsDisplayConsentForFutureRecruitment)
+            {
+                to.ProcessingDataInFutureClause = from.ConsentForFutureRecruitmentContent;
+            }
+            if (from.IsDisplayCustomConsent)
+            {
+                to.CustomConsentClauseTitle = from.CustomConsentTitle;
+                to.CustomConsentClause = from.CustomConsentContent;
             }
         }
     }

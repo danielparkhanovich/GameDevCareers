@@ -34,6 +34,11 @@ namespace JobBoardPlatform.DAL.Models.Company
         public DateTime CreatedAt { get; set; }
         public DateTime PublishedAt { get; set; }
 
+        public string InformationClause { get; set; } = string.Empty;
+        public string? ProcessingDataInFutureClause { get; set; }
+        public string? CustomConsentClauseTitle { get; set; }
+        public string? CustomConsentClause { get; set; }
+
         public bool IsPaid { get; set; }
         public bool IsPublished { get; set; }
         public bool IsShelved { get; set; }

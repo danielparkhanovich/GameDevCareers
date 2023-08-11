@@ -8,48 +8,56 @@
     bool isTechKeywords = offerDescription.TechKeywords != null && offerDescription.TechKeywords.Count() > 0;
     bool isExternalForm = offerDescription.ContactForm == ContactTypeEnum.ExternalForm.ToString();
 
+    bool isProcessingInFutureClause = !string.IsNullOrEmpty(offerDescription.ProcessingDataInFutureClause);
+    bool isCustomConsentClause = !string.IsNullOrEmpty(offerDescription.CustomConsentClause);
+
     var application = Model.Update;
 }
 
 <div class="container px-5 py-5">
-    <div class="d-flex flex-row bg-primary bg-opacity-75 rounded px-5 py-4 mb-4">
-        <div class="d-flex flex-column mt-4">
-            <div class="bg-white bg-opacity-10 rounded p-2">
-                <div class="bg-white bg-opacity-25 rounded p-2">
-                    <div class="bg-white rounded p-3">
-                        <img src=@offerDescription.CompanyImageUrl width="75" height="75" class="border border-secondary rounded">
+    <div class="bg-primary bg-opacity-75 rounded px-5 py-4 mb-4">
+        <div class="d-flex flex-row">
+            <div class="d-flex flex-column mt-4">
+                <div class="bg-white bg-opacity-10 rounded p-2">
+                    <div class="bg-white bg-opacity-25 rounded p-2">
+                        <div class="bg-white rounded p-3">
+                            <img src=@offerDescription.CompanyImageUrl width="75" height="75" class="border border-secondary rounded" style="object-fit:contain;">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="d-flex flex-column justify-content-center mx-4">
-            <div class="d-flex flex-row">
-                <h2 class="text-light mt-4">@offerDescription.JobTitle</h2>
-                @if (isTechKeywords)
+            <div class="d-flex flex-column justify-content-center mx-4">
+                <h3 class="text-light mt-4">@offerDescription.JobTitle</h3>
+                <div class="d-flex flex-row mb-2">
+                    <i class="bi bi-buildings text-light"></i>
+                    <div class="text-light mx-2">@offerDescription.CompanyName</div>
+                </div>
+                <div class="d-flex flex-row mb-3">
+                    <i class="bi bi-geo-alt text-light"></i>
+                    <div class="text-light mx-2">@offerDescription.FullAddress</div>
+                    <div class="text-center rounded @(isFullyRemote ? "bg-light" : "bg-dark bg-opacity-50") px-3 mx-3">
+                        <p class="small mb-0 @(isFullyRemote ? "text-primary" : "text-light") ">@offerDescription.WorkLocationType</p>
+                    </div>
+                </div>
+                @for (int i = 0; i < offerDescription.EmploymentDetails.Length; i++)
                 {
-                    @foreach (var technology in offerDescription.TechKeywords!)
-                    {
-                        <div class="d-flex flex-column justify-content-end text-center">
-                            <p class="text-light text-opacity-50 small rounded-pill border border-light border-opacity-25 px-3 ms-3">@technology.ToLower()</p>
-                        </div>
-                    }
+                    <div class="d-flex flex-row text-light mt-1">
+                        <h5 class="text-light">@offerDescription.SalaryDetails[i]</h5>
+                        <div class="mx-2">@offerDescription.EmploymentDetails[i]</div>
+                    </div>
                 }
             </div>
-            <div class="d-flex flex-row mb-2">
-                <i class="bi bi-buildings text-light"></i>
-                <div class="text-light mx-2">@offerDescription.CompanyName</div>
-            </div>
-            <div class="d-flex flex-row">
-                <i class="bi bi-geo-alt text-light"></i>
-                <div class="text-light mx-2">@offerDescription.FullAddress</div>
-                <div class="text-center rounded @(isFullyRemote ? "bg-light" : "bg-dark bg-opacity-50") px-3 mx-3">
-                    <p class="small mb-0 @(isFullyRemote ? "text-primary" : "text-light") ">@offerDescription.WorkLocationType</p>
-                </div>
-            </div>
-            <div class="d-flex flex-row text-light mt-3 mb-1">
-                <h5 class="text-light">@offerDescription.SalaryDetails[0]</h5>
-                <div class="mx-2">@offerDescription.EmploymentDetails[0]</div>
-            </div>
+        </div>
+        <div class="d-flex flex-row mt-2 justify-content-center">
+            @if (isTechKeywords)
+            {
+                @foreach (var technology in offerDescription.TechKeywords!)
+                {
+                    <div class="d-flex flex-row justify-content-end text-center">
+                        <p class="text-light text-opacity-75 small rounded-pill border border-light border-opacity-25 px-3 ms-3">@technology.ToLower()</p>
+                    </div>
+                }
+            }
         </div>
     </div>
     <div class="card mb-4">
@@ -58,6 +66,9 @@
         </div>
         <div class="card-body">
             @Html.Raw(System.Web.HttpUtility.HtmlDecode(offerDescription.JobDescription))
+            <p class="text-muted small mt-2">
+                @offerDescription.InformationClause
+            </p>
         </div>
     </div>
     @if (!isExternalForm)
@@ -84,19 +95,55 @@
                     </div>
                     <div class="row gx-3 mb-3">
                         <div class="col-md-12">
+                            <label asp-for="Update.AdditionalInformation" class="small mb-1" for="inputDescription">Introduce yourself (linkedin/github links)</label>
+                            <textarea asp-for="Update.AdditionalInformation" rows="3" class="form-control" id="inputDescription" type="text" placeholder="Type something about you" 
+                            value="@application.AdditionalInformation"></textarea>
+                        </div>
+                    </div>
+                    <div class="row gx-3 mb-3">
+                        <div class="col-md-12">
                             @{
                                 ViewData["IsPostFormOnChange"] = false;
                             }
                             @await Html.PartialAsync("./Fields/_UploadCvField", Model)
                         </div>
                     </div>
-                    <div class="row gx-3 mb-3">
-                        <div class="col-md-12">
-                            <label asp-for="Update.AdditionalInformation" class="small mb-1" for="inputDescription">Introduce yourself (linkedin/github links)</label>
-                            <textarea asp-for="Update.AdditionalInformation" rows="3" class="form-control" id="inputDescription" type="text" placeholder="Type something about you" 
-                            value="@application.AdditionalInformation"></textarea>
+                    @if (isProcessingInFutureClause)
+                    {
+                        <div class="mb-3 row gx-3 col-md-12">
+                            <div>
+                                <div class="form-check">
+                                    <input asp-for="Update.IsProcessingDataInFutureConsent" class="form-check-input" type="checkbox">
+                                    <label asp-for="Update.IsProcessingDataInFutureConsent" class="form-check-label">
+                                        Processing data in future recruitment
+                                    </label>
+                                    <br />
+                                    <span asp-validation-for="Update.IsProcessingDataInFutureConsent" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <p class="text-muted small">
+                                @Model.Display.ProcessingDataInFutureClause
+                            </p>
                         </div>
-                    </div>
+                    }
+                    @if (isCustomConsentClause)
+                    {
+                        <div class="mb-3 row gx-3 col-md-12">
+                            <div>
+                                <div class="form-check">
+                                    <input asp-for="Update.IsCustomConsent" class="form-check-input" type="checkbox">
+                                    <label asp-for="Update.IsCustomConsent" class="form-check-label">
+                                        @Model.Display.CustomConsentClauseTitle
+                                    </label>
+                                    <br />
+                                    <span asp-validation-for="Update.IsCustomConsent" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <p class="text-muted small">
+                                @Model.Display.CustomConsentClause
+                            </p>
+                        </div>
+                    }
                     <!-- Submit button -->
                     <button type="submit" class="btn btn-primary btn-block px-5">Apply</button>
                 </form>

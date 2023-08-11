@@ -1,7 +1,10 @@
-﻿using JobBoardPlatform.BLL.Commands.Offer;
+﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Utils;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
+using System.Diagnostics;
+using System.Reflection.Emit;
 
 namespace JobBoardPlatform.BLL.Commands.Admin
 {
@@ -39,17 +42,40 @@ namespace JobBoardPlatform.BLL.Commands.Admin
             }
 
             var offersGenerator = new JobOffersGenerator();
+            var generatedData = GenerateOffersData(offersGenerator, toProcess);
+            ShuffleOffers(generatedData);
+            await CreateOffers(generatedData);
+        }
 
-            foreach (var companyIdentity in toProcess)
+        private List<(CompanyIdentity, IOfferData)> GenerateOffersData(
+            JobOffersGenerator generator, List<CompanyIdentity> companies)
+        {
+            var generatedData = new List<(CompanyIdentity, IOfferData)>();
+            foreach (var companyIdentity in companies)
             {
                 for (int i = 0; i < offersCount; i++)
                 {
-                    var data = offersGenerator.GenerateData(companyIdentity);
-                    var addNewOfferCommand = new AddOfferCommand(companyIdentity.ProfileId,
-                        data,
-                        offersRepository);
-                    await addNewOfferCommand.Execute();
+                    var data = generator.GenerateData(companyIdentity);
+                    generatedData.Add((companyIdentity, data));
                 }
+            }
+            return generatedData;
+        }
+
+        private void ShuffleOffers(List<(CompanyIdentity, IOfferData)> offers)
+        {
+            Random rnd = new Random();
+            offers = offers.OrderBy((item) => rnd.Next()).ToList();
+        }
+
+        private async Task CreateOffers(List<(CompanyIdentity, IOfferData)> offers)
+        {
+            foreach (var offer in offers)
+            {
+                var addNewOfferCommand = new AddOfferCommand(offer.Item1.ProfileId,
+                                                             offer.Item2,
+                                                             offersRepository);
+                await addNewOfferCommand.Execute();
             }
         }
     }

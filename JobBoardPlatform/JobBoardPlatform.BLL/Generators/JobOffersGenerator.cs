@@ -26,6 +26,10 @@ namespace JobBoardPlatform.BLL.Utils
         private readonly string Description = "\r\n  <hr>\r\n  <p>Hey everyone! We're Crunching Koalas and you may recognize us because of:</p>\r\n\r\n<ul>\r\n<li><a href=\"https://www.nintendo.com/games/detail/darkwood-switch/\">Darkwood</a>, <a href=\"https://www.nintendo.com/games/detail/darkwood-switch/\">Project Warlock</a>, <a href=\"https://www.nintendo.com/games/detail/butcher-switch/\">Butcher</a> or <a href=\"https://www.nintendo.com/games/detail/lichtspeer-double-speer-edition-switch/\">Lichtspeer</a>, so some of the games that we ported and published on consoles;</li>\r\n<li><a href=\"https://www.nintendo.com/games/detail/thronebreaker-the-witcher-tales-switch/\">Thronebreaker</a>, <a href=\"https://store.playstation.com/pl-pl/product/EP4361-CUSA15690_00-0000000000000003\">Frostpunk</a>, <a href=\"https://www.nintendo.com/games/detail/this-war-of-mine-complete-edition-switch/\">This War of Mine</a>, <a href=\"https://www.nintendo.com/games/detail/ruiner-switch/\">Ruiner</a>, so some of the titles we ported and brought to consoles;</li>\r\n<li>or <a href=\"https://store.steampowered.com/app/252750/MouseCraft/\">MouseCraft</a>, a game which we developed by ourselves.</li>\r\n</ul>\r\n\r\n<p>We are looking for Programmer to join our team.</p>\r\n\r\n<h3>Requirements:</h3>\r\n\r\n<ul>\r\n<li>2 years of experience on a similar position;</li>\r\n<li>good English;</li>\r\n<li>good knowledge of UE4/5 or C++;</li>\r\n<li>code samples or at least one released title;</li>\r\n</ul>\r\n\r\n<h3>Responsibilities:</h3>\r\n\r\n<p><strong>Porting games for all major platforms available:</strong></p>\r\n\r\n<ul>\r\n<li>Switch;</li>\r\n<li>PlayStation 5;</li>\r\n<li>Xbox Series X;</li>\r\n<li>PlayStation 4;</li>\r\n<li>Xbox One;</li>\r\n<li>Steam;</li>\r\n<li>Android;</li>\r\n<li>iOS; etc.</li>\r\n</ul>\r\n\r\n<p><strong>Co-developing games and game related software for Koala's publishing and our partners</strong>:</p>\r\n\r\n<ul>\r\n<li>implementing gameplay and engine elements;</li>\r\n<li>providing optimization services;</li>\r\n<li>creating digital soundtracks, themes, artbooks, etc. from the code side;</li>\r\n</ul>\r\n\r\n<p><strong>Providing code and console consultancy services</strong>:</p>\r\n\r\n<ul>\r\n<li>consulting porting topics for our publishing partners;</li>\r\n<li>creating tutorials and documentation for new console specific features we implement;</li>\r\n<li>sharing important knowledge with teammates in lecture sessions;</li>\r\n</ul>\r\n\r\n<h3>Pluses:</h3>\r\n\r\n<ul>\r\n<li>knowledge of any of the console's porting process;</li>\r\n<li>experience in one or more: rendering pipeline, shaders, sound, fmod, wwise, memory management;</li>\r\n<li>experience in creating multiplayer games;</li>\r\n</ul>\r\n\r\n<h3>What are we offering?</h3>\r\n\r\n<ul>\r\n<li>an opportunity to work on interesting and relevant projects (just check our portfolio or the 1st paragraph of this job offer);</li>\r\n<li>salary between 6.000 and 10.000 PLN net of tax (Umowa o pracę) depending on the experience and the contract type;</li>\r\n<li>available types of contracts: Umowa o pracę, B2B;</li>\r\n<li>Partially financed Medicover and Multisport</li>\r\n<li>core hours 11-14;</li>\r\n<li>possibility to work for a well-known, established company that knows where it wants to be.</li>\r\n</ul>\r\n\r\n<p>Cheers!</p>\r\n\r\n  <hr>";
         private readonly int[] SalaryRanges = new int[] { 4500, 7000, 13000, 25000, 30000, 40000 };
         private readonly string ExternalLink = "http://localhost:3000/";
+        private readonly string InformationClause = "Nullam nec posuere quam. Nullam id elementum risus, non lacinia lacus. Vestibulum auctor tortor et nunc sollicitudin rhoncus. Aenean faucibus orci sit amet nulla aliquam, sit amet gravida ipsum sodales. Morbi ullamcorper lacus sed posuere fringilla. Nam sit amet orci molestie, fermentum dolor sit amet, hendrerit elit.";
+        private readonly string FutureDataProcessing = "Aliquam sit amet mi vel metus lacinia ultricies eget a purus. Integer semper porttitor libero, id accumsan neque mollis ut. Aenean malesuada velit at risus hendrerit, vel lobortis felis commodo. Nullam sollicitudin nisl quis magna viverra tempor. Nulla ut nisi accumsan, facilisis ipsum volutpat, accumsan purus. Mauris pulvinar ipsum ex, eget eleifend nunc molestie at.";
+        private readonly string CustomConsentTitle = "Etiam tristique dolor sit amet nunc cursus, vel dictum risus molestie.";
+        private readonly string CustomConsentContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id purus finibus, mattis est non, mollis velit. Cras vulputate urna sit amet fringilla rutrum. Mauris venenatis sagittis tincidunt. Fusce vel velit molestie, faucibus nunc eget, lobortis justo. Ut lobortis accumsan aliquam. Sed lobortis dictum fringilla. Donec sollicitudin tellus a sem accumsan bibendum. Mauris fermentum, nibh ut rhoncus elementum, mi velit commodo tortor, tempor placerat neque nisi quis sapien.";
 
 
         public IOfferData GenerateData(CompanyIdentity companyIdentity)
@@ -40,6 +44,8 @@ namespace JobBoardPlatform.BLL.Utils
             string title = GetTitle(mainTechnology, random, seniority);
             string[] techKeywords = title.Split();
             var workLocationType = GetWorkLocation(random);
+            string? futureDataProcessing = GetFutureProcessingConsent(random);
+            (string? customConsent, string? customConsentTitle) = GetCustomConsent(random);
 
             var newOfferData = new MockOfferData()
             {
@@ -54,6 +60,13 @@ namespace JobBoardPlatform.BLL.Utils
                 JobTitle = title,
                 TechKeywords = techKeywords,
                 WorkLocationType = (int)workLocationType + 1,
+                InformationClause = InformationClause,
+                ApplicationsContactExternalFormUrl = contact.Item2,
+                IsDisplayConsentForFutureRecruitment = !string.IsNullOrEmpty(futureDataProcessing),
+                ConsentForFutureRecruitmentContent = futureDataProcessing,
+                IsDisplayCustomConsent = !string.IsNullOrEmpty(customConsent),
+                CustomConsentContent = customConsent,
+                CustomConsentTitle = customConsentTitle
             };
 
             return newOfferData;
@@ -113,12 +126,6 @@ namespace JobBoardPlatform.BLL.Utils
 
         private EmploymentType[] GetEmploymentDetails(string? seniority, Random random)
         {
-            // TODO: change to 0.25
-            if (random.NextDouble() < 0)
-            {
-                return null;
-            }
-
             var employmentTypes = Enum.GetValues(typeof(EmploymentTypeEnum))
                 .Cast<EmploymentTypeEnum>()
                 .ToList();
@@ -126,7 +133,7 @@ namespace JobBoardPlatform.BLL.Utils
             int employmentTypesCount = random.Next(1, 4);
             var details = new List<EmploymentType>(employmentTypesCount);
 
-            for (int i = 0; i < employmentTypes.Count; i++)
+            for (int i = 0; i < employmentTypesCount; i++)
             {
                 // setup salary range
                 int fromIndex = 0;
@@ -139,13 +146,8 @@ namespace JobBoardPlatform.BLL.Utils
                     fromIndex = Array.IndexOf(TitleSeniority, seniority);
                 }
 
-                int fromSalary = SalaryRanges[fromIndex];
-                int toSalary = fromSalary;
-
-                if (fromIndex + 1 < SalaryRanges.Length)
-                {
-                    toSalary = fromSalary + random.Next(10, 20) * 1_000;
-                }
+                int? fromSalary = SalaryRanges[fromIndex];
+                int? toSalary = fromSalary + random.Next(10, 20) * 1_000;
 
                 // select employment type & modify salary range
                 var employmentType = EmploymentTypeEnum.Permanent;
@@ -176,14 +178,20 @@ namespace JobBoardPlatform.BLL.Utils
                 {
                     currency = CurrencyTypeEnum.EUR;
                     fromSalary = (int)(fromSalary * 0.22f * 1.35f);
-                    toSalary = (int)(toSalary * 0.22f * 0.35f);
+                    toSalary = (int)(toSalary * 0.22f * 1.35f);
                 }
 
-                details.Add(new MockEmploymentType()
+                if (random.NextDouble() < 0.5f)
+                {
+                    fromSalary = null;
+                    toSalary = null;
+                }
+
+                details.Add(new EmploymentType()
                 {
                     SalaryFromRange = fromSalary,
                     SalaryToRange = toSalary,
-                    EmploymentType = (int)employmentType + 1,
+                    TypeId = (int)employmentType + 1,
                     SalaryCurrencyType = (int)currency + 1
                 });
             }
@@ -259,6 +267,30 @@ namespace JobBoardPlatform.BLL.Utils
 
             int randomIndex = random.Next(workLocationTypes.Count);
             return workLocationTypes[randomIndex];
+        }
+
+        private string? GetFutureProcessingConsent(Random random)
+        {
+            if (random.NextDouble() < 0.5f)
+            {
+                return FutureDataProcessing;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private (string?, string?) GetCustomConsent(Random random)
+        {
+            if (random.NextDouble() < 0.5f)
+            {
+                return (CustomConsentContent, CustomConsentTitle);
+            }
+            else
+            {
+                return (null, null);
+            }
         }
     }
 }

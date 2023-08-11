@@ -28,8 +28,17 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             to.WorkLocationType = from.WorkLocation.Type;
             to.ContactForm = from.ContactDetails.ContactType.Type;
 
+            MapInformationClauses(from, to);
             MapSalaryDetails(from, to);
             MapFullAddress(from, to);
+        }
+
+        private void MapInformationClauses(JobOffer from, OfferContentDisplayViewModel to)
+        {
+            to.InformationClause = from.InformationClause;
+            to.ProcessingDataInFutureClause = from.ProcessingDataInFutureClause;
+            to.CustomConsentClauseTitle = from.CustomConsentClauseTitle;
+            to.CustomConsentClause = from.CustomConsentClause;
         }
 
         private void MapSalaryDetails(JobOffer from, OfferContentDisplayViewModel to)
@@ -42,7 +51,6 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
                 string singleSalaryText = "Undisclosed Salary";
 
                 var salaryRange = employmentDetails.SalaryRange;
-
                 if (salaryRange != null)
                 {
                     singleSalaryText = $"{salaryRange.From} - {salaryRange.To} {salaryRange.SalaryCurrency.Type}";

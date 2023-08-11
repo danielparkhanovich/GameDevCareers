@@ -23,6 +23,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
             };
 
             MapContactType(offer, viewModel);
+            MapConsentClauses(offer, viewModel);
 
             return viewModel;
         }
@@ -50,6 +51,18 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
             {
                 to.ApplicationsContactExternalFormUrl = from.ContactDetails.ContactAddress;
             }
+        }
+
+        private void MapConsentClauses(JobOffer from, OfferDataViewModel to)
+        {
+            to.InformationClause = from.InformationClause;
+
+            to.IsDisplayConsentForFutureRecruitment = !string.IsNullOrEmpty(from.ProcessingDataInFutureClause);
+            to.ConsentForFutureRecruitmentContent = from.ProcessingDataInFutureClause;
+
+            to.IsDisplayCustomConsent = !string.IsNullOrEmpty(from.CustomConsentClause);
+            to.CustomConsentTitle = from.CustomConsentClauseTitle;
+            to.CustomConsentContent = from.CustomConsentClause;
         }
     }
 }
