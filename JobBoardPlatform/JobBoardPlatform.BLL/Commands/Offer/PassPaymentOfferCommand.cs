@@ -21,6 +21,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             offer.IsPaid = true;
             offer.IsPublished = true;
             offer.PublishedAt = DateTime.Now;
+            offer.RefreshedOnPageAt = DateTime.Now;
             await offersRepository.Update(offer);
         }
     }

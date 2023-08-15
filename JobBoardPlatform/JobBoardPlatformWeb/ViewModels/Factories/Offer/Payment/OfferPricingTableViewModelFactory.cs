@@ -1,39 +1,43 @@
-﻿using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
+﻿using JobBoardPlatform.BLL.Query.Identity;
+using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 
 namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
 {
     public class OfferPricingTableViewModelFactory : IViewModelAsyncFactory<OfferPricingTableViewModel>
     {
-        private int selectedPlan;
+        private readonly int selectedPlan;
+        private readonly IOfferPlanQueryExecutor plansQuery;
 
 
-        public OfferPricingTableViewModelFactory()
+        public OfferPricingTableViewModelFactory(IOfferPlanQueryExecutor plansQuery)
         {
+            this.plansQuery = plansQuery;
         }
 
-        public OfferPricingTableViewModelFactory(int selectedPlan)
+        public OfferPricingTableViewModelFactory(IOfferPlanQueryExecutor plansQuery, int selectedPlan)
         {
+            this.plansQuery = plansQuery;
             this.selectedPlan = selectedPlan;
         }
 
-        public Task<OfferPricingTableViewModel> CreateAsync()
+        public async Task<OfferPricingTableViewModel> CreateAsync()
         {
             var viewModel = new OfferPricingTableViewModel();
             viewModel.Features = GetFeatures();
-            viewModel.Plans = GetPlans();
+            viewModel.Plans = await GetPlansAsync();
             if (selectedPlan != 0) 
             {
                 var element = viewModel.Plans[selectedPlan - 1];
                 viewModel.Plans = new List<OfferPricingPlanViewModel>() { element };
             }
 
-            return Task.FromResult(viewModel);
+            return viewModel;
         }
 
         private List<string> GetFeatures()
         {
-            // TODO: replace by database data fetch
             return new List<string>()
             {
                 "Number of publication days",
@@ -44,56 +48,62 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
             };
         }
 
-        private List<OfferPricingPlanViewModel> GetPlans()
+        private async Task<List<OfferPricingPlanViewModel>> GetPlansAsync()
         {
-            // TODO: replace by database data fetch
-            var plans = new List<OfferPricingPlanViewModel>
+            var viewModels = new List<OfferPricingPlanViewModel>();
+
+            var plans = await plansQuery.GetAllAsync();
+            foreach (var plan in plans) 
             {
-                new OfferPricingPlanViewModel()
-                {
-                    OfferType = "Commission",
-                    Price = "25",
-                    Currency = "PLN",
-                    FeatureValues = new List<string>()
-                    {
-                        "30 days", 
-                        "1 location", 
-                        "3 bump-up", 
-                        "<i class=\"bi bi-check-lg text-success\" style=\"font-size: 1.5rem;\"></i>",
-                        "Commissions",
-                    }
-                },
-                new OfferPricingPlanViewModel()
-                {
-                    OfferType = "Indie",
-                    Price = "50",
-                    Currency = "PLN",
-                    FeatureValues = new List<string>()
-                    {
-                        "30 days", 
-                        "3 location", 
-                        "3 bump-up", 
-                        "<i class=\"bi bi-x-lg text-danger\" style=\"font-size: 1.5rem;\"></i>",
-                        "Offers",
-                    },
-                    AvailableFreeSlots = 50
-                },
-                new OfferPricingPlanViewModel()
-                {
-                    OfferType = "AAA",
-                    Price = "100",
-                    Currency = "PLN",
-                    FeatureValues = new List<string>()
-                    {
-                        "<strong>45 days</strong>",
-                        "<strong>10 location</strong>",
-                        "<strong>7 bump-up</strong>", 
-                        "<i class=\"bi bi-check-lg text-success\" style=\"font-size: 1.5rem;\"></i>",
-                        "Offers",
-                    }
-                }
+                var viewModel = GetOfferPricingPlanViewModel(plan);
+                viewModels.Add(viewModel);
+            }
+            return viewModels;
+        }
+
+        private OfferPricingPlanViewModel GetOfferPricingPlanViewModel(JobOfferPlan plan)
+        {
+            var viewModel = new OfferPricingPlanViewModel();
+            viewModel.OfferType = plan.Name.Type;
+            viewModel.Price = plan.PriceInPLN.ToString();
+            viewModel.Currency = "PLN";
+            viewModel.AvailableFreeSlots = plan.FreeSlotsCount;
+            MapFeatureValues(plan, viewModel);
+            return viewModel;
+        }
+
+        private void MapFeatureValues(JobOfferPlan from, OfferPricingPlanViewModel to)
+        {
+            to.FeatureValues = new List<string>()
+            {
+                $"{from.PublicationDaysCount} days",
+                $"{from.EmploymentLocationsCount} locations",
+                $"{from.OfferRefreshesCount} bump-ups",
+                $"{GetOptionIsInludedOrNotHtml(from.IsAbleToRedirectApplications)}",
+                $"{from.Category.Type}"
             };
-            return plans;
+        }
+
+        private string GetOptionIsInludedOrNotHtml(bool isIncluded)
+        {
+            if (isIncluded)
+            {
+                return GetOptionIncludedHtml();
+            }
+            else
+            {
+                return GetOptionNotIncludedHtml();
+            }
+        }
+
+        private string GetOptionIncludedHtml()
+        {
+            return "<i class=\"bi bi-check-lg text-success\" style=\"font-size: 1.5rem;\"></i>";
+        }
+
+        private string GetOptionNotIncludedHtml()
+        {
+            return "<i class=\"bi bi-x-lg text-danger\" style=\"font-size: 1.5rem;\"></i>";
         }
     }
 }

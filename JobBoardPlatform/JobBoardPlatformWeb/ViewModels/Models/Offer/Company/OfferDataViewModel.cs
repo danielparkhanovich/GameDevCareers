@@ -6,6 +6,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
     public class OfferDataViewModel : IMainTechnology, ITechKeywords, IOfferData, IOfferSalary
     {
         public int OfferId { get; set; }
+        public int PlanId { get; set; }
         public string JobTitle { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;

@@ -1,4 +1,6 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
+﻿using JobBoardPlatform.BLL.Query.Identity;
+using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
@@ -8,10 +10,12 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
     public class OfferPaymentFormViewModelFactory : IViewModelAsyncFactory<OfferPaymentFormViewModel>
     {
         private readonly JobOffer offer;
+        private readonly IOfferPlanQueryExecutor plansQuery;
 
 
-        public OfferPaymentFormViewModelFactory(JobOffer offer)
+        public OfferPaymentFormViewModelFactory(IOfferPlanQueryExecutor plansQuery, JobOffer offer)
         {
+            this.plansQuery = plansQuery;
             this.offer = offer;
         }
 
@@ -33,7 +37,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
 
         private async Task<OfferPricingTableViewModel> GetSelectedPlan()
         {
-            var factory = new OfferPricingTableViewModelFactory(3);
+            var factory = new OfferPricingTableViewModelFactory(plansQuery, 3);
             return await factory.CreateAsync();
         }
     }

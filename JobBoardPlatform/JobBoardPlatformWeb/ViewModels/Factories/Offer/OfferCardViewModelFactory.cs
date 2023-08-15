@@ -39,10 +39,10 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 
         private string GetPublishedAgo(JobOffer from)
         {
-            var daysFormatter = new PublishedAgoFormatter(from.IsPublished);
+            var daysFormatter = new PublishedAgoFormatter();
             if (from.IsPublished)
             {
-                return daysFormatter.GetString(from.PublishedAt);
+                return daysFormatter.GetString(from.RefreshedOnPageAt);
             }
             else
             {

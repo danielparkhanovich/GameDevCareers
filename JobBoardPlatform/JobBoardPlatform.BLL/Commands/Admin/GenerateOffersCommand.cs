@@ -3,8 +3,6 @@ using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Utils;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using System.Diagnostics;
-using System.Reflection.Emit;
 
 namespace JobBoardPlatform.BLL.Commands.Admin
 {

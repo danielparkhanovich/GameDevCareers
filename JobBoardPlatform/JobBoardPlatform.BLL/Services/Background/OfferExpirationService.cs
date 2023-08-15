@@ -27,13 +27,10 @@ namespace JobBoardPlatform.BLL.Services.Background
             {
                 return GetNotPaidOfferDaysLeft();
             }
-            else if (offer.IsPublished)
+            else
             {
                 return GetPublishedOfferDaysLeft();
             }
-
-            return GetPublishedOfferDaysLeft();
-            //throw new Exception("Unknown offer state");
         }
 
         private bool IsOfferNotPaid()

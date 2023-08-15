@@ -4,6 +4,7 @@ using JobBoardPlatform.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoardPlatform.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230813190705_Offer_Plans_JobOffers_PlanId_Property_Tmp")]
+    partial class Offer_Plans_JobOffers_PlanId_Property_Tmp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,7 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.Property<int>("NumberOfViews")
                         .HasColumnType("int");
 
-                    b.Property<int>("PlanId")
+                    b.Property<int?>("PlanId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProcessingDataInFutureClause")
@@ -298,13 +301,7 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.Property<bool>("IsAbleToRedirectApplications")
                         .HasColumnType("bit");
 
-                    b.Property<int>("NameId")
-                        .HasColumnType("int");
-
                     b.Property<int>("OfferRefreshesCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PriceInPLN")
                         .HasColumnType("int");
 
                     b.Property<int>("PublicationDaysCount")
@@ -313,8 +310,6 @@ namespace JobBoardPlatform.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("NameId");
 
                     b.ToTable("JobOfferPlans");
 
@@ -326,9 +321,7 @@ namespace JobBoardPlatform.DAL.Migrations
                             EmploymentLocationsCount = 1,
                             FreeSlotsCount = 0,
                             IsAbleToRedirectApplications = true,
-                            NameId = 1,
                             OfferRefreshesCount = 1,
-                            PriceInPLN = 25,
                             PublicationDaysCount = 30
                         },
                         new
@@ -336,11 +329,9 @@ namespace JobBoardPlatform.DAL.Migrations
                             Id = 2,
                             CategoryId = 1,
                             EmploymentLocationsCount = 3,
-                            FreeSlotsCount = 50,
+                            FreeSlotsCount = 0,
                             IsAbleToRedirectApplications = false,
-                            NameId = 2,
                             OfferRefreshesCount = 3,
-                            PriceInPLN = 50,
                             PublicationDaysCount = 30
                         },
                         new
@@ -350,9 +341,7 @@ namespace JobBoardPlatform.DAL.Migrations
                             EmploymentLocationsCount = 10,
                             FreeSlotsCount = 0,
                             IsAbleToRedirectApplications = true,
-                            NameId = 3,
                             OfferRefreshesCount = 7,
-                            PriceInPLN = 125,
                             PublicationDaysCount = 45
                         });
                 });
@@ -655,40 +644,6 @@ namespace JobBoardPlatform.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobBoardPlatform.DAL.Models.EnumTables.JobOfferPlanType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("JobOfferPlanTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Type = "COMMISSION"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Type = "INDIE"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Type = "AAA"
-                        });
-                });
-
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.EnumTables.MainTechnologyType", b =>
                 {
                     b.Property<int>("Id")
@@ -795,9 +750,7 @@ namespace JobBoardPlatform.DAL.Migrations
 
                     b.HasOne("JobBoardPlatform.DAL.Models.Company.JobOfferPlan", "Plan")
                         .WithMany()
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PlanId");
 
                     b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.WorkLocationType", "WorkLocation")
                         .WithMany()
@@ -881,15 +834,7 @@ namespace JobBoardPlatform.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("JobBoardPlatform.DAL.Models.EnumTables.JobOfferPlanType", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("Name");
                 });
 
             modelBuilder.Entity("JobBoardPlatform.DAL.Models.Company.JobOfferSalariesRange", b =>

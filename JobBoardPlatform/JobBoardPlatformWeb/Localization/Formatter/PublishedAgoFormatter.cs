@@ -2,12 +2,8 @@
 {
     public class PublishedAgoFormatter : ITextFormatter<DateTime>
     {
-        private readonly bool isPublished;
-
-
-        public PublishedAgoFormatter(bool isPublished)
+        public PublishedAgoFormatter()
         {
-            this.isPublished = isPublished;
         }
 
         public string GetString(DateTime date)
@@ -18,14 +14,7 @@
                 return "new";
             }
 
-            if (isPublished)
-            {
-                return $"{daysAgo}d ago";
-            }
-            else
-            {
-                return $"{daysAgo}d ago";
-            }
+            return $"{daysAgo}d ago";
         }
     }
 }

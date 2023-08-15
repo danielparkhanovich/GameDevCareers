@@ -60,7 +60,7 @@ namespace JobBoardPlatform.BLL.Search.MainPage
 
         protected override IQueryable<JobOffer> GetSorted(IQueryable<JobOffer> available)
         {
-            available = available.OrderByDescending(offer => offer.PublishedAt);
+            available = available.OrderByDescending(offer => offer.RefreshedOnPageAt);
             return available;
         }
 

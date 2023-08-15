@@ -29,6 +29,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             var offer = new JobOffer();
             offer.CompanyProfileId = profileId;
             offer.CreatedAt = DateTime.Now;
+            offer.RefreshedOnPageAt = DateTime.Now;
 
             dataToOffer.Map(data, offer);
             await repository.Add(offer);

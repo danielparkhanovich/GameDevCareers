@@ -11,6 +11,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Company
             var viewModel = new OfferDataViewModel()
             {
                 OfferId = offer.Id,
+                PlanId = offer.PlanId,
                 JobTitle = offer.JobTitle,
                 City = offer.City,
                 Country = offer.Country,

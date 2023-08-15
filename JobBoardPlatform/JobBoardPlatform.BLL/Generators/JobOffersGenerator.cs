@@ -2,6 +2,7 @@
 using JobBoardPlatform.BLL.Generators;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
+using JobBoardPlatform.DAL.Models.EnumTables;
 
 namespace JobBoardPlatform.BLL.Utils
 {
@@ -28,7 +29,7 @@ namespace JobBoardPlatform.BLL.Utils
         private readonly string ExternalLink = "http://localhost:3000/";
         private readonly string InformationClause = "Nullam nec posuere quam. Nullam id elementum risus, non lacinia lacus. Vestibulum auctor tortor et nunc sollicitudin rhoncus. Aenean faucibus orci sit amet nulla aliquam, sit amet gravida ipsum sodales. Morbi ullamcorper lacus sed posuere fringilla. Nam sit amet orci molestie, fermentum dolor sit amet, hendrerit elit.";
         private readonly string FutureDataProcessing = "Aliquam sit amet mi vel metus lacinia ultricies eget a purus. Integer semper porttitor libero, id accumsan neque mollis ut. Aenean malesuada velit at risus hendrerit, vel lobortis felis commodo. Nullam sollicitudin nisl quis magna viverra tempor. Nulla ut nisi accumsan, facilisis ipsum volutpat, accumsan purus. Mauris pulvinar ipsum ex, eget eleifend nunc molestie at.";
-        private readonly string CustomConsentTitle = "Etiam tristique dolor sit amet nunc cursus, vel dictum risus molestie.";
+        private readonly string CustomConsentTitle = "Custom consent title";
         private readonly string CustomConsentContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id purus finibus, mattis est non, mollis velit. Cras vulputate urna sit amet fringilla rutrum. Mauris venenatis sagittis tincidunt. Fusce vel velit molestie, faucibus nunc eget, lobortis justo. Ut lobortis accumsan aliquam. Sed lobortis dictum fringilla. Donec sollicitudin tellus a sem accumsan bibendum. Mauris fermentum, nibh ut rhoncus elementum, mi velit commodo tortor, tempor placerat neque nisi quis sapien.";
 
 
@@ -50,6 +51,7 @@ namespace JobBoardPlatform.BLL.Utils
             var newOfferData = new MockOfferData()
             {
                 MainTechnologyType = (int)mainTechnology + 1,
+                PlanId = GetPlanId(random),
                 Country = address.Item1,
                 City = address.Item2,
                 Street = address.Item3,
@@ -133,6 +135,12 @@ namespace JobBoardPlatform.BLL.Utils
             int employmentTypesCount = random.Next(1, 4);
             var details = new List<EmploymentType>(employmentTypesCount);
 
+            bool isNotDiscloseSalary = false;
+            if (random.NextDouble() < 0.5f)
+            {
+                isNotDiscloseSalary = true;
+            }
+
             for (int i = 0; i < employmentTypesCount; i++)
             {
                 // setup salary range
@@ -150,25 +158,15 @@ namespace JobBoardPlatform.BLL.Utils
                 int? toSalary = fromSalary + random.Next(10, 20) * 1_000;
 
                 // select employment type & modify salary range
-                var employmentType = EmploymentTypeEnum.Permanent;
+                var notIncludedTypes = employmentTypes.Where(x => details.All(y => (int)x + 1 != y.TypeId))
+                    .ToArray();
+                int randomTypeIndex = random.Next(notIncludedTypes.Length);
+                var employmentType = notIncludedTypes[randomTypeIndex];
 
-                if (random.NextDouble() < 0.5f)
+                if (employmentType == EmploymentTypeEnum.B2B)
                 {
-                    employmentType = EmploymentTypeEnum.B2B;
                     fromSalary = (int)(fromSalary * 1.5f);
                     toSalary = (int)(toSalary * 1.5f);
-                }
-                else if (random.NextDouble() < 0.6f)
-                {
-                    employmentType = EmploymentTypeEnum.MandateContract;
-                }
-
-                if (details.Any(x => x.TypeId == (int)employmentType + 1))
-                {
-                    var exclude = details.First(x => x.TypeId == (int)employmentType + 1);
-                    var cleared = employmentTypes.Where(x => exclude.TypeId != (int)x + 1).ToArray();
-                    int randomIndex = random.Next(cleared.Length);
-                    employmentType = cleared[randomIndex];
                 }
 
                 // select currency & modify salary range
@@ -181,7 +179,7 @@ namespace JobBoardPlatform.BLL.Utils
                     toSalary = (int)(toSalary * 0.22f * 1.35f);
                 }
 
-                if (random.NextDouble() < 0.5f)
+                if (isNotDiscloseSalary)
                 {
                     fromSalary = null;
                     toSalary = null;
@@ -291,6 +289,16 @@ namespace JobBoardPlatform.BLL.Utils
             {
                 return (null, null);
             }
+        }
+
+        private int GetPlanId(Random random)
+        {
+            var planTypes = Enum.GetValues(typeof(JobOfferPlanEnum))
+                .Cast<JobOfferPlanEnum>()
+                .ToList();
+
+            int randomPlanId = random.Next(planTypes.Count) + 1;
+            return randomPlanId;
         }
     }
 }

@@ -5,6 +5,7 @@ namespace JobBoardPlatform.BLL.Generators
     internal class MockOfferData : IOfferData
     {
         public int OfferId { get; set; }
+        public int PlanId { get; set; }
         public string JobTitle { get; set; }
         public string Country { get; set; }
         public string City { get; set; }

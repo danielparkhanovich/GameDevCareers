@@ -3,6 +3,7 @@
     public interface IOfferData
     {
         int OfferId { get; set; }
+        int PlanId { get; set; }
         string JobTitle { get; set; }
         string Country { get; set; } // TODO: Remove
         string City { get; set; }

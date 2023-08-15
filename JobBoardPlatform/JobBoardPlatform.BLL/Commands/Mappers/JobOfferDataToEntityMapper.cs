@@ -7,6 +7,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
     {
         public void Map(IOfferData from, JobOffer to)
         {
+            to.PlanId = from.PlanId;
             to.JobTitle = from.JobTitle;
             to.Description = from.JobDescription;
             to.Country = from.Country;

@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.EnumTables;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobBoardPlatform.DAL.Models.Company
@@ -9,6 +8,10 @@ namespace JobBoardPlatform.DAL.Models.Company
     public class JobOffer : IEntity
     {
         public int Id { get; set; }
+
+        [ForeignKey("Plan")]
+        public int PlanId { get; set; }
+        public JobOfferPlan Plan { get; set; }
 
         [ForeignKey("CompanyProfile")]
         public int CompanyProfileId { get; set; }
@@ -33,6 +36,7 @@ namespace JobBoardPlatform.DAL.Models.Company
         public string? Address { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime PublishedAt { get; set; }
+        public DateTime RefreshedOnPageAt { get; set; }
 
         public string InformationClause { get; set; } = string.Empty;
         public string? ProcessingDataInFutureClause { get; set; }

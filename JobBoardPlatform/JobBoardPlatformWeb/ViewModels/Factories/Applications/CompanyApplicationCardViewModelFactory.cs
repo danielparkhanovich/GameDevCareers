@@ -13,7 +13,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
 
         public CompanyApplicationCardViewModelFactory()
         {
-            this.daysFormatter = new PublishedAgoFormatter(true);
+            this.daysFormatter = new PublishedAgoFormatter();
         }
 
         public IContainerCard CreateCard(JobOfferApplication application)

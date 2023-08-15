@@ -9,6 +9,7 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
     {
         public OfferFormDataValidator()
         {
+            RuleFor(offerData => offerData.PlanId).NotEqual(0).WithMessage("Select offer plan");
             RuleFor(offerData => offerData.JobTitle).NotNull().WithMessage("Job title cannot be empty");
             RuleFor(offerData => offerData.Country).NotNull().WithMessage("Country cannot be empty");
             RuleFor(offerData => offerData.City).NotNull().WithMessage("City cannot be empty");

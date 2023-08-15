@@ -43,7 +43,7 @@
                 {
                     <div class="d-flex flex-row text-light mt-1">
                         <h5 class="text-light">@offerDescription.SalaryDetails[i]</h5>
-                        <div class="mx-2">@offerDescription.EmploymentDetails[i]</div>
+                        <div class="mx-2">- @offerDescription.EmploymentDetails[i]</div>
                     </div>
                 }
             </div>
@@ -54,7 +54,7 @@
                 @foreach (var technology in offerDescription.TechKeywords!)
                 {
                     <div class="d-flex flex-row justify-content-end text-center">
-                        <p class="text-light text-opacity-75 small rounded-pill border border-light border-opacity-25 px-3 ms-3">@technology.ToLower()</p>
+                        <p class="text-light text-opacity-75 small rounded-pill border border-light border-opacity-25 px-3 ms-3 my-0">@technology.ToLower()</p>
                     </div>
                 }
             }

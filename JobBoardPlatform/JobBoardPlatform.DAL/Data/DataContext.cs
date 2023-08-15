@@ -1,10 +1,10 @@
 ﻿using JobBoardPlatform.DAL.Data.Enums;
+using JobBoardPlatform.DAL.Data.Setup;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.DAL.Models.EnumTables;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace JobBoardPlatform.DAL.Data
 {
@@ -19,6 +19,8 @@ namespace JobBoardPlatform.DAL.Data
         public DbSet<CompanyProfile> CompanyProfiles { get; set; }
 
         public DbSet<JobOffer> JobOffers { get; set; }
+        public DbSet<JobOfferCategoryType> JobOfferCategories { get; set; }
+        public DbSet<JobOfferPlan> JobOfferPlans { get; set; }
         public DbSet<JobOfferEmploymentDetails> JobOfferEmploymentDetails { get; set; }
         public DbSet<JobOfferSalariesRange> JobOfferSalariesRange { get; set; }
         public DbSet<JobOfferEmploymentType> EmploymentTypes { get; set; }
@@ -42,19 +44,27 @@ namespace JobBoardPlatform.DAL.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            CreateEnumEntities(modelBuilder);
+            CreateOfferPlans(modelBuilder);
+        }
+
+        private void CreateEnumEntities(ModelBuilder modelBuilder)
+        {
             var enumCreator = new EnumModelCreator(modelBuilder);
-
             enumCreator.SetDataForEntity<JobOfferEmploymentType, EmploymentTypeEnum>();
-
             enumCreator.SetDataForEntity<CurrencyType, CurrencyTypeEnum>();
-
             enumCreator.SetDataForEntity<WorkLocationType, WorkLocationTypeEnum>();
-
             enumCreator.SetDataForEntity<MainTechnologyType, MainTechnologyTypeEnum>();
-
             enumCreator.SetDataForEntity<ContactType, ContactTypeEnum>();
-
             enumCreator.SetDataForEntity<ApplicationFlagType, ApplicationFlagEnum>();
+            enumCreator.SetDataForEntity<JobOfferCategoryType, JobOfferCategoryEnum>();
+            enumCreator.SetDataForEntity<JobOfferPlanType, JobOfferPlanEnum>();
+        }
+
+        private void CreateOfferPlans(ModelBuilder modelBuilder)
+        {
+            var planCreator = new JobOfferPlanCreator(modelBuilder);
+            planCreator.CreateRecords();
         }
     }
 }

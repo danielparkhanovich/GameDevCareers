@@ -4,6 +4,7 @@ using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.Controllers.Utils;
 using JobBoardPlatform.PL.Interactors.Notifications;
 using JobBoardPlatform.PL.Interactors.Payment;
@@ -21,19 +22,22 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Route("payment")]
     public class CompanyOfferPaymentController : Controller
     {
-        private readonly IOfferManager commandsExecutor;
+        private readonly IOfferManager offerManager;
+        private readonly IOfferPlanQueryExecutor plansQuery;
         private readonly IOfferQueryExecutor queryExecutor;
         private readonly IValidator<IOfferData> validator;
         private readonly IPaymentInteractor paymentInteractor;
 
 
         public CompanyOfferPaymentController(
-            IOfferManager commandsExecutor, 
+            IOfferManager offerManager,
+            IOfferPlanQueryExecutor plansQuery,
             IOfferQueryExecutor queryExecutor,
             IValidator<IOfferData> validator,
             IPaymentInteractor paymentInteractor)
         {
-            this.commandsExecutor = commandsExecutor;
+            this.offerManager = offerManager;
+            this.plansQuery = plansQuery;
             this.queryExecutor = queryExecutor;
             this.validator = validator;
             this.paymentInteractor = paymentInteractor;
@@ -96,7 +100,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private Task<OfferPaymentFormViewModel> GetViewModel(JobOffer offer)
         {
-            var factory = new OfferPaymentFormViewModelFactory(offer);
+            var factory = new OfferPaymentFormViewModelFactory(plansQuery, offer);
             return factory.CreateAsync();
         }
     }
