@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Search.Templates;
+﻿using JobBoardPlatform.BLL.Search.Enums;
+using JobBoardPlatform.BLL.Search.Templates;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
@@ -53,6 +54,15 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             if (!string.IsNullOrEmpty(searchParams.SearchString))
             {
                 available = SearchByKeywords(available);
+            }
+
+            if (searchParams.Type == OfferType.Employment)
+            {
+                available = available.Where(x => x.Plan.CategoryId == (int)OfferType.Employment + 1);
+            }
+            else if (searchParams.Type == OfferType.Commission)
+            {
+                available = available.Where(x => x.Plan.CategoryId == (int)OfferType.Commission + 1);
             }
 
             return available;

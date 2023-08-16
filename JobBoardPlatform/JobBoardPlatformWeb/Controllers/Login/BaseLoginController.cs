@@ -5,6 +5,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.PL.Interactors.Notifications;
+using JobBoardPlatform.PL.ViewModels.Models.MainTechnologyWidgets;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {

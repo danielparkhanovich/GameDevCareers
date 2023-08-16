@@ -251,6 +251,24 @@ namespace JobBoardPlatform.BLL.Utils
                 string prefixTech = TitleDesign[randomIndex];
                 postfix = prefixTech;
             }
+            else if (mainTechnology == MainTechnologyTypeEnum.Testing)
+            {
+                int randomIndex = random.Next(TitleTesting.Length);
+                string prefixTech = TitleTesting[randomIndex];
+                postfix = prefixTech;
+            }
+            else if (mainTechnology == MainTechnologyTypeEnum.Management)
+            {
+                int randomIndex = random.Next(TitleManagement.Length);
+                string prefixTech = TitleManagement[randomIndex];
+                postfix = prefixTech;
+            }
+            else if (mainTechnology == MainTechnologyTypeEnum.Other)
+            {
+                int randomIndex = random.Next(TitleOther.Length);
+                string prefixTech = TitleOther[randomIndex];
+                postfix = prefixTech;
+            }
 
             string title = $"{seniority} {postfix}";
 

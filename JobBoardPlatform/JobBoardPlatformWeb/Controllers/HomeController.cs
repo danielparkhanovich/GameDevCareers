@@ -20,7 +20,6 @@ namespace JobBoardPlatformWeb.Controllers
         }
 
         [Route("")]
-        [Route("commissions", Order = 1)]
         public async Task<IActionResult> Index()
         {
             var viewModelFactory = new OffersMainPageViewModelFactory(searcher, GetSearchParams());

@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.PL.ViewModels.Contracts;
-using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
+﻿using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Payment
 {

@@ -10,6 +10,7 @@
         public const string HidePublished = "hidepublished";
         public const string HideShelved = "hideshelved";
         public const string OfferId = "offerId";
+        public const string Category = "category";
 
         // General
         public const string Page = "page";

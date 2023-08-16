@@ -12,8 +12,8 @@ namespace JobBoardPlatform.BLL.Search.MainPage
     {
         protected override void AssignFilterParams(HttpRequest httpRequest, MainPageOfferSearchParams searchParams)
         {
-            var tabString = httpRequest.Path.ToString().ToLower();
-            searchParams.Type = GetOfferType(tabString);
+            string? typeString = httpRequest.Query[OfferSearchUrlParams.Category];
+            searchParams.Type = GetOfferType(typeString);
 
             // Get all query parameters
             string? technologyString = httpRequest.Query[OfferSearchUrlParams.Technology];
@@ -24,11 +24,11 @@ namespace JobBoardPlatform.BLL.Search.MainPage
             searchParams.SearchString = httpRequest.Query[OfferSearchUrlParams.Search];
         }
 
-        private OfferType GetOfferType(string typeString)
+        private OfferType GetOfferType(string? typeString)
         {
             OfferType offerType = OfferType.Employment;
 
-            if (typeString == "/commissions")
+            if (typeString == OfferType.Commission.ToString().ToLower())
             {
                 offerType = OfferType.Commission;
             }

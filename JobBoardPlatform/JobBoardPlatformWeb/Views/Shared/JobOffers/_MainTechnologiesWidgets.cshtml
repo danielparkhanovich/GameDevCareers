@@ -1,83 +1,93 @@
 ﻿@using JobBoardPlatform.DAL.Models.Enums;
 @using JobBoardPlatform.PL.ViewModels.Contracts;
+@using JobBoardPlatform.PL.ViewModels.Factories.MainTechnologyWidgets;
 
 @model IMainTechnology
 @{
-    var fields = Enum.GetValues(typeof(MainTechnologyTypeEnum))
-        .Cast<MainTechnologyTypeEnum>()
-        .ToArray();
-    var fieldLabels = new List<string>(fields.Select(x => x.ToString()));
-    var fieldValues = new List<string>(fields.Select(x => x.ToString()));
-    int indexOffset = 1;
+    var widgetsFactory = new MainTechnologyWidgetsFactory();
+    var widgets = await widgetsFactory.CreateAsync();
 
-    bool isIncludeAny = (ViewData["Title"] as string == "Home Page");
-    if (isIncludeAny)
+    int startFromIndex = 0;
+    bool isIncludeAll = (ViewData["Title"] as string == "Home Page");
+    if (!isIncludeAll)
     {
-        fieldLabels.Insert(0, "All");
-        fieldValues.Insert(0, "All");
-        indexOffset = 0;
+        startFromIndex = 1;
     }
 
-    int selectedIndex = Model.MainTechnologyType - indexOffset;
+    bool isHighlightAllOnAllOption = true;
+    int selectedIndex = Model.MainTechnologyType;
 }
 
 <div class="d-flex btn-group flex-wrap" data-toggle="buttons">
-    @for (int i = 0; i < fieldLabels.Count; i++)
+    @for (int i = startFromIndex; i < widgets.Count; i++)
     {
-        <div fieldtype="@fieldValues[i]" class="d-flex flex-column justify-content-center align-items-center radio-button-area widgetField" onclick="selectField('mainFieldInput_@i')">
-            <label asp-for="MainTechnologyType" class="d-flex flex-column align-items-center p-3 text-center mainField" for="option4">
+        <div fieldtype="@widgets[i].Value" class="d-flex flex-column justify-content-center align-items-center radio-button-area widgetField small" onclick="selectField('mainFieldInput_@i')" style="width: 90px;">
+            <label asp-for="MainTechnologyType" class="d-flex flex-column align-items-center p-2 text-center mainField" for="option4">
                 <div class="overlay" style="width: 4rem; height: 4rem; position: absolute; border-radius: 50%; background-color: rgba(100, 100, 100, 0.5); opacity:0; transition: all 0.3s;
-                 z-index:0;"></div>
-                <i class="d-flex justify-content-center align-items-center rounded-circle bi bi-display text-white mainFieldImg"
+                    z-index:0;"></div>
+                <div class="d-flex justify-content-center align-items-center rounded-circle text-white mainFieldImg"
                     style="width: 3rem; height: 3rem; font-size: 1.4rem;
                     background-image: linear-gradient(90deg, rgba(101,101,101,1) 0%, rgba(130,130,130,1) 100%);
                     transition: all 0.2s ease-in-out; z-index:1;">
-                </i>
-                <div class="small">@fieldLabels[i].ToString()</div>
+                    <img src="@widgets[i].IconUri" width="30" height="30" class="text-secondary" style="color:gray;"  />
+                </div>
+                <div class="small">@widgets[i].Label</div>
             </label>
-            <input asp-for="MainTechnologyType" id="mainFieldInput_@i" class="mainFieldInput" type="radio" value="@(i + indexOffset)"
-                style="position: absolute; opacity: 0; pointer-events: none;" />
+            <input asp-for="MainTechnologyType" id="mainFieldInput_@i" class="mainFieldInput" type="radio" value="@i"
+               style="position: absolute; opacity: 0; pointer-events: none;" />
         </div>
     }
 </div>
 
 <script>
+    const isHighlightAll = @Html.Raw(Json.Serialize(isHighlightAllOnAllOption));
+    const widgets = @Html.Raw(Json.Serialize(widgets));
     const radioButtons = document.getElementsByClassName('mainFieldInput');
 
     const selected = @Html.Raw(Json.Serialize(selectedIndex));
 
-    checkTechnologyWidget(radioButtons[selected]);
+    selectField(`mainFieldInput_${selected}`);
+    //checkTechnologyWidget(radioButtons[selected], +selected);
 
     function selectField(value) {
-        for (var i = 0; i < radioButtons.length; i++) 
-        {
-            var element = radioButtons[i];
+        for (let i = 0; i < radioButtons.length; i++) {
+            const element = radioButtons[i];
             uncheckTechnologyWidget(element);
-            console.log(element.id);
         }
 
-        var selectedRadioButton = document.querySelector('#'+value);
-        checkTechnologyWidget(selectedRadioButton);
-        console.log(selectedRadioButton.id);
+        const selectedRadioButton = document.querySelector('#' + value);
+        const id = +value.split('_')[1];
+        console.log(id);
+        if (isHighlightAll && id == 0)
+        {
+            console.log(id);
+            for (let i = 0; i < radioButtons.length; i++) {
+                checkTechnologyWidget(radioButtons[i], i);
+            }
+        }
+        else
+        {
+            checkTechnologyWidget(selectedRadioButton, id);
+        }
     }
 
-    function checkTechnologyWidget(element) {
-
+    function checkTechnologyWidget(element, id) {
         element.checked = true;
 
-        // Add 'active' class to parent element of selected radio button
-        var label = element.parentElement.querySelector('.mainField');
+        const widgetData = widgets[id];
+        const colorFromStr = `rgba(${widgetData.backgroundColorFrom.r},${widgetData.backgroundColorFrom.g},${widgetData.backgroundColorFrom.b},0.8)`;
+        const colorToStr = `rgba(${widgetData.backgroundColorTo.r},${widgetData.backgroundColorTo.g},${widgetData.backgroundColorTo.b},0.8)`;
 
-        var img = label.querySelector('.mainFieldImg');
-        img.style.backgroundImage = "linear-gradient(90deg, rgba(52,89,230,1) 0%, rgba(102,134,255,1) 100%)";
+        const label = element.parentElement.querySelector('.mainField');
+        const img = label.querySelector('.mainFieldImg');
+        img.style.backgroundImage = `linear-gradient(90deg, ${colorFromStr} 0%, ${colorToStr} 100%)`;
     }
 
     function uncheckTechnologyWidget(element) {
         element.checked = false;
 
-        var label = element.parentElement.querySelector('.mainField');
-
-        var img = label.querySelector('.mainFieldImg');
+        const label = element.parentElement.querySelector('.mainField');
+        const img = label.querySelector('.mainFieldImg');
         img.style.backgroundImage = "linear-gradient(90deg, rgba(101,101,101,1) 0%, rgba(130,130,130,1) 100%)";
     }
 </script>

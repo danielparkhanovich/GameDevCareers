@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,21 +24,25 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public const string OfferIdTempData = "OfferId";
 
         private readonly IOfferManager offersManager;
+        private readonly IOfferPlanQueryExecutor offerPlansQuery;
         private readonly IValidator<IOfferData> validator;
 
 
         public CompanyOfferEditorController(
             IOfferManager offersManager, 
+            IOfferPlanQueryExecutor offerPlansQuery,
             IValidator<IOfferData> validator)
         {
             this.offersManager = offersManager;
+            this.offerPlansQuery = offerPlansQuery;
             this.validator = validator;
         }
 
         [Route("new", Order = 1)]
-        public IActionResult Editor()
+        public async Task<IActionResult> Editor()
         {
             var viewModel = new EditOfferViewModel();
+            await SetPricingPlans(viewModel);
             return View(viewModel);
         }
 
@@ -52,6 +58,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         public async Task<IActionResult> Editor(int offerId)
         {
             var viewModel = new EditOfferViewModel();
+            await SetPricingPlans(viewModel);
             viewModel.OfferDetails = await GetOfferDetailsViewModelAsync(offerId);
             return View(viewModel);
         }
@@ -118,6 +125,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             {
                 return RedirectToAction("Offers", "CompanyOffersPanel");
             }
+        }
+
+        private async Task SetPricingPlans(EditOfferViewModel viewModel)
+        {
+            var pricingPlans = await (new OfferPricingTableViewModelFactory(offerPlansQuery).CreateAsync());
+            viewModel.PricingPlans = pricingPlans;
         }
     }
 }

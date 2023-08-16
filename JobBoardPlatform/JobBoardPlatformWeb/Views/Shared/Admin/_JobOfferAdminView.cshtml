@@ -42,7 +42,7 @@
                         @{
                             var widget = new MainTechnologyWidgetViewModel()
                             {
-                                Label = Model.MainTechnology
+                                MainTechnology = Model.MainTechnology
                             };
                         }
                         @await Html.PartialAsync("./JobOffers/_MainTechnologyStaticWidget", widget)

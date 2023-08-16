@@ -5,6 +5,9 @@
         Programming,
         Audio,
         Graphics3D,
-        LevelDesign
+        LevelDesign,
+        Testing,
+        Management,
+        Other
     }
 }

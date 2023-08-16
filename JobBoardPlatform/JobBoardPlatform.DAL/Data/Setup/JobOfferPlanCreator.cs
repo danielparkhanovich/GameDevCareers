@@ -50,7 +50,7 @@ namespace JobBoardPlatform.DAL.Data.Setup
                 PublicationDaysCount = 30,
                 EmploymentLocationsCount = 1,
                 IsAbleToRedirectApplications = true,
-                OfferRefreshesCount = 1,
+                OfferRefreshesCount = 0,
                 FreeSlotsCount = 0,
                 CategoryId = (int)JobOfferCategoryEnum.Commissions + 1,
             };
@@ -66,7 +66,7 @@ namespace JobBoardPlatform.DAL.Data.Setup
                 PublicationDaysCount = 30,
                 EmploymentLocationsCount = 3,
                 IsAbleToRedirectApplications = false,
-                OfferRefreshesCount = 3,
+                OfferRefreshesCount = 1,
                 FreeSlotsCount = 50,
                 CategoryId = (int)JobOfferCategoryEnum.Employment + 1,
             };
@@ -82,7 +82,7 @@ namespace JobBoardPlatform.DAL.Data.Setup
                 PublicationDaysCount = 45,
                 EmploymentLocationsCount = 10,
                 IsAbleToRedirectApplications = true,
-                OfferRefreshesCount = 7,
+                OfferRefreshesCount = 3,
                 FreeSlotsCount = 0,
                 CategoryId = (int)JobOfferCategoryEnum.Employment + 1,
             };

@@ -74,7 +74,12 @@ namespace JobBoardPlatform.BLL.Services.Background
         {
             int publishDays = offer.Plan.PublicationDaysCount;
             int totalBumpUps = offer.Plan.OfferRefreshesCount;
-            double refreshDeltaInDays = (double)publishDays / totalBumpUps;
+            if (totalBumpUps == 0)
+            {
+                return false;
+            }
+
+            double refreshDeltaInDays = (double)publishDays / (totalBumpUps + 1);
 
             var lastBumpUpAt = offer.RefreshedOnPageAt;
             var nextBumpUpAt = lastBumpUpAt.AddDays(refreshDeltaInDays);

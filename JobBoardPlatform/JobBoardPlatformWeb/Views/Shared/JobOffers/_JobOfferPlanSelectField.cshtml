@@ -1,0 +1,33 @@
+﻿@using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
+
+@model IOfferData
+@{
+    
+}
+
+<div>    
+    <p>
+        Is it possible to remote work for candidate? <span class="text-danger">*</span>
+    </p>
+    <div class="d-flex flex-row">
+        <div class="form-check me-5">
+            <input asp-for="OfferId" class="form-check-input" type="radio" value="1" checked>
+            <label asp-for="OfferId" class="form-check-label">
+                Office
+            </label>
+        </div>
+        <div class="form-check me-5">
+            <input asp-for="OfferId" class="form-check-input" type="radio" value="2">
+            <label asp-for="OfferId" class="form-check-label">
+                Hybrid
+            </label>
+        </div>
+        <div class="form-check">
+            <input asp-for="OfferId" class="form-check-input" type="radio" value="3">
+            <label asp-for="OfferId" class="form-check-label">
+                Fully Remote
+            </label>
+        </div>
+        <span asp-validation-for="OfferId" class="text-danger"></span>
+    </div>
+</div>

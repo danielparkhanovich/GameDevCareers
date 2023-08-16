@@ -13,6 +13,7 @@ using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using Microsoft.AspNetCore.Mvc;
@@ -56,9 +57,10 @@ namespace JobBoardPlatform.PL.Controllers.Register
 
         [Route("post-ad")]
         [TypeFilter(typeof(RedirectRegisteredCompanyFilter))]
-        public IActionResult StartPostOfferAndRegister()
+        public async Task<IActionResult> StartPostOfferAndRegister()
         {
             var viewModel = new CompanyPublishOfferAndRegisterViewModel();
+            await SetPricingPlans(viewModel.EditOffer);
             return View(viewModel);
         }
 
@@ -185,6 +187,12 @@ namespace JobBoardPlatform.PL.Controllers.Register
         {
             var factory = new OfferPaymentFormViewModelFactory(plansQuery, offer);
             return factory.CreateAsync();
+        }
+
+        private async Task SetPricingPlans(EditOfferViewModel viewModel)
+        {
+            var pricingPlans = await (new OfferPricingTableViewModelFactory(plansQuery).CreateAsync());
+            viewModel.PricingPlans = pricingPlans;
         }
     }
 }
