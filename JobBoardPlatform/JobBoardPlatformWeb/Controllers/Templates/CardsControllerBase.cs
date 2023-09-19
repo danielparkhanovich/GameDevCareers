@@ -12,7 +12,6 @@ namespace JobBoardPlatform.PL.Controllers.Templates
         public virtual async Task<IActionResult> RefreshCardsContainer()
         {
             var container = await GetContainer();
-            var test = Request;
             return PartialView(CardsContainerViewModel.PartialView, container);
         }
 

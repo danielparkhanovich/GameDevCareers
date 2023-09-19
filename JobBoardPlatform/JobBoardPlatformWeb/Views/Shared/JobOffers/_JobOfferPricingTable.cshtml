@@ -42,7 +42,7 @@
                 @foreach (var plan in Model.Plans)
                 {
                     <td class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-top-0 border-success" : "")">
-                        <a href="@Url.Action($"{CompanyRegistrationWithOfferPublishController.StartPostOfferAndRegisterAction}")"
+                        <a href="@Url.Action($"{CompanyRegistrationWithOfferPublishController.StartPostOfferAndRegisterAction}", new { planType = plan.OfferType.ToLower() })"
                        class="text-small btn btn-primary rounded-pill px-5">
                             Post a job
                         </a>

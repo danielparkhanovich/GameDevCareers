@@ -4,13 +4,11 @@ using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.Interactors.Notifications;
 using JobBoardPlatform.PL.Interactors.Registration;
-using JobBoardPlatform.PL.ViewModels.Contracts;
-using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
@@ -55,40 +53,46 @@ namespace JobBoardPlatform.PL.Controllers.Register
             return View(viewModel);
         }
 
-        [Route("post-ad")]
+        [Route("post-ad/{planType}/{formDataTokenId?}")]
         [TypeFilter(typeof(RedirectRegisteredCompanyFilter))]
-        public async Task<IActionResult> StartPostOfferAndRegister()
+        public async Task<IActionResult> StartPostOfferAndRegister(string planType, string? formDataTokenId = null)
         {
-            var viewModel = new CompanyPublishOfferAndRegisterViewModel();
-            await SetPricingPlans(viewModel.EditOffer);
+            ICompanyProfileAndNewOfferData viewModel;
+            if (string.IsNullOrEmpty(formDataTokenId))
+            {
+                viewModel = new CompanyPublishOfferAndRegisterViewModel();
+            }
+            else
+            {
+                viewModel = await extendedInteractor.GetPostFormViewModelAsync(formDataTokenId);
+            }
+            int planId = GetPlanTypeId(planType);
+            viewModel.OfferData.PlanId = planId;
+
+            await SetPricingPlans((viewModel as CompanyPublishOfferAndRegisterViewModel).EditOffer);
             return View(viewModel);
         }
 
-        [Route("post-ad/{formDataTokenId}")]
-        public async Task<IActionResult> StartPostOfferAndRegister(string formDataTokenId)
+        public IActionResult ReloadFormOnPlanChange(string planType, string? formDataTokenId = null)
         {
-            var viewModel = await extendedInteractor.GetPostFormViewModelAsync(formDataTokenId);
-            return View(viewModel);
+            return RedirectToAction(
+                "StartPostOfferAndRegister", 
+                new { planType = planType, formDataTokenId = formDataTokenId });
         }
 
-        [Route("post-ad/{formDataTokenId}")]
+        [Route("post-ad/{planType}/{formDataTokenId?}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> StartPostOfferAndRegister(
-            CompanyPublishOfferAndRegisterViewModel registerData, string formDataTokenId)
-        {
-            await extendedInteractor.DeletePreviousSavedDataAsync(registerData, formDataTokenId);
-            return await StartPostOfferAndRegister(registerData);
-        }
-
-        [Route("post-ad")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StartPostOfferAndRegister(CompanyPublishOfferAndRegisterViewModel registerData)
+            CompanyPublishOfferAndRegisterViewModel registerData, string planType, string? formDataTokenId = null)
         {
             var result = await validator.ValidateAsync(registerData);
             if (result.IsValid)
             {
+                if (!string.IsNullOrEmpty(formDataTokenId))
+                {
+                    await extendedInteractor.DeletePreviousSavedDataAsync(registerData, formDataTokenId);
+                }
                 string tokenId = await extendedInteractor.SavePostFormViewModelAsync(registerData);
                 return RedirectToAction("VerifyRegistration", new { formDataTokenId = tokenId });
             }
@@ -172,6 +176,9 @@ namespace JobBoardPlatform.PL.Controllers.Register
             var viewModel = new CompanyVerifyPublishOfferAndRegistrationViewModel();
             viewModel.FormDataTokenId = formDataTokenId;
 
+            var formData = await extendedInteractor.GetPostFormViewModelAsync(formDataTokenId);
+            viewModel.PlanType = GetPlanType(formData.OfferData.PlanId);
+
             if (UserSessionUtils.IsLoggedIn(User))
             {
                 int profileId = UserSessionUtils.GetProfileId(User);
@@ -193,6 +200,27 @@ namespace JobBoardPlatform.PL.Controllers.Register
         {
             var pricingPlans = await (new OfferPricingTableViewModelFactory(plansQuery).CreateAsync());
             viewModel.PricingPlans = pricingPlans;
+        }
+
+        private int GetPlanTypeId(string plan)
+        {
+            var plans = Enum.GetValues(typeof(JobOfferPlanEnum))
+                .Cast<JobOfferPlanEnum>().ToList();
+            for (int i = 0; i < plans.Count; i++)
+            {
+                if (plan.ToLower() == plans[i].ToString().ToLower())
+                {
+                    return i + 1;
+                }
+            }
+            return 2;
+        }
+
+        private string GetPlanType(int id)
+        {
+            var plans = Enum.GetValues(typeof(JobOfferPlanEnum))
+                .Cast<JobOfferPlanEnum>().ToList();
+            return plans[id - 1].ToString().ToLower();
         }
     }
 }

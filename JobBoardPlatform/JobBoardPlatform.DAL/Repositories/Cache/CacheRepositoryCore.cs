@@ -18,8 +18,11 @@ namespace JobBoardPlatform.DAL.Repositories.Cache
         public async Task UpdateAsync(string entryKey, T entry)
         {
             var serialized = GetSerialized(entry);
-            var bytes = TryGetBytesFromSerialized(serialized);
-            await cache.SetAsync(entryKey, bytes, GetOptions());
+            if (!IsSerializedEmpty(serialized))
+            {
+                var bytes = TryGetBytesFromSerialized(serialized);
+                await cache.SetAsync(entryKey, bytes, GetOptions());
+            }
         }
 
         public async Task<T> GetAsync(string entryKey)

@@ -7,6 +7,7 @@
     ViewData["Title"] = "Post a job";
     ViewData["IsHideSignIn"] = true;
     string tokenId = Model.FormDataTokenId;
+    string planType = Model.PlanType;
 
     var paymentNotification = NotificationsManager.Instance.TryGetNotification(
         NotificationsManager.PaymentSection, TempData);
@@ -25,7 +26,7 @@
     <div class="card border-0 shadow-lg p-2">
         <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
             <div></div>
-            <a class="btn btn-outline-primary" asp-action="StartPostOfferAndRegister" asp-route-formDataTokenId="@tokenId">
+            <a class="btn btn-outline-primary" asp-action="StartPostOfferAndRegister" asp-route-planType="@planType" asp-route-formDataTokenId="@tokenId">
                 <i class="bi bi-arrow-left"></i>
                 Back
             </a>

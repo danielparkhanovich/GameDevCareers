@@ -1,7 +1,41 @@
 ﻿@model EditOfferViewModel
+@{
+    string? formDataTokenId = this.ViewContext.RouteData.Values["formDataTokenId"] as string;
+    var availablePlans = Model.PricingPlans;
+}
 
-<div>    
+<div id="offerForm">    
     <div class="mb-2">
+        <div class="card-header border-bottom-0 bg-transparent">
+            <strong>Offer plan</strong>
+        </div>
+        <div class="card-body">
+            <p>
+                Choose appropriate plan <span class="text-danger">*</span>
+            </p>
+            <div class="d-flex flex-row" id="offerPlans">
+                @for (int i = 0; i < availablePlans.Plans.Count; i++)
+                {
+                    var plan = availablePlans.Plans[i];
+
+                    <div class="form-check me-5">
+                        <input asp-for="OfferDetails.PlanId" id="plan_@i" class="form-check-input" type="radio" value="@(i + 1)" data-plantype="@plan.OfferType">
+                        <label asp-for="OfferDetails.PlanId" for="plan_@i" class="d-flex flex-row align-content-center form-check-label">
+                            @plan.OfferType
+                            @if (plan.AvailableFreeSlots > 0)
+                            {
+                                <span class="badge bg-success text-center ms-2 align-self-center">Free</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-dark text-center ms-2 align-self-center">@plan.Price @plan.Currency</span>
+                            }
+                        </label>
+                    </div>
+                }
+                <span asp-validation-for="OfferDetails.PlanId" class="text-danger"></span>
+            </div>
+        </div>
         <div class="card-header border-bottom-0 bg-transparent">
             <strong>Position info</strong>
         </div>
@@ -41,20 +75,20 @@
             </p>
             <div class="d-flex flex-row">
                 <div class="form-check me-5">
-                    <input asp-for="OfferDetails.WorkLocationType" class="form-check-input" type="radio" value="1" checked>
-                    <label asp-for="OfferDetails.WorkLocationType" class="form-check-label">
+                    <input asp-for="OfferDetails.WorkLocationType" id="work_location_office" class="form-check-input" type="radio" value="1" checked>
+                    <label asp-for="OfferDetails.WorkLocationType" for="work_location_office" class="form-check-label">
                         Office
                     </label>
                 </div>
                 <div class="form-check me-5">
-                    <input asp-for="OfferDetails.WorkLocationType" class="form-check-input" type="radio" value="2">
-                    <label asp-for="OfferDetails.WorkLocationType" class="form-check-label">
+                    <input asp-for="OfferDetails.WorkLocationType" id="work_location_hybrid" class="form-check-input" type="radio" value="2">
+                    <label asp-for="OfferDetails.WorkLocationType" for="work_location_hybrid" class="form-check-label">
                         Hybrid
                     </label>
                 </div>
                 <div class="form-check">
-                    <input asp-for="OfferDetails.WorkLocationType" class="form-check-input" type="radio" value="3">
-                    <label asp-for="OfferDetails.WorkLocationType" class="form-check-label">
+                    <input asp-for="OfferDetails.WorkLocationType" id="work_location_remote" class="form-check-input" type="radio" value="3">
+                    <label asp-for="OfferDetails.WorkLocationType" for="work_location_remote" class="form-check-label">
                         Fully Remote
                     </label>
                 </div>
@@ -300,7 +334,32 @@
         callback: undefined,
     });
 
+    // on offer plan change
     const contactFormTypeSelect = $('#contactFormTypeSelect');
+
+    $('#offerPlans input').each(function () 
+    {
+        $(this).change(function () {
+            if(this.checked)
+            {
+                console.log("switched");
+                const form = $("#offerForm").closest('form');
+                const dataToSend = form.serialize();
+                console.log(dataToSend);
+
+                const planType = this.dataset.plantype.toLowerCase();
+                let refreshUrl = `@Url.Action("ReloadFormOnPlanChange")?planType=${planType}`;
+
+                const formDataTokenId = @(Html.Raw(Json.Serialize(formDataTokenId)));
+                if (formDataTokenId != null)
+                {
+                    refreshUrl += `&formDataTokenId=${formDataTokenId}`;
+                }
+
+                window.location.href = refreshUrl;
+            }
+        });
+    });
 
     // switches in contact address section
     const emailContactInputField = $('#emailContactInputField');
