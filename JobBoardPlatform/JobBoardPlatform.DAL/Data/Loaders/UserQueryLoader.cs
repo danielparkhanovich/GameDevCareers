@@ -16,7 +16,7 @@ namespace JobBoardPlatform.DAL.Data.Loaders
             }
             else if (typeof(T) == typeof(CompanyIdentity))
             {
-                var company = ((IQueryable<EmployeeIdentity>)queryable).Include(x => x.Profile);
+                var company = ((IQueryable<CompanyIdentity>)queryable).Include(x => x.Profile);
                 return (IQueryable<T>)company;
             }
             throw new NotImplementedException();

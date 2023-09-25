@@ -3,9 +3,10 @@ using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.PL.Aspects.DataValidators;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Company;
-using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,8 +42,19 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("new", Order = 1)]
         public async Task<IActionResult> Editor()
         {
-            var viewModel = new EditOfferViewModel();
-            await SetPricingPlans(viewModel);
+            var factory = new EditOfferViewModelFactory(offerPlansQuery);
+            var viewModel = await factory.CreateAsync();
+            return View(viewModel);
+        }
+
+        [Route("{planType}")]
+        public async Task<IActionResult> Editor(string planType)
+        {
+            var factory = new EditOfferViewModelFactory(offerPlansQuery);
+            var viewModel = await factory.CreateAsync();
+            int planId = GetPlanTypeId(planType);
+            viewModel.OfferDetails.PlanId = planId;
+
             return View(viewModel);
         }
 
@@ -53,13 +65,22 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return await TryAddNewOfferAsync(viewModel);
         }
 
+        public IActionResult ReloadFormOnPlanChange(string planType, string? formDataTokenId = null)
+        {
+            return RedirectToAction(
+                "Editor",
+                new { planType = planType });
+        }
+
+
         [Route("edit-{offerId}", Order = 0)]
         [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
         public async Task<IActionResult> Editor(int offerId)
         {
-            var viewModel = new EditOfferViewModel();
-            await SetPricingPlans(viewModel);
+            var factory = new EditOfferViewModelFactory(offerPlansQuery);
+            var viewModel = await factory.CreateAsync();
             viewModel.OfferDetails = await GetOfferDetailsViewModelAsync(offerId);
+            viewModel.Display.IsPaid = await IsOfferPaidAsync(offerId);
             return View(viewModel);
         }
 
@@ -77,6 +98,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             var offer = await offersManager.GetAsync(offerId);
             var viewModelFactory = new OfferDetailsViewModelFactory();
             return viewModelFactory.Create(offer);
+        }
+
+        private async Task<bool> IsOfferPaidAsync(int offerId)
+        {
+            var offer = await offersManager.GetAsync(offerId);
+            return offer.IsPaid;
         }
 
         private async Task<IActionResult> TryAddNewOfferAsync(EditOfferViewModel viewModel)
@@ -127,10 +154,18 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             }
         }
 
-        private async Task SetPricingPlans(EditOfferViewModel viewModel)
+        private int GetPlanTypeId(string plan)
         {
-            var pricingPlans = await (new OfferPricingTableViewModelFactory(offerPlansQuery).CreateAsync());
-            viewModel.PricingPlans = pricingPlans;
+            var plans = Enum.GetValues(typeof(JobOfferPlanEnum))
+                .Cast<JobOfferPlanEnum>().ToList();
+            for (int i = 0; i < plans.Count; i++)
+            {
+                if (plan.ToLower() == plans[i].ToString().ToLower())
+                {
+                    return i + 1;
+                }
+            }
+            return 2;
         }
     }
 }

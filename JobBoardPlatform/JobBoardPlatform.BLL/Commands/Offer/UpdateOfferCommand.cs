@@ -2,6 +2,7 @@
 using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.DAL.Managers;
 using JobBoardPlatform.DAL.Models.Company;
+using System;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
 {
@@ -29,7 +30,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             var offer = await offerManager.GetAsync(data.OfferId);
             await DeleteOldCollections(offer, data);
             SortTechKeywords(data);
-            dataToOffer.Map(data, offer);
+            MapData(offer);
             await offerModel.OffersRepository.Update(offer);
         }
 
@@ -44,6 +45,15 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             {
                 await offerModel.DeleteTechKeywords(offer);
             }
+        }
+
+        private void MapData(JobOffer offer)
+        {
+            if (offer.IsPaid)
+            {
+                data.PlanId = offer.PlanId;
+            }
+            dataToOffer.Map(data, offer);
         }
 
         private void SortTechKeywords(IOfferData data)
