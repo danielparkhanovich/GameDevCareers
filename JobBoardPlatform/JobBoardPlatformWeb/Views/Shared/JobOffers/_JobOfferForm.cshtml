@@ -1,6 +1,8 @@
 ﻿@model EditOfferViewModel
 @{
     string? formDataTokenId = this.ViewContext.RouteData.Values["formDataTokenId"] as string;
+    string? offerId = this.ViewContext.RouteData.Values["offerId"] as string;
+
     var availablePlans = Model.PricingPlans;
 }
 
@@ -376,6 +378,12 @@
                 if (formDataTokenId != null)
                 {
                     refreshUrl += `&formDataTokenId=${formDataTokenId}`;
+                }
+
+                const offerId = @(Html.Raw(Json.Serialize(offerId)));
+                if (offerId != null) 
+                {
+                    refreshUrl += `&offerId=${offerId}`;
                 }
 
                 window.location.href = refreshUrl;

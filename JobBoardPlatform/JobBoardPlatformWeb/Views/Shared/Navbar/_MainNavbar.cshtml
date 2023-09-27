@@ -3,16 +3,22 @@
 @using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 @using JobBoardPlatform.PL.Controllers.Register;
 @using JobBoardPlatform.PL.Controllers.Utils;
+@using JobBoardPlatformWeb.Controllers;
 
 @{
     string currentController = ViewContext.RouteData.Values["Controller"].ToString();
-    string? employmentType = ViewContext.HttpContext.Request.Query[OfferSearchUrlParams.Category];
 
-    var employmentTypeEnum = OfferType.Employment;
-    if (employmentType == OfferType.Commission.ToString().ToLower())
+    OfferType? employmentTypeEnum = null;
+    if (currentController == ControllerUtils.GetControllerName(typeof(HomeController)))
     {
-        employmentTypeEnum = OfferType.Commission;
+        string? employmentType = ViewContext.HttpContext.Request.Query[OfferSearchUrlParams.Category];
+        employmentTypeEnum = OfferType.Employment;
+        if (employmentType == OfferType.Commission.ToString().ToLower())
+        {
+            employmentTypeEnum = OfferType.Commission;
+        }
     }
+
     string companyRegisterController = ControllerUtils.GetControllerName(
         typeof(CompanyRegistrationWithOfferPublishController));
 }

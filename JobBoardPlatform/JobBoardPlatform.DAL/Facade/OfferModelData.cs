@@ -36,7 +36,6 @@ namespace JobBoardPlatform.DAL.Managers
             this.ApplicationsResumeStorage = applicationsResumeStorage;
         }
 
-
         public async Task DeleteEmploymentDetails(JobOffer offer)
         {
             var employmentDetailsIds = offer.EmploymentDetails.Select(x => x.Id);
@@ -64,6 +63,5 @@ namespace JobBoardPlatform.DAL.Managers
                 await TechKeywordsRepository.Delete(id);
             }
         }
-
     }
 }

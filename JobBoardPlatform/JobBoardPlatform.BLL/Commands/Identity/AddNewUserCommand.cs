@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Models.Contracts;
+﻿using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Identities

@@ -2,7 +2,7 @@
 
 namespace JobBoardPlatform.BLL.Common.Formatter
 {
-    public class SalaryFormatter : ITextFormatter<JobOffer>
+    public class SalaryOnCardFormatter : ITextFormatter<JobOffer>
     {
         public string GetString(JobOffer offer)
         {

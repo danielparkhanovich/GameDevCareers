@@ -65,22 +65,38 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return await TryAddNewOfferAsync(viewModel);
         }
 
-        public IActionResult ReloadFormOnPlanChange(string planType, string? formDataTokenId = null)
+        public IActionResult ReloadFormOnPlanChange(string planType, string? offerId = null, string? formDataTokenId = null)
         {
-            return RedirectToAction(
-                "Editor",
-                new { planType = planType });
+            if (!string.IsNullOrEmpty(offerId))
+            {
+                int offerIdInt = int.Parse(offerId);
+                return RedirectToAction(
+                    "Editor",
+                    new { offerId = offerId, planType = planType });
+            }
+            else
+            {
+                return RedirectToAction(
+                    "Editor",
+                    new { planType = planType });
+            }
         }
-
 
         [Route("edit-{offerId}", Order = 0)]
         [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
-        public async Task<IActionResult> Editor(int offerId)
+        public async Task<IActionResult> Editor(int offerId, string? planType = null)
         {
             var factory = new EditOfferViewModelFactory(offerPlansQuery);
             var viewModel = await factory.CreateAsync();
             viewModel.OfferDetails = await GetOfferDetailsViewModelAsync(offerId);
             viewModel.Display.IsPaid = await IsOfferPaidAsync(offerId);
+
+            if (!string.IsNullOrEmpty(planType))
+            {
+                int planId = GetPlanTypeId(planType);
+                viewModel.OfferDetails.PlanId = planId;
+            }
+
             return View(viewModel);
         }
 

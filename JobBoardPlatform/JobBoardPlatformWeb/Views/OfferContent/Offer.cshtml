@@ -1,8 +1,16 @@
-﻿
+﻿@using JobBoardPlatform.PL.Controllers.Utils;
+
 @model OfferContentViewModel
 @{
     ViewData["Title"] = $"{Model.Display.JobTitle} for {Model.Display.CompanyName}";
     var offerDescription = Model.Display;
+
+    var backgroundColorFrom = Model.Display.MainTechnologyWidget.BackgroundColorFrom;
+    var backgroundColorTo = Model.Display.MainTechnologyWidget.BackgroundColorTo;
+
+    var backgroundColorFromStr = $"rgba({backgroundColorFrom.R}, {backgroundColorFrom.G}, {backgroundColorFrom.B}, 0.85)";
+    var backgroundColorToStr = $"rgba({backgroundColorTo.R}, {backgroundColorTo.G}, {backgroundColorTo.B}, 0.85)";
+    var backgroundImgPath = StaticFilesUtils.PathToOfferContentBackground;
 
     bool isFullyRemote = offerDescription.WorkLocationType == WorkLocationTypeEnum.FullyRemote.ToString();
     bool isTechKeywords = offerDescription.TechKeywords != null && offerDescription.TechKeywords.Count() > 0;
@@ -15,7 +23,8 @@
 }
 
 <div class="container px-5 py-5">
-    <div class="bg-primary bg-opacity-75 rounded px-5 py-4 mb-4">
+    <div class="bg-opacity-75 rounded px-5 py-4 mb-4"
+    style="background-image: linear-gradient(90deg, @(backgroundColorFromStr) 0%, @(backgroundColorToStr) 100%), url(@(backgroundImgPath));">
         <div class="d-flex flex-row">
             <div class="d-flex flex-column mt-4">
                 <div class="bg-white bg-opacity-10 rounded p-2">
@@ -26,26 +35,39 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex flex-column justify-content-center mx-4">
-                <h3 class="text-light mt-4">@offerDescription.JobTitle</h3>
-                <div class="d-flex flex-row mb-2">
-                    <i class="bi bi-buildings text-light"></i>
-                    <div class="text-light mx-2">@offerDescription.CompanyName</div>
-                </div>
-                <div class="d-flex flex-row mb-3">
-                    <i class="bi bi-geo-alt text-light"></i>
-                    <div class="text-light mx-2">@offerDescription.FullAddress</div>
-                    <div class="text-center rounded @(isFullyRemote ? "bg-light" : "bg-dark bg-opacity-50") px-3 mx-3">
-                        <p class="small mb-0 @(isFullyRemote ? "text-primary" : "text-light") ">@offerDescription.WorkLocationType</p>
+            <!-- Title with description & share btn. date etc. -->
+            <div class="d-flex flex-row justify-content-between w-100">
+                <div class="d-flex flex-column justify-content-center mx-4">
+                    <h3 class="text-light mt-4">@offerDescription.JobTitle</h3>
+                    <div class="d-flex flex-row mb-2">
+                        <i class="bi bi-buildings text-light"></i>
+                        <div class="text-light mx-2">@offerDescription.CompanyName</div>
                     </div>
-                </div>
-                @for (int i = 0; i < offerDescription.EmploymentDetails.Length; i++)
-                {
-                    <div class="d-flex flex-row text-light mt-1">
-                        <h5 class="text-light">@offerDescription.SalaryDetails[i]</h5>
-                        <div class="mx-2">- @offerDescription.EmploymentDetails[i]</div>
+                    <div class="d-flex flex-row mb-3">
+                        <i class="bi bi-geo-alt text-light"></i>
+                        <div class="text-light mx-2">@offerDescription.FullAddress</div>
+                        <div class="text-center rounded @(isFullyRemote ? "bg-light" : "bg-dark bg-opacity-50") px-3 mx-3">
+                            <p class="small mb-0 @(isFullyRemote ? "text-primary" : "text-light") ">@offerDescription.WorkLocationType</p>
+                        </div>
                     </div>
-                }
+                    @for (int i = 0; i < offerDescription.EmploymentDetails.Length; i++)
+                    {
+                        <div class="d-flex flex-row text-light mt-1">
+                            <h5 class="text-light">@offerDescription.SalaryDetails[i]</h5>
+                            <div class="mx-2">- @offerDescription.EmploymentDetails[i]</div>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex flex-row mx-4 mt-4 align-content-start">
+                    <div class="d-flex flex-row rounded text-light border border-light px-2 mb-0 justify-content-center align-self-start small">
+                        <img src="@Model.Display.MainTechnologyWidget.IconUri" width="20" height="20" />
+                        <div class="ms-1 align-middle mb-0 h-100 text-truncate">@Model.Display.MainTechnologyWidget.Label</div>
+                    </div>
+                    <div class="ms-2 rounded text-light border border-light px-2 mb-0 justify-content-center align-self-start small">
+                        <div class="align-middle mb-0 h-100 text-truncate">@Model.Display.PublishedAgo</div>
+                    </div>
+                    <div class="ms-2 btn btn-primary align-self-start py-0 px-2 text-center"><i class="bi bi-share"></i></div>
+                </div>
             </div>
         </div>
         <div class="d-flex flex-row mt-2 justify-content-center">

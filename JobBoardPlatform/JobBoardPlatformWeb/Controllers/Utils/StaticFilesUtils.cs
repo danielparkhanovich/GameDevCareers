@@ -18,6 +18,8 @@ namespace JobBoardPlatform.PL.Controllers.Utils
         public const string PathToTechnologyTestingWidgetIcon = "/Resources/MainTechnology/testing.svg";
         public const string PathToTechnologyOtherWidgetIcon = "/Resources/MainTechnology/other.svg";
 
+        public const string PathToOfferContentBackground = "/Resources/offerContentBackground.png";
+
 
         public static string GetDefaultAvatarUriIfEmpty(string? imageUrl, ClaimsPrincipal user)
         {

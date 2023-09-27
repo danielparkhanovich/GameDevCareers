@@ -33,21 +33,14 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
 
         private string GetSalaryDetails(JobOffer from)
         {
-            var salaryFormatter = new SalaryFormatter();
+            var salaryFormatter = new SalaryOnCardFormatter();
             return salaryFormatter.GetString(from);
         }
 
         private string GetPublishedAgo(JobOffer from)
         {
-            var daysFormatter = new PublishedAgoFormatter();
-            if (from.IsPublished)
-            {
-                return daysFormatter.GetString(from.RefreshedOnPageAt);
-            }
-            else
-            {
-                return daysFormatter.GetString(from.CreatedAt);
-            }
+            var daysFormatter = new OfferPublishedAgoFormatter();
+            return daysFormatter.GetString(from);
         }
 
         private string[]? GetKeywords(JobOffer from)

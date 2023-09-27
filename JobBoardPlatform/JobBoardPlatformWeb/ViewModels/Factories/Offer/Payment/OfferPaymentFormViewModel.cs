@@ -23,7 +23,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
         {
             var viewModel = new OfferPaymentFormViewModel();
             viewModel.OfferCard = GetOfferCard(offer);
-            viewModel.SelectedPlan = await GetSelectedPlan();
+            viewModel.SelectedPlan = await GetSelectedPlan(offer.PlanId);
             viewModel.OfferId = offer.Id;
             return viewModel;
         }
@@ -35,9 +35,9 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
             return card as OfferCardViewModel;
         }
 
-        private async Task<OfferPricingTableViewModel> GetSelectedPlan()
+        private async Task<OfferPricingTableViewModel> GetSelectedPlan(int selectedPlanId)
         {
-            var factory = new OfferPricingTableViewModelFactory(plansQuery, 3);
+            var factory = new OfferPricingTableViewModelFactory(plansQuery, selectedPlanId);
             return await factory.CreateAsync();
         }
     }
