@@ -1,5 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
+using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 using Stripe.Checkout;
 
 namespace JobBoardPlatform.PL.Interactors.Payment
@@ -9,21 +11,24 @@ namespace JobBoardPlatform.PL.Interactors.Payment
         private readonly IOfferQueryExecutor queryExecutor;
         private readonly IOfferManager offersManager;
         private readonly IHttpContextAccessor contextAccessor;
+        private readonly IOfferPlanQueryExecutor plansQuery;
 
 
         public StripePaymentInteractor(
             IOfferQueryExecutor queryExecutor,
             IOfferManager offersManager,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IOfferPlanQueryExecutor plansQuery)
         {
             this.queryExecutor = queryExecutor;
             this.offersManager = offersManager;
             this.contextAccessor = contextAccessor;
+            this.plansQuery = plansQuery;
         }
 
         public async Task ProcessCheckout(int offerId)
         {
-            var options = GetSessionOptions();
+            var options = await GetSessionOptions(offerId);
             var session = CreateSessionService(options);
 
             var context = contextAccessor.HttpContext;
@@ -41,13 +46,13 @@ namespace JobBoardPlatform.PL.Interactors.Payment
             }
         }
 
-        private SessionCreateOptions GetSessionOptions()
+        private async Task<SessionCreateOptions> GetSessionOptions(int offerId)
         {
             return new SessionCreateOptions
             {
                 SuccessUrl = GetSuccessUrl(),
                 CancelUrl = GetCancelUrl(),
-                LineItems = GetSessionLineItemOptions(),
+                LineItems = await GetSessionLineItemOptions(offerId),
                 Mode = "payment"
             };
         }
@@ -64,23 +69,26 @@ namespace JobBoardPlatform.PL.Interactors.Payment
             return $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}/rejected";
         }
 
-        private List<SessionLineItemOptions> GetSessionLineItemOptions()
+        private async Task<List<SessionLineItemOptions>> GetSessionLineItemOptions(int offerId)
         {
-            return new List<SessionLineItemOptions>() { GetSingleLineItemOption() };
+            return new List<SessionLineItemOptions>() { await GetSingleLineItemOption(offerId) };
         }
 
-        private SessionLineItemOptions GetSingleLineItemOption()
+        private async Task<SessionLineItemOptions> GetSingleLineItemOption(int offerId)
         {
+            var offer = await queryExecutor.GetOfferById(offerId);
+            var plan = (await GetSelectedPlan(offerId)).Plans.Single();
+            var price = Convert.ToDouble(plan.Price);
+
             return new SessionLineItemOptions()
             {
                 PriceData = new SessionLineItemPriceDataOptions()
                 {
-                    UnitAmount = 1500,
+                    UnitAmount = (long)price * 100,
                     Currency = "pln",
                     ProductData = new SessionLineItemPriceDataProductDataOptions()
                     {
-                        Name = "Senior 3D Animator",
-
+                        Name = $"Plan {plan.OfferType} for {offer.JobTitle}",
                     }
                 },
                 Quantity = 1
@@ -91,6 +99,13 @@ namespace JobBoardPlatform.PL.Interactors.Payment
         {
             var service = new SessionService();
             return service.Create(options);
+        }
+
+        private async Task<OfferPricingTableViewModel> GetSelectedPlan(int offerId)
+        {
+            var offer = await queryExecutor.GetOfferById(offerId);
+            var factory = new OfferPricingTableViewModelFactory(plansQuery, offer.PlanId);
+            return await factory.CreateAsync();
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
-    [TypeFilter(typeof(SkipLoggedInUsersFilter))]
+    [TypeFilter(typeof(RedirectLoggedInUsersFilter))]
     public abstract class BaseRegisterController<T> : Controller where T : class, IUserLoginData
     {
         public const string TryConfirmRegistrationAction = "TryConfirmRegistration";

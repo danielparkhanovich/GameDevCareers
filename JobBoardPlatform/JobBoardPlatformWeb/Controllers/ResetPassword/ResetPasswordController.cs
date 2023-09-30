@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.ResetPassword
 {
-    [TypeFilter(typeof(SkipLoggedInUsersFilter))]
+    [TypeFilter(typeof(RedirectLoggedInUsersFilter))]
     [Route("reset")]
     public class ResetPasswordController : Controller
     {

@@ -26,6 +26,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             to.JobDescription = from.Description;
             to.CompanyName = from.CompanyProfile.CompanyName;
             to.CompanyImageUrl = from.CompanyProfile.ProfileImageUrl;
+            to.CompanyWebsiteUrl = from.CompanyProfile.CompanyWebsiteUrl;
             to.WorkLocationType = from.WorkLocation.Type;
             to.ContactForm = from.ContactDetails.ContactType.Type;
 
@@ -49,10 +50,10 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             var salaryDisplayText = new List<string>(from.EmploymentDetails.Count);
             var employmentTypeDisplayText = new List<string>(from.EmploymentDetails.Count);
 
-            var salaryFormatter = new SalaryOnCardFormatter();
+            var salaryFormatter = new SalaryFormatter();
             foreach (var employmentDetails in from.EmploymentDetails)
             {
-                string singleSalaryText = salaryFormatter.GetString(from);
+                string singleSalaryText = salaryFormatter.GetString(employmentDetails.SalaryRange);
                 string employmentType = employmentDetails.EmploymentType.Type;
 
                 salaryDisplayText.Add(singleSalaryText);

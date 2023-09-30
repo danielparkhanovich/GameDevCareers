@@ -20,7 +20,7 @@ namespace JobBoardPlatform.BLL.Common.Formatter
                 return salaryDetails;
             }
 
-            var firstDetails = details.OrderBy(x => x.SalaryRange!.To).First();
+            var firstDetails = details.OrderByDescending(x => x.SalaryRange!.To).First();
             var salary = firstDetails.SalaryRange!;
             salaryDetails = $"{salary.From} - {salary.To} {salary.SalaryCurrency.Type}";
 

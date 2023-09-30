@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
-    [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     [Route("offer")]
+    [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOfferEditorController : Controller
     {
         public const string AddNewOfferAction = "Editor";
@@ -44,10 +44,11 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         {
             var factory = new EditOfferViewModelFactory(offerPlansQuery);
             var viewModel = await factory.CreateAsync();
+
             return View(viewModel);
         }
 
-        [Route("{planType}")]
+        [Route("{planType}", Order = 2)]
         public async Task<IActionResult> Editor(string planType)
         {
             var factory = new EditOfferViewModelFactory(offerPlansQuery);
@@ -61,6 +62,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [HttpPost("new", Order = 1)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editor(EditOfferViewModel viewModel)
+        {
+            return await TryAddNewOfferAsync(viewModel);
+        }
+
+        [HttpPost("{planType}", Order = 2)]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editor(EditOfferViewModel viewModel, string planType)
         {
             return await TryAddNewOfferAsync(viewModel);
         }
@@ -174,6 +182,12 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         {
             var plans = Enum.GetValues(typeof(JobOfferPlanEnum))
                 .Cast<JobOfferPlanEnum>().ToList();
+
+            if (plan == "new")
+            {
+                plan = plans[1].ToString().ToLower();
+            }
+
             for (int i = 0; i < plans.Count; i++)
             {
                 if (plan.ToLower() == plans[i].ToString().ToLower())

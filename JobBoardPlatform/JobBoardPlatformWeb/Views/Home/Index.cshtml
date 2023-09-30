@@ -13,13 +13,12 @@
 <div class="container px-5 pt-4">
     <div class="d-flex flex-column px-5">
         <div class="mb-3">
-            <div class="row">
+            <div>
                 <div class="input-group mb-3 p-4 m-4 bg-dark bg-opacity-10">
-                    <span class="input-group-text bg-white border-end-0 ps-3 pe-1"><i class="bi bi-search"></i></span>
-                    <input id="searchField" type="text" class="form-control px-2 border-start-0" placeholder="Search e.g. skill, location, company" value="@search.SearchString">
+                    <input id="searchField" type="text" class="form-control px-3 border-start-0" placeholder="Search e.g. skill, location, company" value="@search.SearchString">
                     <button class="btn btn-primary" type="button"
                             onclick="searchWithKeywords();">
-                        Search
+                        <i class="bi bi-search px-2"></i>
                     </button>
                 </div>
             </div>
@@ -122,9 +121,7 @@
     }
 
     function switchOfferType(type) {
-
         // Employment and commission types
-
         refreshCards(updateOffersCount);
     }
 

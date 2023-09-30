@@ -3,6 +3,7 @@ using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
@@ -13,6 +14,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 {
     [Route("manage-ads")]
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
+    [TypeFilter(typeof(RedirectAdminFilter))]
     public class CompanyOffersPanelController : OfferCardsControllerBase
     {
         private readonly CompanyOffersSearcher offersSearcher;

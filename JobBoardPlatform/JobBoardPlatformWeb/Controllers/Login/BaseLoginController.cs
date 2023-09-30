@@ -9,7 +9,7 @@ using JobBoardPlatform.PL.ViewModels.Models.MainTechnologyWidgets;
 
 namespace JobBoardPlatform.PL.Controllers.Login
 {
-    [TypeFilter(typeof(SkipLoggedInUsersFilter))]
+    [TypeFilter(typeof(RedirectLoggedInUsersFilter))]
     public abstract class BaseLoginController<TIdentity, TProfile> : Controller 
         where TIdentity: class, IUserIdentityEntity
         where TProfile: class, IUserProfileEntity

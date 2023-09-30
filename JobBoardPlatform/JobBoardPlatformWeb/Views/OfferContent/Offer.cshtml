@@ -5,6 +5,8 @@
     ViewData["Title"] = $"{Model.Display.JobTitle} for {Model.Display.CompanyName}";
     var offerDescription = Model.Display;
 
+    var currentUri = new Uri($"{this.Context.Request.Scheme}://{this.Context.Request.Host}{this.Context.Request.Path}{this.Context.Request.QueryString}");
+
     var backgroundColorFrom = Model.Display.MainTechnologyWidget.BackgroundColorFrom;
     var backgroundColorTo = Model.Display.MainTechnologyWidget.BackgroundColorTo;
 
@@ -15,6 +17,7 @@
     bool isFullyRemote = offerDescription.WorkLocationType == WorkLocationTypeEnum.FullyRemote.ToString();
     bool isTechKeywords = offerDescription.TechKeywords != null && offerDescription.TechKeywords.Count() > 0;
     bool isExternalForm = offerDescription.ContactForm == ContactTypeEnum.ExternalForm.ToString();
+    bool isCompanyHasWebsite = !string.IsNullOrEmpty(Model.Display.CompanyWebsiteUrl);
 
     bool isProcessingInFutureClause = !string.IsNullOrEmpty(offerDescription.ProcessingDataInFutureClause);
     bool isCustomConsentClause = !string.IsNullOrEmpty(offerDescription.CustomConsentClause);
@@ -41,7 +44,14 @@
                     <h3 class="text-light mt-4">@offerDescription.JobTitle</h3>
                     <div class="d-flex flex-row mb-2">
                         <i class="bi bi-buildings text-light"></i>
-                        <div class="text-light mx-2">@offerDescription.CompanyName</div>
+                        @if (isCompanyHasWebsite)
+                        {
+                            <a class="text-light mx-2 text-decoration-none btn btn-primary py-0 px-1" href="@Model.Display.CompanyWebsiteUrl" target="_blank"><strong>@offerDescription.CompanyName</strong></a>
+                        }
+                        else
+                        {
+                            <div class="text-light mx-2">@offerDescription.CompanyName</div>
+                        }
                     </div>
                     <div class="d-flex flex-row mb-3">
                         <i class="bi bi-geo-alt text-light"></i>
@@ -66,7 +76,10 @@
                     <div class="ms-2 rounded text-light border border-light px-2 mb-0 justify-content-center align-self-start small">
                         <div class="align-middle mb-0 h-100 text-truncate">@Model.Display.PublishedAgo</div>
                     </div>
-                    <div class="ms-2 btn btn-primary align-self-start py-0 px-2 text-center"><i class="bi bi-share"></i></div>
+                    <div class="ms-2 btn btn-primary align-self-start py-0 px-2 text-center 
+                                btn-copy js-tooltip js-copy" data-toggle="tooltip" data-placement="bottom" data-copy="@(currentUri)" title="Copy to clipboard">
+                        <i class="bi bi-share"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -179,3 +192,42 @@
         </div>
     }
 </div>
+
+<script>
+
+    $(document).ready(function () {
+
+        // Copy to clipboard
+        $('.js-tooltip').tooltip();
+
+        $('.js-copy').click(function () {
+            var text = $(this).attr('data-copy');
+            var el = $(this);
+            copyToClipboard(text, el);
+        });
+    });
+
+    function copyToClipboard(text, el) {
+        var copyTest = document.queryCommandSupported('copy');
+        var elOriginalText = el.attr('data-bs-original-title');
+
+        if (copyTest === true) {
+            var copyTextArea = document.createElement("textarea");
+            copyTextArea.value = text;
+            document.body.appendChild(copyTextArea);
+            copyTextArea.select();
+            try {
+                var successful = document.execCommand('copy');
+                el.attr('data-bs-original-title', 'Copied!')
+                el.tooltip('show');
+            } catch (err) {
+                console.log('Oops, unable to copy');
+            }
+            document.body.removeChild(copyTextArea);
+            el.attr('data-bs-original-title', elOriginalText);
+        } else {
+            // Fallback if browser doesn't support .execCommand('copy')
+            window.prompt("Copy to clipboard: Ctrl+C or Command+C, Enter", text);
+        }
+    }
+</script>

@@ -7,7 +7,9 @@
 
 @model AdminOfferCardViewModel
 @{
-    var offer = Model;
+    var offer = Model.CardViewModel;
+    bool isSuspended = Model.IsSuspended;
+
     int offerId = offer.CardDisplay.Id;
 
     string applicationsUrl = string.Empty;
@@ -20,7 +22,7 @@
         applicationsUrl = $"{@Url.Action("Applications", "CompanyApplicationsPanel", new { offerId = offerId, page = 1 })}";
     }
 
-    string editOfferUrl = $"{@Url.Action("NewOffer", "CompanyOfferEditor", new { offerId = offerId })}";
+    string editOfferUrl = $"{@Url.Action(CompanyOfferEditorController.EditOfferAction, "CompanyOfferEditor", new { offerId = offerId })}";
     string hideOfferUrl = $"{@Url.Action(OfferCardsControllerBase.ToggleVisibilityAction)}";
     string closeOfferUrl = $"{@Url.Action(OfferCardsControllerBase.DeleteAction)}";
     string suspendOfferUrl = $"{@Url.Action(OfferCardsControllerBase.ToggleSuspendAction)}";
@@ -34,7 +36,7 @@
     <div class="card border-0 shadow-sm">
         <div class="d-flex flex-row mx-0 @(offer.IsVisibleOnMainPage ? null : "bg-dark bg-opacity-10")">
             <div class="col-7 mx-0 px-0">
-                @await Html.PartialAsync(Model.CardDisplay.PartialView, Model.CardDisplay)
+                @await Html.PartialAsync(offer.CardDisplay.PartialView, offer.CardDisplay)
             </div>
             <div class="d-flex flex-row company-card-view-data w-100 justify-content-between">
                 <div>
@@ -42,7 +44,7 @@
                         @{
                             var widget = new MainTechnologyWidgetViewModel()
                             {
-                                MainTechnology = Model.MainTechnology
+                                MainTechnology = offer.MainTechnology
                             };
                         }
                         @await Html.PartialAsync("./JobOffers/_MainTechnologyStaticWidget", widget)
@@ -114,20 +116,27 @@
                         </div>   
                     </div>
                     <div class="d-flex align-items-center rounded-pill text-@(color) border border-@(color) small align-self-center ms-3 px-2">
-                        <small>@Model.DaysLeft</small>
+                        <small>@offer.DaysLeft</small>
                     </div>
                 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center pe-4 ms-3">
                 <div class="dropdown">
                     <a class="nav-link dropdown-toggle rounded border border-primary px-2 mb-0 justify-content-center align-self-center" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                        <small>modify</small>
+                        <small>more</small>
                     </a>
                     <div class="dropdown-menu py-0">
                         <a class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm @(isAvailableToEdit ? string.Empty : "disabled")" href="@editOfferUrl">
                             <div>Edit</div>
                             <i class="bi bi-pencil-square ms-1"></i>
                         </a>
+                        @if (offer.StateType != OfferStateType.NotPaid && offer.ContactType == ContactTypeEnum.PrivateApplications.ToString())
+                        {
+                            <a class="w-100 d-flex flex-row justify-content-between btn btn-outline-primary btn-sm mt-1" href="@applicationsUrl">
+                                <div>Applications</div>
+                                <i class="bi bi-send ms-1"></i>
+                            </a>
+                        }
                         <button @(isAvailableToShelve ? string.Empty : "disabled") class="w-100 d-flex flex-row justify-content-between btn @(offer.IsShelved ? "btn-outline-info" : "btn-outline-warning") btn-sm mt-1"
                                 onclick="shelveOffer(@offerId, @(((!offer.IsShelved).ToString().ToLower())));">
                             @if (!offer.IsShelved)
@@ -154,9 +163,9 @@
                                 <i class="bi bi-activity ms-1"></i>
                             }
                         </button>
-                        <button class="w-100 d-flex flex-row justify-content-between btn @(offer.IsSuspended ? "btn-outline-success" : "btn-outline-dark") btn-sm mt-1"
-                                onclick="suspendOffer(@offerId, @((!offer.IsSuspended).ToString().ToLower()));">
-                            @if (!offer.IsSuspended)
+                        <button class="w-100 d-flex flex-row justify-content-between btn @(isSuspended ? "btn-outline-success" : "btn-outline-dark") btn-sm mt-1"
+                                onclick="suspendOffer(@offerId, @((!isSuspended).ToString().ToLower()));">
+                            @if (!isSuspended)
                             {
                                 <div>@("Suspend")</div>
                                 <i class="bi bi-flag"></i>
