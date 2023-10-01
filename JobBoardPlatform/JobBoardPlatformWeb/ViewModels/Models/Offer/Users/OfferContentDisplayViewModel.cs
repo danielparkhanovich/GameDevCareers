@@ -14,6 +14,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
         public string JobDescription { get; set; } = string.Empty;
         public string InformationClause { get; set; } = string.Empty;
         public MainTechnologyWidget MainTechnologyWidget { get; set; } = new MainTechnologyWidget();
+        public string? ExternalFormUrl { get; set; }
         public string? CompanyWebsiteUrl { get; set; }
         public string? ProcessingDataInFutureClause { get; set; }
         public string? CustomConsentClauseTitle { get; set; }

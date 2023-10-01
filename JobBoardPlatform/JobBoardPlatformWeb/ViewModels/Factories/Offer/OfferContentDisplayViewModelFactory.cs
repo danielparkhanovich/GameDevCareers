@@ -29,6 +29,7 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             to.CompanyWebsiteUrl = from.CompanyProfile.CompanyWebsiteUrl;
             to.WorkLocationType = from.WorkLocation.Type;
             to.ContactForm = from.ContactDetails.ContactType.Type;
+            to.ExternalFormUrl = from.ContactDetails.ContactAddress;
 
             MapMainTechnologyWidget(from, to);
             MapPublishedAgo(from, to);
