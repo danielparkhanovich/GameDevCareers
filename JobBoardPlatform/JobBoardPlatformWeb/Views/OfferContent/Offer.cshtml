@@ -120,12 +120,14 @@
                         <div class="col-md-12">
                             <label asp-for="Update.FullName" class="small mb-1" for="inputFirstAndLastName">First and last name *</label>
                             <input asp-for="Update.FullName" class="form-control" id="inputFirstAndLastName" type="text" placeholder="Enter your first and last name" value="@application.FullName">
+                            <span asp-validation-for="Update.FullName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="row gx-3 mb-3">
                         <div class="col-md-12">
                             <label asp-for="Update.Email" class="small mb-1" for="inputEmail">Email *</label>
                             <input asp-for="Update.Email" class="form-control" id="inputEmail" type="text" placeholder="Enter your email address" value=@application.Email>
+                            <span asp-validation-for="Update.Email" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="row gx-3 mb-3">
@@ -133,6 +135,7 @@
                             <label asp-for="Update.AdditionalInformation" class="small mb-1" for="inputDescription">Introduce yourself (linkedin/github links)</label>
                             <textarea asp-for="Update.AdditionalInformation" rows="3" class="form-control" id="inputDescription" type="text" placeholder="Type something about you" 
                             value="@application.AdditionalInformation"></textarea>
+                            <span asp-validation-for="Update.AdditionalInformation" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="row gx-3 mb-3">
@@ -141,6 +144,7 @@
                                 ViewData["IsPostFormOnChange"] = false;
                             }
                             @await Html.PartialAsync("./Fields/_UploadCvField", Model)
+                            <span asp-validation-for="Update.AttachedResume" class="text-danger"></span>
                         </div>
                     </div>
                     @if (isProcessingInFutureClause)

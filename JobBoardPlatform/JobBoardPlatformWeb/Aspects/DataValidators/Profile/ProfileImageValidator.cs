@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.PL.Aspects.DataValidators.Common;
 
 namespace JobBoardPlatform.PL.Aspects.DataValidators.Profile
 {
@@ -14,19 +15,13 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Profile
 
             When(profileImage => profileImage != null && profileImage.File != null, () => 
             {
-                AddRulesForFile();
+                RuleFor(profileImage => profileImage.File!).SetValidator(GetFileValidator());
             });
 		}
 
-        private void AddRulesForFile()
+        private FileValidator GetFileValidator()
         {
-			int maxFileSizeInBytes = GlobalLimits.GetValueInBytesFromMb(GlobalLimits.MaximumProfileImageSizeInMb);
-			RuleFor(profileImage => profileImage.File!.Length).LessThan(maxFileSizeInBytes)
-                .WithMessage($"File cannot be larger than {GlobalLimits.MaximumProfileImageSizeInMb} MB");
-
-            string[] availableFormats = new string[] { "image/jpeg", "image/png" };
-            RuleFor(profileImage => profileImage.File!.ContentType).Must(x => availableFormats.Contains(x))
-                .WithMessage($"Profile image must be in JPG or PNG format");
-		}
+			return new FileValidator(GlobalLimits.MaximumProfileImageSizeInMb, new string[] { "image/jpeg", "image/png" });
+        }
     }
 }

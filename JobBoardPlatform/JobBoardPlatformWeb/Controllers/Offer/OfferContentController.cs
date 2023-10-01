@@ -2,7 +2,6 @@
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using JobBoardPlatform.DAL.Models.Employee;
-using JobBoardPlatform.DAL.Options;
 using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
@@ -13,6 +12,8 @@ using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
+using FluentValidation;
+using JobBoardPlatform.PL.Aspects.DataValidators;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -26,6 +27,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly IRepository<EmployeeIdentity> identityRepository;
         private readonly IProfileResumeBlobStorage resumeStorage;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
+        private readonly IValidator<OfferApplicationUpdateViewModel> applicationFormValidator;
 
 
         public OfferContentController(
@@ -35,7 +37,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             IRepository<EmployeeProfile> profileRepository,
             IRepository<EmployeeIdentity> identityRepository,
             IOfferActionHandlerFactory actionHandlerFactory,
-            IProfileResumeBlobStorage resumeStorage)
+            IProfileResumeBlobStorage resumeStorage,
+            IValidator<OfferApplicationUpdateViewModel> applicationFormValidator)
         {
             this.commandsExecutor = commandsExecutor;
             this.queryExecutor = queryExecutor;
@@ -44,19 +47,17 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             this.identityRepository = identityRepository;
             this.resumeStorage = resumeStorage;
             this.actionHandlerFactory = actionHandlerFactory;
+            this.applicationFormValidator = applicationFormValidator;
         }
 
         [Route("offer-{companyname}-{offertitle}-{id}")]
         public async Task<IActionResult> Offer(int id, string companyname, string offertitle)
         {
-            var offer = await queryExecutor.GetOfferById(id);
-            var display = GetOfferContentDisplayViewModel(offer);
-
             var content = new OfferContentViewModel();
-            content.Display = display;
+            content.Display = await GetOfferContentDisplayViewModel(id);
 
             await TryFillApplicationForm(content);
-            await TryIncreaseViewsCount(offer);
+            await TryIncreaseViewsCount(id);
 
             // save original id (for safety reasons need to add encryption)
             content.Update.OfferId = id;
@@ -69,30 +70,34 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("offer-{companyname}-{offertitle}-{id}")]
         public async Task<IActionResult> Offer(OfferContentViewModel content)
         {
-            if (!ModelState.IsValid)
+            var result = await applicationFormValidator.ValidateAsync(content.Update);
+            if (result.IsValid)
             {
-                return RedirectToAction("Offer");
+                int offerId = content.Update.OfferId;
+                await commandsExecutor.TryPostApplicationFormAsync(
+                    offerId, TryGetUserProfileId(), Request, Response, content.Update);
             }
-            else if (content.File == null && await resumeStorage.IsExistsAsync(content.ResumeUrl))
+            else
             {
-                return RedirectToAction("Offer");
+                result.AddToModelState(this.ModelState, nameof(content.Update));
             }
 
-            int offerId = content.Update.OfferId;
-            await commandsExecutor.TryPostApplicationFormAsync(
-                offerId, TryGetUserProfileId(), Request, Response, content.Update);
-
-            return RedirectToAction("Offer");
+            content.Display = await GetOfferContentDisplayViewModel(content.Update.OfferId);
+            return View(content);
         }
 
-        private OfferContentDisplayViewModel GetOfferContentDisplayViewModel(JobOffer offer)
+        private async Task<OfferContentDisplayViewModel> GetOfferContentDisplayViewModel(int offerId)
         {
+            var offer = await queryExecutor.GetOfferById(offerId);
+
             var viewModelFactory = new OfferContentDisplayViewModelFactory();
             return viewModelFactory.Create(offer);
         }
 
-        private async Task TryIncreaseViewsCount(JobOffer offer)
+        private async Task TryIncreaseViewsCount(int offerId)
         {
+            var offer = await queryExecutor.GetOfferById(offerId);
+
             if (!IsIncreaseOfferViewsCount(offer))
             {
                 return;
@@ -150,7 +155,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             int? profileId = null;
             if (UserSessionUtils.IsLoggedIn(User))
             {
-                profileId = UserSessionUtils.GetIdentityId(User);
+                profileId = UserSessionUtils.GetProfileId(User);
             }
             return profileId;
         }

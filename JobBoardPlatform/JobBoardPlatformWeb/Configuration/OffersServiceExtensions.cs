@@ -1,4 +1,5 @@
-﻿
+﻿using FluentValidation;
+using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
@@ -6,6 +7,8 @@ using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Search.Contracts;
 using JobBoardPlatform.BLL.Search.MainPage;
+using JobBoardPlatform.PL.Aspects.DataValidators.Offers;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Users;
 
 namespace JobBoardPlatform.PL.Configuration
 {
@@ -17,6 +20,7 @@ namespace JobBoardPlatform.PL.Configuration
             AddMainPageServices(services);
             AddCompanyPanelServices(services);
             AddApplicationsServices(services);
+            AddValidatorServices(services);
         }
 
         private static void AddManagerServices(IServiceCollection services)
@@ -45,6 +49,12 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddTransient<OfferApplicationCommandsExecutor>();
             services.AddTransient<OfferApplicationsSearcher>();
             services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelApplicationSearchParams>, CompanyPanelApplicationSearchParamsFactory>();
+        }
+
+        private static void AddValidatorServices(IServiceCollection services)
+        {
+            services.AddScoped<IValidator<OfferApplicationUpdateViewModel>, OfferApplicationFormValidator>();
+            services.AddScoped<IValidator<IAttachedResume>, ResumeValidator>();
         }
     }
 }
