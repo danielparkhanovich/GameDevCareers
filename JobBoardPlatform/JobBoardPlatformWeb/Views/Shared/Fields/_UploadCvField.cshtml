@@ -44,7 +44,7 @@
 
                         <button type="button" class="small font-italic text-muted mt-auto border-0 bg-transparent"
                             onclick="removeClientSideAttachedResume();">
-                            <i class="bi bi-x-lg text-primary" style="font-size: 1.5rem;"></i>
+                            <i class="bi bi-x-lg text-primary" id="uploadResumeCardCancel" style="font-size: 1.5rem;"></i>
                         </button>
                     }
                 </div>
@@ -85,7 +85,7 @@
 
     function addInputFieldListeners()
     {
-        attachResumeButton.addEventListener("click", function () {
+        attachResumeButton.addEventListener("click", (e) => {
             fileContainer.click();
         });
 
@@ -101,8 +101,18 @@
             }
         });
 
-        card.addEventListener("click", () => {
-            if (displayInput.style.display == "flex"){
+        card.addEventListener("click", (e) => {
+            
+            if (e.target.id == "uploadResumeCardCancel") {
+                return;
+            }
+            else if (e.target.id == "attachedResume-button") 
+            {
+                return;
+            }
+
+            if (displayInput.style.display == "flex")
+            {
                 fileContainer.click();
             }
         });
@@ -157,8 +167,6 @@
         // Get the file input element and the file object
         const file = fileContainer.files[0];
 
-        console.log("Test");
-
         // Create a FileReader object to read the file contents
         const reader = new FileReader();
         reader.onload = () => {
@@ -206,8 +214,6 @@
 
     function removeClientSideAttachedResume() 
     {
-        console.log("removed");
-
         fileContainer.files = null;
         fileContainer.value = "";
         toggleClientFileFieldView(false);
