@@ -40,12 +40,14 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             string[] tabsLabels = new string[] { "Profile", "Settings" };
             string[] tabsActions = new string[] { "Profile", "Settings" };
             string[] tabsControllers = new string[] { "EmployeeProfile", "UserSettings" };
+            string[] tabsIcons = new string[] { "bi bi-person", "bi bi-sliders2" };
 
             var viewModel = new ProfileTabsViewModel()
             {
-                MainTabsLabels = tabsLabels,
-                MainTabsActions = tabsActions,
-                MainTabsControllers = tabsControllers
+                Labels = tabsLabels,
+                Actions = tabsActions,
+                Controllers = tabsControllers,
+                Icons = tabsIcons
             };
 
             return viewModel;
@@ -53,15 +55,17 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
 
         private ProfileTabsViewModel GetCompanyTabs()
         {
-            string[] tabsLabels = new string[] { "Company profile", "Manage Ads", "Settings" };
+            string[] tabsLabels = new string[] { "Company Profile", "Manage Ads", "Settings" };
             string[] tabsActions = new string[] { "Profile", "Offers", "Settings" };
             string[] tabsControllers = new string[] { "CompanyProfile", "CompanyOffersPanel", "UserSettings" };
+            string[] tabsIcons = new string[] { "bi bi-person", "bi bi-list-task", "bi bi-sliders2" };
 
             var viewModel = new ProfileTabsViewModel()
             {
-                MainTabsLabels = tabsLabels,
-                MainTabsActions = tabsActions,
-                MainTabsControllers = tabsControllers
+                Labels = tabsLabels,
+                Actions = tabsActions,
+                Controllers = tabsControllers,
+                Icons = tabsIcons
             };
 
             return viewModel;
@@ -78,12 +82,14 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
                 ControllerUtils.GetControllerName(typeof(AdminPanelEmployeesController)),
                 ControllerUtils.GetControllerName(typeof(UserSettingsController))
             };
+            string[] tabsIcons = new string[] { "bi bi-server", "bi bi-buildings", "bi bi-people", "bi bi-sliders2" };
 
             var viewModel = new ProfileTabsViewModel()
             {
-                MainTabsLabels = tabsLabels,
-                MainTabsActions = tabsActions,
-                MainTabsControllers = tabsControllers
+                Labels = tabsLabels,
+                Actions = tabsActions,
+                Controllers = tabsControllers,
+                Icons = tabsIcons
             };
 
             return viewModel;

@@ -17,10 +17,6 @@
     string role = UserSessionUtils.GetRole(User);
     var factory = new ProfileTabsViewModelFactory(role);
     var viewModel = await factory.CreateAsync();
-
-    var actions = viewModel.MainTabsActions;
-    var controllers = viewModel.MainTabsControllers;
-    var tabs = viewModel.MainTabsLabels;
 }
 
 <li class="nav-item bg-secondary border-start border-opacity-10 border-dark dropdown px-2">
@@ -29,16 +25,16 @@
         @userName
     </a>
     <div class="dropdown-menu dropdown-menu-end mt-3">
-        @for (int i = 0; i < tabs.Length; i++)
+        @for (int i = 0; i < viewModel.Labels.Length; i++)
         {
-            <a class="dropdown-item" asp-controller="@controllers[i]" asp-action="@actions[i]">
-                <i class="bi bi-person mx-2"></i>
-                @tabs[i]
+            <a class="dropdown-item" asp-controller="@viewModel.Controllers[i]" asp-action="@viewModel.Actions[i]">
+                <i class="@viewModel.Icons[i] mx-2"></i>
+                @viewModel.Labels[i]
             </a>
             <div class="dropdown-divider"></div>
         }
         <a class="dropdown-item" asp-controller="Home" asp-action="LogOut">
-            <i class="bi bi-emoji-dizzy mx-2"></i>
+            <i class="bi bi-box-arrow-left mx-2"></i>
             Log out
         </a>
     </div>

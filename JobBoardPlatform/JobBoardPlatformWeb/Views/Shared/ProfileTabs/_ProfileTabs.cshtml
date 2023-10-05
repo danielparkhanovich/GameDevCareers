@@ -6,9 +6,9 @@
     var factory = new ProfileTabsViewModelFactory(role);
     var viewModel = await factory.CreateAsync();
 
-    var actions = viewModel.MainTabsActions;
-    var controllers = viewModel.MainTabsControllers;
-    var tabs = viewModel.MainTabsLabels;
+    var actions = viewModel.Actions;
+    var controllers = viewModel.Controllers;
+    var tabs = viewModel.Labels;
 
     string currentController = ViewContext.RouteData.Values["Controller"].ToString();
     string currentAction = ViewContext.RouteData.Values["Action"].ToString();
