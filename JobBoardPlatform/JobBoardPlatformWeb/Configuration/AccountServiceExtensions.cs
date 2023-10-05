@@ -17,6 +17,8 @@ using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Aspects.DataValidators.Offers;
 using JobBoardPlatform.PL.Aspects.DataValidators.Profile;
 using JobBoardPlatform.PL.Aspects.DataValidators.Registration;
+using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Controllers.Utils.Renderers;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
@@ -40,6 +42,8 @@ namespace JobBoardPlatform.PL.Configuration
         {
             services.AddTransient<IEmailSender, SmtpEmailSender>();
             services.Configure<EmailConfiguration>(configuration.GetSection("EmailGateway"));
+            services.AddScoped<ApplicationEmailViewRenderer>();
+            services.AddScoped<IViewRenderService, ViewRenderService>();
         }
 
         private static void AddPasswordServices(IServiceCollection services)

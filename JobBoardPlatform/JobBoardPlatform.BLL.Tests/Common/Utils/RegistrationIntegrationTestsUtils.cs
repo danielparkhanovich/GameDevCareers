@@ -167,7 +167,9 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
                 applicationsResumeStorage,
                 GetApplicationForm(email, offerId, resumeUrl),
                 offerId,
-                profileId);
+                profileId,
+                null,
+                null);
             await command.Execute();
         }
 

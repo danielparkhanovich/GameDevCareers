@@ -72,6 +72,10 @@ namespace JobBoardPlatform.PL.Requirements
             {
                 routeId = httpContext?.Request.Query[requirement.IdParameterName];
             }
+            if (string.IsNullOrEmpty(routeId))
+            {
+                routeId = httpContext?.Request.Form[requirement.IdParameterName];
+            }
 
             if (string.IsNullOrEmpty(routeId))
             {

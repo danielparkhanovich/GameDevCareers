@@ -3,14 +3,14 @@ using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {
-    public class UpdateApplicationPriorityCommand : ICommand
+    public class UpdateApplicationPriorityCommand : ICommandWithResult<int>
     {
         private readonly IRepository<JobOfferApplication> applicationsRepository;
         private readonly int applicationId;
         private readonly int newPriorityIndex;
 
 
-        public int ResultPriorityIndex { get; private set; }
+        public int Result { get; private set; }
 
 
         public UpdateApplicationPriorityCommand(IRepository<JobOfferApplication> applicationsRepository, 
@@ -38,7 +38,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
 
             await applicationsRepository.Update(application);
 
-            ResultPriorityIndex = application.ApplicationFlagTypeId;
+            Result = application.ApplicationFlagTypeId;
         }
     }
 }

@@ -14,13 +14,14 @@ using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
 using FluentValidation;
 using JobBoardPlatform.PL.Aspects.DataValidators;
+using JobBoardPlatform.PL.Controllers.Utils;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
     [Authorize(Policy = AuthorizationPolicies.OfferPublishedOrOwnerOnlyPolicy)]
     public class OfferContentController : Controller
     {
-        private readonly OfferApplicationCommandsExecutor commandsExecutor;
+        private readonly IApplicationsManager applicationsManager;
         private readonly IOfferQueryExecutor queryExecutor;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<EmployeeProfile> profileRepository;
@@ -28,19 +29,21 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly IProfileResumeBlobStorage resumeStorage;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
         private readonly IValidator<OfferApplicationUpdateViewModel> applicationFormValidator;
+        private readonly ApplicationEmailViewRenderer viewRenderService;
 
 
         public OfferContentController(
-            OfferApplicationCommandsExecutor commandsExecutor,
+            IApplicationsManager applicationsManager,
             IOfferQueryExecutor queryExecutor,
             IRepository<JobOffer> offersRepository,
             IRepository<EmployeeProfile> profileRepository,
             IRepository<EmployeeIdentity> identityRepository,
             IOfferActionHandlerFactory actionHandlerFactory,
             IProfileResumeBlobStorage resumeStorage,
-            IValidator<OfferApplicationUpdateViewModel> applicationFormValidator)
+            IValidator<OfferApplicationUpdateViewModel> applicationFormValidator,
+            ApplicationEmailViewRenderer viewRenderService)
         {
-            this.commandsExecutor = commandsExecutor;
+            this.applicationsManager = applicationsManager;
             this.queryExecutor = queryExecutor;
             this.offersRepository = offersRepository;
             this.profileRepository = profileRepository;
@@ -48,6 +51,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             this.resumeStorage = resumeStorage;
             this.actionHandlerFactory = actionHandlerFactory;
             this.applicationFormValidator = applicationFormValidator;
+            this.viewRenderService = viewRenderService;
         }
 
         [Route("offer-{companyname}-{offertitle}-{id}")]
@@ -74,8 +78,10 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             if (result.IsValid)
             {
                 int offerId = content.Update.OfferId;
-                await commandsExecutor.TryPostApplicationFormAsync(
-                    offerId, TryGetUserProfileId(), Request, Response, content.Update);
+                viewRenderService.SetController(this);
+
+                await applicationsManager.TryPostApplicationFormAsync(
+                    offerId, TryGetUserProfileId(), Request, Response, content.Update, viewRenderService);
             }
             else
             {

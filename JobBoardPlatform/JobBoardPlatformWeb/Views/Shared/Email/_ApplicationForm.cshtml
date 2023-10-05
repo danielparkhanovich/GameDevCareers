@@ -1,0 +1,61 @@
+﻿@using JobBoardPlatform.PL.ViewModels.Models.Email;
+
+@model ApplicationEmailViewModel
+@{
+    bool isDescription = !string.IsNullOrEmpty(Model.Application.Description);
+    bool isCity = !string.IsNullOrEmpty(Model.Application.City);
+    bool isCountry = !string.IsNullOrEmpty(Model.Application.Country);
+    bool isGitHub = !string.IsNullOrEmpty(Model.Application.GitHubUrl);
+    bool isLinkedIn = !string.IsNullOrEmpty(Model.Application.LinkedInUrl);
+    bool isYearsOfExperience = !string.IsNullOrEmpty(Model.Application.YearsOfExperience);
+}
+
+<div>
+    Dear @(Model.CompanyName) Team <br>
+    We are excited to inform you that a candidate has applied for the position of @(Model.JobTitle) at your company through [Your Job Offer Website]. <br>
+    <br>
+    Here are the details of the applicant:
+    <ul>
+        <li><strong>Name:</strong> @(Model.Application.FullName)</li>
+        <li><strong>Email Address:</strong> @(Model.Application.Email)</li>
+        <li><strong>Resume:</strong> @(Model.Application.ResumeUrl)</li>
+        @if (isYearsOfExperience)
+        {
+            <li><strong>Years of experience:</strong> @(Model.Application.YearsOfExperience)</li>
+        }
+        @if (isGitHub)
+        {
+            <li><strong>GitHub:</strong> @(Model.Application.GitHubUrl)</li>
+        }
+        @if (isLinkedIn)
+        {
+            <li><strong>LinkedIn:</strong> @(Model.Application.LinkedInUrl)</li>
+        }
+        @if (isCity)
+        {
+            <li><strong>City:</strong> @(Model.Application.City)</li>
+        }
+        @if (isCountry)
+        {
+            <li><strong>Country:</strong> @(Model.Application.Country)</li>
+        }
+        @if (isDescription)
+        {
+            <li>
+                <strong>Cover letter @(Model.Application.CoverLetterWordsCount) words:</strong>
+                <br>
+                <span style="white-space: pre-line">@(Model.Application.Description)</span>
+            </li>
+        }
+    </ul>
+    <br>
+    Please take a moment to review the applicant's profile and evaluate their qualifications for the role. <br>
+    You can contact them directly using the provided email address. <br>
+    If you have any questions or need further assistance, please don't hesitate to reach out to us. <br>
+    We are here to help streamline your hiring process and ensure you find the best talent for your team. <br>
+    Thank you for choosing [Your Job Offer Website] for your recruitment needs. <br>
+    We wish you the best of luck in finding the perfect candidate for the position. <br>
+    <br>
+    Best regards, <br>
+    [Your Job Offer Website]
+</div>

@@ -1,5 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
+using JobBoardPlatform.PL.Aspects.DataValidators.Common;
+using JobBoardPlatform.PL.Controllers.Utils;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
@@ -25,13 +27,14 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
             string? city = application.EmployeeProfile?.City;
             string? country = application.EmployeeProfile?.Country;
 
-            var viewModel = new CompanyApplicationCardViewModel()
+            var viewModel = new ApplicationCardViewModel()
             {
                 Id = application.Id,
+                OfferId = application.JobOfferId,
                 PriorityFlagId = application.ApplicationFlagTypeId,
                 FullName = application.FullName,
                 Email = application.Email,
-                ProfileImageUrl = profileImageUrl,
+                ProfileImageUrl = GetProfileImageUri(profileImageUrl),
                 ResumeUrl = application.ResumeUrl,
                 YearsOfExperience = yearsOfExperience,
                 Description = application.Description,
@@ -41,7 +44,51 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications
                 Country = country
             };
 
+            ParseCoverLetterAndSetUrls(viewModel);
+
             return viewModel;
+        }
+
+        private string GetProfileImageUri(string? profileImageUrl)
+        {
+            return StaticFilesUtils.GetEmployeeDefaultAvatarUriIfEmpty(profileImageUrl);
+        }
+
+        private void ParseCoverLetterAndSetUrls(ApplicationCardViewModel application)
+        {
+            if (string.IsNullOrEmpty(application.Description))
+            {
+                return;
+            }
+
+            var urlValidator = new UrlValidator();
+
+            var separators = new string[] { " ", "\r\n" };
+            var tokens = application.Description.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var token in tokens) 
+            {
+                TryParseUrlToken(urlValidator, application, token);
+            }
+
+            application.CoverLetterWordsCount = tokens.Length;
+        }
+
+        private void TryParseUrlToken(UrlValidator urlValidator, ApplicationCardViewModel application, string token)
+        {
+            var urlValidation = urlValidator.Validate(token);
+            if (!urlValidation.IsValid)
+            {
+                return;
+            }
+
+            if (token.Contains("github"))
+            {
+                application.GitHubUrl = token;
+            }
+            else if (token.Contains("linkedin"))
+            {
+                application.LinkedInUrl = token;
+            }
         }
     }
 }

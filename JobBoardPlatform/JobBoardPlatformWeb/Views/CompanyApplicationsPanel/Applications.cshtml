@@ -1,10 +1,23 @@
-﻿
+﻿@using System.Text.RegularExpressions;
+@using JobBoardPlatform.PL.Controllers.Offer;
+@using JobBoardPlatform.PL.Controllers.Utils;
+
 @model CompanyApplicationsViewModel
 @{
     ViewData["Title"] = $"{Model.OfferCard.JobTitle} applications";
 
+    string editOfferController = ControllerUtils.GetControllerName(typeof(CompanyOfferEditorController));
+
     var offerCard = Model.OfferCard;
     var applicationCards = Model.Applications;
+
+    // TODO: move to utilities function
+    string formattedCompanyName = Regex.Replace(offerCard.Company, @"\s+", "-").ToLower();
+    string formattedOfferTitle = Regex.Replace(offerCard.JobTitle, @"\s+", "-").ToLower();
+    string offerPageUrl = $"{formattedCompanyName}-{formattedOfferTitle}";
+
+    var contentData = new { id = offerCard.Id, companyname = formattedCompanyName, offertitle = formattedOfferTitle };
+    string contentUrl = @Url.Action("Offer", "OfferContent", contentData);
 }
 
 <div class="container-xl px-4 pt-4">
@@ -12,24 +25,33 @@
     <!-- Account page navigation-->
     @await Html.PartialAsync("./ProfileTabs/_ProfileTabs")
 
-    <div class="mb-5 card">
-        <div class="card-header d-flex justify-content-between">
-            <div>
-                Job offer
-            </div>
-            <div class="d-flex flex-row">
-                <div class="me-3">
-                    <i class="bi bi-eye"></i> @Model.TotalViewsCount
+    <div class="mb-2">
+        <div class="card-body">
+            <div class="bg-info bg-opacity-10 py-1">
+                <div class="mx-2 my-2 card border-0">
+                    <partial name="./JobOffers/_JobOffer" model="@Model.OfferCard" />
                 </div>
-                <div class="me-3">
-                    <i class="bi bi-send"></i> @Model.TotalApplications
+            </div>
+            <div class="d-flex flex-row align-items-center mt-2">
+                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="Editor" asp-controller="@editOfferController" asp-route-offerId="@offerCard.Id">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to edit
+                </a>
+                <a class="btn btn-sm btn-outline-secondary me-3" href="@contentUrl">
+                    <i class="bi bi-file-text"></i>
+                    Check preview
+                </a>
+                <div class="me-3 border rounded-pill small py-1 px-2">
+                    <i class="bi bi-eye"></i> View count: @Model.TotalViewsCount
+                </div>
+                <div class="me-2 border rounded-pill small py-1 px-2">
+                    <i class="bi bi-send"></i> Applied count: @Model.TotalApplications
                 </div>
             </div>
         </div>
-        @await Html.PartialAsync("./JobOffers/_JobOffer", offerCard)
     </div>
 
-    <div id="cards-container" class="border">
+    <div id="cards-container" class="border mt-5">
         @await Html.PartialAsync("./Templates/_CardsContainer", applicationCards)
     </div>
 </div>

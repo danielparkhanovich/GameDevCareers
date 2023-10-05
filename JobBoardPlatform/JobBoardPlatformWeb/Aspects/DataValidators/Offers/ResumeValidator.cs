@@ -22,7 +22,6 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
             });
         }
 
-
         private void AddRuleForStorageUrlValidation(IProfileResumeBlobStorage resumeStorage)
         {
             When(resume => !string.IsNullOrEmpty(resume.ResumeUrl), () =>

@@ -34,7 +34,9 @@ namespace JobBoardPlatform.BLL.Services.Email
 
         private MailMessage GetMailMessage(string targetEmail, string subject, string message)
         {
-            return new MailMessage(options.SourceEmail, targetEmail, subject, message);
+            var mail = new MailMessage(options.SourceEmail, targetEmail, subject, message);
+            mail.IsBodyHtml = true;
+            return mail;
         }
     }
 }

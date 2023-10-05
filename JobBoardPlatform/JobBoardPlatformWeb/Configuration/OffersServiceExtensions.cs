@@ -46,7 +46,7 @@ namespace JobBoardPlatform.PL.Configuration
 
         private static void AddApplicationsServices(IServiceCollection services)
         {
-            services.AddTransient<OfferApplicationCommandsExecutor>();
+            services.AddTransient<IApplicationsManager, ApplicationsManager>();
             services.AddTransient<OfferApplicationsSearcher>();
             services.AddTransient<IPageSearchParamsUrlFactory<CompanyPanelApplicationSearchParams>, CompanyPanelApplicationSearchParamsFactory>();
         }

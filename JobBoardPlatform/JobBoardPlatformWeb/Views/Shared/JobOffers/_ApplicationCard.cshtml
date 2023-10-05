@@ -2,97 +2,121 @@
 @using System.Text.RegularExpressions;
 @using JobBoardPlatform.PL.Controllers.Offer;
 
-@model CompanyApplicationCardViewModel
+@model ApplicationCardViewModel
 @{
     var card = Model;
-
-    string? profileImageUrl = card.ProfileImageUrl;
-    if (string.IsNullOrEmpty(profileImageUrl))
-    {
-        profileImageUrl = "https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg";
-    }
+    bool isCoverLetter = !string.IsNullOrEmpty(card.Description);
 }
 
-<div class="card-body d-flex align-content-center text-decoration-none border-start border-success border-4 rounded shadow bg-white py-2 px-1 card-border-@card.Id">
-    <img src=@profileImageUrl width="60" height="60" class="mx-2 border border-secondary rounded-circle">
-    <div class="d-flex flex-row justify-content-between mx-2 w-100">
-        <div class="d-flex flex-column">
-            <div class="d-flex">
-                <div class="d-flex flex-column justify-content-center me-2">
-                    @card.FullName
-                </div>
-            </div>
-            <div class="d-flex justify-content-between">
-                <div class="d-flex flex-column justify-content-center me-1" style="font-size: 0.75rem;">
-                    @card.Email
-                </div>
-                <div class="p-1 me-1">
-                    <button class="btn btn-sm btn-outline-primary px-1 py-0" onclick=copyContent("@card.Email");>
-                        <i class="bi bi-clipboard"></i>
-                    </button>
-                </div>
-            </div>
-            @if (card.City != null && card.Country != null)
-            {
-                <div class="d-flex flex-row small mx-1" style="font-size: 0.75rem;">
-                    <div class="d-flex flex-row">
-                        <i class="bi bi-geo-alt text-muted"></i>
-                        <div class="text-muted mx-1">@card.City, @card.Country</div>
+<div class="card-body border-start border-success border-4 rounded shadow bg-white py-2 px-1 card-border-@card.Id">
+    <div class="d-flex align-content-center text-decoration-none">
+        <img src=@card.ProfileImageUrl width="60" height="60" class="mx-2 border border-secondary rounded-circle">
+        <div class="d-flex flex-row justify-content-between mx-2 w-100">
+            <div class="d-flex flex-column">
+                <div class="d-flex">
+                    <div class="d-flex flex-column justify-content-center me-2">
+                        @card.FullName
                     </div>
                 </div>
-            }
-        </div>
-        <div class="d-flex flex-row justify-content-between">
-            <div class="d-flex flex-column justify-content-center mx-4">
-                @if (card.LinkedInUrl != null)
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-column justify-content-center me-1" style="font-size: 0.75rem;">
+                        @card.Email
+                    </div>
+                    <div class="p-1 me-1">
+                        <button class="btn btn-sm btn-outline-primary px-1 py-0 js-tooltip js-copy" 
+                        data-toggle="tooltip" data-placement="bottom" data-copy="@(card.Email)" title="Copy to clipboard">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+                @if (card.City != null && card.Country != null)
                 {
-                    <a target="_blank" rel="noopener noreferrer" href=@card.LinkedInUrl>
-                        <i class="bi bi-linkedin mx-2 text-info" style="font-size: 1.75rem;"></i>
-                    </a>
+                    <div class="d-flex flex-row small mx-1" style="font-size: 0.75rem;">
+                        <div class="d-flex flex-row">
+                            <i class="bi bi-geo-alt text-muted"></i>
+                            <div class="text-muted mx-1">@card.City, @card.Country</div>
+                        </div>
+                    </div>
                 }
             </div>
-            <div class="d-flex flex-column justify-content-center">
-                <a role="button" class="d-flex flex-column justify-content-center text-decoration-none" id="client-side-open-resume-button" target=”_blank” href=@card.ResumeUrl>
-                    <div class="d-flex flex-row btn btn-primary py-0 px-3">
-                        <div class="d-flex flex-column justify-content-center me-1">
-                            Resume (.PDF)
-                        </div>
-                        <i class="bi bi-file-earmark-pdf-fill text-info text-light" style="font-size: 1.75rem;"></i>
-                    </div>
-                    @if (card.YearsOfExperience != null)
+            <div class="d-flex flex-row justify-content-between">
+                <div class="d-flex flex-row justify-content-center align-items-center mx-4">
+                    @if (card.LinkedInUrl != null)
                     {
-                        <div class="text-center text-muted small">years of experience: @card.YearsOfExperience</div>
+                        <a target="_blank" rel="noopener noreferrer" href=@card.LinkedInUrl>
+                            <i class="bi bi-linkedin mx-2 text-info" style="font-size: 1.75rem;"></i>
+                        </a>
                     }
-                </a>
-            </div>
-            <!-- priorities -->
-            <div class="d-flex flex-row mx-5">
-                <div class="d-flex flex-column justify-content-center me-1">
-                    <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark must-hire-priority-@card.Id"
-                            onclick="selectPriority(@card.Id, @((int)ApplicationFlagEnum.MustHire));">
-                        <p class="align-middle mb-0 h-100"><i class="bi bi-star"></i></p>
-                    </button>
-                </div>
-                <div class="d-flex flex-column justify-content-center me-1">
-                    <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark average-hire-priority-@card.Id"
-                            onclick="selectPriority(@card.Id, @((int)ApplicationFlagEnum.AverageHire));">
-                        <p class="align-middle mb-0 h-100"><i class="bi bi-question-lg"></i></p>
-                    </button>
+                    @if (card.GitHubUrl != null)
+                    {
+                        <a target="_blank" rel="noopener noreferrer" href=@card.GitHubUrl>
+                            <i class="bi bi-github mx-2 text-dark" style="font-size: 1.75rem;"></i>
+                        </a>
+                    }
                 </div>
                 <div class="d-flex flex-column justify-content-center">
-                    <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark reject-priority-@card.Id"
-                            onclick="selectPriority(@card.Id, @((int)ApplicationFlagEnum.RejectHire));">
-                        <p class="align-middle mb-0 h-100"><i class="bi bi-x-lg"></i></p>
-                    </button>
+                    <a role="button" class="d-flex flex-column justify-content-center text-decoration-none" id="client-side-open-resume-button" target=”_blank” href=@card.ResumeUrl>
+                        <div class="d-flex flex-row btn btn-primary py-0 px-3">
+                            <div class="d-flex flex-column justify-content-center me-1">
+                                Resume (.PDF)
+                            </div>
+                            <i class="bi bi-file-earmark-pdf-fill text-info text-light" style="font-size: 1.75rem;"></i>
+                        </div>
+                        @if (card.YearsOfExperience != null)
+                        {
+                            <div class="text-center text-muted small">years of experience: @card.YearsOfExperience</div>
+                        }
+                    </a>
                 </div>
-            </div>
-            <!-- published ago -->
-            <div class="rounded-pill border border-primary px-2 mb-0 justify-content-center align-self-center small border-1">
-                <div class="align-middle mb-0 h-100 text-truncate" style="font-size:12px;">@card.ApplicatedAgo</div>
+                <!-- priorities -->
+                <div class="d-flex flex-row mx-5">
+                    <div class="d-flex flex-column justify-content-center me-1">
+                        <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark must-hire-priority-@card.Id"
+                                onclick="selectPriority(@card.Id, @((int)ApplicationFlagEnum.MustHire), @(card.OfferId));">
+                            <p class="align-middle mb-0 h-100"><i class="bi bi-star"></i></p>
+                        </button>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center me-1">
+                        <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark average-hire-priority-@card.Id"
+                                onclick="selectPriority(@card.Id, @((int)ApplicationFlagEnum.AverageHire), @(card.OfferId));">
+                            <p class="align-middle mb-0 h-100"><i class="bi bi-question-lg"></i></p>
+                        </button>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center">
+                        <button class="rounded-pill border-0 px-2 mb-0 bg-light text-dark reject-priority-@card.Id"
+                                onclick="selectPriority(@card.Id, @((int)ApplicationFlagEnum.RejectHire), @(card.OfferId));">
+                            <p class="align-middle mb-0 h-100"><i class="bi bi-x-lg"></i></p>
+                        </button>
+                    </div>
+                </div>
+                <!-- published ago -->
+                <div class="rounded-pill border border-primary px-2 mb-0 justify-content-center align-self-center small border-1">
+                    <div class="align-middle mb-0 h-100 text-truncate" style="font-size:12px;">@card.ApplicatedAgo</div>
+                </div>
             </div>
         </div>
     </div>
+    @if (isCoverLetter)
+    {
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <button class="accordion-header text-center accordion-button collapsed py-1" id="headingOne"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@(card.Id)" aria-expanded="false" aria-controls="collapse-@(card.Id)"
+                        style="font-size:14px;">
+                    cover letter (@(card.CoverLetterWordsCount) words)
+                </button>
+                <div id="collapse-@(card.Id)" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+                    <div class="accordion-body">
+                        <span style="white-space: pre-line">@card.Description</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
+<!--Copy to clipboard .js-tooltip .js-copy-->
+@await Html.PartialAsync("./Templates/_CopyToClipboardTooltipScript")
 
 <script>
     var applicationIndex = @Json.Serialize(Model.Id);
@@ -154,24 +178,13 @@
         }
     }
 
-    async function copyContent(textToCopy) 
-    {
-        try {
-            await navigator.clipboard.writeText(textToCopy);
-            console.log('Content copied to clipboard');
-        }
-        catch (err) {
-            console.error('Failed to copy: ', err);
-        }
-    }
-
-    function selectPriority(applicationId, priorityIndex) 
+    function selectPriority(applicationId, priorityIndex, offerId) 
     {
         // all enums need to add 1 to consist with database scheme
         priorityIndex += 1;
 
         const action = @Html.Raw(Json.Serialize(CompanyApplicationsPanelController.SetPriorityAction));
-        const data = { applicationId: applicationId, priorityIndex: priorityIndex };
+        const data = { applicationId: applicationId, priorityIndex: priorityIndex, offerId: offerId };
         refreshCardsAfterRequest(action, applicationId, data);
     }
 </script>

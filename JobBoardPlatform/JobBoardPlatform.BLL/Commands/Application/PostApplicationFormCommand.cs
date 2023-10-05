@@ -1,12 +1,9 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
-using JobBoardPlatform.BLL.Services.Authentification.Authorization;
+using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Options;
-using JobBoardPlatform.DAL.Repositories.Blob;
+using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
-using Microsoft.Extensions.Options;
-using System.Security.Claims;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {
@@ -20,6 +17,9 @@ namespace JobBoardPlatform.BLL.Commands.Application
         private readonly int offerId;
         private readonly int? userProfileId;
 
+        private readonly IEmailContent<JobOfferApplication> emailContent;
+        private readonly IEmailSender emailSender;
+
 
         public PostApplicationFormCommand(
             IRepository<JobOfferApplication> applicationsRepository,
@@ -28,7 +28,9 @@ namespace JobBoardPlatform.BLL.Commands.Application
             IApplicationsResumeBlobStorage resumeStorage,
             IApplicationForm form,
             int offerId,
-            int? userProfileId)
+            int? userProfileId,
+            IEmailContent<JobOfferApplication> emailContent,
+            IEmailSender emailSender)
         {
             this.applicationsRepository = applicationsRepository;
             this.offersRepository = offersRepository;
@@ -37,6 +39,8 @@ namespace JobBoardPlatform.BLL.Commands.Application
             this.form = form;
             this.offerId = offerId;
             this.userProfileId = userProfileId;
+            this.emailContent = emailContent;
+            this.emailSender = emailSender;
         }
 
         public async Task Execute()
@@ -47,6 +51,8 @@ namespace JobBoardPlatform.BLL.Commands.Application
             var offer = await offersRepository.Get(offerId);
             offer.NumberOfApplications += 1;
             await offersRepository.Update(offer);
+
+            await TrySendEmail(application, offer);
         }
 
         private async Task<JobOfferApplication> GetApplication()
@@ -80,6 +86,16 @@ namespace JobBoardPlatform.BLL.Commands.Application
             {
                 var url = await resumeStorage.AssignResumeToOfferAsync(offerId, form.AttachedResume.File);
                 application.ResumeUrl = url;
+            }
+        }
+
+        private async Task TrySendEmail(JobOfferApplication application, JobOffer offer)
+        {
+            if (offer.ContactDetails.ContactType.Type == ContactTypeEnum.Mail.ToString())
+            {
+                var subject = await emailContent.GetSubjectAsync(application);
+                var message = await emailContent.GetMessageAsync(application);
+                await emailSender.SendEmailAsync(offer.ContactDetails.ContactAddress!, subject, message);
             }
         }
     }
