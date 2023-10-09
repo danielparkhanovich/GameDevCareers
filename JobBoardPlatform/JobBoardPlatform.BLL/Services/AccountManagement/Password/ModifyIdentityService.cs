@@ -22,7 +22,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
             this.userManager = userManager;
         }
 
-        public async Task<IUserIdentityEntity> TryChangeLoginIdentifierAsync(int userId, string newLogin, string currentPassword)
+        public async Task<IUserIdentityEntity> TryChangeLoginAsync(int userId, string newLogin)
         {
             await ValidateNewLogin(newLogin);
 
@@ -40,7 +40,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 
         public async Task<IUserIdentityEntity> ForceChangePasswordAsync(string email, string password)
         {
-            var user = await userManager.GetUserByEmailAsync(email);
+            var user = await userManager.GetWithEmailAsync(email);
             await UpdateUserPassword(user, password);
             return user;
         }
@@ -59,7 +59,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 
         private async Task ValidateNewLogin(string newLogin)
         {
-            if (await userManager.GetUserByEmailAsync(newLogin) != null)
+            if (await userManager.GetWithEmailAsync(newLogin) != null)
             {
                 throw new AuthenticationException(AuthenticationException.WrongEmail);
             }

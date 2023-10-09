@@ -41,7 +41,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 
         public async Task TrySendResetPasswordTokenAsync(string email)
         {
-            if (await userManager.GetUserByEmailAsync(email) == null)
+            if (await userManager.GetWithEmailAsync(email) == null)
             {
                 throw new AuthenticationException(AuthenticationException.EmailNotFound);
             }

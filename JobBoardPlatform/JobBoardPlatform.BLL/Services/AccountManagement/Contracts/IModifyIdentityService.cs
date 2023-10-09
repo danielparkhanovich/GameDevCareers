@@ -5,7 +5,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Contracts
     public interface IModifyIdentityService<T> 
         where T : class, IUserIdentityEntity
     {
-        Task<IUserIdentityEntity> TryChangeLoginIdentifierAsync(int userId, string newLogin, string currentPassword);
+        Task<IUserIdentityEntity> TryChangeLoginAsync(int userId, string newLogin);
         Task<IUserIdentityEntity> TryChangePasswordAsync(int userId, string oldPassword, string newPassword);
         Task<IUserIdentityEntity> ForceChangePasswordAsync(string email, string password);
     }

@@ -71,12 +71,12 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
                 HashPassword = passwordHash,
                 Profile = new EmployeeProfile()
             };
-            await userManager.AddNewUser(employee);
+            await userManager.AddAsync(employee);
         }
 
         public async Task DeleteEmployee(string email)
         {
-            var user = await userManager.GetUserByEmailAsync(email);
+            var user = await userManager.GetWithEmailAsync(email);
             var deleteCommand = new DeleteEmployeeCommand(
                 repository,
                 profileRepository,
@@ -96,12 +96,12 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
 
         public Task<EmployeeIdentity> GetEmployeeByEmail(string email)
         {
-            return userManager.GetUserByEmailAsync(email);
+            return userManager.GetWithEmailAsync(email);
         }
 
         public async Task<EmployeeProfile> GetEmployeeProfileByEmail(string email)
         {
-            var user = await userManager.GetUserByEmailAsync(email);
+            var user = await userManager.GetWithEmailAsync(email);
             return await profileRepository.Get(user.ProfileId);
         }
 

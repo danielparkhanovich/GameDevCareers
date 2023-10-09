@@ -1,5 +1,4 @@
-﻿
-using AspNet.Security.OAuth.GitHub;
+﻿using AspNet.Security.OAuth.GitHub;
 using AspNet.Security.OAuth.LinkedIn;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Register;

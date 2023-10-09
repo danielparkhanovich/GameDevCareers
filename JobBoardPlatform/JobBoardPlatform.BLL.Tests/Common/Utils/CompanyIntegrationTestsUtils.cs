@@ -87,7 +87,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
                     CompanyName = "company",
                 }
             };
-            await userManager.AddNewUser(employee);
+            await userManager.AddAsync(employee);
             await SetUserImageInProfile(email);
         }
 
@@ -130,7 +130,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
 
         public async Task DeleteCompany(string email)
         {
-            var user = await userManager.GetUserByEmailAsync(email);
+            var user = await userManager.GetWithEmailAsync(email);
             var deleteCommand = new DeleteCompanyCommand(
                     repository,
                     profileRepository,
@@ -142,12 +142,12 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
 
         public Task<CompanyIdentity> GetCompanyByEmail(string email)
         {
-            return userManager.GetUserByEmailAsync(email);
+            return userManager.GetWithEmailAsync(email);
         }
 
         public async Task<CompanyProfile> GetCompanyProfileByEmail(string email)
         {
-            var user = await userManager.GetUserByEmailAsync(email);
+            var user = await userManager.GetWithEmailAsync(email);
             return await profileRepository.Get(user.ProfileId);
         }
 

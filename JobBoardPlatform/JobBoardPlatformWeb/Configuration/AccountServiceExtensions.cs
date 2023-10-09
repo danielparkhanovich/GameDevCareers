@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
@@ -93,6 +94,9 @@ namespace JobBoardPlatform.PL.Configuration
 
             services.AddTransient<UserManager<EmployeeIdentity>>();
             services.AddTransient<UserManager<CompanyIdentity>>();
+
+            services.AddTransient<IUserSettingsService, UserSettingsService>();
+            services.AddTransient<IDeleteCommandFactory, DeleteCommandFactory>();
 
             services.AddTransient(typeof(IModifyIdentityService<>), typeof(ModifyIdentityService<>));
         }

@@ -46,7 +46,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public async Task TrySendConfirmationTokenAsync(string email, string password, string formDataTokenId)
         {
-            if (await userManager.GetUserByEmailAsync(email) != null)
+            if (await userManager.GetWithEmailAsync(email) != null)
             {
                 throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }
@@ -60,7 +60,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         public async Task TryRegisterByTokenAsync(string tokenId, HttpContext httpContext)
         {
             var registrationToken = await TryGetRegistrationTokenAsync(tokenId);
-            if (await userManager.GetUserByEmailAsync(registrationToken.RelatedLogin) != null)
+            if (await userManager.GetWithEmailAsync(registrationToken.RelatedLogin) != null)
             {
                 return;
             }
@@ -69,7 +69,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
             await RegisterUser(registrationToken, dataToken.Value.CompanyProfileData);
 
-            var addedUser = await userManager.GetUserByEmailAsync(registrationToken.RelatedLogin);
+            var addedUser = await userManager.GetWithEmailAsync(registrationToken.RelatedLogin);
             await authorizationService.SignInHttpContextAsync(httpContext, addedUser.Id);
 
             await CreateOffer(addedUser, dataToken.Value.OfferData);
@@ -103,7 +103,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         {
             var user = GetCompanyIdentity(token.RelatedLogin, token.PasswordHash);
             user.Profile = GetCompanyProfile(profileData);
-            return userManager.AddNewUser(user);
+            return userManager.AddAsync(user);
         }
 
         private Task CreateOffer(CompanyIdentity company, IOfferData offerData)

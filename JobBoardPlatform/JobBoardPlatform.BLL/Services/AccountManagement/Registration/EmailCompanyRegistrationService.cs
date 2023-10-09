@@ -35,7 +35,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public async Task TrySendConfirmationTokenAndPasswordAsync(string email, string password)
         {
-            if (userManager.GetUserByEmailAsync(email) != null)
+            if (userManager.GetWithEmailAsync(email) != null)
             {
                 throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }
@@ -48,9 +48,9 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         {
             var token = await TryGetTokenAsync(tokenId);
             var user = GetCompanyIdentity(token.RelatedLogin, token.PasswordHash);
-            await userManager.AddNewUser(user);
+            await userManager.AddAsync(user);
 
-            var addedUser = userManager.GetUserByEmailAsync(user.Email);
+            var addedUser = userManager.GetWithEmailAsync(user.Email);
             await authorizationService.SignInHttpContextAsync(httpContext, addedUser.Id);
         }
 
