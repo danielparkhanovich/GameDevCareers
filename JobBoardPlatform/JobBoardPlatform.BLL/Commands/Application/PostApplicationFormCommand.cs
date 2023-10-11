@@ -91,7 +91,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
 
         private async Task TrySendEmail(JobOfferApplication application, JobOffer offer)
         {
-            if (offer.ContactDetails.ContactType.Type == ContactTypeEnum.Mail.ToString())
+            if (offer.ContactDetails.ContactTypeId == ((int)ContactTypeEnum.Mail + 1))
             {
                 var subject = await emailContent.GetSubjectAsync(application);
                 var message = await emailContent.GetMessageAsync(application);

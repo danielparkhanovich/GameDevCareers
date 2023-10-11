@@ -13,6 +13,7 @@ using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures;
 using JobBoardPlatform.IntegrationTests.Common.TestFiles;
+using JobBoardPlatform.PL.Controllers.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Utils
@@ -31,6 +32,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         private readonly IUserProfileImagesStorage imageStorage;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage applicationsResumeStorage;
+        private readonly IApplicationsManager applicationsManager;
+        private readonly IEmailContent<JobOfferApplication> applicationEmailRenderer;
 
 
         public EmployeeIntegrationTestsUtils(IServiceProvider serviceProvider)
@@ -44,6 +47,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             imageStorage = serviceProvider.GetService<IUserProfileImagesStorage>()!;
             profileResumeStorage = serviceProvider.GetService<IProfileResumeBlobStorage>()!;
             applicationsResumeStorage = serviceProvider.GetService<IApplicationsResumeBlobStorage>()!;
+            applicationsManager = serviceProvider.GetService<IApplicationsManager>()!;
+            applicationEmailRenderer = serviceProvider.GetService<IEmailContent<JobOfferApplication>>()!;
         }
 
         public string GetUserExampleEmail(int userId = 1)
@@ -168,17 +173,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
                 profileId = profile.Id;
             }
 
-            var command = new PostApplicationFormCommand(
-                applicationRepositry,
-                offersRepository,
-                profileResumeStorage,
-                applicationsResumeStorage,
-                GetApplicationForm(email, offerId, resumeUrl),
-                offerId,
-                profileId,
-                null,
-                null);
-            await command.Execute();
+            var applicationForm = GetApplicationForm(email, offerId, resumeUrl);
+            await applicationsManager.PostApplicationFormAsync(offerId, profileId, applicationForm, applicationEmailRenderer);
         }
 
         public async Task SetUsersResumeInProfile(int usersCount)

@@ -2,7 +2,7 @@ using JobBoardPlatform.IntegrationTests.Common.Fixtures;
 
 namespace JobBoardPlatform.IntegrationTests.Account.Registration
 {
-    public class RegisterEmployeeTest : IClassFixture<OffersManagementFixture>, IDisposable
+    public class RegisterEmployeeTest : IClassFixture<AppFixture>, IDisposable
     {
         public RegisterEmployeeTest()
         {

@@ -4,15 +4,15 @@ using JobBoardPlatform.IntegrationTests.Common.Utils;
 
 namespace JobBoardPlatform.IntegrationTests.Account.Delete
 {
-    public class DeleteEmployeeTest : IClassFixture<OffersManagementFixture>, IDisposable
+    public class DeleteEmployeeTest : IClassFixture<AppFixture>, IDisposable
     {
-        private readonly OffersManagementFixture fixture;
+        private readonly AppFixture fixture;
         private readonly EmployeeIntegrationTestsUtils testsUtils;
         private readonly CompanyIntegrationTestsUtils companyUtils;
         private readonly EmployeeProfileAssert assert;
 
 
-        public DeleteEmployeeTest(OffersManagementFixture fixture)
+        public DeleteEmployeeTest(AppFixture fixture)
         {
             this.fixture = fixture;
             testsUtils = new EmployeeIntegrationTestsUtils(fixture.ServiceProvider);

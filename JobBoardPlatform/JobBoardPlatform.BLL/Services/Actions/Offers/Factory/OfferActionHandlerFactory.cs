@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.PageViews;
+using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Services.Actions.Offers.Factory
 {

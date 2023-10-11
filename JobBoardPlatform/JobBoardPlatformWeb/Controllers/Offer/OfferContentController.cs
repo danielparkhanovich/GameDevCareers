@@ -80,8 +80,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 int offerId = content.Update.OfferId;
                 viewRenderService.SetController(this);
 
-                await applicationsManager.TryPostApplicationFormAsync(
-                    offerId, TryGetUserProfileId(), Request, Response, content.Update, viewRenderService);
+                var actionsHandler = actionHandlerFactory.GetApplyActionHandler(offerId);
+                if (!actionsHandler.IsActionDoneRecently(Request))
+                {
+                    await applicationsManager.PostApplicationFormAsync(
+                        offerId, TryGetUserProfileId(), content.Update, viewRenderService);
+
+                    actionsHandler.RegisterAction(Request, Response);
+                }
             }
             else
             {

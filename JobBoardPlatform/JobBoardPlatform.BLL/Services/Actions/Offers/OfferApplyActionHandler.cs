@@ -10,7 +10,7 @@ namespace JobBoardPlatform.BLL.Services.Actions.Offers
         private readonly string cookieName;
 
 
-        public OfferApplyActionHandler(int offerId)
+        public OfferApplyActionHandler(int offerId) 
         {
             this.cookieName = $"OfferApplied_{offerId}";
         }

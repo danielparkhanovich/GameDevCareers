@@ -131,13 +131,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         public async Task DeleteCompany(string email)
         {
             var user = await userManager.GetWithEmailAsync(email);
-            var deleteCommand = new DeleteCompanyCommand(
-                    repository,
-                    profileRepository,
-                    offersManager,
-                    imageStorage,
-                    user.Id);
-            await deleteCommand.Execute();
+            await userManager.DeleteAsync(user.Id);
         }
 
         public Task<CompanyIdentity> GetCompanyByEmail(string email)

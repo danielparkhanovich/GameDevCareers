@@ -1,16 +1,15 @@
-using JobBoardPlatform.IntegrationTests.Common.Assertions;
 using JobBoardPlatform.IntegrationTests.Common.Fixtures;
 using JobBoardPlatform.IntegrationTests.Common.Utils;
 
 namespace JobBoardPlatform.IntegrationTests.Offers
 {
-    public class OfferEditorTest : IClassFixture<OffersManagementFixture>, IDisposable
+    public class OfferEditorTest : IClassFixture<AppFixture>, IDisposable
     {
-        private readonly OffersManagementFixture fixture;
+        private readonly AppFixture fixture;
         private readonly CompanyIntegrationTestsUtils testsUtils;
 
 
-        public OfferEditorTest(OffersManagementFixture fixture)
+        public OfferEditorTest(AppFixture fixture)
         {
             this.fixture = fixture;
             this.testsUtils = new CompanyIntegrationTestsUtils(fixture.ServiceProvider);

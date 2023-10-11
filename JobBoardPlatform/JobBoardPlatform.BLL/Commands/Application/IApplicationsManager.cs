@@ -8,8 +8,8 @@ namespace JobBoardPlatform.BLL.Commands.Application
     {
         Task<ICollection<JobOfferApplication>> GetApplicationsAsync(int offerId); 
         Task<JobOfferApplication> GetApplicationAsync(int applicationId);
-        Task TryPostApplicationFormAsync(
-            int offerId, int? userProfileId, HttpRequest request, HttpResponse response, IApplicationForm form, IEmailContent<JobOfferApplication> emailContent);
+        Task PostApplicationFormAsync(
+            int offerId, int? userProfileId, IApplicationForm form, IEmailContent<JobOfferApplication> emailContent);
         Task<int> UpdateApplicationPriorityAsync(int applicationId, int newPriorityIndex);
     }
 }

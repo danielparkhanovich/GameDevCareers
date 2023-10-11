@@ -4,16 +4,16 @@ using JobBoardPlatform.IntegrationTests.Common.Utils;
 
 namespace JobBoardPlatform.IntegrationTests.Panel
 {
-    public class CompanyOffersPanelTest : IClassFixture<OffersManagementFixture>, IDisposable
+    public class CompanyOffersPanelTest : IClassFixture<AppFixture>, IDisposable
     {
-        private readonly OffersManagementFixture fixture;
+        private readonly AppFixture fixture;
         private readonly CompanyIntegrationTestsUtils testsUtils;
         private readonly EmployeeIntegrationTestsUtils employeeUtils;
         private readonly ApplicationsIntegrationTestsUtils applicationsUtils;
         private readonly CompanyProfileAssert assert;
 
 
-        public CompanyOffersPanelTest(OffersManagementFixture fixture)
+        public CompanyOffersPanelTest(AppFixture fixture)
         {
             this.fixture = fixture;
             testsUtils = new CompanyIntegrationTestsUtils(fixture.ServiceProvider);

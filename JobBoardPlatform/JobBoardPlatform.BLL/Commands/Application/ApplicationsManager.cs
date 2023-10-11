@@ -5,7 +5,6 @@ using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoardPlatform.BLL.Commands.Application
@@ -52,18 +51,13 @@ namespace JobBoardPlatform.BLL.Commands.Application
             return await loaded.SingleAsync();
         }
 
-        public async Task TryPostApplicationFormAsync(
+        public async Task PostApplicationFormAsync(
             int offerId, 
-            int? userProfileId, 
-            HttpRequest request, 
-            HttpResponse response, 
+            int? userProfileId,
             IApplicationForm form,
             IEmailContent<JobOfferApplication> emailContent)
         {
-            var actionsHandler = actionHandlerFactory.GetApplyActionHandler(offerId);
-            if (!actionsHandler.IsActionDoneRecently(request))
-            {
-                var postFormCommand = new PostApplicationFormCommand(
+            var postFormCommand = new PostApplicationFormCommand(
                     applicationsRepository,
                     offersRepository,
                     profileResumeStorage,
@@ -73,10 +67,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
                     userProfileId,
                     emailContent,
                     emailSender);
-                await postFormCommand.Execute();
-
-                actionsHandler.RegisterAction(request, response);
-            }
+            await postFormCommand.Execute();
         }
 
         /// <returns>result priority value</returns>

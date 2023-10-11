@@ -4,15 +4,15 @@ using JobBoardPlatform.IntegrationTests.Common.Utils;
 
 namespace JobBoardPlatform.IntegrationTests.Profile
 {
-    public class EmployeeProfileResumeTest : IClassFixture<OffersManagementFixture>, IDisposable
+    public class EmployeeProfileResumeTest : IClassFixture<AppFixture>, IDisposable
     {
-        private readonly OffersManagementFixture fixture;
+        private readonly AppFixture fixture;
         private readonly EmployeeIntegrationTestsUtils testsUtils;
         private readonly CompanyIntegrationTestsUtils companyUtils;
         private readonly EmployeeProfileAssert assert;
 
 
-        public EmployeeProfileResumeTest(OffersManagementFixture fixture)
+        public EmployeeProfileResumeTest(AppFixture fixture)
         {
             this.fixture = fixture;
             this.testsUtils = new EmployeeIntegrationTestsUtils(fixture.ServiceProvider);

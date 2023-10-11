@@ -1,5 +1,4 @@
-﻿using JobBoardPlatform.DAL.Models.Contracts;
-
+﻿
 namespace JobBoardPlatform.BLL.Commands.Identities
 {
     public interface IDeleteCommandFactory
