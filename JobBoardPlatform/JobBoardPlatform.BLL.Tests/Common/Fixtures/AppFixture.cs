@@ -16,27 +16,24 @@ namespace JobBoardPlatform.IntegrationTests.Common.Fixtures
         {
             AddApplicationServices();
             AddMockServices();
-            ServiceProvider = serviceCollection.BuildServiceProvider();
+            ServiceProvider = services.BuildServiceProvider();
         }
 
         private void AddApplicationServices()
         {
             var builder = WebApplication.CreateBuilder();
-            serviceCollection.AddAuthenticationServices(builder.Configuration);
-            serviceCollection.AddAuthorizationServices();
-            serviceCollection.AddOffersServices();
-            serviceCollection.AddPaymentServices(builder.Configuration);
-            serviceCollection.AddActionsServices(builder.Environment);
-            serviceCollection.AddAccountServices(builder.Configuration);
-            serviceCollection.AddBackgroundServices();
+            services.AddAuthenticationServices(builder.Configuration);
+            services.AddAuthorizationServices();
+            services.AddOffersServices();
+            services.AddPaymentServices(builder.Configuration);
+            services.AddActionsServices(builder.Environment);
+            services.AddAccountServices(builder.Configuration);
+            services.AddBackgroundServices(builder.Environment);
         }
 
         private void AddMockServices()
         {
-            serviceCollection.AddTransient<IOfferCacheManager, OffersCacheManagerMock>();
-            serviceCollection.AddTransient<IOfferQueryExecutor, OfferQueryExecutorMock>();
-            serviceCollection.AddTransient<IEmailContent<JobOfferApplication>, EmailViewRendererMock>();
-            serviceCollection.AddTransient<IEmailSender, EmailSenderMock>();
+            TestSetup.AddMockServices(services);
         }
     }
 }

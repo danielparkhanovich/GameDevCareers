@@ -38,7 +38,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             return viewModel;
         }
 
-        private IProfileImage GetProfileImage(string? imageUrl)
+        private ProfileImage GetProfileImage(string? imageUrl)
         {
             return new ProfileImageViewModel()
             {

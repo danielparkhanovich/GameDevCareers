@@ -2,7 +2,7 @@
 {
     public interface ICompanyProfileAndNewOfferData
     {
-        ICompanyProfileData CompanyProfileData { get; set; }
+        CompanyProfileData CompanyProfileData { get; set; }
         IOfferData OfferData { get; set; }
     }
 }

@@ -87,9 +87,9 @@ namespace JobBoardPlatform.IntegrationTests.Account.Delete
             int registeredUsersWithAttachedResume = 2;
             await employeeUtils.SetUsersResumeInProfile(registeredUsersWithAttachedResume);
 
-            await employeeUtils.ApplyUsersToOffer(0, addedOffersIds[0].Id);
-            await employeeUtils.ApplyUsersToOffer(0, 3, addedOffersIds[1].Id);
-            await employeeUtils.ApplyUsersToOffer(3, 10, addedOffersIds[2].Id);
+            await employeeUtils.ApplyToOffer(0, addedOffersIds[0].Id);
+            await employeeUtils.ApplyToOffer(0, 3, addedOffersIds[1].Id);
+            await employeeUtils.ApplyToOffer(3, 10, addedOffersIds[2].Id);
 
             await testsUtils.DeleteCompany(userEmail);
 

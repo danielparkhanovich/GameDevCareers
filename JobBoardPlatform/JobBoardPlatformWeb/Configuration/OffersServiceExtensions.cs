@@ -54,7 +54,7 @@ namespace JobBoardPlatform.PL.Configuration
         private static void AddValidatorServices(IServiceCollection services)
         {
             services.AddScoped<IValidator<OfferApplicationUpdateViewModel>, OfferApplicationFormValidator>();
-            services.AddScoped<IValidator<IAttachedResume>, ResumeValidator>();
+            services.AddScoped<IValidator<AttachedResume>, ResumeValidator>();
         }
     }
 }

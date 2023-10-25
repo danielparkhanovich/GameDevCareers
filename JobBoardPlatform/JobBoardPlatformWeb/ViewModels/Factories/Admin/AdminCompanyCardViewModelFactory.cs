@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;

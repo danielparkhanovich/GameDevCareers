@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoardPlatform.PL.Controllers.Utils
+namespace JobBoardPlatform.PL.Controllers.Presenters
 {
     public static class ControllerUtils
     {

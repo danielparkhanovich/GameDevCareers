@@ -20,14 +20,14 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     {
         private readonly IRepository<CompanyProfile> companyRepository;
         private readonly CompanyOffersSearcher offersSearcher;
-        private readonly AdminCommandsExecutor adminCommandsExecutor;
+        private readonly AdminCommands adminCommandsExecutor;
         private readonly IOfferQueryExecutor queryExecutor;
 
 
         public AdminPanelOffersController(
             IRepository<CompanyProfile> companyRepository,
             IOfferManager commandsExecutor,
-            AdminCommandsExecutor adminCommandsExecutor,
+            AdminCommands adminCommandsExecutor,
             CompanyOffersSearcher offersSearcher,
             IOfferQueryExecutor queryExecutor) 
             : base(commandsExecutor)

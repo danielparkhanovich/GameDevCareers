@@ -1,8 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Commands.Mappers;
-using JobBoardPlatform.DAL.Managers;
+using JobBoardPlatform.DAL.Contexts;
 using JobBoardPlatform.DAL.Models.Company;
-using System;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
 {
@@ -11,13 +10,13 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         private readonly IOfferData data;
         private readonly IOfferManager offerManager;
         private readonly IMapper<IOfferData, JobOffer> dataToOffer;
-        private readonly OfferModelData offerModel;
+        private readonly OfferContext offerModel;
 
 
         public UpdateOfferCommand(
             IOfferData data,
             IOfferManager offerManager,
-            OfferModelData offerModel)
+            OfferContext offerModel)
         {
             this.data = data;
             this.offerManager = offerManager;

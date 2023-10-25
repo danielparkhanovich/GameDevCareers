@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.MainPage;
-using JobBoardPlatform.DAL.Managers;
+using JobBoardPlatform.DAL.Contexts;
 using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
@@ -11,19 +11,25 @@ namespace JobBoardPlatform.BLL.Commands.Offer
         private readonly IOfferQueryExecutor queryExecutor;
         private readonly IOfferCacheManager cacheManager;
         private readonly MainPageOffersSearcher offersSearcher;
-        private readonly OfferModelData offerModel;
+        private readonly OfferContext offerModel;
 
 
         public OfferManager(
             IOfferQueryExecutor queryExecutor,
             IOfferCacheManager cacheManager,
             MainPageOffersSearcher offersSearcher,
-            OfferModelData offerModel)
+            OfferContext offerModel)
         {
             this.queryExecutor = queryExecutor;
             this.cacheManager = cacheManager;
             this.offersSearcher = offersSearcher;
             this.offerModel = offerModel;
+        }
+
+        public async Task<List<int>> GetAllIdsAsync()
+        {
+            var offers = (await offerModel.OffersRepository.GetAll());
+            return offers.Select(x => x.Id).ToList();
         }
 
         public async Task<List<int>> GetAllIdsAsync(int profileId)

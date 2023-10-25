@@ -13,7 +13,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage resumeStorage;
-        private readonly IApplicationForm form;
+        private readonly ApplicationForm form;
         private readonly int offerId;
         private readonly int? userProfileId;
 
@@ -26,7 +26,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             IRepository<JobOffer> offersRepository,
             IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage resumeStorage,
-            IApplicationForm form,
+            ApplicationForm form,
             int offerId,
             int? userProfileId,
             IEmailContent<JobOfferApplication> emailContent,
@@ -91,6 +91,11 @@ namespace JobBoardPlatform.BLL.Commands.Application
 
         private async Task TrySendEmail(JobOfferApplication application, JobOffer offer)
         {
+            if (emailContent == null)
+            {
+                return;
+            }
+
             if (offer.ContactDetails.ContactTypeId == ((int)ContactTypeEnum.Mail + 1))
             {
                 var subject = await emailContent.GetSubjectAsync(application);

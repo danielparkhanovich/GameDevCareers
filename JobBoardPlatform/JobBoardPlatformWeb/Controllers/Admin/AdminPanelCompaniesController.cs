@@ -1,12 +1,9 @@
 ﻿using JobBoardPlatform.BLL.Commands;
 using JobBoardPlatform.BLL.Commands.Identities;
-using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Offers;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Blob;
-using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
@@ -20,25 +17,19 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelCompaniesController : AdminPanelUsersControllerBase<CompanyIdentity, AdminPanelCompaniesViewModel>
     {
+        private readonly IDeleteUserCommandFactory deleteUserCommandFactory;
         private readonly IRepository<CompanyIdentity> identityRepository;
         private readonly IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
-        private readonly IRepository<CompanyProfile> profileRepository;
-        private readonly IOfferManager offersManager;
-        private readonly IUserProfileImagesStorage imagesStorage;
 
 
         public AdminPanelCompaniesController(
+            IDeleteUserCommandFactory deleteUserCommandFactory,
             IRepository<CompanyIdentity> identityRepository,
-            IRepository<CompanyProfile> profileRepository,
-            IOfferManager offersManager,
-            IUserProfileImagesStorage imagesStorage,
             IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService) 
             : base(identityRepository)
         {
+            this.deleteUserCommandFactory = deleteUserCommandFactory;
             this.identityRepository = identityRepository;
-            this.profileRepository = profileRepository;
-            this.offersManager = offersManager;
-            this.imagesStorage = imagesStorage;
             this.authorizationService = authorizationService;
         }
 
@@ -52,7 +43,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         private CompanyPanelOfferSearchParameters GetSearchParametersFromUrl()
         {
-            int? profileId = null;
             var offerSearchParametersFactory = new CompanyPanelOfferSearchParametersFactory();
             var searchParams = offerSearchParametersFactory.GetSearchParams(Request);
             return searchParams;
@@ -66,12 +56,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         protected override ICommand GetDeleteCommand(int userId)
         {
-            return new DeleteCompanyCommand(
-                identityRepository,
-                profileRepository,
-                offersManager,
-                imagesStorage,
-                userId);
+            return deleteUserCommandFactory.GetCommand(typeof(CompanyIdentity), userId);
         }
     }
 }

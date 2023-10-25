@@ -5,6 +5,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 {
     public interface IOfferManager
     {
+        public Task<List<int>> GetAllIdsAsync();
         public Task<List<int>> GetAllIdsAsync(int profileId);
         public Task<JobOffer> GetAsync(int offerId);
         public Task AddAsync(int profileId, IOfferData offerData);

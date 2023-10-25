@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.DAL.Models.Company;
-using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Admin

@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Resources\ExampleFiles\company0.jpg" />
+    <Content Remove="wwwroot\Resources\ExampleFiles\company1.jpg" />
+    <Content Remove="wwwroot\Resources\ExampleFiles\companyLogo2.jpg" />
+    <Content Remove="wwwroot\Resources\ExampleFiles\companyLogo3.jpg" />
+    <Content Remove="wwwroot\Resources\ExampleFiles\companyLogo4.jpg" />
+    <Content Remove="wwwroot\Resources\ExampleFiles\companyLogo5.jpg" />
+    <Content Remove="wwwroot\Resources\ExampleFiles\companyLogo6.jpg" />
+    <Content Remove="wwwroot\Resources\ExampleFiles\userProfileImage0.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="6.0.15" />
     <PackageReference Include="AspNet.Security.OAuth.LinkedIn" Version="6.0.15" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -28,22 +39,19 @@
     <ProjectReference Include="..\JobBoardPlatform.DAL\JobBoardPlatform.DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Localization\Text\Resource.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="JobBoardPlatform.IntegrationTests" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Localization\Text\Resource.pl-PL.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Localization\Text\Resource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+	  <None Include="wwwroot\Resources\ExampleFiles\companyLogo6.jpg" />
+	  <None Include="wwwroot\Resources\ExampleFiles\companyLogo5.jpg" />
+	  <None Include="wwwroot\Resources\ExampleFiles\companyLogo4.jpg" />
+	  <None Include="wwwroot\Resources\ExampleFiles\companyLogo3.jpg" />
+	  <None Include="wwwroot\Resources\ExampleFiles\companyLogo2.jpg" />
+	  <None Include="wwwroot\Resources\ExampleFiles\company1.jpg" />
+	  <None Include="wwwroot\Resources\ExampleFiles\company0.jpg" />
+	  <None Include="wwwroot\Resources\ExampleFiles\userProfileImage0.png" />
+	</ItemGroup>
 
 </Project>

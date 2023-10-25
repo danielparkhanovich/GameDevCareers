@@ -14,7 +14,8 @@ using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
 using FluentValidation;
 using JobBoardPlatform.PL.Aspects.DataValidators;
-using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Controllers.Presenters;
+using JobBoardPlatform.BLL.Commands.Offer;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -22,7 +23,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     public class OfferContentController : Controller
     {
         private readonly IApplicationsManager applicationsManager;
-        private readonly IOfferQueryExecutor queryExecutor;
+        private readonly IOfferManager offerManager;
         private readonly IRepository<JobOffer> offersRepository;
         private readonly IRepository<EmployeeProfile> profileRepository;
         private readonly IRepository<EmployeeIdentity> identityRepository;
@@ -34,7 +35,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         public OfferContentController(
             IApplicationsManager applicationsManager,
-            IOfferQueryExecutor queryExecutor,
+            IOfferManager offerManager,
             IRepository<JobOffer> offersRepository,
             IRepository<EmployeeProfile> profileRepository,
             IRepository<EmployeeIdentity> identityRepository,
@@ -44,7 +45,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             ApplicationEmailViewRenderer viewRenderService)
         {
             this.applicationsManager = applicationsManager;
-            this.queryExecutor = queryExecutor;
+            this.offerManager = offerManager;
             this.offersRepository = offersRepository;
             this.profileRepository = profileRepository;
             this.identityRepository = identityRepository;
@@ -54,7 +55,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             this.viewRenderService = viewRenderService;
         }
 
-        [Route("offer-{companyname}-{offertitle}-{id}")]
+        [Route("{companyname}-{offertitle}-{id}")]
         public async Task<IActionResult> Offer(int id, string companyname, string offertitle)
         {
             var content = new OfferContentViewModel();
@@ -71,7 +72,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("offer-{companyname}-{offertitle}-{id}")]
+        [Route("{companyname}-{offertitle}-{id}")]
         public async Task<IActionResult> Offer(OfferContentViewModel content)
         {
             var result = await applicationFormValidator.ValidateAsync(content.Update);
@@ -98,9 +99,22 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             return View(content);
         }
 
+        [Route("redirect-to-external")]
+        public async Task<IActionResult> RedirectToExternalForm(string url, int id)
+        {
+            var actionsHandler = actionHandlerFactory.GetApplyActionHandler(id);
+            if (!actionsHandler.IsActionDoneRecently(Request))
+            {
+                await applicationsManager.RedirectApplicationFormAsync(id);
+                actionsHandler.RegisterAction(Request, Response);
+            }
+
+            return Redirect(url);
+        }
+
         private async Task<OfferContentDisplayViewModel> GetOfferContentDisplayViewModel(int offerId)
         {
-            var offer = await queryExecutor.GetOfferById(offerId);
+            var offer = await offerManager.GetAsync(offerId);
 
             var viewModelFactory = new OfferContentDisplayViewModelFactory();
             return viewModelFactory.Create(offer);
@@ -108,7 +122,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private async Task TryIncreaseViewsCount(int offerId)
         {
-            var offer = await queryExecutor.GetOfferById(offerId);
+            var offer = await offerManager.GetAsync(offerId);
 
             if (!IsIncreaseOfferViewsCount(offer))
             {
@@ -152,8 +166,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private bool IsIncreaseOfferViewsCount(JobOffer offer)
         {
-            return UserSessionUtils.IsLoggedIn(User) &&
-                   !UserRolesUtils.IsUserOwner(User, offer) && 
+            return !UserRolesUtils.IsUserOwner(User, offer) && 
                    !UserRolesUtils.IsUserAdmin(User);
         }
 

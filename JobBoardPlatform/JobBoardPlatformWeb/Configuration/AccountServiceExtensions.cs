@@ -3,6 +3,7 @@ using JobBoardPlatform.BLL.Boundaries;
 using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.BLL.Commands.Profile;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.AccountManagement.Common;
 using JobBoardPlatform.BLL.Services.AccountManagement.Password;
@@ -12,14 +13,14 @@ using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Register;
 using JobBoardPlatform.BLL.Services.Email;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
+using JobBoardPlatform.DAL.Models.Admin;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Aspects.DataValidators.Offers;
 using JobBoardPlatform.PL.Aspects.DataValidators.Profile;
 using JobBoardPlatform.PL.Aspects.DataValidators.Registration;
-using JobBoardPlatform.PL.Controllers.Utils;
-using JobBoardPlatform.PL.Controllers.Utils.Renderers;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
@@ -60,7 +61,7 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddScoped<IValidator<CompanyPublishOfferAndRegisterViewModel>, CompanyPublishOfferAndRegisterValidator>();
             services.AddScoped<IValidator<UserPasswordViewModel>, UserPasswordValidator>();
             services.AddScoped<IValidator<IOfferData>, OfferFormDataValidator>();
-            services.AddScoped<IValidator<IProfileImage>, ProfileImageValidator>();
+            services.AddScoped<IValidator<ProfileImage>, ProfileImageValidator>();
         }
 
         private static void AddRegistrationServices(IServiceCollection services)
@@ -91,19 +92,22 @@ namespace JobBoardPlatform.PL.Configuration
         {
             services.AddTransient<IdentityQueryExecutor<EmployeeIdentity>>();
             services.AddTransient<IdentityQueryExecutor<CompanyIdentity>>();
+            services.AddTransient<IdentityQueryExecutor<AdminIdentity>>();
 
             services.AddTransient<UserManager<EmployeeIdentity>>();
             services.AddTransient<UserManager<CompanyIdentity>>();
+            services.AddTransient<UserManager<AdminIdentity>>();
 
             services.AddTransient<IUserSettingsService, UserSettingsService>();
-            services.AddTransient<IDeleteCommandFactory, DeleteCommandFactory>();
+            services.AddTransient<IDeleteUserCommandFactory, DeleteUserCommandFactory>();
+            services.AddTransient<IUpdateUserCommandFactory, UpdateUserCommandFactory>();
 
             services.AddTransient(typeof(IModifyIdentityService<>), typeof(ModifyIdentityService<>));
         }
 
         private static void AddAdminServices(IServiceCollection services)
         {
-            services.AddTransient<AdminCommandsExecutor>();
+            services.AddTransient<AdminCommands>();
         }
     }
 }

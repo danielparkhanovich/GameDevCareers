@@ -1,11 +1,13 @@
 ﻿@using JobBoardPlatform.PL.Controllers.Login;
+@using JobBoardPlatform.PL.Controllers.Presenters;
 @{
     string authorizationButtonsText = (ViewData["AuthorizationButtonsText"] as string)!;
+    var registerWithProviderController = ControllerUtils.GetControllerName(typeof(EmployeeLoginController));
 }
 <div class="col-md-12 text-center mt-3">
     <div>
         <div class="d-flex flex-row justify-content-center">
-            <a href="@Url.Action(EmployeeLoginController.LoginWithGoogleAction)"
+            <a asp-controller="@(registerWithProviderController)" asp-action="@(nameof(EmployeeLoginController.LoginWithGoogle))"
                class="btn btn-secondary btn-floating me-4 w-50">
                 <div class="d-flex align-items-center justify-content-center">
                     <i class="bi bi-google fs-5 mx-2" 
@@ -17,7 +19,7 @@
                     <div>@authorizationButtonsText Google</div>
                 </div>
             </a>
-            <a href="@Url.Action(EmployeeLoginController.LoginWithGitHubAction)"
+            <a asp-controller="@(registerWithProviderController)" asp-action="@(nameof(EmployeeLoginController.LoginWithGitHub))"
                class="btn btn-secondary btn-floating w-50">
                 <div class="d-flex align-items-center justify-content-center">
                     <i class="bi bi-github fs-5 mx-2"></i>
@@ -26,14 +28,14 @@
             </a>
         </div>
         <div class="d-flex flex-row justify-content-center mt-3">
-            <a href="@Url.Action(EmployeeLoginController.LoginWithLinkedInAction)"
+            <a asp-controller="@(registerWithProviderController)" asp-action="@(nameof(EmployeeLoginController.LoginWithLinkedIn))"
                class="btn btn-secondary btn-floating me-4 w-50 disabled">
                 <div class="d-flex align-items-center justify-content-center">
                     <i class="bi bi-linkedin fs-5 mx-2 text-info"></i>
                     <div>@authorizationButtonsText LinkedIn</div>
                 </div>
             </a>
-            <a href="@Url.Action(EmployeeLoginController.LoginWithFacebookAction)"
+            <a asp-controller="@(registerWithProviderController)" asp-action="@(nameof(EmployeeLoginController.LoginWithFacebook))"
                class="btn btn-secondary btn-floating w-50">
                 <div class="d-flex align-items-center justify-content-center">
                     <i class="bi bi-facebook fs-5 mx-2 text-primary"></i>

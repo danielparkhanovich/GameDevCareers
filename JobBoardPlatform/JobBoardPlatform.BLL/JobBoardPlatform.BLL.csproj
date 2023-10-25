@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Payment\**" />
+    <EmbeddedResource Remove="Services\Payment\**" />
+    <None Remove="Services\Payment\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
@@ -14,10 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JobBoardPlatform.DAL\JobBoardPlatform.DAL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\Payment\" />
   </ItemGroup>
 
 </Project>

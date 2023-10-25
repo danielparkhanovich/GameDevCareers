@@ -1,7 +1,7 @@
 ﻿using JobBoardPlatform.BLL.Common.Formatter;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Aspects.DataValidators.Common;
-using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.ViewModels.Contracts;
 using JobBoardPlatform.PL.ViewModels.Factories.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;

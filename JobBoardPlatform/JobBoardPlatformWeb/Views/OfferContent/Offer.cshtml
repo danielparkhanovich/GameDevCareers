@@ -1,4 +1,4 @@
-﻿@using JobBoardPlatform.PL.Controllers.Utils;
+﻿@using JobBoardPlatform.PL.Controllers.Presenters;
 
 @model OfferContentViewModel
 @{
@@ -26,8 +26,13 @@
 }
 
 <div class="container px-5 py-5">
-    <div class="bg-opacity-75 rounded px-5 py-4 mb-4"
-    style="background-image: linear-gradient(90deg, @(backgroundColorFromStr) 0%, @(backgroundColorToStr) 100%), url(@(backgroundImgPath));">
+    <div class="bg-opacity-75 rounded" style="background-image: linear-gradient(90deg, @(backgroundColorFromStr) 0%, @(backgroundColorToStr) 100%), url(@(backgroundImgPath));">
+        <!-- go back button -->
+        <button class="btn btn-sm btn-secondary" onclick="javascript:window.history.back();">
+            <i class="bi bi-arrow-left"></i>
+        </button>
+        <!-- header card content -->
+        <div class="px-5 pb-4 mb-4">
         <div class="d-flex flex-row">
             <div class="d-flex flex-column mt-4">
                 <div class="bg-white bg-opacity-10 rounded p-2">
@@ -57,7 +62,7 @@
                         <i class="bi bi-geo-alt text-light"></i>
                         <div class="text-light mx-2">@offerDescription.FullAddress</div>
                         <div class="text-center rounded @(isFullyRemote ? "bg-light" : "bg-dark bg-opacity-50") px-3 mx-3">
-                            <p class="small mb-0 @(isFullyRemote ? "text-primary" : "text-light") ">@offerDescription.WorkLocationType</p>
+                            <p class="small mb-0 @(isFullyRemote ? "text-primary" : "text-light") ">@offerDescription.WorkLocationTypeText</p>
                         </div>
                     </div>
                     @for (int i = 0; i < offerDescription.EmploymentDetails.Length; i++)
@@ -70,6 +75,9 @@
                 </div>
                 <div class="d-flex flex-row mx-4 mt-4 align-content-start">
                     <div class="d-flex flex-row rounded text-light border border-light px-2 mb-0 justify-content-center align-self-start small">
+                        <div class="ms-1 align-middle mb-0 h-100 text-truncate">@Model.Display.OfferCategory</div>
+                    </div>
+                    <div class="ms-2 d-flex flex-row rounded text-light border border-light px-2 mb-0 justify-content-center align-self-start small">
                         <img src="@Model.Display.MainTechnologyWidget.IconUri" width="20" height="20" />
                         <div class="ms-1 align-middle mb-0 h-100 text-truncate">@Model.Display.MainTechnologyWidget.Label</div>
                     </div>
@@ -94,6 +102,7 @@
                 }
             }
         </div>
+    </div>
     </div>
     <div class="card mb-4">
         <div class="card-header bg-white h5">
@@ -192,7 +201,10 @@
     else
     {
         <div class="d-flex flex-row justify-content-center">
-            <a class="btn btn-primary w-75 px-5" href="@offerDescription.ExternalFormUrl" target="_blank">Apply</a>
+            <a class="btn btn-primary w-75 px-5"
+               asp-action="RedirectToExternalForm" asp-controller="OfferContent" asp-route-url="@offerDescription.ExternalFormUrl" asp-route-id="@application.OfferId" target="_blank">
+                Apply
+            </a>
         </div>
     }
 </div>

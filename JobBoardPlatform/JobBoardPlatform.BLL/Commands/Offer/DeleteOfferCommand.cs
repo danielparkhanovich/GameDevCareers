@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Query.Identity;
-using JobBoardPlatform.DAL.Managers;
+using JobBoardPlatform.DAL.Contexts;
 using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
@@ -10,13 +10,13 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     public class DeleteOfferCommand : ICommand
     {
         private readonly IOfferQueryExecutor queryExecutor;
-        private readonly OfferModelData offerModel;
+        private readonly OfferContext offerModel;
         private readonly int offerIdToDelete;
 
 
         public DeleteOfferCommand(
             IOfferQueryExecutor queryExecutor,
-            OfferModelData offerModel,
+            OfferContext offerModel,
             int offerIdToDelete)
         {
             this.queryExecutor = queryExecutor;

@@ -5,7 +5,7 @@ using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.Interactors.Notifications;
 using JobBoardPlatform.PL.Interactors.Payment;
 using JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment;

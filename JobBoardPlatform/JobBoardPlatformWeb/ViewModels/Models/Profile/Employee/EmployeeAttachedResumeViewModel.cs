@@ -2,7 +2,7 @@
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Profile.Employee
 {
-    public class EmployeeAttachedResumeViewModel : IAttachedResume
+    public class EmployeeAttachedResumeViewModel : AttachedResume
     {
         public IFormFile? File { get; set; }
         public string? ResumeUrl { get; set; }

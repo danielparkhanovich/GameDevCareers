@@ -3,7 +3,7 @@ using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
 {
-    public class OfferContentViewModel : IAttachedResume
+    public class OfferContentViewModel : AttachedResume
     {
         public IFormFile? File { get => Update.AttachedResume.File; set => Update.AttachedResume.File = value; }
         public string? ResumeUrl { get => Update.AttachedResume.ResumeUrl; set => Update.AttachedResume.ResumeUrl = value; }

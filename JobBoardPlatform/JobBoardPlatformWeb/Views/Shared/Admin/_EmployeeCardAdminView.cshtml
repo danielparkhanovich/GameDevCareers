@@ -1,5 +1,5 @@
 ﻿@using JobBoardPlatform.PL.Controllers.Profile;
-@using JobBoardPlatform.PL.Controllers.Utils;
+@using JobBoardPlatform.PL.Controllers.Presenters;
 @using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 @using JobBoardPlatform.PL.ViewModels.Models.Admin;
 @using JobBoardPlatform.PL.ViewModels.Models.Offer.Widgets;
@@ -12,8 +12,8 @@
     var card = Model;
     int identityId = card.Id;
 
-    string deleteUrl = $"{@Url.Action(AdminPanelCompaniesController.DeleteAction)}";
-    string logIntoUrl = $"{@Url.Action(AdminPanelCompaniesController.LogIntoAction)}";
+    string deleteUrl = $"{@Url.Action(nameof(AdminPanelCompaniesController.Delete))}";
+    string logIntoUrl = $"{@Url.Action(nameof(AdminPanelCompaniesController.LogInto))}";
 
     bool isName = !string.IsNullOrEmpty(Model.Name);
     bool isSurname = !string.IsNullOrEmpty(Model.Surname);

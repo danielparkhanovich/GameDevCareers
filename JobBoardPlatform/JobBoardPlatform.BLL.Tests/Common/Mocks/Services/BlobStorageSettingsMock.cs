@@ -15,9 +15,9 @@ namespace JobBoardPlatform.IntegrationTests.Common.Mocks.Services
 
         public BlobStorageSettingsMock()
         {
-            imagesContainer = DbFixture.GetUniqueName("imagescontainer");
-            resumeContainer = DbFixture.GetUniqueName("resumecontainer");
-            applicationsResumeContainer = DbFixture.GetUniqueName("applicationsresumecontainer");
+            imagesContainer = TestSetup.GetUniqueName("imagescontainer");
+            resumeContainer = TestSetup.GetUniqueName("resumecontainer");
+            applicationsResumeContainer = TestSetup.GetUniqueName("applicationsresumecontainer");
         }
 
         public string GetContainerName(Type storageType)

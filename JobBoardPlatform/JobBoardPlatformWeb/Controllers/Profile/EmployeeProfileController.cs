@@ -12,26 +12,26 @@ using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Session;
-using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
+using JobBoardPlatform.BLL.Commands.Identity;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
     [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
     public class EmployeeProfileController : BaseProfileController<EmployeeProfile, EmployeeProfileViewModel>
     {
+        private readonly UserManager<EmployeeIdentity> userManager;
         private readonly IRepository<EmployeeProfile> profileRepository;
-        private readonly IUserProfileImagesStorage imageStorage;
         private readonly IProfileResumeBlobStorage resumeStorage;
         private readonly IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession;
 
 
         public EmployeeProfileController(
+            UserManager<EmployeeIdentity> userManager,
             IRepository<EmployeeProfile> profileRepository,
-            IUserProfileImagesStorage imageStorage,
             IProfileResumeBlobStorage resumeStorage,
             IUserSessionService<EmployeeIdentity, EmployeeProfile> userSession)
         {
-            this.imageStorage = imageStorage;
+            this.userManager = userManager;
             this.resumeStorage = resumeStorage;
             this.profileRepository = profileRepository;            
             this.userSession = userSession;
@@ -74,16 +74,8 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         protected override async Task UpdateProfile(EmployeeProfileViewModel viewModel)
         {
-            int id = UserSessionUtils.GetProfileId(User);
-
-            var updateProfileCommand = new UpdateEmployeeProfileCommand(id,
-                viewModel,
-                profileRepository,
-                imageStorage,
-                resumeStorage);
-
-            await updateProfileCommand.Execute();
-
+            int id = UserSessionUtils.GetIdentityId(User);
+            await userManager.UpdateProfileAsync(id, viewModel);
             await userSession.UpdateSessionStateAsync(HttpContext);
         }
     }

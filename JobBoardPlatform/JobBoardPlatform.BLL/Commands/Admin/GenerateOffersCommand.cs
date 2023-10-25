@@ -1,4 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Utils;
 using JobBoardPlatform.DAL.Models.Company;
@@ -10,25 +11,25 @@ namespace JobBoardPlatform.BLL.Commands.Admin
     {
         private readonly int offersCount;
         private readonly int companyId;
-        private readonly IRepository<CompanyIdentity> repository;
+        private readonly UserManager<CompanyIdentity> companyManager;
         private readonly IRepository<JobOffer> offersRepository;
 
 
         public GenerateOffersCommand(int offersCount,
             int companyId, 
-            IRepository<CompanyIdentity> repository,
+            UserManager<CompanyIdentity> companyManager,
             IRepository<JobOffer> offersRepository)
         {
             this.offersCount = offersCount;
             this.companyId = companyId;
-            this.repository = repository;
+            this.companyManager = companyManager;
             this.offersRepository = offersRepository;
         }
 
         public async Task Execute()
         {
             var toProcess = new List<CompanyIdentity>();
-            var company = await repository.Get(companyId); 
+            var company = await companyManager.GetAsync(companyId); 
 
             if (company != null)
             {
@@ -36,7 +37,7 @@ namespace JobBoardPlatform.BLL.Commands.Admin
             }
             else
             {
-                toProcess = await repository.GetAll();
+                toProcess = await companyManager.GetAllAsync();
             }
 
             var offersGenerator = new JobOffersGenerator();

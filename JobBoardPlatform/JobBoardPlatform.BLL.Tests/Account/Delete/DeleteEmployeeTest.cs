@@ -79,7 +79,7 @@ namespace JobBoardPlatform.IntegrationTests.Account.Delete
             await testsUtils.SetUserImageInProfile(userEmail);
             await testsUtils.SetUserResumeInProfile(userEmail);
 
-            var offers = await companyUtils.GetOffersAsync(companyIds, offersCount);
+            var offers = await companyUtils.GetOffersAsync(companyIds);
             await testsUtils.ApplyToOffers(userEmail, offers);
 
             string attachedResumeUrl = await testsUtils.GetResumeUrl(userEmail);

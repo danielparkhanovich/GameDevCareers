@@ -17,7 +17,11 @@ namespace JobBoardPlatform.DAL.Data.Loaders
                 .Include(x => x.EmploymentDetails)
                     .ThenInclude(y => y.EmploymentType)
                 .Include(x => x.ContactDetails)
-                    .ThenInclude(y => y.ContactType);
+                    .ThenInclude(y => y.ContactType)
+                .Include(x => x.Plan)
+                    .ThenInclude(x => x.Name)
+                 .Include(x => x.Plan)
+                    .ThenInclude(x => x.Category);
             return offer;
         }
     }

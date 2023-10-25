@@ -1,6 +1,6 @@
 ﻿@using JobBoardPlatform.PL.Aspects.DataValidators;
-@using JobBoardPlatform.PL.Controllers.Utils;
-@model IProfileImage
+@using JobBoardPlatform.PL.Controllers.Presenters;
+@model ProfileImage
 @{
     string userImageUrl = StaticFilesUtils.GetCompanyDefaultAvatarUriIfEmpty(Model.ImageUrl);
 }

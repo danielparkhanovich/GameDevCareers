@@ -3,15 +3,12 @@ using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
-using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
-using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.PL.ViewModels.Factories.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -19,25 +16,19 @@ namespace JobBoardPlatform.PL.Controllers.Profile
     [Authorize(Policy = AuthorizationPolicies.AdminOnlyPolicy)]
     public class AdminPanelEmployeesController : AdminPanelUsersControllerBase<EmployeeIdentity, AdminPanelEmployeesViewModel>
     {
+        private readonly IDeleteUserCommandFactory deleteUserCommandFactory;
         private readonly IRepository<EmployeeIdentity> identityRepository;
-        private readonly IRepository<EmployeeProfile> profileRepository;
-        private readonly IUserProfileImagesStorage imagesStorage;
-        private readonly IProfileResumeBlobStorage resumesStorage;
         private readonly IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService;
 
 
         public AdminPanelEmployeesController(
+            IDeleteUserCommandFactory deleteUserCommandFactory,
             IRepository<EmployeeIdentity> identityRepository,
-            IRepository<EmployeeProfile> profileRepository,
-            IUserProfileImagesStorage imagesStorage,
-            IProfileResumeBlobStorage resumesStorage,
             IAuthorizationService<EmployeeIdentity, EmployeeProfile> authorizationService)
             : base(identityRepository)
         {
+            this.deleteUserCommandFactory = deleteUserCommandFactory;
             this.identityRepository = identityRepository;
-            this.profileRepository = profileRepository;
-            this.imagesStorage = imagesStorage;
-            this.resumesStorage = resumesStorage;
             this.authorizationService = authorizationService;
         }
 
@@ -55,12 +46,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         protected override ICommand GetDeleteCommand(int userId)
         {
-            return new DeleteEmployeeCommand(
-                identityRepository, 
-                profileRepository, 
-                imagesStorage,
-                resumesStorage, 
-                userId);
+            return deleteUserCommandFactory.GetCommand(typeof(EmployeeIdentity), userId);
         }
     }
 }

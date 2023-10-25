@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using JobBoardPlatform.BLL.Common;
 
 namespace JobBoardPlatform.PL.Aspects.DataValidators.Common
 {
@@ -6,7 +7,7 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Common
     {
         public FileValidator(int maxFileSizeInMb, string[] availableFormats)
         {
-            RuleFor(file => file.Length).LessThan(GlobalLimits.GetValueInBytesFromMb(maxFileSizeInMb))
+            RuleFor(file => file.Length).LessThan(GlobalBLL.Limits.GetValueInBytesFromMb(maxFileSizeInMb))
                 .WithMessage($"File cannot be larger than {maxFileSizeInMb} MB");
 
             RuleFor(file => file.ContentType).Must(x => availableFormats.Contains(x))

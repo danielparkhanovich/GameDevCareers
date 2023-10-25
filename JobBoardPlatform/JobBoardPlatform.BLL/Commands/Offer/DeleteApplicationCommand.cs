@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.DAL.Managers;
+﻿using JobBoardPlatform.DAL.Contexts;
 using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Offer
@@ -6,10 +6,10 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     public class DeleteApplicationCommand : ICommand
     {
         private readonly int applicationId;
-        private readonly OfferModelData offerModel;
+        private readonly OfferContext offerModel;
 
 
-        public DeleteApplicationCommand(int applicationId, OfferModelData offerModel)
+        public DeleteApplicationCommand(int applicationId, OfferContext offerModel)
         {
             this.applicationId = applicationId;
             this.offerModel = offerModel;

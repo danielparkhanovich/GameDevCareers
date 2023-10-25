@@ -46,7 +46,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public async Task TrySendConfirmationTokenAsync(string email, string password, string formDataTokenId)
         {
-            if (await userManager.GetWithEmailAsync(email) != null)
+            if (await userManager.IsExistsWithEmailAsync(email))
             {
                 throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }
@@ -99,7 +99,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             return dataToken;
         }
 
-        private Task RegisterUser(RegistrationToken token, ICompanyProfileData profileData)
+        private Task RegisterUser(RegistrationToken token, CompanyProfileData profileData)
         {
             var user = GetCompanyIdentity(token.RelatedLogin, token.PasswordHash);
             user.Profile = GetCompanyProfile(profileData);
@@ -111,7 +111,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             return offersManager.AddAsync(company.ProfileId, offerData);
         }
 
-        private CompanyProfile GetCompanyProfile(ICompanyProfileData profileData)
+        private CompanyProfile GetCompanyProfile(CompanyProfileData profileData)
         {
             var companyProfile = new CompanyProfile();
             var mapper = new CompanyDataToCompanyProfileMapper();

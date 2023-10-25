@@ -35,7 +35,11 @@ namespace JobBoardPlatform.IntegrationTests.Common.TestFiles
                 stream.CopyTo(memoryStream);
                 memoryStream.Position = 0;
 
-                var formFile = new FormFile(memoryStream, 0, memoryStream.Length, "file", "file.pdf");
+                var formFile = new FormFile(memoryStream, 0, memoryStream.Length, "file", Path.GetFileName(stream.Name)) 
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = contentType
+                };
                 return formFile;
             }
         }

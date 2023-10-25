@@ -3,9 +3,9 @@ using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Mappers
 {
-    public class CompanyDataToCompanyProfileMapper : IMapper<ICompanyProfileData, CompanyProfile>
+    public class CompanyDataToCompanyProfileMapper : IMapper<CompanyProfileData, CompanyProfile>
     {
-        public void Map(ICompanyProfileData from, CompanyProfile to)
+        public void Map(CompanyProfileData from, CompanyProfile to)
         {
             if (!string.IsNullOrEmpty(from.CompanyName))
             {
