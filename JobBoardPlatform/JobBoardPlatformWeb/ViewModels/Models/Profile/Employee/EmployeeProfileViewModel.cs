@@ -5,6 +5,6 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Profile.Employee
 {
     public class EmployeeProfileViewModel : EmployeeProfileData, IProfileViewModel
     {
-        public EmployeeAttachedResumeViewModel? AttachedResume { get; set; }
+        public EmployeeAttachedResumeViewModel? AttachedResume { get; set; } = new EmployeeAttachedResumeViewModel();
     }
 }

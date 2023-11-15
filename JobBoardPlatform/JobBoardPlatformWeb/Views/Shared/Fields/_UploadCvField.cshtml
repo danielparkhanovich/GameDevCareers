@@ -12,7 +12,7 @@
     }
 
     var resume = Model;
-    bool isFilePreUploaded = (string.IsNullOrEmpty(Model.FileSize) == false);
+    bool isFilePreUploaded = Model != null && (string.IsNullOrEmpty(Model.FileSize) == false);
 }
 
 <div class="mb-3">
