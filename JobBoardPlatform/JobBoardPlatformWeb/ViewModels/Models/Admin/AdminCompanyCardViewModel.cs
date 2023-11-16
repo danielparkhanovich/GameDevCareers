@@ -12,6 +12,5 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Admin
         public string? Country { get; set; }
         public string? City { get; set; }
         public string? CompanyWebsiteUrl { get; set; }
-        public int PublishedOffersCount { get; set; }
     }
 }

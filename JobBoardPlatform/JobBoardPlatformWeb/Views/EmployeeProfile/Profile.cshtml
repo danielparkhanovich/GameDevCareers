@@ -1,6 +1,6 @@
 ﻿@model EmployeeProfileViewModel
 @{
-    ViewData["Title"] = "Employee";
+    ViewData["Title"] = "Profile";
 
     var user = Model;
 
@@ -72,7 +72,7 @@
                         @{
                             ViewData["IsPostFormOnChange"] = true;
                         }
-                        @await Html.PartialAsync("./Fields/_UploadCvField", Model)
+                        <partial name="./Fields/_UploadCvField" for="@Model.AttachedResume" />
 
                         <div class="mb-3">
                             <label asp-for="YearsOfExperience" class="small mb-1">Years of experience</label>

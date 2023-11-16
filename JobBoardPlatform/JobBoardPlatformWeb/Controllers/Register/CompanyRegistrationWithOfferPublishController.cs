@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
@@ -57,19 +57,15 @@ namespace JobBoardPlatform.PL.Controllers.Register
         [TypeFilter(typeof(RedirectRegisteredCompanyFilter))]
         public async Task<IActionResult> StartPostOfferAndRegister(string planType, string? formDataTokenId = null)
         {
-            ICompanyProfileAndNewOfferData viewModel;
-            if (string.IsNullOrEmpty(formDataTokenId))
-            {
-                viewModel = new CompanyPublishOfferAndRegisterViewModel();
-            }
-            else
+            var viewModel = new CompanyPublishOfferAndRegisterViewModel();
+            if (!string.IsNullOrEmpty(formDataTokenId))
             {
                 viewModel = await extendedInteractor.GetPostFormViewModelAsync(formDataTokenId);
             }
             int planId = GetPlanTypeId(planType);
-            viewModel.OfferData.PlanId = planId;
+            viewModel.EditOffer.OfferDetails.PlanId = planId;
 
-            await SetPricingPlans((viewModel as CompanyPublishOfferAndRegisterViewModel).EditOffer);
+            await SetPricingPlans(viewModel.EditOffer);
             return View(viewModel);
         }
 
@@ -91,20 +87,18 @@ namespace JobBoardPlatform.PL.Controllers.Register
             {
                 if (!string.IsNullOrEmpty(formDataTokenId))
                 {
-                    await extendedInteractor.DeletePreviousSavedDataAsync(registerData, formDataTokenId);
+                    await extendedInteractor.DeletePreviousSavedDataAsync(
+                        registerData.CompanyProfileData.ProfileImage, formDataTokenId);
                 }
-                string tokenId = await extendedInteractor.SavePostFormViewModelAsync(registerData);
+                string tokenId = await extendedInteractor.SavePostFormAsync(registerData);
                 return RedirectToAction("VerifyRegistration", new { formDataTokenId = tokenId });
             }
             else
             {
-                // TODO: remove after tests
-                string tokenId = await extendedInteractor.SavePostFormViewModelAsync(registerData);
-                return RedirectToAction("VerifyRegistration", new { formDataTokenId = tokenId });
-                //
                 result.AddToModelState(this.ModelState);
             }
 
+            await SetPricingPlans(registerData.EditOffer);
             return View(registerData);
         }
 
@@ -177,7 +171,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
             viewModel.FormDataTokenId = formDataTokenId;
 
             var formData = await extendedInteractor.GetPostFormViewModelAsync(formDataTokenId);
-            viewModel.PlanType = GetPlanType(formData.OfferData.PlanId);
+            viewModel.PlanType = GetPlanType(formData.EditOffer.OfferDetails.PlanId);
 
             if (UserSessionUtils.IsLoggedIn(User))
             {

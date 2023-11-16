@@ -1,17 +1,18 @@
 ﻿@using JobBoardPlatform.DAL.Models.Enums;
 @using System.Text.RegularExpressions;
+@using JobBoardPlatform.PL.Controllers.Offer;
+@using JobBoardPlatform.PL.Controllers.Presenters;
 
 @model OfferCardViewModel
 @{
     var offer = Model;
 
-    // TODO: move to utilities function
-    string formattedCompanyName = Regex.Replace(offer.Company, @"\s+", "-").ToLower();
-    string formattedOfferTitle = Regex.Replace(offer.JobTitle, @"\s+", "-").ToLower();
-    string offerPageUrl = $"{formattedCompanyName}-{formattedOfferTitle}";
-
-    var contentData = new { id = offer.Id, companyname = formattedCompanyName, offertitle = formattedOfferTitle };
-    string contentUrl = @Url.Action("Offer", "OfferContent", contentData);
+    var contentData = new { 
+        id = offer.Id, 
+        companyname = offer.OnClickUrlDisplayCompanyName, 
+        offertitle = offer.OnClickUrlDisplayOfferTitleName 
+    };
+    string contentUrl = @Url.Action(offer.OnClickRedirectAction, offer.OnClickRedirectController, contentData)!;
 }
 
 <a href="@contentUrl" class="shadow card-body d-flex rounded align-content-center text-decoration-none px-2" 
@@ -42,7 +43,7 @@
                 @if (offer.WorkLocationType == WorkLocationTypeEnum.FullyRemote.ToString())
                 {
                     <div class="d-flex flex-row align-items-center text-center rounded-pill bg-primary bg-opacity-10 px-2 small">
-                        <div class="mb-0 text-primary small text-center">@offer.WorkLocationType</div>
+                        <div class="mb-0 text-primary small text-center">@offer.WorkLocationTypeText</div>
                     </div>
                 }
             </div>

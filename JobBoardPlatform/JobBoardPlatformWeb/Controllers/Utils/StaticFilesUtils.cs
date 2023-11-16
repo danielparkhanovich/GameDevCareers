@@ -1,13 +1,15 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using System.Security.Claims;
 
-namespace JobBoardPlatform.PL.Controllers.Utils
+namespace JobBoardPlatform.PL.Controllers.Presenters
 {
     public static class StaticFilesUtils
     {
         private const string PathToCompanyDefaultAvatar = "/Resources/defaultCompany.png";
         private const string PathToEmployeeDefaultAvatar = "/Resources/defaultUserProfileImage.png";
         private const string PathToTechnologyWidgetDefaultIcon = "/Resources/MainTechnology/defaultWidget.svg";
+
+        public const string PathToLogo = "/Resources/logo.svg";
 
         public const string PathToTechnologyAllWidgetIcon = "/Resources/MainTechnology/all.svg";
         public const string PathToTechnologyProgrammingWidgetIcon = "/Resources/MainTechnology/programming.svg";
@@ -19,6 +21,10 @@ namespace JobBoardPlatform.PL.Controllers.Utils
         public const string PathToTechnologyOtherWidgetIcon = "/Resources/MainTechnology/other.svg";
 
         public const string PathToOfferContentBackground = "/Resources/offerContentBackground.png";
+
+        public const string PathToExampleCompanyProfileImages = "wwwroot/Resources/ExampleFiles/company{0}.{1}";
+        public const string PathToExampleEmployeeProfileImages = "wwwroot/Resources/ExampleFiles/employee.jpg";
+        public const string PathToExampleEmployeeResume = "wwwroot/Resources/ExampleFiles/resume.pdf";
 
 
         public static string GetDefaultAvatarUriIfEmpty(string? imageUrl, ClaimsPrincipal user)
@@ -61,6 +67,19 @@ namespace JobBoardPlatform.PL.Controllers.Utils
             }
 
             return defaultUri;
+        }
+
+        public static IFormFile GetFileAsFormFile(string filePath, string contentType)
+        {
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                var memoryStream = new MemoryStream();
+                stream.CopyTo(memoryStream);
+                memoryStream.Position = 0;
+
+                var formFile = new FormFile(memoryStream, 0, memoryStream.Length, stream.Name, Path.GetFileName(stream.Name));
+                return formFile;
+            }
         }
     }
 }

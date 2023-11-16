@@ -1,5 +1,5 @@
 ﻿using JobBoardPlatform.DAL.Models.Enums;
-using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.MainTechnologyWidgets;
 using System.Drawing;

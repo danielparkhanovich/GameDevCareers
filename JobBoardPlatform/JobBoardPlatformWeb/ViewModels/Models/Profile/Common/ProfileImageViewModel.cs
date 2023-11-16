@@ -1,10 +1,8 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Profile.Common
 {
-    public class ProfileImageViewModel : IProfileImage
+    public class ProfileImageViewModel : ProfileImage
     {
-        public IFormFile? File { get; set; }
-        public string? ImageUrl { get; set; }
     }
 }

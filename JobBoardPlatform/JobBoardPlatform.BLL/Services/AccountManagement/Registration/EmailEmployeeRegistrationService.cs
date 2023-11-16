@@ -36,7 +36,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public async Task TrySendConfirmationTokenAsync(string email, string password)
         {
-            if (await userManager.GetWithEmailAsync(email) != null)
+            if (await userManager.IsExistsWithEmailAsync(email))
             {
                 throw new AuthenticationException(AuthenticationException.EmailAlreadyRegistered);
             }

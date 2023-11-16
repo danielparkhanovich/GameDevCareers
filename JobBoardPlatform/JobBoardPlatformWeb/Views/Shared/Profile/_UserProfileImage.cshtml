@@ -1,6 +1,8 @@
 ﻿@using JobBoardPlatform.PL.Aspects.DataValidators;
-@using JobBoardPlatform.PL.Controllers.Utils;
-@model IProfileImage
+@using JobBoardPlatform.PL.Controllers.Presenters;
+@using JobBoardPlatform.BLL.Common;
+
+@model ProfileImage
 @{
     string userImageUrl = StaticFilesUtils.GetDefaultAvatarUriIfEmpty(Model.ImageUrl, User);
 }
@@ -9,7 +11,7 @@
     <!-- Profile picture image-->
     <img class="img-account-profile rounded-circle mb-2" width="128" height="128" src=@userImageUrl alt="User profile image" style="object-fit:contain;">
     <!-- Profile picture help block-->
-    <div class="small font-italic text-muted mb-2">JPG or PNG no larger than @GlobalLimits.MaximumProfileImageSizeInMb MB</div>
+    <div class="small font-italic text-muted mb-2">JPG or PNG no larger than @GlobalBLL.Limits.MaximumProfileImageSizeInMb MB</div>
     <!-- Profile picture upload button-->
     <input asp-for="File" class="form-control" id="profileImage-input" type="file" accept="image/png, image/jpeg" style="display:none" />
     <button class="btn btn-primary" id="profileImage-button" type="button">Upload new image</button>

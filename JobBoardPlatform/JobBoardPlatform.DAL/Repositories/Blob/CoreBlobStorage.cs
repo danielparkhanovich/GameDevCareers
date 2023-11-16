@@ -85,7 +85,7 @@ namespace JobBoardPlatform.DAL.Repositories.Blob
 
         private string GetFileName(IFormFile formFile)
         {
-            return $"{Guid.NewGuid()}{PropertiesSeparator}{formFile.FileName}";
+            return $"{Guid.NewGuid()}{PropertiesSeparator}{formFile.FileName.Replace(' ', '_').ToLower()}";
         }
 
         private async Task UploadFile(IFormFile file, BlobExportData exportData, BlobClient blobClient)

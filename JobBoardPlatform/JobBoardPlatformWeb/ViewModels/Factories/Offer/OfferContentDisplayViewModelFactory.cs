@@ -28,8 +28,10 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             to.CompanyImageUrl = from.CompanyProfile.ProfileImageUrl;
             to.CompanyWebsiteUrl = from.CompanyProfile.CompanyWebsiteUrl;
             to.WorkLocationType = from.WorkLocation.Type;
+            to.WorkLocationTypeText = GetWorkLocationText(from);
             to.ContactForm = from.ContactDetails.ContactType.Type;
             to.ExternalFormUrl = from.ContactDetails.ContactAddress;
+            to.OfferCategory = from.Plan.Category.Type;
 
             MapMainTechnologyWidget(from, to);
             MapPublishedAgo(from, to);
@@ -52,10 +54,11 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
             var employmentTypeDisplayText = new List<string>(from.EmploymentDetails.Count);
 
             var salaryFormatter = new SalaryFormatter();
+            var employmentTypeFormatter = new EmploymentTypeFormatter();
             foreach (var employmentDetails in from.EmploymentDetails)
             {
                 string singleSalaryText = salaryFormatter.GetString(employmentDetails.SalaryRange);
-                string employmentType = employmentDetails.EmploymentType.Type;
+                string employmentType = employmentTypeFormatter.GetString(employmentDetails.EmploymentType.Type);
 
                 salaryDisplayText.Add(singleSalaryText);
                 employmentTypeDisplayText.Add(employmentType);
@@ -86,6 +89,12 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer
         {
             var factory = new MainTechnologyWidgetFactory();
             to.MainTechnologyWidget = factory.Create(from.MainTechnologyType.Type);
+        }
+
+        private string GetWorkLocationText(JobOffer from)
+        {
+            var formatter = new WorkLocationTypeFormatter();
+            return formatter.GetString(from.WorkLocation.Type);
         }
     }
 }

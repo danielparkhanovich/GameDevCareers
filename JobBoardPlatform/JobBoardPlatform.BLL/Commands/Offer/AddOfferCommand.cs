@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Models;
@@ -8,14 +8,14 @@ namespace JobBoardPlatform.BLL.Commands.Offer
     public class AddOfferCommand : ICommand
     {
         private readonly int profileId;
-        private readonly IOfferData data;
-        private readonly IMapper<IOfferData, JobOffer> dataToOffer;
+        private readonly OfferData data;
+        private readonly IMapper<OfferData, JobOffer> dataToOffer;
         private readonly IRepository<JobOffer> repository;
 
 
         public AddOfferCommand(
             int profileId,
-            IOfferData data,
+            OfferData data,
             IRepository<JobOffer> repository)
         {
             this.profileId = profileId;

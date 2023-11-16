@@ -1,15 +1,11 @@
 ﻿using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
-using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Identities
 {
-    /// <summary>
-    /// Immediate delete
-    /// </summary>
-    public class DeleteEmployeeCommand : ICommand
+    internal class DeleteEmployeeCommand : ICommand
     {
         private readonly IRepository<EmployeeIdentity> repository;
         private readonly IRepository<EmployeeProfile> profileRepository;

@@ -2,13 +2,15 @@
 @using JobBoardPlatform.BLL.Search;
 @using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 @using JobBoardPlatform.PL.Controllers.Register;
-@using JobBoardPlatform.PL.Controllers.Utils;
+@using JobBoardPlatform.PL.Controllers.Presenters;
 @using JobBoardPlatformWeb.Controllers;
 
 @{
-    string currentController = ViewContext.RouteData.Values["Controller"].ToString();
+    string logoUri = StaticFilesUtils.PathToLogo;
 
     OfferType? employmentTypeEnum = null;
+
+    string currentController = ViewContext.RouteData.Values["Controller"].ToString();
     if (currentController == ControllerUtils.GetControllerName(typeof(HomeController)))
     {
         string? employmentType = ViewContext.HttpContext.Request.Query[OfferSearchUrlParams.Category];
@@ -25,10 +27,10 @@
 
 <nav class="navbar fixed-top navbar-expand-sm navbar-toggleable-sm navbar-secondary bg-secondary border-bottom border-opacity-10 border-dark box-shadow p-0">
     <div class="container-fluid">
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-            <strong class="h4 mx-2">GameDev.Hunt</strong>
+        <a class="navbar-brand mx-2" asp-area="" asp-controller="Home" asp-action="Index">
+            <img width="90" height="30" src="@logoUri" />
         </a>
-        <small class="text-muted" style="font-weight:400;">Find your next job in game development</small>
+        <p class="h6 text-muted mb-0 ms-2" style="font-family: 'Urbanist'">@GlobalPL.Configuration.ApplicationName</p>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

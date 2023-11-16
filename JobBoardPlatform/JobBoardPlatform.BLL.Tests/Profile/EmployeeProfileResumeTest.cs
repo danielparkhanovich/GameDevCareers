@@ -57,7 +57,7 @@ namespace JobBoardPlatform.IntegrationTests.Profile
             await testsUtils.SetUserResumeInProfile(userEmail);
             string attachedResumeUrl = await testsUtils.GetResumeUrl(userEmail);
 
-            var offers = await companyUtils.GetOffersAsync(companyIds, offersCount);
+            var offers = await companyUtils.GetOffersAsync(companyIds);
             await testsUtils.ApplyToOffers(userEmail, offers);
 
             await testsUtils.TryDeleteEmployeeProfileResume(userEmail);
@@ -77,7 +77,7 @@ namespace JobBoardPlatform.IntegrationTests.Profile
             await testsUtils.SetUserResumeInProfile(userEmail);
             string attachedResumeUrl = await testsUtils.GetResumeUrl(userEmail);
 
-            var offers = await companyUtils.GetOffersAsync(companyIds, offersCount);
+            var offers = await companyUtils.GetOffersAsync(companyIds);
             await testsUtils.ApplyToOffers(userEmail, offers);
 
             await companyUtils.CloseOffers(offers);

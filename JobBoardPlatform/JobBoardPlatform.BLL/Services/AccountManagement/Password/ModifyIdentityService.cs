@@ -59,7 +59,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 
         private async Task ValidateNewLogin(string newLogin)
         {
-            if (await userManager.GetWithEmailAsync(newLogin) != null)
+            if (await userManager.IsExistsWithEmailAsync(newLogin))
             {
                 throw new AuthenticationException(AuthenticationException.WrongEmail);
             }

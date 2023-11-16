@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
@@ -54,7 +54,7 @@ namespace JobBoardPlatform.PL.Configuration
         private static void AddValidatorServices(IServiceCollection services)
         {
             services.AddScoped<IValidator<OfferApplicationUpdateViewModel>, OfferApplicationFormValidator>();
-            services.AddScoped<IValidator<IAttachedResume>, ResumeValidator>();
+            services.AddScoped<IValidator<AttachedResume>, ResumeValidator>();
         }
     }
 }

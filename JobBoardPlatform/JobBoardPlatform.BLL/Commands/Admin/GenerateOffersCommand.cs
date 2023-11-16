@@ -1,4 +1,5 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
+using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Utils;
 using JobBoardPlatform.DAL.Models.Company;
@@ -10,25 +11,25 @@ namespace JobBoardPlatform.BLL.Commands.Admin
     {
         private readonly int offersCount;
         private readonly int companyId;
-        private readonly IRepository<CompanyIdentity> repository;
+        private readonly UserManager<CompanyIdentity> companyManager;
         private readonly IRepository<JobOffer> offersRepository;
 
 
         public GenerateOffersCommand(int offersCount,
             int companyId, 
-            IRepository<CompanyIdentity> repository,
+            UserManager<CompanyIdentity> companyManager,
             IRepository<JobOffer> offersRepository)
         {
             this.offersCount = offersCount;
             this.companyId = companyId;
-            this.repository = repository;
+            this.companyManager = companyManager;
             this.offersRepository = offersRepository;
         }
 
         public async Task Execute()
         {
             var toProcess = new List<CompanyIdentity>();
-            var company = await repository.Get(companyId); 
+            var company = await companyManager.GetAsync(companyId); 
 
             if (company != null)
             {
@@ -36,7 +37,7 @@ namespace JobBoardPlatform.BLL.Commands.Admin
             }
             else
             {
-                toProcess = await repository.GetAll();
+                toProcess = await companyManager.GetAllAsync();
             }
 
             var offersGenerator = new JobOffersGenerator();
@@ -45,10 +46,10 @@ namespace JobBoardPlatform.BLL.Commands.Admin
             await CreateOffers(generatedData);
         }
 
-        private List<(CompanyIdentity, IOfferData)> GenerateOffersData(
+        private List<(CompanyIdentity, OfferData)> GenerateOffersData(
             JobOffersGenerator generator, List<CompanyIdentity> companies)
         {
-            var generatedData = new List<(CompanyIdentity, IOfferData)>();
+            var generatedData = new List<(CompanyIdentity, OfferData)>();
             foreach (var companyIdentity in companies)
             {
                 for (int i = 0; i < offersCount; i++)
@@ -60,13 +61,13 @@ namespace JobBoardPlatform.BLL.Commands.Admin
             return generatedData;
         }
 
-        private void ShuffleOffers(List<(CompanyIdentity, IOfferData)> offers)
+        private void ShuffleOffers(List<(CompanyIdentity, OfferData)> offers)
         {
             Random rnd = new Random();
             offers = offers.OrderBy((item) => rnd.Next()).ToList();
         }
 
-        private async Task CreateOffers(List<(CompanyIdentity, IOfferData)> offers)
+        private async Task CreateOffers(List<(CompanyIdentity, OfferData)> offers)
         {
             foreach (var offer in offers)
             {

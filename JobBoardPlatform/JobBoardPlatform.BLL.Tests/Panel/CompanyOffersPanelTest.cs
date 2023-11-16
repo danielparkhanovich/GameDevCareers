@@ -78,7 +78,7 @@ namespace JobBoardPlatform.IntegrationTests.Panel
             await testsUtils.AddPublishedOfferAsync(companyEmail, offerTitle);
 
             var offer = await testsUtils.GetOfferAsync(companyEmail, offerTitle);
-            await employeeUtils.ApplyUsersToOffer(totalApplied, offer!.Id);
+            await employeeUtils.ApplyToOffer(totalApplied, offer!.Id);
             var resumeUrls = await testsUtils.GetOfferAppliedResumeUrlsAsync(offer!.Id);
             await assert.ApplicationsAreAdded(offer!.Id, totalApplied, resumeUrls);
             await testsUtils.CloseOffer(companyEmail, offerTitle);

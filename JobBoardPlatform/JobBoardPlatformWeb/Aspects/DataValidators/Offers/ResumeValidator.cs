@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.PL.Aspects.DataValidators.Common;
+using JobBoardPlatform.BLL.Common;
 
 namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
 {
-    public class ResumeValidator : AbstractValidator<IAttachedResume>
+    public class ResumeValidator : AbstractValidator<AttachedResume>
     {
         public ResumeValidator(IProfileResumeBlobStorage resumeStorage)
         {
@@ -39,7 +40,7 @@ namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
 
         private FileValidator GetFileValidator()
         {
-            return new FileValidator(GlobalLimits.MaximumResumeSizeInMb, new string[] { "application/pdf" });
+            return new FileValidator(GlobalBLL.Limits.MaximumResumeSizeInMb, new string[] { "application/pdf" });
         }
     }
 }

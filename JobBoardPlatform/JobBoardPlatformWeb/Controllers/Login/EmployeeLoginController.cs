@@ -14,11 +14,6 @@ namespace JobBoardPlatform.PL.Controllers.Login
     [Route("signin-employee")]
     public class EmployeeLoginController : BaseLoginController<EmployeeIdentity, EmployeeProfile>
     {
-        public const string LoginWithGoogleAction = "LoginWithGoogle";
-        public const string LoginWithFacebookAction = "LoginWithFacebook";
-        public const string LoginWithGitHubAction = "LoginWithGitHub";
-        public const string LoginWithLinkedInAction = "LoginWithLinkedIn";
-
         private readonly IAuthenticationWithProviderService<EmployeeIdentity> identityService;
 
 
@@ -36,7 +31,7 @@ namespace JobBoardPlatform.PL.Controllers.Login
         {
             return ChallengeAsync(
                 GoogleDefaults.AuthenticationScheme,
-                "LoginWithGoogleCallback");
+                nameof(LoginWithGoogleCallback));
         }
 
         [HttpGet]
@@ -44,8 +39,8 @@ namespace JobBoardPlatform.PL.Controllers.Login
         public Task LoginWithFacebook()
         {
             return ChallengeAsync(
-                FacebookDefaults.AuthenticationScheme, 
-                "LoginWithFacebookCallback");
+                FacebookDefaults.AuthenticationScheme,
+                nameof(LoginWithFacebookCallback));
         }
 
         [HttpGet]
@@ -53,8 +48,8 @@ namespace JobBoardPlatform.PL.Controllers.Login
         public Task LoginWithGitHub()
         {
             return ChallengeAsync(
-                GitHubAuthenticationDefaults.AuthenticationScheme, 
-                "LoginWithGitHubCallback");
+                GitHubAuthenticationDefaults.AuthenticationScheme,
+                nameof(LoginWithGitHubCallback));
         }
 
         [HttpGet]
@@ -62,8 +57,8 @@ namespace JobBoardPlatform.PL.Controllers.Login
         public Task LoginWithLinkedIn()
         {
             return ChallengeAsync(
-                LinkedInAuthenticationDefaults.AuthenticationScheme, 
-                "LoginWithLinkedInCallback");
+                LinkedInAuthenticationDefaults.AuthenticationScheme,
+                nameof(LoginWithLinkedInCallback));
         }
 
         [Route("google-callback")]

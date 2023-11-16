@@ -1,5 +1,6 @@
 ﻿using JobBoardPlatform.DAL.Data.Enums;
 using JobBoardPlatform.DAL.Data.Setup;
+using JobBoardPlatform.DAL.Models.Admin;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Models.Enums;
@@ -29,6 +30,7 @@ namespace JobBoardPlatform.DAL.Data
         public DbSet<JobOfferTechKeyword> JobOfferTechKeywords { get; set; }
 
         // Common
+        public DbSet<AdminIdentity> AdminCredentials { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<TechKeyword> TechKeywords { get; set; }
         public DbSet<WorkLocationType> WorkLocationTypes { get; set; }
@@ -39,7 +41,6 @@ namespace JobBoardPlatform.DAL.Data
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,5 +1,7 @@
 ﻿@using JobBoardPlatform.PL.Aspects.DataValidators;
-@model IAttachedResume
+@using JobBoardPlatform.BLL.Common;
+
+@model AttachedResume
 @{
     // in case of server side handling, form will be immediately submitted
     bool isPostFormOnChange = false;
@@ -10,7 +12,7 @@
     }
 
     var resume = Model;
-    bool isFilePreUploaded = (string.IsNullOrEmpty(Model.FileSize) == false);
+    bool isFilePreUploaded = Model != null && (string.IsNullOrEmpty(Model.FileSize) == false);
 }
 
 <div class="mb-3">
@@ -57,7 +59,7 @@
                         Drag and Drop or <button class="btn btn-primary btn-sm" type="button" id="attachedResume-button">Browse</button>
                     </label>
                 </div>
-                <div class="small font-italic text-muted mb-2">PDF no larger than @GlobalLimits.MaximumResumeSizeInMb MB</div>
+                <div class="small font-italic text-muted mb-2">PDF no larger than @GlobalBLL.Limits.MaximumResumeSizeInMb MB</div>
             </div>
         </div>
     </div>

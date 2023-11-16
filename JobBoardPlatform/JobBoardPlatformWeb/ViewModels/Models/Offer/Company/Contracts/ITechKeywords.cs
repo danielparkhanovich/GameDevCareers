@@ -2,6 +2,6 @@
 {
     public interface ITechKeywords
     {
-        public string[] TechKeywords { get; set; }
+        public string[]? TechKeywords { get; set; }
     }
 }

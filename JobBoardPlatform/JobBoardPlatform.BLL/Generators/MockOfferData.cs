@@ -1,8 +1,8 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 
 namespace JobBoardPlatform.BLL.Generators
 {
-    internal class MockOfferData : IOfferData
+    internal class MockOfferData : OfferData
     {
         public int OfferId { get; set; }
         public int PlanId { get; set; }

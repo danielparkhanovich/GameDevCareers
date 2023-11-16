@@ -1,6 +1,7 @@
-﻿@using JobBoardPlatform.PL.Controllers.Utils;
+﻿@using JobBoardPlatform.PL.Controllers.Presenters;
 @using JobBoardPlatform.PL.Interactors.Notifications;
 @{
+    ViewData["Title"] = $"Reset password";
     var resetPassword = NotificationsManager.Instance.TryGetNotification(
         NotificationsManager.ResetPasswordSection, TempData);
 }

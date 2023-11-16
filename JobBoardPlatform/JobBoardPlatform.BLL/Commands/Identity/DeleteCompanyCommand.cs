@@ -1,15 +1,11 @@
 ﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob;
-using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Identities
 {
-    /// <summary>
-    /// Immediate delete
-    /// </summary>
-    public class DeleteCompanyCommand : ICommand
+    internal class DeleteCompanyCommand : ICommand
     {
         private readonly IRepository<CompanyIdentity> repository;
         private readonly IRepository<CompanyProfile> profileRepository;

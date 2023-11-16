@@ -1,11 +1,11 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
-using JobBoardPlatform.BLL.Services.Actions.Offers.Factory;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {
@@ -15,7 +15,6 @@ namespace JobBoardPlatform.BLL.Commands.Application
         private readonly IRepository<JobOfferApplication> applicationsRepository;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage resumeStorage;
-        private readonly IOfferActionHandlerFactory actionHandlerFactory;
         private readonly IEmailSender emailSender;
 
 
@@ -24,14 +23,12 @@ namespace JobBoardPlatform.BLL.Commands.Application
             IRepository<JobOfferApplication> applicationsRepository,
             IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage resumeStorage,
-            IOfferActionHandlerFactory actionHandlerFactory,
             IEmailSender emailSender)
         {
             this.offersRepository = offersRepository;
             this.applicationsRepository = applicationsRepository;
             this.profileResumeStorage = profileResumeStorage;
             this.resumeStorage = resumeStorage;
-            this.actionHandlerFactory = actionHandlerFactory;
             this.emailSender = emailSender;
         }
 
@@ -54,10 +51,10 @@ namespace JobBoardPlatform.BLL.Commands.Application
         public async Task PostApplicationFormAsync(
             int offerId, 
             int? userProfileId,
-            IApplicationForm form,
+            ApplicationForm form,
             IEmailContent<JobOfferApplication> emailContent)
         {
-            var postFormCommand = new PostApplicationFormCommand(
+            var command = new PostApplicationFormCommand(
                     applicationsRepository,
                     offersRepository,
                     profileResumeStorage,
@@ -67,7 +64,14 @@ namespace JobBoardPlatform.BLL.Commands.Application
                     userProfileId,
                     emailContent,
                     emailSender);
-            await postFormCommand.Execute();
+            await command.Execute();
+        }
+
+        public async Task RedirectApplicationFormAsync(int offerId)
+        {
+            var command = new RedirectApplicationFormCommand(
+                offersRepository, offerId);
+            await command.Execute();
         }
 
         /// <returns>result priority value</returns>

@@ -1,11 +1,11 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.PL.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardPlatform.PL.Controllers.Register
 {
     [TypeFilter(typeof(RedirectLoggedInUsersFilter))]
-    public abstract class BaseRegisterController<T> : Controller where T : class, IUserLoginData
+    public abstract class BaseRegisterController<T> : Controller where T : UserLoginData
     {
         public const string TryConfirmRegistrationAction = "TryConfirmRegistration";
         public const string CheckVerifyingTokenAction = "CheckVerifyingToken";

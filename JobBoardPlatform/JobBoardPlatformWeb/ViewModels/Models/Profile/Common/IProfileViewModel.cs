@@ -1,9 +1,9 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Profile.Common
 {
     public interface IProfileViewModel
     {
-        IProfileImage ProfileImage { get; set; }
+        ProfileImage ProfileImage { get; set; }
     }
 }

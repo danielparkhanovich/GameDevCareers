@@ -24,7 +24,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
         public async Task<TEntity> TryRegisterAsync(string email, string password)
         {
-            if (userManager.GetWithEmailAsync(email) != null)
+            if (await userManager.IsExistsWithEmailAsync(email))
             {
                 throw new AuthenticationException(AuthenticationException.WrongEmail);
             }

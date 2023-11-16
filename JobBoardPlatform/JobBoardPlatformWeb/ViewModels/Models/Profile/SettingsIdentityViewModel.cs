@@ -1,8 +1,8 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Profile
 {
-    public class SettingsIdentityViewModel : ILoginSettingsData
+    public class SettingsIdentityViewModel : LoginSettingsData
     {
         public string? Login { get; set; }
         public string? OldPassword { get; set; }

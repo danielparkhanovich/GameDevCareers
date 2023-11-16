@@ -1,6 +1,6 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.PL.Controllers.Profile;
-using JobBoardPlatform.PL.Controllers.Utils;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

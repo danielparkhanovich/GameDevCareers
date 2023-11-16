@@ -11,8 +11,10 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
         public string CompanyImageUrl { get; set; } = string.Empty;
         public string FullAddress { get; set; } = string.Empty;
         public string WorkLocationType { get; set; } = string.Empty;
+        public string WorkLocationTypeText { get; set; } = string.Empty;
         public string JobDescription { get; set; } = string.Empty;
         public string InformationClause { get; set; } = string.Empty;
+        public string OfferCategory { get; set; } = string.Empty;
         public MainTechnologyWidget MainTechnologyWidget { get; set; } = new MainTechnologyWidget();
         public string? ExternalFormUrl { get; set; }
         public string? CompanyWebsiteUrl { get; set; }

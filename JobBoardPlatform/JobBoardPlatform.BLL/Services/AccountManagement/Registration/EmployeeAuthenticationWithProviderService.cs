@@ -94,7 +94,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         private async Task<EmployeeIdentity> HandleAuthenticationWithDefaultServices(
             EmployeeIdentity user, HttpContext httpContext)
         {
-            if (await userManager.GetWithEmailAsync(user.Email) == null)
+            if (!(await userManager.IsExistsWithEmailAsync(user.Email)))
             {
                 string password = passwordGenerator.GeneratePassword();
                 await registrationService.TryRegisterAsync(user.Email, password);

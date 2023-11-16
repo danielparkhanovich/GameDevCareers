@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Common;
@@ -38,7 +38,7 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             return viewModel;
         }
 
-        private IProfileImage GetProfileImage(string? imageUrl)
+        private ProfileImage GetProfileImage(string? imageUrl)
         {
             return new ProfileImageViewModel()
             {

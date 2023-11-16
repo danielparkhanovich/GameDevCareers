@@ -80,11 +80,11 @@ namespace JobBoardPlatform.PL.Controllers.ResetPassword
 
         private async Task TryProcessResetPassword(string email)
         {
-            if (await employeeManager.GetWithEmailAsync(email) != null)
+            if (await employeeManager.IsExistsWithEmailAsync(email))
             {
                 await ProcessResetPasswordEmployee(email);
             }
-            else if (await companyManager.GetWithEmailAsync(email) != null) 
+            else if (await companyManager.IsExistsWithEmailAsync(email)) 
             { 
                 await ProcessResetPasswordCompany(email);
             }

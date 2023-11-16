@@ -1,20 +1,19 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
-using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
 {
-    public class UpdateEmployeeProfileCommand : UpdateProfileCommandBase<EmployeeIdentity, EmployeeProfile, IEmployeeProfileData>
+    internal class UpdateEmployeeProfileCommand : UpdateProfileCommandBase<EmployeeIdentity, EmployeeProfile, EmployeeProfileData>
     {
         private readonly IUserProfileImagesStorage imageStorage;
         private readonly IProfileResumeBlobStorage resumeStorage;
 
 
         public UpdateEmployeeProfileCommand(int profileId,
-            IEmployeeProfileData profileData, 
+            EmployeeProfileData profileData, 
             IRepository<EmployeeProfile> repository,
             IUserProfileImagesStorage imageStorage,
             IProfileResumeBlobStorage resumeStorage) 
@@ -24,7 +23,7 @@ namespace JobBoardPlatform.BLL.Commands.Profile
             this.resumeStorage = resumeStorage;
         }
 
-        protected override async Task UploadFiles(IEmployeeProfileData from, EmployeeProfile to)
+        protected override async Task UploadFiles(EmployeeProfileData from, EmployeeProfile to)
         {
             if (from.ProfileImage != null && from.ProfileImage.File != null)
             {
@@ -38,7 +37,7 @@ namespace JobBoardPlatform.BLL.Commands.Profile
             }
         }
 
-        protected override void MapDataToModel(IEmployeeProfileData from, EmployeeProfile to)
+        protected override void MapDataToModel(EmployeeProfileData from, EmployeeProfile to)
         {
             if (!string.IsNullOrEmpty(from.Name))
             {

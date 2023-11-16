@@ -7,7 +7,6 @@ using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
@@ -16,9 +15,6 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         where TEntity: class, IEntity
         where TViewModel: IAdminPanelViewModel<TEntity>, new()
     {
-        public const string LogIntoAction = "LogInto";
-        public const string DeleteAction = "Delete";
-
         private readonly IRepository<TEntity> identityRepository;
 
 

@@ -1,6 +1,5 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Application;
-using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Profile;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
@@ -9,29 +8,20 @@ using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
-using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures;
 using JobBoardPlatform.IntegrationTests.Common.TestFiles;
-using JobBoardPlatform.PL.Controllers.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Utils
 {
-    /// <summary>
-    /// TODO: Add Mediator to handle utils dependencies
-    /// </summary>
     internal class EmployeeIntegrationTestsUtils
     {
         private readonly UserManager<EmployeeIdentity> userManager;
         private readonly IPasswordHasher passwordHasher;
-        private readonly IRepository<EmployeeIdentity> repository;
         private readonly IRepository<EmployeeProfile> profileRepository;
-        private readonly IRepository<JobOffer> offersRepository;
-        private readonly IRepository<JobOfferApplication> applicationRepositry;
         private readonly IUserProfileImagesStorage imageStorage;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
-        private readonly IApplicationsResumeBlobStorage applicationsResumeStorage;
         private readonly IApplicationsManager applicationsManager;
         private readonly IEmailContent<JobOfferApplication> applicationEmailRenderer;
 
@@ -40,13 +30,9 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         {
             userManager = serviceProvider.GetService<UserManager<EmployeeIdentity>>()!;
             passwordHasher = serviceProvider.GetService<IPasswordHasher>()!;
-            repository = serviceProvider.GetService<IRepository<EmployeeIdentity>>()!;
             profileRepository = serviceProvider.GetService<IRepository<EmployeeProfile>>()!;
-            offersRepository = serviceProvider.GetService<IRepository<JobOffer>>()!;
-            applicationRepositry = serviceProvider.GetService<IRepository<JobOfferApplication>>()!;
             imageStorage = serviceProvider.GetService<IUserProfileImagesStorage>()!;
             profileResumeStorage = serviceProvider.GetService<IProfileResumeBlobStorage>()!;
-            applicationsResumeStorage = serviceProvider.GetService<IApplicationsResumeBlobStorage>()!;
             applicationsManager = serviceProvider.GetService<IApplicationsManager>()!;
             applicationEmailRenderer = serviceProvider.GetService<IEmailContent<JobOfferApplication>>()!;
         }
@@ -85,13 +71,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         public async Task DeleteEmployee(string email)
         {
             var user = await userManager.GetWithEmailAsync(email);
-            var deleteCommand = new DeleteEmployeeCommand(
-                repository,
-                profileRepository,
-                imageStorage,
-                profileResumeStorage,
-                user.Id);
-            await deleteCommand.Execute();
+            await userManager.DeleteAsync(user.Id);
         }
 
         public async Task TryDeleteEmployeeProfileResume(string email)
@@ -139,12 +119,12 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             return profileResumeStorage.IsExistsAsync(url);
         }
 
-        public Task ApplyUsersToOffer(int usersCount, int offerId)
+        public Task ApplyToOffer(int usersCount, int offerId)
         {
-            return ApplyUsersToOffer(0, usersCount, offerId);
+            return ApplyToOffer(0, usersCount, offerId);
         }
 
-        public async Task ApplyUsersToOffer(int userIdFrom, int userIdTo, int offerId)
+        public async Task ApplyToOffer(int userIdFrom, int userIdTo, int offerId)
         {
             for (int i = userIdFrom; i < userIdTo; i++)
             {
@@ -189,35 +169,29 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         public Task SetUserResumeInProfile(string email)
         {
             var resume = IntegrationTestFilesManager.GetExampleResumeFile();
-            var profileData = new EmployeeProfileDataMock() { File = resume };
+            var profileData = new EmployeeProfileData() { File = resume };
             return UpdateEmployeeProfile(email, profileData);
         }
 
         public Task SetUserImageInProfile(string email)
         {
             var image = IntegrationTestFilesManager.GetEmployeeProfileImageFile();
-            var profileData = new EmployeeProfileDataMock() 
+            var profileData = new EmployeeProfileData() 
             { 
-                ProfileImage = new ProfileImageMock() { File = image }
+                ProfileImage = new ProfileImage() { File = image }
             };
             return UpdateEmployeeProfile(email, profileData);
         }
 
-        private async Task UpdateEmployeeProfile(string email, IEmployeeProfileData profileData)
+        private async Task UpdateEmployeeProfile(string email, EmployeeProfileData profileData)
         {
             var user = await GetEmployeeByEmail(email);
-            var updateCommand = new UpdateEmployeeProfileCommand(
-                user.Id,
-                profileData,
-                profileRepository,
-                imageStorage,
-                profileResumeStorage);
-            await updateCommand.Execute();
+            await userManager.UpdateProfileAsync(user.Id, profileData);
         }
 
-        private ApplicationFormMock GetApplicationForm(string email, int offerId, string? resumeUrl)
+        private ApplicationForm GetApplicationForm(string email, int offerId, string? resumeUrl)
         {
-            var attachedResume = new AttachedResumeMock();
+            var attachedResume = new AttachedResume();
             if (!string.IsNullOrEmpty(resumeUrl))
             {
                 attachedResume.ResumeUrl = resumeUrl;
@@ -227,7 +201,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
                 attachedResume.File = IntegrationTestFilesManager.GetExampleResumeFile();
             }
 
-            return new ApplicationFormMock()
+            return new ApplicationForm()
             {
                 FullName = "Example Example",
                 AdditionalInformation = "SomeText",
