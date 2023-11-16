@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company.Contracts
 {

@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;

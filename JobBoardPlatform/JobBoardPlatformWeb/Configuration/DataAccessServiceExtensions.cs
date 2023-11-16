@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Cache.Converters;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
@@ -60,7 +60,7 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddTransient<ICacheRepository<int>, MainPageOffersCountCacheRepository>();
             services.AddTransient<ICacheRepository<RegistrationToken>, RegistrationTokensCacheRepository>();
             services.AddTransient<ICacheRepository<RestorePasswordToken>, RestorePasswordTokensCacheRepository>();
-            services.AddTransient<ICacheRepository<DataToken<ICompanyProfileAndNewOfferData>>, CompanyRegistrationTokensCacheRepository<ICompanyProfileAndNewOfferData>>();
+            services.AddTransient<ICacheRepository<DataToken<CompanyProfileAndNewOfferData>>, CompanyRegistrationTokensCacheRepository<CompanyProfileAndNewOfferData>>();
             services.AddTransient<ICacheRepository<ConfirmationToken>, CompanyRegistrationConfirmationTokensCacheRepository>();
         }
 
@@ -89,8 +89,8 @@ namespace JobBoardPlatform.PL.Configuration
             {
                 Converters = new List<JsonConverter>
                 {
-                    new InterfaceConverter<ICompanyProfileAndNewOfferData, CompanyPublishOfferAndRegisterViewModel>(),
-                    new InterfaceConverter<IOfferData, OfferDataViewModel>(),
+                    //new InterfaceConverter<CompanyProfileAndNewOfferData, CompanyPublishOfferAndRegisterViewModel>(),
+                    new InterfaceConverter<OfferData, OfferDataViewModel>(),
                     //new InterfaceConverter<ProfileImage, ProfileImageViewModel>()
                 }
             };

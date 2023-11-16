@@ -1,5 +1,5 @@
 ﻿
-namespace JobBoardPlatform.BLL.Boundaries
+namespace JobBoardPlatform.BLL.DTOs
 {
     public class CompanyProfileData : ProfileData
     {

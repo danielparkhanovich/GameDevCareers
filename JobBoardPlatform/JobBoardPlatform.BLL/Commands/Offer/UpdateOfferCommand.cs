@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.DAL.Contexts;
 using JobBoardPlatform.DAL.Models.Company;
@@ -7,14 +7,14 @@ namespace JobBoardPlatform.BLL.Commands.Offer
 {
     public class UpdateOfferCommand : ICommand
     {
-        private readonly IOfferData data;
+        private readonly OfferData data;
         private readonly IOfferManager offerManager;
-        private readonly IMapper<IOfferData, JobOffer> dataToOffer;
+        private readonly IMapper<OfferData, JobOffer> dataToOffer;
         private readonly OfferContext offerModel;
 
 
         public UpdateOfferCommand(
-            IOfferData data,
+            OfferData data,
             IOfferManager offerManager,
             OfferContext offerModel)
         {
@@ -33,7 +33,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             await offerModel.OffersRepository.Update(offer);
         }
 
-        private async Task DeleteOldCollections(JobOffer offer, IOfferData newOffer)
+        private async Task DeleteOldCollections(JobOffer offer, OfferData newOffer)
         {
             if (newOffer.EmploymentTypes != null)
             {
@@ -55,7 +55,7 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             dataToOffer.Map(data, offer);
         }
 
-        private void SortTechKeywords(IOfferData data)
+        private void SortTechKeywords(OfferData data)
         {
             if (data.TechKeywords != null)
             {

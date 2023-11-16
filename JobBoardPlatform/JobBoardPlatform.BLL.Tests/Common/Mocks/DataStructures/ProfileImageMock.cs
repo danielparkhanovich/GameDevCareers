@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures

@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;

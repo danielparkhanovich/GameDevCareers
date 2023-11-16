@@ -1,5 +1,5 @@
 ﻿
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
 {

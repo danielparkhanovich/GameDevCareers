@@ -3,7 +3,7 @@ using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 
 namespace JobBoardPlatform.BLL.Commands.Profile
 {

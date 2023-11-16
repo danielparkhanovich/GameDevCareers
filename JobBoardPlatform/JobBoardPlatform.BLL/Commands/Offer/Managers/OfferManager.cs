@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search.MainPage;
 using JobBoardPlatform.DAL.Contexts;
@@ -43,13 +43,13 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             return await queryExecutor.GetOfferById(offerId);
         }
 
-        public async Task AddAsync(int profileId, IOfferData offerData)
+        public async Task AddAsync(int profileId, OfferData offerData)
         {
             var command = new AddOfferCommand(profileId, offerData, offerModel.OffersRepository);
             await ExecuteCommandAndUpdateCacheAsync(command);
         }
 
-        public async Task UpdateAsync(IOfferData offerData)
+        public async Task UpdateAsync(OfferData offerData)
         {
             var command = new UpdateOfferCommand(offerData, this, offerModel);
             await ExecuteCommandAndUpdateCacheAsync(command);

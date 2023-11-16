@@ -1,9 +1,9 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Authentification
 {
-    public class UserLoginViewModel : IUserLoginData
+    public class UserLoginViewModel : UserLoginData
     {
         [Required]
         [EmailAddress]

@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Mappers;
 using JobBoardPlatform.BLL.Commands.Offer;
@@ -17,7 +17,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         private readonly IEmailSender emailSender;
         private readonly IRegistrationTokensService registrationTokensService;
         private readonly ConfirmationTokensService confirmationTokensService;
-        private readonly DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService;
+        private readonly DataTokensService<CompanyProfileAndNewOfferData> dataTokensService;
         private readonly IConfirmationLinkFactory linkFactory;
         private readonly IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
         private readonly UserManager<CompanyIdentity> userManager;
@@ -28,7 +28,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             IEmailSender emailSender,
             IRegistrationTokensService registrationTokensService,
             ConfirmationTokensService confirmationTokensService,
-            DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService,
+            DataTokensService<CompanyProfileAndNewOfferData> dataTokensService,
             IConfirmationLinkFactory linkFactory,
             IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService,
             UserManager<CompanyIdentity> userManager,
@@ -92,7 +92,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             }
         }
 
-        private async Task<DataToken<ICompanyProfileAndNewOfferData>> GetDataToken(string tokenId)
+        private async Task<DataToken<CompanyProfileAndNewOfferData>> GetDataToken(string tokenId)
         {
             var confirmationToken = await confirmationTokensService.TryGetTokenAsync(tokenId);
             var dataToken = await dataTokensService.TryGetTokenAsync(confirmationToken.TokenToConfirmId);
@@ -106,7 +106,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             return userManager.AddAsync(user);
         }
 
-        private Task CreateOffer(CompanyIdentity company, IOfferData offerData)
+        private Task CreateOffer(CompanyIdentity company, OfferData offerData)
         {
             return offersManager.AddAsync(company.ProfileId, offerData);
         }

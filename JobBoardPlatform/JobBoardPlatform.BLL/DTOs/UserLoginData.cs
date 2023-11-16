@@ -1,6 +1,6 @@
-﻿namespace JobBoardPlatform.BLL.Boundaries
+﻿namespace JobBoardPlatform.BLL.DTOs
 {
-    public interface IUserLoginData
+    public class UserLoginData
     {
         public string Email { get; set; }
         public string Password { get; set; }

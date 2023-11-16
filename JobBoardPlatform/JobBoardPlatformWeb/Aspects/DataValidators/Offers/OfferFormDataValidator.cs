@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.PL.Aspects.DataValidators.Common;
 using System.Text.RegularExpressions;
 
 namespace JobBoardPlatform.PL.Aspects.DataValidators.Offers
 {
-    public class OfferFormDataValidator : AbstractValidator<IOfferData>
+    public class OfferFormDataValidator : AbstractValidator<OfferData>
     {
         public OfferFormDataValidator()
         {

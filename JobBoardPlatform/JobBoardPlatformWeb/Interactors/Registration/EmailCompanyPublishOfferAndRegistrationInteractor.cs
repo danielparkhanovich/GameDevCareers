@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens;
 using JobBoardPlatform.BLL.Services.Authentification.Register;
@@ -6,6 +6,9 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob.Temporary;
 using JobBoardPlatform.DAL.Repositories.Cache.Tokens;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
+using JobBoardPlatform.PL.ViewModels.Models.Registration;
+using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
+using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
 
 namespace JobBoardPlatform.PL.Interactors.Registration
 {
@@ -13,7 +16,7 @@ namespace JobBoardPlatform.PL.Interactors.Registration
     {
         private readonly IOfferManager offerManager;
         private readonly IUserProfileImagesTemporaryStorage temporaryStorage;
-        private readonly DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService;
+        private readonly DataTokensService<CompanyProfileAndNewOfferData> dataTokensService;
         private readonly ConfirmationTokensService confirmationTokensService;
         private readonly EmailCompanyPublishOfferAndRegistrationService registrationService;
 
@@ -21,7 +24,7 @@ namespace JobBoardPlatform.PL.Interactors.Registration
         public EmailCompanyPublishOfferAndRegistrationInteractor(
             IOfferManager offerManager,
             IUserProfileImagesTemporaryStorage temporaryStorage,
-            DataTokensService<ICompanyProfileAndNewOfferData> dataTokensService,
+            DataTokensService<CompanyProfileAndNewOfferData> dataTokensService,
             ConfirmationTokensService confirmationTokensService,
             EmailCompanyPublishOfferAndRegistrationService registrationService)
         {
@@ -33,22 +36,38 @@ namespace JobBoardPlatform.PL.Interactors.Registration
         }
 
         /// <returns>Token Id to access data from cache</returns>
-        public async Task<string> SavePostFormViewModelAsync(
-            ICompanyProfileAndNewOfferData viewModel, string? previousTokenId = null)
+        public async Task<string> SavePostFormAsync(
+            CompanyPublishOfferAndRegisterViewModel viewModel, string? previousTokenId = null)
         {
+            var form = new CompanyProfileAndNewOfferData()
+            {
+                CompanyProfileData = viewModel.CompanyProfileData,
+                OfferData = viewModel.EditOffer.OfferDetails
+            };
+
             if (!string.IsNullOrEmpty(previousTokenId))
             {
                 await DeleteSavedDataAsync(previousTokenId);
             }
 
-            var token = await SaveRegistrationDataAsync(viewModel);
+            var token = await SaveRegistrationDataAsync(form);
             return token.Id;
         }
 
-        public async Task<ICompanyProfileAndNewOfferData> GetPostFormViewModelAsync(string tokenId)
+        public async Task<CompanyPublishOfferAndRegisterViewModel> GetPostFormViewModelAsync(string tokenId)
         {
+            var viewModel = new CompanyPublishOfferAndRegisterViewModel();
+
             var token = await dataTokensService.TryGetTokenAsync(tokenId);
-            return token.Value;
+            var postForm = token.Value;
+
+            viewModel.EditOffer = new EditOfferViewModel()
+            {
+                OfferDetails = postForm.OfferData
+            };
+            viewModel.CompanyProfileData = postForm.CompanyProfileData;
+
+            return viewModel;
         }
 
         public async Task<JobOffer> GetAddedOfferAsync(int userProfileId)
@@ -76,25 +95,25 @@ namespace JobBoardPlatform.PL.Interactors.Registration
             return (await confirmationTokensService.TryGetTokenAsync(tokenId)).TokenToConfirmId;
         }
 
-        public async Task DeletePreviousSavedDataAsync(ICompanyProfileAndNewOfferData viewModel, string tokenId)
+        public async Task DeletePreviousSavedDataAsync(ProfileImage savedImage, string tokenId)
         {
             await DeleteSavedViewModelAsync(tokenId);
-            if (viewModel.CompanyProfileData.ProfileImage.File != null)
+            if (savedImage != null)
             {
                 await DeleteSavedImageAsync(tokenId);
             }
         }
 
-        private async Task<DataToken<ICompanyProfileAndNewOfferData>> SaveRegistrationDataAsync(
-            ICompanyProfileAndNewOfferData viewModel)
+        private async Task<DataToken<CompanyProfileAndNewOfferData>> SaveRegistrationDataAsync(
+            CompanyProfileAndNewOfferData form)
         {
-            await UploadImageIfChanged(viewModel);
+            await UploadImageIfChanged(form);
 
-            var token = await dataTokensService.RegisterNewTokenAsync(viewModel);
+            var token = await dataTokensService.RegisterNewTokenAsync(form);
             return token;
         }
 
-        private async Task UploadImageIfChanged(ICompanyProfileAndNewOfferData viewModel)
+        private async Task UploadImageIfChanged(CompanyProfileAndNewOfferData viewModel)
         {
             var file = viewModel.CompanyProfileData.ProfileImage.File;
             if (file != null)
@@ -104,7 +123,7 @@ namespace JobBoardPlatform.PL.Interactors.Registration
             }
         }
 
-        private Task<string> UploadImageAsync(ICompanyProfileAndNewOfferData viewModel)
+        private Task<string> UploadImageAsync(CompanyProfileAndNewOfferData viewModel)
         {
             var imageFile = viewModel.CompanyProfileData.ProfileImage.File!;
             return temporaryStorage.ChangeImageAsync(null, imageFile!);

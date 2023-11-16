@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search;

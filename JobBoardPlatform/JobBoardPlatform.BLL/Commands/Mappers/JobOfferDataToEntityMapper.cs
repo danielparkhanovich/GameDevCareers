@@ -1,11 +1,11 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.DAL.Models.Company;
 
 namespace JobBoardPlatform.BLL.Commands.Mappers
 {
-    public class JobOfferDataToEntityMapper : IMapper<IOfferData, JobOffer>
+    public class JobOfferDataToEntityMapper : IMapper<OfferData, JobOffer>
     {
-        public void Map(IOfferData from, JobOffer to)
+        public void Map(OfferData from, JobOffer to)
         {
             to.PlanId = from.PlanId;
             to.JobTitle = from.JobTitle;
@@ -32,7 +32,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             }
         }
 
-        private void MapContactDetails(IOfferData from, JobOffer to)
+        private void MapContactDetails(OfferData from, JobOffer to)
         {
             var contactDetails = new JobOfferContactDetails();
             contactDetails.ContactTypeId = from.ApplicationsContactType;
@@ -49,7 +49,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             to.ContactDetails = contactDetails;
         }
 
-        private void MapOfferDetails(IOfferData from, JobOffer to)
+        private void MapOfferDetails(OfferData from, JobOffer to)
         {
             var employmentDetails = new JobOfferEmploymentDetails[from.EmploymentTypes.Length];
 
@@ -81,7 +81,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             }
         }
 
-        private void MapTechKeywords(IOfferData from, JobOffer to)
+        private void MapTechKeywords(OfferData from, JobOffer to)
         {
             from.TechKeywords = from.TechKeywords!.Distinct().ToArray();
 
@@ -110,7 +110,7 @@ namespace JobBoardPlatform.BLL.Commands.Mappers
             }
         }
 
-        private void MapConsentClauses(IOfferData from, JobOffer to)
+        private void MapConsentClauses(OfferData from, JobOffer to)
         {
             to.InformationClause = from.InformationClause;
 

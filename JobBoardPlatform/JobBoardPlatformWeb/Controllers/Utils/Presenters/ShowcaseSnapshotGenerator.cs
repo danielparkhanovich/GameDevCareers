@@ -1,11 +1,10 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Utils;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.PL.Controllers.Presenters;
-using NuGet.Packaging.Signing;
 
 namespace JobBoardPlatform.BLL.Generators
 {

@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;

@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
@@ -23,7 +23,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly IOfferManager offerManager;
         private readonly IOfferPlanQueryExecutor plansQuery;
         private readonly IOfferQueryExecutor queryExecutor;
-        private readonly IValidator<IOfferData> validator;
+        private readonly IValidator<OfferData> validator;
         private readonly IPaymentInteractor paymentInteractor;
 
 
@@ -31,7 +31,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             IOfferManager offerManager,
             IOfferPlanQueryExecutor plansQuery,
             IOfferQueryExecutor queryExecutor,
-            IValidator<IOfferData> validator,
+            IValidator<OfferData> validator,
             IPaymentInteractor paymentInteractor)
         {
             this.offerManager = offerManager;

@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Application;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;

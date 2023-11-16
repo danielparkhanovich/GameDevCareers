@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.PL.Controllers.Register;
@@ -6,7 +6,7 @@ using JobBoardPlatform.PL.Controllers.Register;
 namespace JobBoardPlatform.PL.Interactors.Registration
 {
     public class DefaultRegistrationInteractor<TData, TEntity> : IRegistrationInteractor<TData> 
-        where TData : class, IUserLoginData
+        where TData : UserLoginData
         where TEntity : class, IUserIdentityEntity, new()
     {
         private readonly IRegistrationService<TEntity> registrationService;

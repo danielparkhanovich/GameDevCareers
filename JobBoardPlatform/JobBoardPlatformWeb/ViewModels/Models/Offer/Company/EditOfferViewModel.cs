@@ -1,4 +1,4 @@
-﻿
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
@@ -7,6 +7,6 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
     {
         public OfferPricingTableViewModel PricingPlans = new OfferPricingTableViewModel();
         public EditOfferDisplayViewModel Display { get; set; } = new EditOfferDisplayViewModel();
-        public OfferDataViewModel OfferDetails { get; set; } = new OfferDataViewModel();
+        public OfferData OfferDetails { get; set; } = new OfferDataViewModel();
     }
 }

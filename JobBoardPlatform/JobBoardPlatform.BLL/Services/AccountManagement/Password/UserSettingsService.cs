@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
@@ -60,7 +60,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
             }
         }
 
-        public async Task TryUpdateLoginDataAsync(string role, int identityId, ILoginSettingsData loginSettings)
+        public async Task TryUpdateLoginDataAsync(string role, int identityId, LoginSettingsData loginSettings)
         {
             if (role == UserRoles.Employee || role == UserRoles.Admin)
             {
@@ -78,7 +78,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 
         private async Task TryUpdateLoginDataAsync<TIdentity>(
             int identityId,
-            ILoginSettingsData loginSettings, 
+            LoginSettingsData loginSettings, 
             IModifyIdentityService<TIdentity> modifyService,
             UserManager<TIdentity> userManager) 
             where TIdentity : class, IUserIdentityEntity

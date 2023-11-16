@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Identities;
 using JobBoardPlatform.BLL.Commands.Identity;
 using JobBoardPlatform.BLL.Commands.Offer;
@@ -60,7 +60,7 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddScoped<IValidator<CompanyRegisterViewModel>, CompanyRegisterValidator>();
             services.AddScoped<IValidator<CompanyPublishOfferAndRegisterViewModel>, CompanyPublishOfferAndRegisterValidator>();
             services.AddScoped<IValidator<UserPasswordViewModel>, UserPasswordValidator>();
-            services.AddScoped<IValidator<IOfferData>, OfferFormDataValidator>();
+            services.AddScoped<IValidator<OfferData>, OfferFormDataValidator>();
             services.AddScoped<IValidator<ProfileImage>, ProfileImageValidator>();
         }
 

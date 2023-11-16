@@ -1,22 +1,20 @@
-﻿using JobBoardPlatform.BLL.DTOs;
-
-namespace JobBoardPlatform.BLL.Generators
+﻿namespace JobBoardPlatform.BLL.DTOs
 {
-    internal class MockOfferData : OfferData
+    public class OfferData
     {
         public int OfferId { get; set; }
         public int PlanId { get; set; }
         public string JobTitle { get; set; }
-        public string Country { get; set; }
+        public string Country { get; set; } // TODO: Remove
         public string City { get; set; }
-        public int WorkLocationType { get; set; }
-        public string JobDescription { get; set; }
-        public int ApplicationsContactType { get; set; }
-        public string? ApplicationsContactEmail { get; set; }
-        public int MainTechnologyType { get; set; }
-        public EmploymentType[] EmploymentTypes { get; set; }
-        public string[]? TechKeywords { get; set; }
         public string? Street { get; set; }
+        public int WorkLocationType { get; set; }
+        public EmploymentType[] EmploymentTypes { get; set; }
+        public int MainTechnologyType { get; set; } // change to enum
+        public string[]? TechKeywords { get; set; }
+        public string JobDescription { get; set; }
+        public int ApplicationsContactType { get; set; } // change to enum
+        public string? ApplicationsContactEmail { get; set; }
         public string? ApplicationsContactExternalFormUrl { get; set; }
         public string InformationClause { get; set; }
         public bool IsDisplayConsentForFutureRecruitment { get; set; }

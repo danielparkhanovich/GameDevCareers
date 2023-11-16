@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace JobBoardPlatform.BLL.Boundaries
+namespace JobBoardPlatform.BLL.DTOs
 {
     public class ProfileImage
     {

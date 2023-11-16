@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
@@ -26,13 +26,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
         private readonly IOfferManager offersManager;
         private readonly IOfferPlanQueryExecutor offerPlansQuery;
-        private readonly IValidator<IOfferData> validator;
+        private readonly IValidator<OfferData> validator;
 
 
         public CompanyOfferEditorController(
             IOfferManager offersManager, 
             IOfferPlanQueryExecutor offerPlansQuery,
-            IValidator<IOfferData> validator)
+            IValidator<OfferData> validator)
         {
             this.offersManager = offersManager;
             this.offerPlansQuery = offerPlansQuery;

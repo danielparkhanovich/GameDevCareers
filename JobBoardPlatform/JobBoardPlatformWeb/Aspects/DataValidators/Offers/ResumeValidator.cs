@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JobBoardPlatform.BLL.Boundaries;
+using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.PL.Aspects.DataValidators.Common;
 using JobBoardPlatform.BLL.Common;

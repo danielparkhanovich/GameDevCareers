@@ -1,4 +1,4 @@
-﻿using JobBoardPlatform.BLL.Boundaries;
+﻿using JobBoardPlatform.BLL.DTOs;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
