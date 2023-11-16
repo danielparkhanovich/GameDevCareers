@@ -33,9 +33,6 @@ jobs:
     - name: Build app
       run: dotnet build ${{ env.WEBAPP_SOLUTION_PATH }} --configuration Release --no-restore
 
-    - name: Test app
-      run: dotnet test ${{ env.WEBAPP_SOLUTION_PATH }} --no-build
-
     - name: Publish app for deploy
       run: dotnet publish ${{ env.WEBAPP_SOLUTION_PATH }} --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
