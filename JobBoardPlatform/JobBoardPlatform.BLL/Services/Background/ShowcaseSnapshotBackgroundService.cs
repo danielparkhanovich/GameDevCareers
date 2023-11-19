@@ -28,7 +28,7 @@ namespace JobBoardPlatform.BLL.Services.Background
                     await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
 
                     var generator = GetGenerator();
-                    await generator.CreateOffers(1);
+                    await generator.CreateOffersForEachCompany(1);
                     if (i % 5 == 0)
                     {
                         await generator.CreateApplications();
@@ -54,7 +54,7 @@ namespace JobBoardPlatform.BLL.Services.Background
 
             await generator.CreateAdmins();
             await generator.CreateCompanies();
-            await generator.CreateOffers(10);
+            await generator.CreateOffersForEachCompany(10);
             await generator.CreateEmployees();
             await generator.CreateApplications();
         }

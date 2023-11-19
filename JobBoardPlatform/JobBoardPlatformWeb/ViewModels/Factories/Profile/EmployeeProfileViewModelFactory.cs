@@ -32,7 +32,8 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
                 FileName = resumeName,
                 FileSize = resumeSize,
                 YearsOfExperience = profile.YearsOfExperience,
-                LinkedInUrl = profile.LinkedInUrl
+                LinkedInUrl = profile.LinkedInUrl,
+                AttachedResume = GetAttachedResume(profile.ResumeUrl),
             };
 
             return viewModel;
@@ -43,6 +44,16 @@ namespace JobBoardPlatform.PL.ViewModels.Middleware.Factories.Profile
             return new ProfileImageViewModel()
             {
                 ImageUrl = imageUrl
+            };
+        }
+
+        private EmployeeAttachedResumeViewModel GetAttachedResume(string? resumeUrl)
+        {
+            return new EmployeeAttachedResumeViewModel()
+            {
+                FileName = resumeName,
+                FileSize = resumeSize,
+                ResumeUrl = resumeUrl
             };
         }
     }

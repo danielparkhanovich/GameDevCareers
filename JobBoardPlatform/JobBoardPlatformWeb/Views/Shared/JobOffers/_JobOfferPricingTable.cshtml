@@ -1,15 +1,18 @@
 ﻿@using JobBoardPlatform.PL.Controllers.Register;
 @using JobBoardPlatform.PL.ViewModels.Models.Offer.Payment;
 @model OfferPricingTableViewModel
+@{
+    bool isMultiplePlans = Model.Plans.Count > 1;
+}
 
 <div class="table-responsive w-100">
-    <table class="table shadow-none table-striped text-successtable-border border-light">
+    <table class="table shadow-lg table-striped text-successtable-border border-light">
         <thead class="border-light">
             <tr>
                 <th scope="col">Features</th>
                 @foreach (var plan in Model.Plans)
                 {
-                    <th class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-bottom-0 border-success" : "")" scope="col">
+                    <th class="text-center @(isMultiplePlans && plan.AvailableFreeSlots > 0 ? "border border-2 border-bottom-0 border-success" : "")" scope="col">
                         <strong>@plan.OfferType</strong>
                         @if (plan.AvailableFreeSlots > 0)
                         {
@@ -33,22 +36,25 @@
                     <th scope="row">@feature</th>
                     @foreach (var plan in Model.Plans)
                     {
-                        <td class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-top-0 border-bottom-0 border-success" : "")" width="@(100/(Model.Plans.Count + 1))%">@Html.Raw(plan.FeatureValues[i])</td>
+                        <td class="text-center @(isMultiplePlans && plan.AvailableFreeSlots > 0 ? "border border-2 border-top-0 border-bottom-0 border-success" : "")" width="@(100/(Model.Plans.Count + 1))%">@Html.Raw(plan.FeatureValues[i])</td>
                     }
                 </tr>
             }
-            <tr>
-                <th scope="row"></th>
-                @foreach (var plan in Model.Plans)
-                {
-                    <td class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-top-0 border-success" : "")">
-                        <a href="@Url.Action($"{CompanyRegistrationWithOfferPublishController.StartPostOfferAndRegisterAction}", new { planType = plan.OfferType.ToLower() })"
+            @if (isMultiplePlans)
+            {
+                <tr>
+                    <th scope="row"></th>
+                    @foreach (var plan in Model.Plans)
+                    {
+                        <td class="text-center @(plan.AvailableFreeSlots > 0 ? "border border-2 border-top-0 border-success" : "")">
+                            <a href="@Url.Action($"{CompanyRegistrationWithOfferPublishController.StartPostOfferAndRegisterAction}", new { planType = plan.OfferType.ToLower() })"
                        class="text-small btn btn-primary rounded-pill px-5">
-                            Post a job
-                        </a>
-                    </td>
-                }
-            </tr>
+                                Post a job
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
         </tbody>
     </table>
 </div>

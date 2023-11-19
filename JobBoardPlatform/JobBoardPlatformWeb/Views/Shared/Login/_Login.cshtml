@@ -6,7 +6,8 @@
 @model UserLoginViewModel
 @{
     string resetControllerName = ControllerUtils.GetControllerName(typeof(ResetPasswordController));
-    string registerControllerName = ViewData["RegisterControllerName"] as string;
+    bool isHideReset = TempData.ContainsKey("HideResetPassword");
+    TempData.Remove("HideResetPassword");
 
     var failedLogin = NotificationsManager.Instance.TryGetNotification(
         NotificationsManager.LoginSection, TempData);
@@ -24,7 +25,10 @@
             <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
             <label asp-for="Password" for="floatingPassword">Password</label>
 
-            <a asp-controller=@resetControllerName asp-action="Reset" class="text-primary" style="text-decoration: none;"><b>Forgot password?</b></a>
+            @if (!isHideReset)
+            {
+                <a asp-controller=@resetControllerName asp-action="Reset" class="text-primary" style="text-decoration: none;"><b>Forgot password?</b></a>
+            }
         </div>
         <div class="col-md-12 text-center mt-4 mb-4">
             <button type="submit" class="btn btn-primary px-5 py-1 btn-lg rounded-pill">Sign in</button>

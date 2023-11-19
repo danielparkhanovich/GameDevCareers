@@ -5,6 +5,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Employee;
 using JobBoardPlatform.PL.Aspects.DataValidators;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.Filters;
 using JobBoardPlatform.PL.Interactors.Notifications;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
@@ -21,6 +22,7 @@ namespace JobBoardPlatform.PL.Controllers.ResetPassword
         private readonly UserManager<EmployeeIdentity> employeeManager;
         private readonly UserManager<CompanyIdentity> companyManager;
         private readonly IValidator<UserPasswordViewModel> validator;
+        private readonly IViewRenderService viewRenderService;
 
 
         public ResetPasswordController(
@@ -28,13 +30,15 @@ namespace JobBoardPlatform.PL.Controllers.ResetPassword
             IResetPasswordService<CompanyIdentity, CompanyProfile> companyReset,
             UserManager<EmployeeIdentity> employeeManager,
             UserManager<CompanyIdentity> companyManager,
-            IValidator<UserPasswordViewModel> validator)
+            IValidator<UserPasswordViewModel> validator,
+            IViewRenderService viewRenderService)
         {
             this.employeeReset = employeeReset;
             this.companyReset = companyReset;
             this.employeeManager = employeeManager;
             this.companyManager = companyManager;
             this.validator = validator;
+            this.viewRenderService = viewRenderService;
         }
 
         public IActionResult Reset()
@@ -46,6 +50,8 @@ namespace JobBoardPlatform.PL.Controllers.ResetPassword
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reset(string email)
         {
+            viewRenderService.SetController(this);
+
             if (ModelState.IsValid)
             {
                 await TryProcessResetPassword(email);
@@ -111,7 +117,7 @@ namespace JobBoardPlatform.PL.Controllers.ResetPassword
 
         private void SetActionDoneNotification(string email)
         {
-            NotificationsManager.Instance.SetActionDoneNotification(
+            NotificationsManager.Instance.SetActionDoneEmailNotification(
                 NotificationsManager.ResetPasswordSection,
                 $"An email with instructions to reset your password has been sent to your {email} email address.",
                 TempData);

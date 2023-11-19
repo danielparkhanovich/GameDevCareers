@@ -6,7 +6,7 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Registration
 {
     public class CompanyPublishOfferAndRegisterViewModel
     {
-        public CompanyProfileData CompanyProfileData { get; set; } = new CompanyProfileViewModel();
+        public CompanyProfileViewModel CompanyProfileData { get; set; } = new CompanyProfileViewModel();
         public EditOfferViewModel EditOffer { get; set; } = new EditOfferViewModel();
     }
 }

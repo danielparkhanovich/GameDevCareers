@@ -15,7 +15,6 @@ namespace JobBoardPlatform.BLL.Generators
         private readonly IApplicationsManager applicationsManager;
         private readonly IOfferManager offerManager;
         private readonly UserManager<EmployeeIdentity> employeeManager;
-        private readonly ApplicationEmailViewRenderer emailViewRenderer;
 
 
         public ShowcaseSnapshotGenerator(
@@ -23,15 +22,13 @@ namespace JobBoardPlatform.BLL.Generators
             AdminCommands adminCommands,
             IApplicationsManager applicationsManager,
             IOfferManager offerManager,
-            UserManager<EmployeeIdentity> employeeManager,
-            ApplicationEmailViewRenderer emailViewRenderer)
+            UserManager<EmployeeIdentity> employeeManager)
         {
             this.usersGenerator = usersGenerator;
             this.adminCommands = adminCommands;
             this.applicationsManager = applicationsManager;
             this.offerManager = offerManager;
             this.employeeManager = employeeManager;
-            this.emailViewRenderer = emailViewRenderer;
         }
 
         public async Task CreateCompanies()
@@ -193,9 +190,11 @@ namespace JobBoardPlatform.BLL.Generators
             {
                 await usersGenerator.CreateAdmin(login, "1234567890!");
             }
+
+            await usersGenerator.CreateAdmin(Common.GlobalBLL.Values.TestEmail, "1234567890!");
         }
 
-        public async Task CreateOffers(int offersCount)
+        public async Task CreateOffersForEachCompany(int offersCount)
         {
             await adminCommands.GenerateOffers(0, offersCount);
 
@@ -258,6 +257,7 @@ namespace JobBoardPlatform.BLL.Generators
             applications.Add(application2);
 
             var users = await employeeManager.GetAllLoadedAsync();
+            var usersIds = new Dictionary<ApplicationForm, int>();
             foreach (var user in users)
             {
                 var userApplication = new ApplicationForm()
@@ -271,6 +271,7 @@ namespace JobBoardPlatform.BLL.Generators
                     AdditionalInformation = user.Profile.Description
                 };
                 applications.Add(userApplication);
+                usersIds.Add(userApplication, user.ProfileId);
             }
 
             var offersIds = await offerManager.GetAllIdsAsync();
@@ -279,7 +280,14 @@ namespace JobBoardPlatform.BLL.Generators
                 foreach (var application in applications)
                 {
                     application.OfferId = offerId;
-                    await applicationsManager.PostApplicationFormAsync(offerId, null, application, null);
+
+                    int? profileId = null;
+                    if (usersIds.ContainsKey(application))
+                    {
+                        profileId = usersIds[application];
+                    }
+                    await applicationsManager.PostApplicationFormAsync(
+                        offerId, profileId, application, false);
                 }
             }
         }

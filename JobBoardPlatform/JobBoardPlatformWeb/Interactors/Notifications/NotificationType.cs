@@ -2,7 +2,8 @@
 {
     public enum NotificationType
     {
-        ActionDone,
+        ActionDoneEmail,
+        Success,
         Error
     }
 }

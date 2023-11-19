@@ -44,8 +44,11 @@ namespace JobBoardPlatform.PL.Configuration
         {
             services.AddTransient<IEmailSender, SmtpEmailSender>();
             services.Configure<EmailConfiguration>(configuration.GetSection("EmailGateway"));
-            services.AddScoped<ApplicationEmailViewRenderer>();
+
             services.AddScoped<IViewRenderService, ViewRenderService>();
+            services.AddScoped<IRegistrationEmailSender, RegistrationEmailSender>();
+            services.AddScoped<IApplicationsEmailSender, ApplicationsEmailSender>();
+            services.AddScoped<IResetPasswordEmailSender, ResetPasswordEmailSender>();
         }
 
         private static void AddPasswordServices(IServiceCollection services)
@@ -84,7 +87,7 @@ namespace JobBoardPlatform.PL.Configuration
 
         private static void AddRestorePasswordServices(IServiceCollection services)
         {
-            services.AddTransient(typeof(IResetPasswordService<,>), typeof(RestorePasswordService<,>));
+            services.AddTransient(typeof(IResetPasswordService<,>), typeof(ResetPasswordService<,>));
             services.AddTransient<IRestorePasswordTokensService, RestorePasswordTokensService>();
         }
 

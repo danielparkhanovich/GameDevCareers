@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
-using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.DAL.Models.Contracts;
 using Microsoft.AspNetCore.Http;
 

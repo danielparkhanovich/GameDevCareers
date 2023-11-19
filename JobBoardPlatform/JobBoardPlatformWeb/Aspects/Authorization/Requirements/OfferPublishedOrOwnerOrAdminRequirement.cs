@@ -28,11 +28,6 @@ namespace JobBoardPlatform.PL.Requirements
 
         private bool IsAuthorized(JobOffer offer, ClaimsPrincipal user)
         {
-            return UserSessionUtils.IsLoggedIn(user) && IsHasPermit(offer, user);
-        }
-
-        private bool IsHasPermit(JobOffer offer, ClaimsPrincipal user)
-        {
             return UserRolesUtils.IsUserOwner(user, offer) || UserRolesUtils.IsUserAdmin(user);
         }
     }

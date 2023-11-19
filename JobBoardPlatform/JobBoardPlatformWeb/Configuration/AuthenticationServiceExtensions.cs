@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 
 namespace JobBoardPlatform.PL.Configuration
@@ -66,6 +67,7 @@ namespace JobBoardPlatform.PL.Configuration
             options.AppId = configuration.GetValue<string>("Authentication:Facebook:ClientId");
             options.AppSecret = configuration.GetValue<string>("Authentication:Facebook:ClientSecret");
             options.Fields.Add("picture");
+
             options.Events = new OAuthEvents
             {
                 OnCreatingTicket = context =>
@@ -73,7 +75,11 @@ namespace JobBoardPlatform.PL.Configuration
                     var identity = (ClaimsIdentity)context.Principal!.Identity!;
                     var profileImg = context.User
                         .GetProperty("picture").GetProperty("data").GetProperty("url").ToString();
-                    identity.AddClaim(new Claim("picture", profileImg));
+
+                    string nameIdentifier = context.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+                    string thumbnailUrl = $"https://graph.facebook.com/{nameIdentifier}/picture?type=large";
+
+                    identity.AddClaim(new Claim("picture", thumbnailUrl));
                     return Task.CompletedTask;
                 }
             };
@@ -83,6 +89,8 @@ namespace JobBoardPlatform.PL.Configuration
         {
             options.ClientId = configuration.GetValue<string>("Authentication:GitHub:ClientId");
             options.ClientSecret = configuration.GetValue<string>("Authentication:GitHub:ClientSecret");
+            options.Scope.Add("user:email");
+            options.Scope.Add("read:user");
         }
 
         private static void AddLinkedInAuthentication(LinkedInAuthenticationOptions options, ConfigurationManager configuration)

@@ -1,0 +1,17 @@
+﻿@using JobBoardPlatform.PL.Controllers.Login;
+@using JobBoardPlatform.PL.ViewModels.Models.MainTechnologyWidgets;
+
+@model UserLoginViewModel
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="d-flex flex-column aligns-items-center justify-content-center min-vh-100 mx-auto" style="max-width: 762px; margin-top: -56px;">
+    <!-- Render shared login form and pass controller name -->
+    @{
+        ViewData["LoginControllerName"] = "AdminLogin";
+        TempData["HideResetPassword"] = true;
+    }
+    <h1 class="text-center">Admin panel</h1>
+    @await Html.PartialAsync("./Login/_Login", Model)
+</div>

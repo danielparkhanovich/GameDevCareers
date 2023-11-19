@@ -17,8 +17,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
     public class CompanyOfferEditorController : Controller
     {
-        public const string AddNewOfferAction = "Editor";
-        public const string EditOfferAction = "Editor";
+        public const string EditorViewName = "Editor";
 
         public const string NextActionTempData = "NextAction";
         public const string NextControllerTempData = "NextController";
@@ -40,35 +39,35 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         }
 
         [Route("new", Order = 1)]
-        public async Task<IActionResult> Editor()
+        public async Task<IActionResult> AddNew()
         {
             var factory = new EditOfferViewModelFactory(offerPlansQuery);
             var viewModel = await factory.CreateAsync();
 
-            return View(viewModel);
+            return View(EditorViewName, viewModel);
         }
 
-        [Route("{planType}", Order = 2)]
-        public async Task<IActionResult> Editor(string planType)
+        [Route("new/{planType}", Order = 0)]
+        public async Task<IActionResult> AddNew(string planType)
         {
             var factory = new EditOfferViewModelFactory(offerPlansQuery);
             var viewModel = await factory.CreateAsync();
             int planId = GetPlanTypeId(planType);
             viewModel.OfferDetails.PlanId = planId;
 
-            return View(viewModel);
+            return View(EditorViewName, viewModel);
         }
 
         [HttpPost("new", Order = 1)]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editor(EditOfferViewModel viewModel)
+        public async Task<IActionResult> AddNew(EditOfferViewModel viewModel)
         {
             return await TryAddNewOfferAsync(viewModel);
         }
 
-        [HttpPost("{planType}", Order = 2)]
+        [HttpPost("new/{planType}", Order = 0)]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editor(EditOfferViewModel viewModel, string planType)
+        public async Task<IActionResult> AddNew(EditOfferViewModel viewModel, string planType)
         {
             return await TryAddNewOfferAsync(viewModel);
         }
@@ -79,20 +78,20 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             {
                 int offerIdInt = int.Parse(offerId);
                 return RedirectToAction(
-                    "Editor",
+                    nameof(Edit),
                     new { offerId = offerId, planType = planType });
             }
             else
             {
                 return RedirectToAction(
-                    "Editor",
+                    nameof(AddNew),
                     new { planType = planType });
             }
         }
 
         [Route("edit-{offerId}", Order = 0)]
         [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
-        public async Task<IActionResult> Editor(int offerId, string? planType = null)
+        public async Task<IActionResult> Edit(int offerId, string? planType = null)
         {
             var factory = new EditOfferViewModelFactory(offerPlansQuery);
             var viewModel = await factory.CreateAsync();
@@ -105,13 +104,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 viewModel.OfferDetails.PlanId = planId;
             }
 
-            return View(viewModel);
+            return View(EditorViewName, viewModel);
         }
 
         [HttpPost("edit-{offerId}", Order = 0)]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = AuthorizationPolicies.OfferOwnerOnlyPolicy)]
-        public async Task<IActionResult> Editor(int offerId, EditOfferViewModel viewModel)
+        public async Task<IActionResult> Edit(int offerId, EditOfferViewModel viewModel)
         {
             viewModel.OfferDetails.OfferId = offerId;
             return await TryUpdateOfferAsync(viewModel);
@@ -144,7 +143,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 result.AddToModelState(this.ModelState, nameof(viewModel.OfferDetails));
             }
 
-            return View(viewModel);
+            await SetPricingPlans(viewModel);
+            return View(EditorViewName, viewModel);
         }
 
         private async Task<IActionResult> TryUpdateOfferAsync(EditOfferViewModel viewModel)
@@ -160,22 +160,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 result.AddToModelState(this.ModelState, nameof(viewModel.OfferDetails));
             }
 
-            return View(viewModel);
+            await SetPricingPlans(viewModel);
+            return View(EditorViewName, viewModel);
         }
 
         private IActionResult RedirectOnSuccess()
         {
-            if (TempData[NextActionTempData] != null && TempData[NextControllerTempData] != null)
-            {
-                string nextAction = (string)TempData[NextActionTempData];
-                string nextController = (string)TempData[NextControllerTempData];
-                string offerId = (string)TempData[OfferIdTempData];
-                return RedirectToAction(nextAction, nextController, new { offerId = offerId });
-            }
-            else
-            {
-                return RedirectToAction("Offers", "CompanyOffersPanel");
-            }
+            return RedirectToAction("Offers", "CompanyOffersPanel");
         }
 
         private int GetPlanTypeId(string plan)
@@ -196,6 +187,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 }
             }
             return 2;
+        }
+
+        private async Task SetPricingPlans(EditOfferViewModel viewModel)
+        {
+            var factory = new EditOfferViewModelFactory(offerPlansQuery);
+            var editViewModel = await factory.CreateAsync();
+            viewModel.PricingPlans = editViewModel.PricingPlans;
         }
     }
 }

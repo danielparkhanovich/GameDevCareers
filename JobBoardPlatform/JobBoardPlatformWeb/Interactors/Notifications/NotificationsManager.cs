@@ -9,6 +9,8 @@ namespace JobBoardPlatform.PL.Interactors.Notifications
         public const string ResetPasswordSection = "restorePassword";
         public const string LoginSection = "loginSection";
         public const string PaymentSection = "paymentSection";
+        public const string PostApplicationSection = "postApplicationSection";
+
 
         public static INotificationsManager Instance
         {
@@ -29,9 +31,15 @@ namespace JobBoardPlatform.PL.Interactors.Notifications
         {
         }
 
-        public void SetActionDoneNotification(string key, string value, ITempDataDictionary tempData)
+        public void SetActionDoneEmailNotification(string key, string value, ITempDataDictionary tempData)
         {
-            var notification = GetNotification(value, NotificationType.ActionDone);
+            var notification = GetNotification(value, NotificationType.ActionDoneEmail);
+            PutData(key, notification, tempData);
+        }
+
+        public void SetSuccessNotification(string key, string value, ITempDataDictionary tempData)
+        {
+            var notification = GetNotification(value, NotificationType.Success);
             PutData(key, notification, tempData);
         }
 

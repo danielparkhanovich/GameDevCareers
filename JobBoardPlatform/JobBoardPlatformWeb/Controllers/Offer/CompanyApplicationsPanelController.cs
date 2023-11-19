@@ -4,13 +4,13 @@ using JobBoardPlatform.BLL.Query.Identity;
 using JobBoardPlatform.BLL.Search;
 using JobBoardPlatform.BLL.Search.CompanyPanel.Applications;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
-using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Controllers.Templates;
 using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using JobBoardPlatform.PL.ViewModels.Models.Email;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -23,14 +23,14 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly OfferApplicationsSearcher searcher;
         private readonly IOfferQueryExecutor queryExecutor;
         private readonly IApplicationsManager applicationsManager;
-        private readonly ApplicationEmailViewRenderer viewRenderService;
+        private readonly IViewRenderService viewRenderService;
 
 
         public CompanyApplicationsPanelController(
             OfferApplicationsSearcher searcher, 
             IOfferQueryExecutor queryExecutor,
             IApplicationsManager applicationsManager,
-            ApplicationEmailViewRenderer viewRenderService)
+            IViewRenderService viewRenderService)
         {
             this.searcher = searcher;
             this.queryExecutor = queryExecutor;
@@ -65,7 +65,8 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             viewRenderService.SetController(this);
 
             var application = await applicationsManager.GetApplicationAsync(applicationId);
-            ViewBag.EmailHtml = await (viewRenderService as IEmailContent<JobOfferApplication>)!.GetMessageAsync(application);
+            ViewBag.EmailHtml = await viewRenderService.RenderPartialViewToString(
+                ApplicationEmailViewModel.EmailView, application);
             return View();
         }
 

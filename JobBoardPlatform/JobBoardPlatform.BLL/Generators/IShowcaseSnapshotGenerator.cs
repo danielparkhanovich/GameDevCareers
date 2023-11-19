@@ -5,7 +5,7 @@ namespace JobBoardPlatform.BLL.Generators
     {
         Task CreateAdmins();
         Task CreateCompanies();
-        Task CreateOffers(int offersCount);
+        Task CreateOffersForEachCompany(int offersCount);
         Task CreateEmployees();
         Task CreateApplications();
     }

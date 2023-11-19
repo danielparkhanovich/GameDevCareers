@@ -10,8 +10,7 @@ namespace JobBoardPlatform.PL.Filters
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (UserSessionUtils.IsLoggedIn(context.HttpContext.User) && 
-                UserRolesUtils.IsUserAdmin(context.HttpContext.User))
+            if (UserRolesUtils.IsUserAdmin(context.HttpContext.User))
             {
                 context.Result = new RedirectToActionResult(
                     "Panel", 

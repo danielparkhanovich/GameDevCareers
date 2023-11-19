@@ -13,6 +13,7 @@ using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 using Azure.Storage.Blobs;
 using JobBoardPlatform.DAL.Contexts;
+using JobBoardPlatform.PL.Controllers.Presenters;
 
 namespace JobBoardPlatform.IntegrationTests.Common.Mocks.Services
 {
@@ -22,8 +23,8 @@ namespace JobBoardPlatform.IntegrationTests.Common.Mocks.Services
         {
             services.AddTransient<IOfferCacheManager, OffersCacheManagerMock>();
             services.AddTransient<IOfferQueryExecutor, OfferQueryExecutorMock>();
-            services.AddTransient<IEmailContent<JobOfferApplication>, EmailViewRendererMock>();
             services.AddTransient<IEmailSender, EmailSenderMock>();
+            services.AddTransient<IRegistrationEmailSender, RegistrationEmailSender>();
         }
 
         public static void AddSqlRepository(IServiceCollection services)
@@ -51,7 +52,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Mocks.Services
 
         /// <summary>
         /// Used for creating isolated sql databases
-        /// and blob storages during parallel tests execution
+        /// and blob storage containers during parallel tests execution
         /// </summary>
         public static string GetUniqueName(string name)
         {

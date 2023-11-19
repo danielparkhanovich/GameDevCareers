@@ -5,6 +5,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Models.Employee;
+using JobBoardPlatform.DAL.Models.Admin;
 
 namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 {
@@ -14,29 +15,36 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
         private readonly IModifyIdentityService<CompanyIdentity> companyModifyService;
         private readonly UserManager<EmployeeIdentity> employeeManager;
         private readonly UserManager<CompanyIdentity> companyManager;
+        private readonly UserManager<AdminIdentity> adminManager;
 
 
         public UserSettingsService(
             IModifyIdentityService<EmployeeIdentity> employeeModifyService,
             IModifyIdentityService<CompanyIdentity> companyModifyService,
             UserManager<EmployeeIdentity> employeeManager,
-            UserManager<CompanyIdentity> companyManager)
+            UserManager<CompanyIdentity> companyManager,
+            UserManager<AdminIdentity> adminManager)
         {
             this.employeeModifyService = employeeModifyService;
             this.companyModifyService = companyModifyService;
             this.employeeManager = employeeManager;
             this.companyManager = companyManager;
+            this.adminManager = adminManager;
         }
 
         public async Task<string> GetLoginAsync(string role, int identityId)
         {
-            if (role == UserRoles.Employee || role == UserRoles.Admin)
+            if (role == UserRoles.Employee)
             {
                 return (await employeeManager.GetAsync(identityId)).Email;
             }
             else if (role == UserRoles.Company)
             {
                 return (await companyManager.GetAsync(identityId)).Email;
+            }
+            else if (role == UserRoles.Admin)
+            {
+                return (await adminManager.GetAsync(identityId)).Email;
             }
             else
             {

@@ -12,6 +12,8 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Authorization
         public string DisplayImageUrl { get; set; } = string.Empty;
 
 
+        public AuthorizationData() { }
+
         public AuthorizationData(int identityId, string email, IUserProfileEntity profile)
         {
             Id = identityId;
@@ -31,14 +33,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Authorization
         private void SetRole(IUserProfileAdapter profileAdapter, string email)
         {
             string role = profileAdapter.UserRole;
-            if (UserRolesUtils.IsUserAdmin(email))
-            {
-                Role = UserRoles.Admin;
-            }
-            else
-            {
-                Role = role;
-            }
+            Role = role;
         }
     }
 }

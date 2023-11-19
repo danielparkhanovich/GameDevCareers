@@ -1,15 +1,9 @@
-﻿using JobBoardPlatform.BLL.DTOs;
-using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
+﻿using JobBoardPlatform.PL.ViewModels.Models.Profile.Employee;
 
 namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Users
 {
-    public class OfferContentViewModel : AttachedResume
+    public class OfferContentViewModel
     {
-        public IFormFile? File { get => Update.AttachedResume.File; set => Update.AttachedResume.File = value; }
-        public string? ResumeUrl { get => Update.AttachedResume.ResumeUrl; set => Update.AttachedResume.ResumeUrl = value; }
-        public string? FileName { get => Update.AttachedResume.FileName; set => Update.AttachedResume.FileName = value; }
-        public string? FileSize { get => Update.AttachedResume.FileSize; set => Update.AttachedResume.FileSize = value; }
-
         public OfferContentDisplayViewModel Display { get; set; }
         public OfferApplicationUpdateViewModel Update { get; set; }
 

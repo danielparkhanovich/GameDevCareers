@@ -2,10 +2,7 @@
 using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace JobBoardPlatform.BLL.Services.Authentification.Login
 {
@@ -15,14 +12,17 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Login
     {
         private readonly IRepository<TEntity> userRepository;
         private readonly IRepository<TProfile> profilesRepository;
+        private readonly AuthorizationServiceCore authorization;
 
 
         public AuthorizationService(
             IRepository<TEntity> userRepository,
-            IRepository<TProfile> profilesRepository)
+            IRepository<TProfile> profilesRepository,
+            AuthorizationServiceCore serviceCore)
         {
             this.userRepository = userRepository;
             this.profilesRepository = profilesRepository;
+            this.authorization = serviceCore;
         }
 
         public async Task SignInHttpContextAsync(HttpContext httpContext, int userId)
@@ -33,49 +33,12 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Login
             }
 
             var data = await GetAuthorizationDataAsync(userId);
-
-            List<Claim> claims = new List<Claim>();
-            claims.AddRange(GetSpecificProperties(data));
-            claims.AddRange(GetPersonalizationProperties(data));
-
-            var claimsIdentity = new ClaimsIdentity(claims,
-                CookieAuthenticationDefaults.AuthenticationScheme);
-
-            var properties = new AuthenticationProperties()
-            {
-                AllowRefresh = true,
-                IsPersistent = true
-            };
-
-            await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity), properties);
+            await authorization.SignInHttpContextAsync(httpContext, data);
         }
 
         public async Task SignOutHttpContextAsync(HttpContext httpContext)
         {
-            await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        }
-
-        private List<Claim> GetSpecificProperties(AuthorizationData data)
-        {
-            return new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, data.Id.ToString()),
-                new Claim(ClaimTypes.Name, data.DisplayName),
-                new Claim(ClaimTypes.Role, data.Role)
-            };
-        }
-
-        private List<Claim> GetPersonalizationProperties(AuthorizationData data)
-        {
-            return new List<Claim>()
-            {
-                new Claim(UserSessionProperties.NameIdentifier, data.Id.ToString()),
-                new Claim(UserSessionProperties.ProfileIdentifier, data.ProfileId.ToString()),
-                new Claim(UserSessionProperties.DisplayName, data.DisplayName),
-                new Claim(UserSessionProperties.DisplayImageUrl, data.DisplayImageUrl),
-                new Claim(UserSessionProperties.Role, data.Role)
-            };
+            await authorization.SignOutHttpContextAsync(httpContext);
         }
 
         private async Task<AuthorizationData> GetAuthorizationDataAsync(int userId)

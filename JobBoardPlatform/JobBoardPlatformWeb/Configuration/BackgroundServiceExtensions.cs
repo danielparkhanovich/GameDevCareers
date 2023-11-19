@@ -11,6 +11,7 @@ namespace JobBoardPlatform.PL.Configuration
             services.AddHostedService<ExpiredOffersBackgroundCleaner>();
             services.AddHostedService<OfferBumpUpBackgroundService>();
             services.AddHostedService<TemporaryDataBackgroundCleaner>();
+            services.AddHostedService<TestBackgroundService>();
 
             if (environment.IsProduction())
             {

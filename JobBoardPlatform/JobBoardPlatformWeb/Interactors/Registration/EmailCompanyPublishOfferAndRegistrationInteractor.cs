@@ -65,7 +65,16 @@ namespace JobBoardPlatform.PL.Interactors.Registration
             {
                 OfferDetails = postForm.OfferData
             };
-            viewModel.CompanyProfileData = postForm.CompanyProfileData;
+
+            viewModel.CompanyProfileData = new CompanyProfileViewModel()
+            {
+                CompanyName = postForm.CompanyProfileData.CompanyName,
+                OfficeCity = postForm.CompanyProfileData.OfficeCity,
+                CompanyWebsiteUrl = postForm.CompanyProfileData.CompanyWebsiteUrl,
+                OfficeCountry = postForm.CompanyProfileData.OfficeCountry,
+                OfficeStreet = postForm.CompanyProfileData.OfficeStreet,
+                ProfileImage = postForm.CompanyProfileData.ProfileImage,
+            };
 
             return viewModel;
         }
@@ -95,10 +104,14 @@ namespace JobBoardPlatform.PL.Interactors.Registration
             return (await confirmationTokensService.TryGetTokenAsync(tokenId)).TokenToConfirmId;
         }
 
-        public async Task DeletePreviousSavedDataAsync(ProfileImage savedImage, string tokenId)
+        public async Task DeletePreviousSavedDataAsync(
+            CompanyPublishOfferAndRegisterViewModel registerData, 
+            string tokenId)
         {
             await DeleteSavedViewModelAsync(tokenId);
-            if (savedImage != null)
+
+            bool isNewImageAdded = registerData.CompanyProfileData.ProfileImage.File != null;
+            if (isNewImageAdded)
             {
                 await DeleteSavedImageAsync(tokenId);
             }

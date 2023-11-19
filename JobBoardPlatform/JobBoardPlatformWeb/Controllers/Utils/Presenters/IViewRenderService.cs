@@ -4,6 +4,7 @@ namespace JobBoardPlatform.PL.Controllers.Presenters
 {
     public interface IViewRenderService
     {
-        Task<string> RenderPartialViewToString(Controller Controller, string viewName, object model);
+        void SetController(Controller controller);
+        Task<string> RenderPartialViewToString(string viewName, object model);
     }
 }

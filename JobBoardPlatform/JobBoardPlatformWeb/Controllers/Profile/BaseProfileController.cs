@@ -11,6 +11,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         where TProfile : class, IUserProfileEntity
         where TViewModel : class, IProfileViewModel
     {
+        [Route("profile")]
         public async Task<IActionResult> Profile()
         {
             var viewModel = await GetProfileViewModel();
@@ -20,7 +21,7 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async virtual Task<IActionResult> Profile(TViewModel userViewModel)
+        public async virtual Task<IActionResult> Update(TViewModel userViewModel)
         {
             if (ModelState.IsValid)
             {

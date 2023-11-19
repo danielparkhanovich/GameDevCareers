@@ -97,7 +97,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             if (!(await userManager.IsExistsWithEmailAsync(user.Email)))
             {
                 string password = passwordGenerator.GeneratePassword();
-                await registrationService.TryRegisterAsync(user.Email, password);
+                await registrationService.TryRegisterAsync(user, password);
             }
             return await loginService.ForceLoginAsync(user.Email, httpContext);
         }

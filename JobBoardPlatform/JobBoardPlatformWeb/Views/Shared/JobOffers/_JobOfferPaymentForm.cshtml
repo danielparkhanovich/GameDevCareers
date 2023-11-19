@@ -5,6 +5,7 @@
 @model OfferPaymentFormViewModel
 @{
     string editOfferController = ControllerUtils.GetControllerName(typeof(CompanyOfferEditorController));
+    string editOfferAction = nameof(CompanyOfferEditorController.Edit);
 
     string formattedCompanyName = Regex.Replace(Model.OfferCard.Company, @"\s+", "-").ToLower();
     string formattedOfferTitle = Regex.Replace(Model.OfferCard.JobTitle, @"\s+", "-").ToLower();
@@ -26,7 +27,7 @@
                 </div>
             </div>
             <div class="mt-2">
-                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="Editor" asp-controller="@editOfferController" asp-route-offerId="@Model.OfferId">
+                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="@editOfferAction" asp-controller="@editOfferController" asp-route-offerId="@Model.OfferId">
                     <i class="bi bi-arrow-left"></i>
                     Back to edit
                 </a>

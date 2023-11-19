@@ -1,6 +1,5 @@
 ﻿using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.PL.Controllers.Offer;
-using JobBoardPlatform.PL.Controllers.Register;
 using JobBoardPlatform.PL.Controllers.Presenters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -11,8 +10,7 @@ namespace JobBoardPlatform.PL.Filters
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (UserSessionUtils.IsLoggedIn(context.HttpContext.User) && 
-                UserRolesUtils.IsUserCompany(context.HttpContext.User))
+            if (UserRolesUtils.IsUserCompany(context.HttpContext.User))
             {
                 RedirectCompany(context);
             }

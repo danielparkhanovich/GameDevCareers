@@ -20,7 +20,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
     [Route("payment")]
     public class CompanyOfferPaymentController : Controller
     {
-        private readonly IOfferManager offerManager;
+        private readonly IOfferManager offersManager;
         private readonly IOfferPlanQueryExecutor plansQuery;
         private readonly IOfferQueryExecutor queryExecutor;
         private readonly IValidator<OfferData> validator;
@@ -28,13 +28,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
 
 
         public CompanyOfferPaymentController(
-            IOfferManager offerManager,
+            IOfferManager offersManager,
             IOfferPlanQueryExecutor plansQuery,
             IOfferQueryExecutor queryExecutor,
             IValidator<OfferData> validator,
             IPaymentInteractor paymentInteractor)
         {
-            this.offerManager = offerManager;
+            this.offersManager = offersManager;
             this.plansQuery = plansQuery;
             this.queryExecutor = queryExecutor;
             this.validator = validator;
@@ -50,10 +50,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 return RedirectToOffersPanel();
             }
 
-            TempData[CompanyOfferEditorController.NextActionTempData] = RouteData.Values["action"].ToString();
-            TempData[CompanyOfferEditorController.NextControllerTempData] = RouteData.Values["controller"].ToString();
-            TempData[CompanyOfferEditorController.OfferIdTempData] = RouteData.Values["offerId"].ToString();
-
             var viewModel = await GetViewModel(offer);
             return View(viewModel);
         }
@@ -61,6 +57,13 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("check-out-{offerId}")]
         public async Task<IActionResult> Checkout(int offerId)
         {
+            if (await plansQuery.IsFreePlan(offerId))
+            {
+                await plansQuery.RemoveFreeSlot(offerId);
+                await offersManager.PassPaymentAsync(offerId);
+                return RedirectToAction(nameof(Confirmation), new { offerId = offerId, checkoutSessionId = "free" });
+            }
+
             await paymentInteractor.ProcessCheckout(offerId);
             return new StatusCodeResult(303);
         }
@@ -68,16 +71,19 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         [Route("check-out-{offerId}/{checkoutSessionId}")]
         public async Task<IActionResult> Confirmation(int offerId, string checkoutSessionId)
         {
-            try
+            var offer = await offersManager.GetAsync(offerId);
+            if (!offer.IsPaid)
             {
-                await paymentInteractor.ConfirmCheckout(offerId, checkoutSessionId);
-            }
-            catch (StripeException)
-            {
-                RedirectToAction("Rejected", new { offerId = offerId });
+                try
+                {
+                    await paymentInteractor.ConfirmCheckout(offerId, checkoutSessionId);
+                }
+                catch (StripeException)
+                {
+                    return RedirectToAction(nameof(Rejected), new { offerId = offerId });
+                }
             }
 
-            var offer = await queryExecutor.GetOfferById(offerId);
             var viewModel = await GetViewModel(offer);
             return View(viewModel.OfferCard);
         }

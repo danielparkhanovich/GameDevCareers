@@ -39,14 +39,15 @@
                             </label>
                         </div>
                     }
-                    <span asp-validation-for="OfferDetails.PlanId" class="text-danger"></span>
                 </div>
+                <span asp-validation-for="OfferDetails.PlanId" class="text-danger"></span>
             }
             else
             {
                 int planId = Model.OfferDetails.PlanId;
                 var plan = availablePlans.Plans[planId - 1];
                 <div class="d-flex flex-row align-content-center ">
+                    <input asp-for="OfferDetails.PlanId" type="hidden" value="@Model.OfferDetails.PlanId">
                     @plan.OfferType
                     @if (plan.AvailableFreeSlots > 0)
                     {
@@ -171,7 +172,7 @@
                     <option value="0" selected>Select contact form <span class="text-danger">*</span></option>
                     <option value="1">Email</option>
                     <option value="2">External form</option>
-                    <option value="3">GameDev.Hunt</option>
+                    <option value="3">@GlobalPL.Configuration.ApplicationName ATS</option>
                 </select>
                 <span asp-validation-for="OfferDetails.ApplicationsContactType" class="text-danger mb-3"></span>
             </div>
