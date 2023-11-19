@@ -20,8 +20,8 @@ namespace JobBoardPlatform.BLL.Commands.Offer
             var offer = await offersRepository.Get(offerId);
             offer.IsPaid = true;
             offer.IsPublished = true;
-            offer.PublishedAt = DateTime.Now;
-            offer.RefreshedOnPageAt = DateTime.Now;
+            offer.PublishedAt = DateTime.UtcNow;
+            offer.RefreshedOnPageAt = DateTime.UtcNow;
             await offersRepository.Update(offer);
         }
     }

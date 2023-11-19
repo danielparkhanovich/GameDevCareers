@@ -7,6 +7,7 @@
     ViewData["Title"] = $"{Model.OfferCard.JobTitle} applications";
 
     string editOfferController = ControllerUtils.GetControllerName(typeof(CompanyOfferEditorController));
+    string editOfferAction = nameof(CompanyOfferEditorController.Edit);
 
     var offerCard = Model.OfferCard;
     var applicationCards = Model.Applications;
@@ -33,7 +34,7 @@
                 </div>
             </div>
             <div class="d-flex flex-row align-items-center mt-2">
-                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="Editor" asp-controller="@editOfferController" asp-route-offerId="@offerCard.Id">
+                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="@editOfferAction" asp-controller="@editOfferController" asp-route-offerId="@Model.OfferCard.Id">
                     <i class="bi bi-arrow-left"></i>
                     Back to edit
                 </a>
