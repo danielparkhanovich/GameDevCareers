@@ -3,6 +3,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Authorization.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Login;
 using JobBoardPlatform.BLL.Services.Session;
+using JobBoardPlatform.DAL.Models.Admin;
 using JobBoardPlatform.PL.Requirements;
 using Microsoft.AspNetCore.Authorization;
 
@@ -17,6 +18,8 @@ namespace JobBoardPlatform.PL.Configuration
                 AddAuthorizationPolicies(options);
             });
 
+            services.AddTransient<AuthorizationServiceCore>();
+            services.AddTransient<ILoginService<AdminIdentity>, AdminLoginService>();
             services.AddTransient(typeof(IAuthorizationService<,>), typeof(AuthorizationService<,>));
             services.AddTransient(typeof(IUserSessionService<,>), typeof(UserSessionService<,>));
             services.AddTransient(typeof(ILoginService<,>), typeof(LoginService<,>));

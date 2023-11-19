@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using JobBoardPlatform.DAL.Options;
-using Microsoft.Extensions.Options;
 using JobBoardPlatform.DAL.Repositories.Models;
 using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Models.Company;
@@ -10,10 +8,12 @@ using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
 using JobBoardPlatform.PL.ViewModels.Factories.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.BLL.Services.Session;
+using Microsoft.AspNetCore.Components;
 
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
     [Authorize(Policy = AuthorizationPolicies.CompanyOnlyPolicy)]
+    [Route("company")]
     public class CompanyProfileController : BaseProfileController<CompanyProfile, CompanyProfileViewModel>
     {
         private readonly IRepository<CompanyProfile> profileRepository;

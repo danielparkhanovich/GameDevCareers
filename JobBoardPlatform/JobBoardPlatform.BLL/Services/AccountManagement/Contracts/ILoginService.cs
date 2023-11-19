@@ -8,4 +8,9 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Contracts
         Task<T> TryLoginAsync(string email, string password, HttpContext httpContext);
         Task<T> ForceLoginAsync(string email, HttpContext httpContext);
     }
+
+    public interface ILoginService<T> where T : class, IUserIdentityEntity
+    {
+        Task<T> TryLoginAsync(string email, string password, HttpContext httpContext);
+    }
 }

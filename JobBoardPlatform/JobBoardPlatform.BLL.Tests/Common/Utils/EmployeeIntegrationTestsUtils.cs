@@ -9,7 +9,6 @@ using JobBoardPlatform.DAL.Repositories.Blob;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Blob.Metadata;
 using JobBoardPlatform.DAL.Repositories.Models;
-using JobBoardPlatform.IntegrationTests.Common.Mocks.DataStructures;
 using JobBoardPlatform.IntegrationTests.Common.TestFiles;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +22,6 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
         private readonly IUserProfileImagesStorage imageStorage;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsManager applicationsManager;
-        private readonly IEmailContent<JobOfferApplication> applicationEmailRenderer;
 
 
         public EmployeeIntegrationTestsUtils(IServiceProvider serviceProvider)
@@ -34,7 +32,6 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             imageStorage = serviceProvider.GetService<IUserProfileImagesStorage>()!;
             profileResumeStorage = serviceProvider.GetService<IProfileResumeBlobStorage>()!;
             applicationsManager = serviceProvider.GetService<IApplicationsManager>()!;
-            applicationEmailRenderer = serviceProvider.GetService<IEmailContent<JobOfferApplication>>()!;
         }
 
         public string GetUserExampleEmail(int userId = 1)
@@ -154,7 +151,7 @@ namespace JobBoardPlatform.IntegrationTests.Common.Utils
             }
 
             var applicationForm = GetApplicationForm(email, offerId, resumeUrl);
-            await applicationsManager.PostApplicationFormAsync(offerId, profileId, applicationForm, applicationEmailRenderer);
+            await applicationsManager.PostApplicationFormAsync(offerId, profileId, applicationForm, false);
         }
 
         public async Task SetUsersResumeInProfile(int usersCount)

@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
 {
-    public class RestorePasswordService<TEntity, TProfile> : IResetPasswordService<TEntity, TProfile>
+    public class ResetPasswordService<TEntity, TProfile> : IResetPasswordService<TEntity, TProfile>
         where TEntity : class, IUserIdentityEntity
         where TProfile : class, IUserProfileEntity
     {
-        private readonly IEmailSender emailSender;
+        private readonly IResetPasswordEmailSender emailSender;
         private readonly IRestorePasswordTokensService tokensService;
         private readonly IConfirmationLinkFactory linkFactory;
         private readonly UserManager<TEntity> userManager;
@@ -23,8 +23,8 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
         private readonly IAuthorizationService<TEntity, TProfile> authorizationService;
 
 
-        public RestorePasswordService(
-            IEmailSender emailSender,
+        public ResetPasswordService(
+            IResetPasswordEmailSender emailSender,
             IRestorePasswordTokensService tokensService,
             IConfirmationLinkFactory linkFactory,
             UserManager<TEntity> userManager,
@@ -47,7 +47,7 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
             }
 
             var token = await tokensService.RegisterNewTokenAsync(email);
-            await emailSender.SendEmailAsync(email, "Restore password", GetConfirmationUrl(token.Id));
+            await emailSender.SendEmailAsync(email, GetConfirmationUrl(token.Id));
         }
 
         public async Task TryChangePasswordByTokenAsync(string tokenId, string newPassword, HttpContext httpContext)

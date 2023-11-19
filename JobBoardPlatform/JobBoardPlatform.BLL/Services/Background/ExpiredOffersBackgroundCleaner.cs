@@ -24,7 +24,7 @@ namespace JobBoardPlatform.BLL.Services.Background
             while (!stoppingToken.IsCancellationRequested)
             {
                 await TrySetOffersExpirationState();
-                await Task.Delay(TimeSpan.FromDays(CheckDelayTimeInDays), stoppingToken);
+                await Task.Delay(TimeSpan.FromDays(CheckDelayTimeInDays));
             }
         }
 

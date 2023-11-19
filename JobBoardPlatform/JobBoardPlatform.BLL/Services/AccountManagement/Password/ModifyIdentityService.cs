@@ -41,6 +41,11 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Password
         public async Task<IUserIdentityEntity> ForceChangePasswordAsync(string email, string password)
         {
             var user = await userManager.GetWithEmailAsync(email);
+            if (user == null)
+            {
+                throw new AuthenticationException(AuthenticationException.EmailNotFound);
+            }
+
             await UpdateUserPassword(user, password);
             return user;
         }

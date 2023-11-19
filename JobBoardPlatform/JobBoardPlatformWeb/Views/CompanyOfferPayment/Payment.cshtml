@@ -15,17 +15,17 @@
 
     <div class="card border-0 shadow-lg p-2">
 
-        <div class="card-body mb-2">
+        <div class="card-body">
             <!-- Notification -->
             <partial name="./Notifications/_ActionNotification" model="paymentNotification" />
 
             <!-- Payment form -->
             <partial name="./JobOffers/_JobOfferPaymentForm" for="@Model" />
-        </div>
 
-        <!-- Submit button -->
-        <div class="card-body">
-            <a asp-action="CheckOut" asp-route-offerId="@Model.OfferId" class="btn btn-primary btn-block">Check Out</a>
+            <!-- Submit button -->
+            <div class="card-body">
+                <a asp-action="CheckOut" asp-route-offerId="@Model.OfferId" class="w-100 btn btn-success btn-block"><i class="bi bi-lock-fill"></i> Checkout</a>
+            </div>
         </div>
     </div>
 </div>

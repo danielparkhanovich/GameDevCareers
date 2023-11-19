@@ -16,6 +16,7 @@ using FluentValidation;
 using JobBoardPlatform.PL.Aspects.DataValidators;
 using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.BLL.Commands.Offer;
+using JobBoardPlatform.PL.Interactors.Notifications;
 
 namespace JobBoardPlatform.PL.Controllers.Offer
 {
@@ -30,7 +31,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
         private readonly IProfileResumeBlobStorage resumeStorage;
         private readonly IOfferActionHandlerFactory actionHandlerFactory;
         private readonly IValidator<OfferApplicationUpdateViewModel> applicationFormValidator;
-        private readonly ApplicationEmailViewRenderer viewRenderService;
+        private readonly IViewRenderService viewRenderService;
 
 
         public OfferContentController(
@@ -42,7 +43,7 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             IOfferActionHandlerFactory actionHandlerFactory,
             IProfileResumeBlobStorage resumeStorage,
             IValidator<OfferApplicationUpdateViewModel> applicationFormValidator,
-            ApplicationEmailViewRenderer viewRenderService)
+            IViewRenderService viewRenderService)
         {
             this.applicationsManager = applicationsManager;
             this.offerManager = offerManager;
@@ -64,7 +65,6 @@ namespace JobBoardPlatform.PL.Controllers.Offer
             await TryFillApplicationForm(content);
             await TryIncreaseViewsCount(id);
 
-            // save original id (for safety reasons need to add encryption)
             content.Update.OfferId = id;
 
             return View(content);
@@ -85,14 +85,22 @@ namespace JobBoardPlatform.PL.Controllers.Offer
                 if (!actionsHandler.IsActionDoneRecently(Request))
                 {
                     await applicationsManager.PostApplicationFormAsync(
-                        offerId, TryGetUserProfileId(), content.Update, viewRenderService);
+                        offerId, TryGetUserProfileId(), content.Update);
 
                     actionsHandler.RegisterAction(Request, Response);
                 }
+                NotificationsManager.Instance.SetSuccessNotification(
+                    NotificationsManager.PostApplicationSection,
+                    $"Your resume has been submitted successfully!",
+                    TempData);
             }
             else
             {
                 result.AddToModelState(this.ModelState, nameof(content.Update));
+                NotificationsManager.Instance.SetErrorNotification(
+                    NotificationsManager.PostApplicationSection,
+                    $"Something went wrong.",
+                    TempData);
             }
 
             content.Display = await GetOfferContentDisplayViewModel(content.Update.OfferId);

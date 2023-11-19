@@ -17,6 +17,7 @@ using JobBoardPlatform.BLL.Commands.Identity;
 namespace JobBoardPlatform.PL.Controllers.Profile
 {
     [Authorize(Policy = AuthorizationPolicies.EmployeeOnlyPolicy)]
+    [Route("employee")]
     public class EmployeeProfileController : BaseProfileController<EmployeeProfile, EmployeeProfileViewModel>
     {
         private readonly UserManager<EmployeeIdentity> userManager;
@@ -39,9 +40,9 @@ namespace JobBoardPlatform.PL.Controllers.Profile
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public override async Task<IActionResult> Profile(EmployeeProfileViewModel userViewModel)
+        public override async Task<IActionResult> Update(EmployeeProfileViewModel userViewModel)
         {
-            return await base.Profile(userViewModel);
+            return await base.Update(userViewModel);
         }
 
         public async Task<IActionResult> DeleteResume()
@@ -75,6 +76,11 @@ namespace JobBoardPlatform.PL.Controllers.Profile
         protected override async Task UpdateProfile(EmployeeProfileViewModel viewModel)
         {
             int id = UserSessionUtils.GetIdentityId(User);
+
+            if (viewModel.AttachedResume != null)
+            {
+                viewModel.File = viewModel.AttachedResume.File;
+            }
             await userManager.UpdateProfileAsync(id, viewModel);
             await userSession.UpdateSessionStateAsync(HttpContext);
         }

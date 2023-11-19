@@ -2,9 +2,11 @@
 using JobBoardPlatform.BLL.Services.Authentification.Authorization;
 using JobBoardPlatform.DAL.Models.Contracts;
 using JobBoardPlatform.DAL.Repositories.Models;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.Controllers.Templates;
 using JobBoardPlatform.PL.ViewModels.Models.Admin;
 using JobBoardPlatform.PL.ViewModels.Models.Templates;
+using JobBoardPlatformWeb.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,12 +33,14 @@ namespace JobBoardPlatform.PL.Controllers.Profile
             return View(viewModel);
         }
 
-        [HttpPost("LogInto")]
+        [Route("loginto/{userId}")]
         public async Task<IActionResult> LogInto(int userId)
         {
             var logIntoCommand = GetLogIntoCommand(userId);
             await logIntoCommand.Execute();
-            return RedirectToAction("Home");
+            return RedirectToAction(
+                nameof(HomeController.Index), 
+                ControllerUtils.GetControllerName(typeof(HomeController)));
         }
 
         [HttpPost("Delete")]

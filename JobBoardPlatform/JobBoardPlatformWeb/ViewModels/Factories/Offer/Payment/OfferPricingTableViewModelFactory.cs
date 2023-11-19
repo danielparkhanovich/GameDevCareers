@@ -41,7 +41,6 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
             return new List<string>()
             {
                 "Number of publication days",
-                "Number of locations",
                 "Automatic bump-ups",
                 "Ability to redirect applications",
                 "Publish in category",
@@ -77,7 +76,6 @@ namespace JobBoardPlatform.PL.ViewModels.Factories.Offer.Payment
             to.FeatureValues = new List<string>()
             {
                 $"{from.PublicationDaysCount} days",
-                $"{from.EmploymentLocationsCount} locations",
                 $"{from.OfferRefreshesCount} bump-ups",
                 $"{GetOptionIsInludedOrNotHtml(from.IsAbleToRedirectApplications)}",
                 $"{from.Category.Type}"

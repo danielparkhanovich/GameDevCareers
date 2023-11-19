@@ -8,6 +8,7 @@ namespace JobBoardPlatform.PL.Controllers.Presenters
     public class ViewRenderService : IViewRenderService
     {
         private readonly ICompositeViewEngine viewEngine;
+        private Controller controller;
 
 
         public ViewRenderService(ICompositeViewEngine viewEngine)
@@ -15,7 +16,12 @@ namespace JobBoardPlatform.PL.Controllers.Presenters
             this.viewEngine = viewEngine;
         }
 
-        public async Task<string> RenderPartialViewToString(Controller controller, string viewName, object model)
+        public void SetController(Controller controller)
+        {
+            this.controller = controller;
+        }
+
+        public async Task<string> RenderPartialViewToString(string viewName, object model)
         {
             if (string.IsNullOrEmpty(viewName))
                 viewName = controller.ControllerContext.ActionDescriptor.ActionName;

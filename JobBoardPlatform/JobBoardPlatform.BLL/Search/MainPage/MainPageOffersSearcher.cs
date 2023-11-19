@@ -1,10 +1,13 @@
-﻿using JobBoardPlatform.BLL.Search.Enums;
+﻿using Azure.Core;
+using JobBoardPlatform.BLL.Search.Enums;
 using JobBoardPlatform.BLL.Search.Templates;
 using JobBoardPlatform.DAL.Data.Loaders;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Models.Enums;
 using JobBoardPlatform.DAL.Repositories.Models;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace JobBoardPlatform.BLL.Search.MainPage
 {
@@ -82,24 +85,24 @@ namespace JobBoardPlatform.BLL.Search.MainPage
 
             available = available.Include(offer => offer.CompanyProfile)
                 .Include(offer => offer.MainTechnologyType)
-                .Include(offer => offer.TechKeywords);
+                .Include(offer => offer.TechKeywords)
+                .Include(offer => offer.WorkLocation);
 
-            // ranking + filtering
-            // TODO: integrate Elasticsearch instead (SQL to store, Elasticsearch for queries)
-            available = available
-                .Select(x => new
-                {
-                    Offer = x,
-                    Score = (keywordsTokens.Any(token => x.JobTitle == token) ? 8 : 0) +
-                            // (keywordsTokens.Count(token => x.TechKeywords.Any(y => y.Name == token)) * 3) +
-                            (keywordsTokens.Any(token => x.MainTechnologyType.Type == token) ? 4 : 0) +
-                            (keywordsTokens.Any(token => x.Country == token) ? 3 : 0) +
-                            (keywordsTokens.Any(token => x.City == token) ? 2 : 0) +
-                            (keywordsTokens.Any(token => x.CompanyProfile.CompanyName == token) ? 1 : 0)
-                })
-                .Where(x => x.Score > 0)
-                .OrderByDescending(x => x.Score)
-                .Select(x => x.Offer);
+            var predicate = PredicateBuilder.New<JobOffer>(false);
+
+            foreach (var keyword in keywordsTokens)
+            {
+                predicate = predicate.Or(e =>
+                    EF.Functions.Like(e.JobTitle, $"%{keyword}%") ||
+                    EF.Functions.Like(e.CompanyProfile.CompanyName, $"%{keyword}%") ||
+                    EF.Functions.Like(e.WorkLocation.Type, $"%{keyword}%") ||
+                    EF.Functions.Like(e.City, $"%{keyword}%") ||
+                    EF.Functions.Like(e.Country, $"%{keyword}%") ||
+                    EF.Functions.Like(e.MainTechnologyType.Type, $"%{keyword}%") ||
+                    e.TechKeywords.Any(t => EF.Functions.Like(t.Name, $"%{keyword}%")));
+            }
+
+            available = available.Where(predicate);
 
             return available;
         }

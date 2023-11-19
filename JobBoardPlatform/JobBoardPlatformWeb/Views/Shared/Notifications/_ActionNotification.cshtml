@@ -3,7 +3,22 @@
 
 @if (Model != null)
 {
-    <div class="small alert alert-dismissible @(Model.Type == NotificationType.ActionDone ? "alert-primary" : "alert-danger")">
-        <i class="@(Model.Type == NotificationType.ActionDone ? "bi bi-envelope" : "bi bi-exclamation-diamond-fill") me-1"></i> @Model.Text
-    </div>
+    @if (Model.Type == NotificationType.ActionDoneEmail)
+    {
+        <div class="small alert alert-dismissible alert-primary">
+            <i class="bi bi-envelope me-1"></i> @Model.Text
+        </div>
+    }
+    else if (Model.Type == NotificationType.Success)
+    {
+        <div class="small alert alert-dismissible alert-success">
+            <i class="bi bi-check-all me-1"></i> @Model.Text
+        </div>
+    }
+    else if (Model.Type == NotificationType.Error)
+    {
+        <div class="small alert alert-dismissible alert-danger">
+            <i class="bi bi-exclamation-diamond-fill me-1"></i> @Model.Text
+        </div>
+    }
 }

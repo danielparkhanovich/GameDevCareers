@@ -1,6 +1,4 @@
-﻿using JobBoardPlatform.BLL.Services.Session;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace JobBoardPlatform.BLL.Services.Authentification.Authorization
 {

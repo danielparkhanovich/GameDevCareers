@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+JobBoardPlatform/JobBoardPlatformWeb/appsettings.Test.json
+JobBoardPlatform/JobBoardPlatformWeb/appsettings.Production.json
+JobBoardPlatform/JobBoardPlatformWeb/appsettings.Development.json
+JobBoardPlatform/JobBoardPlatformWeb/Properties/serviceDependencies.game-dev-careers - Web Deploy.json
+JobBoardPlatform/JobBoardPlatformWeb/Properties/serviceDependencies.json
+JobBoardPlatform/JobBoardPlatformWeb/Properties/ServiceDependencies/game-dev-careers - Web Deploy/mssql1.arm.json
+JobBoardPlatform/JobBoardPlatformWeb/Properties/ServiceDependencies/game-dev-careers - Web Deploy/profile.arm.json
+JobBoardPlatform/JobBoardPlatformWeb/Scripts/InitialCreate.sql

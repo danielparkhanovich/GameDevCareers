@@ -17,8 +17,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         private readonly int offerId;
         private readonly int? userProfileId;
 
-        private readonly IEmailContent<JobOfferApplication> emailContent;
-        private readonly IEmailSender emailSender;
+        private readonly IApplicationsEmailSender emailSender;
 
 
         public PostApplicationFormCommand(
@@ -29,8 +28,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             ApplicationForm form,
             int offerId,
             int? userProfileId,
-            IEmailContent<JobOfferApplication> emailContent,
-            IEmailSender emailSender)
+            IApplicationsEmailSender emailSender)
         {
             this.applicationsRepository = applicationsRepository;
             this.offersRepository = offersRepository;
@@ -39,7 +37,6 @@ namespace JobBoardPlatform.BLL.Commands.Application
             this.form = form;
             this.offerId = offerId;
             this.userProfileId = userProfileId;
-            this.emailContent = emailContent;
             this.emailSender = emailSender;
         }
 
@@ -91,16 +88,14 @@ namespace JobBoardPlatform.BLL.Commands.Application
 
         private async Task TrySendEmail(JobOfferApplication application, JobOffer offer)
         {
-            if (emailContent == null)
+            if (emailSender == null)
             {
                 return;
             }
 
             if (offer.ContactDetails.ContactTypeId == ((int)ContactTypeEnum.Mail + 1))
             {
-                var subject = await emailContent.GetSubjectAsync(application);
-                var message = await emailContent.GetMessageAsync(application);
-                await emailSender.SendEmailAsync(offer.ContactDetails.ContactAddress!, subject, message);
+                await emailSender.SendEmailAsync(offer.ContactDetails.ContactAddress!, application);
             }
         }
     }

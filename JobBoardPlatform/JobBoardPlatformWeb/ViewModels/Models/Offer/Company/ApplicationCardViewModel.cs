@@ -5,7 +5,6 @@ namespace JobBoardPlatform.PL.ViewModels.Models.Offer.Company
     public class ApplicationCardViewModel : IContainerCard
     {
         public string PartialView => "./JobOffers/_ApplicationCard";
-        public string EmailView => "./Email/_ApplicationForm";
 
 
         public int Id { get; set; }

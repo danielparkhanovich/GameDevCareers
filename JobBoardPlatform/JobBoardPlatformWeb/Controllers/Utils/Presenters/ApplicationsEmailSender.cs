@@ -1,38 +1,43 @@
-﻿using JobBoardPlatform.BLL.DTOs;
-using JobBoardPlatform.BLL.Commands.Offer;
+﻿using JobBoardPlatform.BLL.Commands.Offer;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.ViewModels.Middleware.Factories.Applications;
 using JobBoardPlatform.PL.ViewModels.Models.Email;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
-using Microsoft.AspNetCore.Mvc;
+using JobBoardPlatform.BLL.Services.IdentityVerification.Contracts;
 
 namespace JobBoardPlatform.PL.Controllers.Presenters
 {
-    public class ApplicationEmailViewRenderer : IEmailContent<JobOfferApplication>
+    public class ApplicationsEmailSender : IApplicationsEmailSender
     {
         private readonly IViewRenderService viewRenderService;
+        private readonly IEmailSender emailSender;
         private readonly IOfferManager offerManager;
-        private Controller? controller;
 
 
-        public ApplicationEmailViewRenderer(IViewRenderService viewRenderService, IOfferManager offerManager)
+        public ApplicationsEmailSender(
+            IViewRenderService viewRenderService, 
+            IEmailSender emailSender,
+            IOfferManager offerManager)
         {
             this.viewRenderService = viewRenderService;
+            this.emailSender = emailSender;
             this.offerManager = offerManager;
         }
 
-        public void SetController(Controller controller)
+        public async Task SendEmailAsync(string targetEmail, JobOfferApplication application)
         {
-            this.controller = controller;
+            var subject = await GetSubjectAsync(application);
+            var message = await GetMessageAsync(application);
+            await emailSender.SendEmailAsync(targetEmail, subject, message);
         }
 
-        public async Task<string> GetSubjectAsync(JobOfferApplication application)
+        private async Task<string> GetSubjectAsync(JobOfferApplication application)
         {
             var offer = await offerManager.GetAsync(application.JobOfferId);
             return $"New Job Application - {offer.JobTitle} at {offer.CompanyProfile.CompanyName}";
         }
 
-        public async Task<string> GetMessageAsync(JobOfferApplication application)
+        private async Task<string> GetMessageAsync(JobOfferApplication application)
         {
             var offer = await offerManager.GetAsync(application.JobOfferId);
 
@@ -44,8 +49,7 @@ namespace JobBoardPlatform.PL.Controllers.Presenters
                 Application = (cardFactory.CreateCard(application) as ApplicationCardViewModel)!
             };
 
-            var emailHtml = await viewRenderService.RenderPartialViewToString(
-                controller!, model.Application.EmailView, model);
+            var emailHtml = await viewRenderService.RenderPartialViewToString(ApplicationEmailViewModel.EmailView, model);
             return emailHtml;
         }
     }

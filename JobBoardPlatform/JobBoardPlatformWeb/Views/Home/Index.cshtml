@@ -1,5 +1,6 @@
 ﻿@using JobBoardPlatform.BLL.Search.Enums;
 @using JobBoardPlatform.BLL.Search;
+@using JobBoardPlatform.PL.Controllers.Presenters;
 @using JobBoardPlatform.PL.ViewModels.Models.Templates;
 
 @model OffersMainPageViewModel
@@ -8,68 +9,91 @@
 
     var offers = Model.OffersContainer;
     var search = Model.OfferSearchData;
+
+    var backgroundImgPath = StaticFilesUtils.PathToHomePageBackground;
 }
 
-<div class="container px-5 pt-4">
-    <div class="d-flex flex-column px-5">
-        <div class="mb-3">
-            <div>
-                <div class="input-group mb-3 p-4 m-4 bg-dark bg-opacity-10">
-                    <input id="searchField" type="text" class="form-control px-3 border-start-0" placeholder="Search e.g. skill, location, company" value="@search.SearchString">
-                    <button class="btn btn-primary" type="button"
-                            onclick="searchWithKeywords();">
-                        <i class="bi bi-search px-2"></i>
-                    </button>
+<div>
+    <div class="background-image-container" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 300px; /* Set your desired height */
+        background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(@backgroundImgPath);
+        background-position: 0px -350px;
+        background-size: cover;
+        z-index: 0;
+      "></div>
+    <div class="container-fluid px-5 pt-4">
+        <div class="d-flex flex-column px-5">
+            <div class="mb-3">
+                <div class="d-flex justify-items-center">
+                    <div class="input-group mb-3 p-4 m-4 bg-dark bg-opacity-10">
+                        <input id="searchField" type="text" class="border-0 form-control px-3 border-start-0" placeholder="Search e.g. skill, location, company" value="@search.SearchString">
+                        
+                        <button id="clearSearchButton" class="px-3 border-0 bg-white @(!string.IsNullOrEmpty(search.SearchString) ? "d-flex" : "d-none") align-items-center"
+                                onclick="searchWithKeywords('');">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+
+                        <button class="btn btn-primary" type="button"
+                                onclick="searchWithKeywords();">
+                            <i class="bi bi-search px-2"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center align-content-center">
+                    <div class="d-flex btn-group bg-dark bg-opacity-10">
+                        @await Html.PartialAsync("./JobOffers/_MainTechnologiesWidgets", Model)
+                    </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-center align-content-center">
-                @await Html.PartialAsync("./JobOffers/_MainTechnologiesWidgets", Model)
-            </div>
-        </div>
 
-        <div class="d-flex flex-row px-4">
-            <ul class="nav nav-tabs flex-grow-1 border-0">
-                <li class="nav-item bg-transparent">
-                    <a class="nav-link bg-transparent @(search.Type == OfferType.Employment ? "active" : string.Empty)"
-                       href="@Url.Action("Index", new { area = "", route = "", category = OfferType.Employment.ToString().ToLower() })">
-                        Employment
-                        @if (search.Type == OfferType.Employment)
-                        {
-                            <small id="recordsCount" class="ms-3">
-                                @Model.OffersContainer.RecordsCount offers
-                            </small>
-                        }
-                    </a>
-                </li>
-                <li class="nav-item bg-transparent px-5">
-                    <a class="nav-link bg-transparent @(search.Type == OfferType.Commission ? "active" : string.Empty)"
-                       href="@Url.Action("Index", new { area = "", route = "", category = OfferType.Commission.ToString().ToLower() })">
-                       Commissions
-                        @if (search.Type == OfferType.Commission)
-                        {
-                            <small id="recordsCount" class="ms-3">
-                                @Model.OffersContainer.RecordsCount offers
-                            </small>
-                        }
-                   </a>
-                </li>
-            </ul>
-            <div class="form-check form-switch align-self-center mx-4">
-                <label class="form-check-label" for="remoteSwitchBox")>Remote</label>
-                <input class="form-check-input" type="checkbox" id="remoteSwitchBox" style="transform: scale(1.25);"
-                       onchange="@($"toggleFilter('{OfferSearchUrlParams.RemoteOnly}', this);")" @(search.IsRemoteOnly ? "checked" : string.Empty)>
+            <div class="d-flex flex-row px-4">
+                <ul class="nav nav-tabs flex-grow-1 border-0">
+                    <li class="nav-item bg-transparent">
+                        <a class="nav-link bg-transparent @(search.Type == OfferType.Employment ? "active" : string.Empty)"
+                           href="@Url.Action("Index", new { area = "", route = "", category = OfferType.Employment.ToString().ToLower() })">
+                            Employment
+                            @if (search.Type == OfferType.Employment)
+                            {
+                                <small id="recordsCount" class="ms-3">
+                                    @Model.OffersContainer.RecordsCount offers
+                                </small>
+                            }
+                        </a>
+                    </li>
+                    <li class="nav-item bg-transparent px-5">
+                        <a class="nav-link bg-transparent @(search.Type == OfferType.Commission ? "active" : string.Empty)"
+                           href="@Url.Action("Index", new { area = "", route = "", category = OfferType.Commission.ToString().ToLower() })">
+                            Commissions
+                            @if (search.Type == OfferType.Commission)
+                            {
+                                <small id="recordsCount" class="ms-3">
+                                    @Model.OffersContainer.RecordsCount offers
+                                </small>
+                            }
+                        </a>
+                    </li>
+                </ul>
+                <div class="form-check form-switch align-self-center mx-4">
+                    <label class="form-check-label" for="remoteSwitchBox" )>Remote</label>
+                    <input class="form-check-input" type="checkbox" id="remoteSwitchBox" style="transform: scale(1.25);"
+                           onchange="@($"toggleFilter('{OfferSearchUrlParams.RemoteOnly}', this);")" @(search.IsRemoteOnly ? "checked" : string.Empty)>
+                </div>
+                <div class="form-check form-switch align-self-center">
+                    <label class="form-check-label" for="withSalarySwitchBox">With salary</label>
+                    <input class="form-check-input" type="checkbox" id="withSalarySwitchBox" style="transform: scale(1.25);"
+                           onchange="@($"toggleFilter('{OfferSearchUrlParams.SalaryOnly}', this);")" @(search.IsSalaryOnly ? "checked" : string.Empty)>
+                </div>
             </div>
-            <div class="form-check form-switch align-self-center">
-                <label class="form-check-label" for="withSalarySwitchBox">With salary</label>
-                <input class="form-check-input" type="checkbox" id="withSalarySwitchBox" style="transform: scale(1.25);"
-                       onchange="@($"toggleFilter('{OfferSearchUrlParams.SalaryOnly}', this);")" @(search.IsSalaryOnly ? "checked" : string.Empty)>
+
+            <hr class="mt-0 mb-0">
+
+            <div id="cards-container">
+                @await Html.PartialAsync(CardsContainerViewModel.PartialView, offers)
             </div>
-        </div>
-
-        <hr class="mt-0 mb-0">
-
-        <div id="cards-container">
-            @await Html.PartialAsync(CardsContainerViewModel.PartialView, offers)
         </div>
     </div>
 </div>
@@ -99,13 +123,38 @@
         }
     }
 
-    function searchWithKeywords() {
+    $("#searchField").keyup(function (event) {
+        // Enter key
+        if (event.keyCode === 13) {
+            searchWithKeywords();
+        }
+    });
+
+    function searchWithKeywords(searchText = null) {
         const paramName = @Html.Raw(Json.Serialize(OfferSearchUrlParams.Search));
+
         var searchField = document.getElementById(searchFieldId);
-        const value = searchField.value;
+        let value = searchField.value;
+
+        if (searchText != null) 
+        { 
+            searchField.value = null;
+            value = searchText;
+        }
 
         updateQueryStringParameter(paramName, value);
         refreshCards(updateOffersCount);
+
+        var clearSearchButton = document.getElementById("clearSearchButton");
+        if (value == '' || value == null) {
+            clearSearchButton.classList.remove("d-flex");
+            clearSearchButton.classList.add("d-none");
+        }
+        else 
+        {
+            clearSearchButton.classList.add("d-flex");
+            clearSearchButton.classList.remove("d-none");
+        }
     }
 
     function switchMainTechnology(type) {

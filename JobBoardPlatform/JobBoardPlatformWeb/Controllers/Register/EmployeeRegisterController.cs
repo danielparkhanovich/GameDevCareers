@@ -3,6 +3,7 @@ using JobBoardPlatform.BLL.Services.Authentification.Contracts;
 using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
 using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.PL.Aspects.DataValidators;
+using JobBoardPlatform.PL.Controllers.Presenters;
 using JobBoardPlatform.PL.Interactors.Notifications;
 using JobBoardPlatform.PL.Interactors.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Authentification;
@@ -16,20 +17,25 @@ namespace JobBoardPlatform.PL.Controllers.Register
         private readonly IRegistrationInteractor<UserRegisterViewModel> registrationInteractor;
         private readonly ILoginService<CompanyIdentity, CompanyProfile> loginService;
         private readonly IValidator<UserRegisterViewModel> validator;
+        private readonly IViewRenderService viewRenderService;
 
 
         public EmployeeRegisterController(
             IRegistrationInteractor<UserRegisterViewModel> registrationInteractor,
             ILoginService<CompanyIdentity, CompanyProfile> loginService,
-            IValidator<UserRegisterViewModel> validator)
+            IValidator<UserRegisterViewModel> validator,
+            IViewRenderService viewRenderService)
         {
             this.registrationInteractor = registrationInteractor;
             this.loginService = loginService;
             this.validator = validator;
+            this.viewRenderService = viewRenderService;
         }
 
         public override async Task<IActionResult> Register(UserRegisterViewModel userRegister)
         {
+            viewRenderService.SetController(this);
+
             var result = await validator.ValidateAsync(userRegister);
             if (result.IsValid)
             {
@@ -68,7 +74,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
             try
             {
                 var redirect = await registrationInteractor.ProcessRegistrationAndRedirect(userRegister);
-                NotificationsManager.Instance.SetActionDoneNotification(
+                NotificationsManager.Instance.SetActionDoneEmailNotification(
                     NotificationsManager.RegisterSection, 
                     $"Check your email inbox {userRegister.Email} for a confirmation link to complete your registration.", 
                     TempData);

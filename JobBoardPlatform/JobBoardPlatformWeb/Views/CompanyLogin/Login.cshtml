@@ -1,7 +1,12 @@
-﻿
+﻿@using JobBoardPlatform.PL.Controllers.Presenters;
+@using JobBoardPlatform.PL.Controllers.Register;
+
 @model UserLoginViewModel
 @{
     ViewData["Title"] = "Sign in";
+
+    string registerController = ControllerUtils.GetControllerName(typeof(CompanyRegistrationWithOfferPublishController));
+    string registerAction = nameof(CompanyRegistrationWithOfferPublishController.RegisterPromotion);
 }
 
 <div class="d-flex flex-column aligns-items-center justify-content-center min-vh-100 mx-auto" style="max-width: 762px; margin-top: -56px;">
@@ -14,7 +19,9 @@
     <div class="col-md-12 text-center mt-2">
         <b>
             <label class="text-dark">Do you want to post a job?</label>
-            <a asp-controller="Home" asp-action="Register" class="text-primary" style="text-decoration: none;">Post job</a>
+            <a asp-controller="@registerController" asp-action="@registerAction" class="text-primary" style="text-decoration: none;">
+                Post job
+            </a>
         </b>
     </div>
 </div>

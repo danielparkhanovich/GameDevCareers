@@ -5,7 +5,6 @@ using JobBoardPlatform.DAL.Models.Company;
 using JobBoardPlatform.DAL.Repositories.Blob.AttachedResume;
 using JobBoardPlatform.DAL.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace JobBoardPlatform.BLL.Commands.Application
 {
@@ -15,7 +14,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
         private readonly IRepository<JobOfferApplication> applicationsRepository;
         private readonly IProfileResumeBlobStorage profileResumeStorage;
         private readonly IApplicationsResumeBlobStorage resumeStorage;
-        private readonly IEmailSender emailSender;
+        private readonly IApplicationsEmailSender emailSender;
 
 
         public ApplicationsManager(
@@ -23,7 +22,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
             IRepository<JobOfferApplication> applicationsRepository,
             IProfileResumeBlobStorage profileResumeStorage,
             IApplicationsResumeBlobStorage resumeStorage,
-            IEmailSender emailSender)
+            IApplicationsEmailSender emailSender)
         {
             this.offersRepository = offersRepository;
             this.applicationsRepository = applicationsRepository;
@@ -52,8 +51,14 @@ namespace JobBoardPlatform.BLL.Commands.Application
             int offerId, 
             int? userProfileId,
             ApplicationForm form,
-            IEmailContent<JobOfferApplication> emailContent)
+            bool isSendEmail = true)
         {
+            var sender = emailSender;
+            if (!isSendEmail)
+            {
+                sender = null;
+            }
+
             var command = new PostApplicationFormCommand(
                     applicationsRepository,
                     offersRepository,
@@ -62,8 +67,7 @@ namespace JobBoardPlatform.BLL.Commands.Application
                     form,
                     offerId,
                     userProfileId,
-                    emailContent,
-                    emailSender);
+                    sender);
             await command.Execute();
         }
 

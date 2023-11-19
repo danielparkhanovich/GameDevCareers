@@ -1,0 +1,19 @@
+﻿@using JobBoardPlatform.PL.ViewModels.Models.Email;
+
+@model RegistrationEmailViewModel
+
+<div>
+    <h2>Welcome to @(GlobalPL.Configuration.ApplicationName)!</h2> 
+    <br>
+    We're excited to have you on board. 
+    <br>
+    <br>
+    To get started, please verify your email by clicking: 
+    <br>
+    @Model.ConfirmationLink 
+    <br>
+    Explore and enjoy the benefits of our platform.
+    <br>
+    Best regards, <br>
+    @(GlobalPL.Configuration.ApplicationName)
+</div>

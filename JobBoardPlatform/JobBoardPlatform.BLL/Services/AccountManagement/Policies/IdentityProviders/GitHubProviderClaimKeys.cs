@@ -6,7 +6,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Authorization.IdentityP
     {
         public string Email => ClaimTypes.Email;
 
-        public string? Name => ClaimTypes.GivenName;
+        public string? Name => "urn:github:name";
 
         public string? Surname => ClaimTypes.Surname;
 

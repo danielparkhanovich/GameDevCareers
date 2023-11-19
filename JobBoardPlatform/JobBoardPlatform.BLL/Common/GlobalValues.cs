@@ -4,7 +4,7 @@
     {
         public class Values
         {
-            public static string TestEmail = "scanax2@gmail.com";
+            public static string TestEmail = "game.dev.careers.petproject@gmail.com";
         }
     }
 }

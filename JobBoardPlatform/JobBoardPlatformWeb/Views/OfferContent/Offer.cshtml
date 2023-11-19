@@ -1,4 +1,5 @@
 ﻿@using JobBoardPlatform.PL.Controllers.Presenters;
+@using JobBoardPlatform.PL.Interactors.Notifications;
 
 @model OfferContentViewModel
 @{
@@ -23,12 +24,19 @@
     bool isCustomConsentClause = !string.IsNullOrEmpty(offerDescription.CustomConsentClause);
 
     var application = Model.Update;
+
+    var postFormResult = NotificationsManager.Instance.TryGetNotification(
+        NotificationsManager.PostApplicationSection, TempData);
 }
 
 <div class="container px-5 py-5">
+
+    <!-- post application form notification -->
+    <partial name="./Notifications/_ActionNotification" model="postFormResult" />
+
     <div class="bg-opacity-75 rounded" style="background-image: linear-gradient(90deg, @(backgroundColorFromStr) 0%, @(backgroundColorToStr) 100%), url(@(backgroundImgPath));">
         <!-- go back button -->
-        <button class="btn btn-sm btn-secondary" onclick="javascript:window.history.back();">
+        <button class="btn btn-sm btn-secondary" onclick="goBack();">
             <i class="bi bi-arrow-left"></i>
         </button>
         <!-- header card content -->
@@ -122,7 +130,7 @@
                 Apply for this job
             </div>
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" id="application-form" enctype="multipart/form-data">
                     <input type="hidden" asp-for="Update.OfferId" value="@application.OfferId" style="display:none;" />
 
                     <div class="row gx-3 mb-3">
@@ -152,8 +160,8 @@
                             @{
                                 ViewData["IsPostFormOnChange"] = false;
                             }
-                            @await Html.PartialAsync("./Fields/_UploadCvField", Model)
-                            <span asp-validation-for="Update.AttachedResume" class="text-danger"></span>
+                            <partial name="./Fields/_UploadCvField" for="@Model.Update.AttachedResume" />
+                            <span asp-validation-for="Update.AttachedResume.File" class="text-danger"></span>
                         </div>
                     </div>
                     @if (isProcessingInFutureClause)
@@ -208,6 +216,23 @@
         </div>
     }
 </div>
+
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    function goBack() 
+    { 
+        if (window.location.href == document.referrer) {
+            window.history.go(-2);
+        }
+        else 
+        {
+            window.history.go(-1);
+        }
+    }
+</script>
 
 <!--Copy to clipboard .js-tooltip .js-copy-->
 @await Html.PartialAsync("./Templates/_CopyToClipboardTooltipScript")

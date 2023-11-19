@@ -14,7 +14,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 {
     public class EmailCompanyPublishOfferAndRegistrationService
     {
-        private readonly IEmailSender emailSender;
+        private readonly IRegistrationEmailSender emailSender;
         private readonly IRegistrationTokensService registrationTokensService;
         private readonly ConfirmationTokensService confirmationTokensService;
         private readonly DataTokensService<CompanyProfileAndNewOfferData> dataTokensService;
@@ -25,7 +25,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
 
         public EmailCompanyPublishOfferAndRegistrationService(
-            IEmailSender emailSender,
+            IRegistrationEmailSender emailSender,
             IRegistrationTokensService registrationTokensService,
             ConfirmationTokensService confirmationTokensService,
             DataTokensService<CompanyProfileAndNewOfferData> dataTokensService,
@@ -54,7 +54,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             var token = await registrationTokensService.RegisterNewTokenAsync(email, password);
 
             await confirmationTokensService.RegisterNewTokenAsync((token.Id, formDataTokenId));
-            await emailSender.SendEmailAsync(email, "Registration", GetConfirmationUrl(token.Id));
+            await emailSender.SendEmailAsync(email, GetConfirmationUrl(token.Id));
         }
 
         public async Task TryRegisterByTokenAsync(string tokenId, HttpContext httpContext)

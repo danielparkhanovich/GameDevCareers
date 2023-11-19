@@ -12,7 +12,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 {
     public class EmailCompanyRegistrationService : IEmailCompanyRegistrationService
     {
-        private readonly IEmailSender emailSender;
+        private readonly IRegistrationEmailSender emailSender;
         private readonly IRegistrationTokensService tokensService;
         private readonly IConfirmationLinkFactory linkFactory;
         private readonly IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService;
@@ -20,7 +20,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
 
 
         public EmailCompanyRegistrationService(
-            IEmailSender emailSender,
+            IRegistrationEmailSender emailSender,
             IRegistrationTokensService tokensService,
             IConfirmationLinkFactory linkFactory,
             IAuthorizationService<CompanyIdentity, CompanyProfile> authorizationService,
@@ -41,7 +41,7 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
             }
 
             var token = await tokensService.RegisterNewTokenAsync(email, password);
-            await emailSender.SendEmailAsync(email, "Registration", GetConfirmationUrl(token.Id));
+            await emailSender.SendEmailAsync(email, GetConfirmationUrl(token.Id));
         }
 
         public async Task TryRegisterByTokenAsync(string tokenId, HttpContext httpContext)

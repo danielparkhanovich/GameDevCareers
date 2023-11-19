@@ -9,6 +9,9 @@ using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
+using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
+using JobBoardPlatform.PL.Interactors.Notifications;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace JobBoardPlatform.PL.Interactors.Registration
 {
@@ -65,7 +68,16 @@ namespace JobBoardPlatform.PL.Interactors.Registration
             {
                 OfferDetails = postForm.OfferData
             };
-            viewModel.CompanyProfileData = postForm.CompanyProfileData;
+
+            viewModel.CompanyProfileData = new CompanyProfileViewModel()
+            {
+                CompanyName = postForm.CompanyProfileData.CompanyName,
+                OfficeCity = postForm.CompanyProfileData.OfficeCity,
+                CompanyWebsiteUrl = postForm.CompanyProfileData.CompanyWebsiteUrl,
+                OfficeCountry = postForm.CompanyProfileData.OfficeCountry,
+                OfficeStreet = postForm.CompanyProfileData.OfficeStreet,
+                ProfileImage = postForm.CompanyProfileData.ProfileImage,
+            };
 
             return viewModel;
         }
@@ -81,10 +93,25 @@ namespace JobBoardPlatform.PL.Interactors.Registration
         }
 
         public async Task<RedirectData> ProcessRegistrationAndRedirectAsync(
-            CompanyRegisterViewModel registrationData, string tokenId)
+            CompanyRegisterViewModel registrationData, string tokenId, ITempDataDictionary tempData)
         {
-            await registrationService.TrySendConfirmationTokenAsync(
-                registrationData.Email, registrationData.Password, tokenId);
+            try
+            {
+                await registrationService.TrySendConfirmationTokenAsync(
+                    registrationData.Email, registrationData.Password, tokenId);
+
+                NotificationsManager.Instance.SetActionDoneEmailNotification(
+                    NotificationsManager.RegisterSection,
+                    $"Check your email inbox {registrationData.Email} for a confirmation link to complete your registration.",
+                    tempData);
+            }
+            catch (AuthenticationException e)
+            {
+                NotificationsManager.Instance.SetErrorNotification(
+                    NotificationsManager.RegisterSection,
+                    $"Email is already registered.",
+                    tempData);
+            }
             return RedirectData.NoRedirect;
         }
 
@@ -95,10 +122,14 @@ namespace JobBoardPlatform.PL.Interactors.Registration
             return (await confirmationTokensService.TryGetTokenAsync(tokenId)).TokenToConfirmId;
         }
 
-        public async Task DeletePreviousSavedDataAsync(ProfileImage savedImage, string tokenId)
+        public async Task DeletePreviousSavedDataAsync(
+            CompanyPublishOfferAndRegisterViewModel registerData, 
+            string tokenId)
         {
             await DeleteSavedViewModelAsync(tokenId);
-            if (savedImage != null)
+
+            bool isNewImageAdded = registerData.CompanyProfileData.ProfileImage.File != null;
+            if (isNewImageAdded)
             {
                 await DeleteSavedImageAsync(tokenId);
             }

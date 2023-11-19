@@ -24,13 +24,6 @@
     <partial name="./Register/_CompanyRegistrationStageIndicator" model="@stage" />
 
     <div class="card border-0 shadow-lg p-2">
-        <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
-            <div></div>
-            <a class="btn btn-outline-primary" asp-action="StartPostOfferAndRegister" asp-route-planType="@planType" asp-route-formDataTokenId="@tokenId">
-                <i class="bi bi-arrow-left"></i>
-                Back
-            </a>
-        </div>
         @if (Model.IsTokenConfirmed)
         {
             <div class="card-body mb-2">
@@ -43,11 +36,18 @@
 
             <!-- Submit button -->
             <div class="card-body">
-                <a asp-action="CheckOut" asp-controller="CompanyOfferPayment" asp-route-offerId="@Model.PaymentForm.OfferCard.Id" class="btn btn-primary btn-block">Check Out</a>
+                <a asp-action="CheckOut" asp-controller="CompanyOfferPayment" asp-route-offerId="@Model.PaymentForm.OfferCard.Id" class="w-100 btn btn-success btn-block"><i class="bi bi-lock-fill"></i> Checkout</a>
             </div>
         }
         else
         {
+            <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
+                <div></div>
+                <a class="btn btn-outline-primary" asp-action="StartPostOfferAndRegister" asp-route-planType="@planType" asp-route-formDataTokenId="@tokenId">
+                    <i class="bi bi-arrow-left"></i>
+                    Back
+                </a>
+            </div>
             <div>
                 <div class="card-header border-bottom-0 bg-transparent d-flex align-items-center justify-content-between">
                     <strong>Sign up</strong>

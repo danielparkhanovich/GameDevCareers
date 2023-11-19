@@ -20,7 +20,7 @@
         applicationsUrl = $"{@Url.Action("Applications", "CompanyApplicationsPanel", new { offerId = offerId, page = 1 })}";
     }
 
-    string editOfferUrl = $"{@Url.Action(CompanyOfferEditorController.EditOfferAction, "CompanyOfferEditor", new { offerId = offerId })}";
+    string editOfferUrl = $"{@Url.Action(nameof(CompanyOfferEditorController.Edit), "CompanyOfferEditor", new { offerId = offerId })}";
     string paymentOfferUrl = $"{@Url.Action("Payment", "CompanyOfferPayment", new { offerId = offerId })}";
 
     string hideOfferUrl = $"{@Url.Action(OfferCardsControllerBase.ToggleVisibilityAction)}";

@@ -13,7 +13,7 @@
     int identityId = card.Id;
 
     string deleteUrl = $"{@Url.Action(nameof(AdminPanelCompaniesController.Delete))}";
-    string logIntoUrl = $"{@Url.Action(nameof(AdminPanelCompaniesController.LogInto))}";
+    string logIntoAction = nameof(AdminPanelCompaniesController.LogInto);
 
     bool isWebsite = !string.IsNullOrEmpty(card.CompanyWebsiteUrl);
     bool isOfficeLocation = !string.IsNullOrEmpty(card.City) && !string.IsNullOrEmpty(card.Country);
@@ -73,11 +73,10 @@
                         <small>modify</small>
                     </a>
                     <div class="dropdown-menu py-0">
-                        <button class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm"
-                                onclick="logIntoAccount(@Model.Id);">
+                        <a asp-action="@logIntoAction" asp-route-userId="@Model.Id" class="w-100 d-flex flex-row justify-content-between btn btn-outline-info btn-sm">
                                 <div>@("Log into account")</div>
                                 <i class="bi bi-door-open ms-1"></i>
-                        </button>
+                        </a>
                         <button class="w-100 d-flex flex-row justify-content-between btn btn-outline-danger btn-sm mt-1"
                                     onclick="deleteAccount(@Model.Id);">
                                 <div>@("Delete account")</div>
@@ -92,12 +91,6 @@
 </div>
 
 <script>
-    function logIntoAccount(cardId) {
-        const action = @Html.Raw(Json.Serialize(logIntoUrl));
-        const data = { userId: cardId };
-        sendRequestWithDataAndUpdateElement(action, cardId, data);
-    }
-
     function deleteAccount(cardId) {
         const action = @Html.Raw(Json.Serialize(deleteUrl));
         const data = { userId: cardId };
