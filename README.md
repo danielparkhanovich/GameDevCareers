@@ -1,4 +1,4 @@
-![plot](./images/screen.png)
+![plot](./images/screen1.png)
 # Game Dev Careers
 🚀 Job Board built on ASP.NET Core MVC.
 
