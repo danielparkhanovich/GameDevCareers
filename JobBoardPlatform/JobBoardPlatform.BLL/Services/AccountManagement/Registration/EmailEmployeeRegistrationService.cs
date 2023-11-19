@@ -48,11 +48,17 @@ namespace JobBoardPlatform.BLL.Services.Authentification.Register
         public async Task TryRegisterByTokenAsync(string tokenId, HttpContext httpContext)
         {
             var token = await TryGetTokenAsync(tokenId);
+            if (await userManager.GetWithEmailAsync(token.RelatedLogin) != null)
+            {
+                return;
+            }
             var user = GetEmployeeIdentity(token);
             await userManager.AddAsync(user);
 
             var addedUser = await userManager.GetWithEmailAsync(user.Email);
             await authorizationService.SignInHttpContextAsync(httpContext, addedUser.Id);
+
+            await tokensService.ExpireTokenAsync(tokenId);
         }
 
         private string GetConfirmationUrl(string tokenId)

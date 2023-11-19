@@ -21,6 +21,7 @@ namespace JobBoardPlatform.PL.Controllers.Presenters
         public const string PathToTechnologyOtherWidgetIcon = "/Resources/MainTechnology/other.svg";
 
         public const string PathToOfferContentBackground = "/Resources/offerContentBackground.png";
+        public const string PathToHomePageBackground = "/Resources/homePageBackground.jpg";
 
         public const string PathToExampleCompanyProfileImages = "wwwroot/Resources/ExampleFiles/company{0}.{1}";
         public const string PathToExampleEmployeeProfileImages = "wwwroot/Resources/ExampleFiles/employee.jpg";

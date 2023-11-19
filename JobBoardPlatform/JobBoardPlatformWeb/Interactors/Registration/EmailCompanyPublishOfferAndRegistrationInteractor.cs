@@ -9,6 +9,9 @@ using JobBoardPlatform.PL.ViewModels.Models.Authentification;
 using JobBoardPlatform.PL.ViewModels.Models.Registration;
 using JobBoardPlatform.PL.ViewModels.Models.Offer.Company;
 using JobBoardPlatform.PL.ViewModels.Models.Profile.Company;
+using JobBoardPlatform.BLL.Services.Authentification.Exceptions;
+using JobBoardPlatform.PL.Interactors.Notifications;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace JobBoardPlatform.PL.Interactors.Registration
 {
@@ -90,10 +93,25 @@ namespace JobBoardPlatform.PL.Interactors.Registration
         }
 
         public async Task<RedirectData> ProcessRegistrationAndRedirectAsync(
-            CompanyRegisterViewModel registrationData, string tokenId)
+            CompanyRegisterViewModel registrationData, string tokenId, ITempDataDictionary tempData)
         {
-            await registrationService.TrySendConfirmationTokenAsync(
-                registrationData.Email, registrationData.Password, tokenId);
+            try
+            {
+                await registrationService.TrySendConfirmationTokenAsync(
+                    registrationData.Email, registrationData.Password, tokenId);
+
+                NotificationsManager.Instance.SetActionDoneEmailNotification(
+                    NotificationsManager.RegisterSection,
+                    $"Check your email inbox {registrationData.Email} for a confirmation link to complete your registration.",
+                    tempData);
+            }
+            catch (AuthenticationException e)
+            {
+                NotificationsManager.Instance.SetErrorNotification(
+                    NotificationsManager.RegisterSection,
+                    $"Email is already registered.",
+                    tempData);
+            }
             return RedirectData.NoRedirect;
         }
 

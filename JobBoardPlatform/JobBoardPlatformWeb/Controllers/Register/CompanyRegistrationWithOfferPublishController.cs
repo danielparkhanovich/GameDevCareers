@@ -143,11 +143,7 @@ namespace JobBoardPlatform.PL.Controllers.Register
             if (result.IsValid)
             {
                 var redirect = await formDataInteractor.ProcessRegistrationAndRedirectAsync(
-                    userRegister, formDataTokenId);
-                NotificationsManager.Instance.SetActionDoneEmailNotification(
-                    NotificationsManager.RegisterSection,
-                    $"Check your email inbox {userRegister.Email} for a confirmation link to complete your registration.",
-                    TempData);
+                    userRegister, formDataTokenId, TempData);
                 return RedirectToAction(redirect.ActionName, redirect.Data);
             }
             else

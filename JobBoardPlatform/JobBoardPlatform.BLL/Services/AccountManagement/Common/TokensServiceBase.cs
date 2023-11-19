@@ -34,7 +34,8 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Common
 
         public async Task ExpireTokenAsync(string tokenId)
         {
-            await cache.DeleteAsync(tokenId);
+            string entryKey = GetTokenEntryKey(tokenId);
+            await cache.DeleteAsync(entryKey);
         }
 
         protected abstract TToken CreateNewToken(TValue data, string tokenId);

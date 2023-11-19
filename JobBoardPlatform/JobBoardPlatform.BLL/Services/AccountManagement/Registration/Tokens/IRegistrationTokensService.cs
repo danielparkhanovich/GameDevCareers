@@ -6,5 +6,6 @@ namespace JobBoardPlatform.BLL.Services.AccountManagement.Registration.Tokens
     {
         Task<RegistrationToken> RegisterNewTokenAsync(string userLogin, string password);
         Task<RegistrationToken> TryGetTokenAsync(string tokenId);
+        Task ExpireTokenAsync(string tokenId);
     }
 }
