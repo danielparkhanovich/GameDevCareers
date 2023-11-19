@@ -21,3 +21,27 @@ Test instance deployed on Azure: https://game-dev-careers.azurewebsites.net/
 - HTML, CSS, JavaScript
 - JQuery
 - Bootstrap
+
+### Test accounts
+#### Companies
+https://game-dev-careers.azurewebsites.net/signin-employer-panel
+- email: game.dev.careers.petproject+generated-company-pixelforge-games@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-company-some-games@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-company-nebulabyte-interactive@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-company-mysticpulse-entertainment@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-company-cybernova-creations@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-company-arcanesparrow-games@gmail.com, password: 1234567890!
+
+#### Users
+https://game-dev-careers.azurewebsites.net/signin-employee
+- email: game.dev.careers.petproject+generated-employee-sarah-johnsonsmith@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-employee-diego-martinezgonzalez@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-employee-max-fischerschmidt@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-employee-mia-wangli@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-employee-lily-chenwu@gmail.com, password: 1234567890!
+
+#### Admins
+https://game-dev-careers.azurewebsites.net/signin-admin
+- email: game.dev.careers.petproject+generated-admin-admin1@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-admin-admin2@gmail.com, password: 1234567890!
+- email: game.dev.careers.petproject+generated-admin-admin3@gmail.com, password: 1234567890!
