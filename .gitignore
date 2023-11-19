@@ -369,3 +369,4 @@ JobBoardPlatform/JobBoardPlatformWeb/Properties/serviceDependencies.json
 JobBoardPlatform/JobBoardPlatformWeb/Properties/ServiceDependencies/game-dev-careers - Web Deploy/mssql1.arm.json
 JobBoardPlatform/JobBoardPlatformWeb/Properties/ServiceDependencies/game-dev-careers - Web Deploy/profile.arm.json
 JobBoardPlatform/JobBoardPlatformWeb/Scripts/InitialCreate.sql
+JobBoardPlatform/JobBoardPlatformWeb/appsettings.Staging.json
