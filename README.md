@@ -10,7 +10,7 @@ Test instance deployed on Azure: https://game-dev-careers.azurewebsites.net/
 - managing profile (upload resume or photo)
 - lightweight management system for applications, offers, and admin management
 - stripe integration
-- mails (via SMTP)
+- mails (SMTP)
 
 ### Technologies
 - ASP.NET Core MVC
